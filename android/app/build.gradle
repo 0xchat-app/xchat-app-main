@@ -1,0 +1,105 @@
+plugins {
+  id 'com.android.application'
+  id 'com.google.gms.google-services'
+  id 'dev.flutter.flutter-gradle-plugin'
+}
+
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+  localPropertiesFile.withReader('UTF-8') { reader ->
+    localProperties.load(reader)
+  }
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+  flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+  flutterVersionName = '1.0'
+}
+
+android {
+  namespace 'com.oxchat.nostr'
+  buildFeatures {
+    buildConfig true
+  }
+  compileSdk 34
+  buildToolsVersion "34.0.0"
+  ndkVersion "27.0.12077973"
+
+  //disable resource file check
+  def version = parsePubspecVersion()
+  def versionParts = version.split("\\+")
+  defaultConfig {
+    applicationId "com.oxchat.global"
+    minSdk 28
+    targetSdk 34
+    multiDexEnabled true
+    versionCode versionParts[1] as Integer
+    versionName versionParts[0]
+
+  }
+
+  splits {
+    abi {
+      enable true
+      reset()
+      include 'armeabi-v7a', 'arm64-v8a'
+      universalApk true
+    }
+  }
+
+  buildTypes {
+    release {
+      minifyEnabled true
+      shrinkResources true
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    }
+    debug {
+      minifyEnabled false
+      shrinkResources false
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    }
+  }
+
+  compileOptions {
+    coreLibraryDesugaringEnabled true
+    sourceCompatibility JavaVersion.VERSION_17
+    targetCompatibility JavaVersion.VERSION_17
+  }
+  lint {
+    abortOnError false
+    checkReleaseBuilds false
+  }
+}
+
+flutter {
+  source '../..'
+}
+
+dependencies {
+  implementation fileTree(include: ['*.jar'], dir: 'libs')
+  implementation 'androidx.appcompat:appcompat:1.2.0'
+  implementation 'androidx.multidex:multidex:2.0.1'
+  implementation platform('com.google.firebase:firebase-bom:32.0.0')
+  coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
+}
+
+def parsePubspecVersion() {
+  def pubspec = file('../../pubspec.yaml')
+  def version = '1.0.0+1' // Default value
+
+  if (pubspec.exists()) {
+    def contents = pubspec.readLines()
+    def versionLine = contents.find { it.startsWith('version:') }
+    if (versionLine != null) {
+      version = versionLine.split(' ')[1].trim()
+    }
+  }
+
+  return version
+}
