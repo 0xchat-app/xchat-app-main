@@ -7,11 +7,13 @@ import '../platform_style.dart';
 class CLIconButton extends StatelessWidget {
   CLIconButton({
     required this.child,
+    required this.size,
     this.padding,
     this.onTap,
   });
 
   final Widget child;
+  final double size;
   final VoidCallback? onTap;
   final EdgeInsets? padding;
 
@@ -25,18 +27,29 @@ class CLIconButton extends StatelessWidget {
   }
 
   Widget buildMaterialIcon(BuildContext context) {
-    return IconButton(
-      onPressed: onTap,
-      padding: padding,
-      icon: child,
+    return SizedBox.square(
+      dimension: size,
+      child: IconButton(
+        onPressed: onTap,
+        padding: padding,
+        constraints: BoxConstraints(
+          minWidth: size,
+          minHeight: size,
+        ),
+        icon: child,
+      ),
     );
   }
 
   Widget buildCupertinoIcon(BuildContext context) {
-    return CupertinoButton(
-      onPressed: onTap,
-      padding: padding,
-      child: child,
+    return SizedBox.square(
+      dimension: size,
+      child: CupertinoButton(
+        onPressed: onTap,
+        minSize: size,
+        padding: padding,
+        child: child,
+      ),
     );
   }
 }

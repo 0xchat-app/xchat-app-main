@@ -3,6 +3,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_common/navigator/navigator.dart';
+import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/widgets/common_image.dart';
 
 import 'button/elevated_button.dart';
@@ -139,17 +140,21 @@ class CLButton {
   static Widget text({
     String? text,
     AlignmentGeometry? alignment,
-    Widget? child,
     VoidCallback? onTap,
     bool expanded = false,
     double? width,
     double? height,
+    EdgeInsetsGeometry? padding,
   }) {
-    child ??= _defaultText(text ?? '');
+    Widget child = _defaultText(text ?? '');
     child = _alignIfNeeded(child, alignment);
 
     return _sizeWrapper(
-      CLTextButton(onTap: onTap, child: child),
+      CLTextButton(
+        padding: padding,
+        onTap: onTap,
+        child: child,
+      ),
       expanded: expanded,
       width: width,
       height: height,
@@ -162,19 +167,24 @@ class CLButton {
     Widget? child,
     VoidCallback? onTap,
     double? size,
+    Color? color,
     EdgeInsets? padding,
   }) {
-    // Default: 44 size & 20 padding
-    padding ??= size == null ? EdgeInsets.all(20) : null;
+    // Default: 44 size & 10 padding
+    size ??= 44.px;
+    padding ??= EdgeInsets.all(10.px);
+    color ??= IconTheme.of(OXNavigator.navigatorKey.currentContext!).color;
+
     child ??= CommonImage(
       iconName: iconName,
-      size: size ?? 24,
-      color: ColorToken.primary.of(OXNavigator.navigatorKey.currentContext!),
+      size: size ?? 24.px,
+      color: color,
       package: package,
     );
 
     return CLIconButton(
       onTap: onTap,
+      size: size,
       padding: padding,
       child: child,
     );

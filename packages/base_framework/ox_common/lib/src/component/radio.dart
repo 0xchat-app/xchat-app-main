@@ -10,13 +10,14 @@ class CLRadio<T> extends StatelessWidget {
     super.key,
     required this.value,
     this.groupValue,
-    this.onChanged,
+    ValueChanged<dynamic>? onChanged,
     this.toggleable = false,
     this.focusNode,
     this.autofocus = false,
     this.mouseCursor,
     this.size,
-  });
+    this.autoEnable = true,
+  }) : onChanged = onChanged ?? (autoEnable ? CLRadio.autoEnableChangedHandler : null);
 
   final T value;
   final T? groupValue;
@@ -27,9 +28,12 @@ class CLRadio<T> extends StatelessWidget {
   final MouseCursor? mouseCursor;
 
   final double? size;
+  final bool autoEnable;
 
   double get defaultSize => 40.px;
   double get defaultContentSizeRatio => 24 / 40;
+
+  static void autoEnableChangedHandler(dynamic value) {}
 
   @override
   Widget build(BuildContext context) {

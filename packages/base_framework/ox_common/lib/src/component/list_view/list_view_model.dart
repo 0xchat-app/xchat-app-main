@@ -100,6 +100,9 @@ class CustomItemModel extends ListViewItem {
     super.icon,
     super.title = '',
     super.subtitle,
+    this.leading,
+    this.titleWidget,
+    this.subtitleWidget,
     this.trailing,
     this.customWidgetBuilder,
     this.onTap,
@@ -108,6 +111,9 @@ class CustomItemModel extends ListViewItem {
   @override
   ValueNotifier? get valueNty => null;
 
+  Widget? leading;
+  Widget? titleWidget;
+  Widget? subtitleWidget;
   Widget? trailing;
 
   Widget Function(BuildContext context)? customWidgetBuilder;
