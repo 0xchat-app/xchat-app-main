@@ -5,23 +5,32 @@ import 'package:ox_common/business_interface/ox_chat/interface.dart';
 import 'package:ox_common/business_interface/ox_usercenter/interface.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/navigator/navigator.dart';
+import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/utils/storage_key_tool.dart';
 import 'package:ox_common/widgets/common_hint_dialog.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 
-class HomeTabBarPage extends StatefulWidget {
-  const HomeTabBarPage({
+import '../widgets/home_header_bar.dart';
+
+class HomePage extends StatefulWidget {
+  const HomePage({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<HomeTabBarPage> createState() => _HomeTabBarPageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _HomeTabBarPageState extends State<HomeTabBarPage> {
+class _HomePageState extends State<HomePage> {
 
   SidebarScaffoldController sidebarController = SidebarScaffoldController();
+
+  CircleItem? selectedCircle;
+  List<CircleItem> circleList = [
+    CircleItem(name: 'Damus', level: 0,  relayUrl: 'wss://relay.damus.io/'),
+    CircleItem(name: '0xChat', level: 1,  relayUrl: 'wss://relay.0xchat.com/'),
+  ];
 
   @override
   void initState() {
@@ -40,8 +49,40 @@ class _HomeTabBarPageState extends State<HomeTabBarPage> {
     return SidebarScaffold(
       controller: sidebarController,
       sidebar: OXUserCenterInterface.settingSlider(),
-      body: OXChatInterface.chatSessionListPageWidget(
-        context,
+      body: Stack(
+        children: [
+          Positioned(
+            top: Adapt.topSafeAreaHeight + HomeHeaderBar.height,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child:buildSessionList(),
+          ),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: HomeHeaderBar(
+              user: OXUserInfoManager.sharedInstance.currentUserInfo,
+              circles: circleList,
+              onCircleSelected: (item) {
+                setState(() {
+                  selectedCircle = item;
+                });
+              },
+              selectedCircle: selectedCircle,
+              onAvatarTap: () {
+                sidebarController.open();
+              },
+              onJoinTap: () {
+
+              },
+              onPaidTap: () {
+
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

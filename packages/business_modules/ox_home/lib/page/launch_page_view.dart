@@ -8,7 +8,7 @@ import 'package:ox_module_service/ox_module_service.dart';
 import 'package:rive/rive.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_theme/ox_theme.dart';
-import 'package:ox_home/page/home_tabbar.dart';
+import 'package:ox_home/page/home_page.dart';
 
 class LaunchPageView extends StatefulWidget {
   const LaunchPageView({super.key});
@@ -108,7 +108,7 @@ class LaunchPageViewState extends State<LaunchPageView> {
       if (_localPasscode.isNotEmpty) {
         OXModuleService.pushPage(context, 'ox_usercenter', 'VerifyPasscodePage', {});
       } else {
-        Navigator.of(context).pushReplacement(CustomRouteFadeIn(const HomeTabBarPage()));
+        Navigator.of(context).pushReplacement(CustomRouteFadeIn(const HomePage()));
       }
     });
   }
