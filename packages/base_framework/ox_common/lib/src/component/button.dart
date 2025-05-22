@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_common/navigator/navigator.dart';
@@ -12,12 +10,23 @@ import 'button/icon_button.dart';
 import 'button/outlined_button.dart';
 import 'button/text_button.dart';
 import 'button/tonal_button.dart';
-import 'color_token.dart';
 import 'text.dart';
 
 class CLButton {
   static Widget _defaultText(String text) {
-    return CLText(text, customColor: null);
+    return CLText(
+      text,
+      resolver: (theme) {
+        final textStyle = theme.titleMedium;
+        return TextStyle().copyWith(
+          fontSize: textStyle?.fontSize,
+          fontWeight: textStyle?.fontWeight,
+          fontStyle: textStyle?.fontStyle,
+          letterSpacing: textStyle?.letterSpacing,
+          height: textStyle?.height,
+        );
+      },
+    );
   }
 
   /// Wraps the inner label with optional [alignment] while keeping the label‑
@@ -43,10 +52,10 @@ class CLButton {
     if (expanded) {
       return LayoutBuilder(
         builder: (context, constraints) {
-          final double? w = constraints.maxWidth.isFinite
-              ? constraints.maxWidth : null;
-          final double? h = constraints.maxHeight.isFinite
-              ? constraints.maxHeight : null;
+          final double? w =
+              constraints.maxWidth.isFinite ? constraints.maxWidth : null;
+          final double? h =
+              constraints.maxHeight.isFinite ? constraints.maxHeight : null;
           return SizedBox(width: w, height: h, child: button);
         },
       );
@@ -65,12 +74,17 @@ class CLButton {
     bool expanded = false,
     double? width,
     double? height,
+    EdgeInsetsGeometry? padding,
   }) {
     child ??= _defaultText(text ?? '');
     child = _alignIfNeeded(child, alignment);
 
     return _sizeWrapper(
-      CLFilledButton(onTap: onTap, child: child),
+      CLFilledButton(
+        padding: padding,
+        onTap: onTap,
+        child: child,
+      ),
       expanded: expanded,
       width: width,
       height: height,
@@ -85,12 +99,17 @@ class CLButton {
     bool expanded = false,
     double? width,
     double? height,
+    EdgeInsetsGeometry? padding,
   }) {
     child ??= _defaultText(text ?? '');
     child = _alignIfNeeded(child, alignment);
 
     return _sizeWrapper(
-      CLTonalButton(onTap: onTap, child: child),
+      CLTonalButton(
+        padding: padding,
+        onTap: onTap,
+        child: child,
+      ),
       expanded: expanded,
       width: width,
       height: height,
@@ -105,12 +124,17 @@ class CLButton {
     bool expanded = false,
     double? width,
     double? height,
+    EdgeInsetsGeometry? padding,
   }) {
     child ??= _defaultText(text ?? '');
     child = _alignIfNeeded(child, alignment);
 
     return _sizeWrapper(
-      CLElevatedButton(onTap: onTap, child: child),
+      CLElevatedButton(
+        padding: padding,
+        onTap: onTap,
+        child: child,
+      ),
       expanded: expanded,
       width: width,
       height: height,
@@ -125,12 +149,17 @@ class CLButton {
     bool expanded = false,
     double? width,
     double? height,
+    EdgeInsetsGeometry? padding,
   }) {
     child ??= _defaultText(text ?? '');
     child = _alignIfNeeded(child, alignment);
 
     return _sizeWrapper(
-      CLOutlinedButton(onTap: onTap, child: child),
+      CLOutlinedButton(
+        padding: padding,
+        onTap: onTap,
+        child: child,
+      ),
       expanded: expanded,
       width: width,
       height: height,
@@ -177,7 +206,7 @@ class CLButton {
 
     child ??= CommonImage(
       iconName: iconName,
-      size: size ?? 24.px,
+      size: size,
       color: color,
       package: package,
     );

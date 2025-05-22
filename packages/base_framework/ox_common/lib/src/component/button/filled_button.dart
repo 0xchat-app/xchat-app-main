@@ -7,10 +7,12 @@ import '../platform_style.dart';
 class CLFilledButton extends StatelessWidget {
   CLFilledButton({
     required this.child,
+    this.padding,
     this.onTap,
   });
 
   final Widget child;
+  final EdgeInsetsGeometry? padding;
   final VoidCallback? onTap;
 
   @override
@@ -18,11 +20,15 @@ class CLFilledButton extends StatelessWidget {
     if (PlatformStyle.isUseMaterial) {
       return FilledButton(
         onPressed: onTap,
+        style: FilledButton.styleFrom(
+          padding: padding,
+        ),
         child: child,
       );
     } else {
       return CupertinoButton.filled(
         onPressed: onTap,
+        padding: padding,
         child: child,
       );
     }
