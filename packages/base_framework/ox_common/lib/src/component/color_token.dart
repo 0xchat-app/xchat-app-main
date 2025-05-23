@@ -53,28 +53,25 @@ extension AppColorResolver on ColorToken {
         case ColorToken.primary:
           return cupertino.primaryColor;
         case ColorToken.onPrimary:
-          return CupertinoColors.white;
-        case ColorToken.primaryContainer:
-          return CupertinoColors.secondarySystemFill.resolveFrom(context);
-        case ColorToken.onPrimaryContainer:
-          return CupertinoColors.white;
-        case ColorToken.secondary:
-          // Use primaryContrastingColor if available, fallback to primaryColor
           return cupertino.primaryContrastingColor;
-        case ColorToken.onSecondary:
-          // Use primaryColor for contrast, fallback to white
+        case ColorToken.primaryContainer:
+          final base = cupertino.primaryColor.withAlpha(0x26);
+          final surface = CupertinoColors.systemBackground.resolveFrom(context);
+          return Color.alphaBlend(base, surface);
+        case ColorToken.onPrimaryContainer:
+          return cupertino.primaryContrastingColor;
+        case ColorToken.secondary:
           return cupertino.primaryColor;
+        case ColorToken.onSecondary:
+          return cupertino.primaryContrastingColor;
         case ColorToken.secondaryContainer:
-          return CupertinoColors.secondarySystemFill.resolveFrom(context);
+          return CupertinoColors.secondarySystemBackground.resolveFrom(context);
         case ColorToken.onSecondaryContainer:
-          return CupertinoColors.white;
+          return CupertinoColors.secondaryLabel.resolveFrom(context);
         case ColorToken.error:
-          // Cupertino does not have error color, fallback to Material
-          final scheme = Theme.of(context).colorScheme;
-          return scheme.error;
+          return CupertinoColors.systemRed.resolveFrom(context);
         case ColorToken.onError:
-          final scheme = Theme.of(context).colorScheme;
-          return scheme.onError;
+          return CupertinoColors.white;
         case ColorToken.surface:
           return CupertinoColors.systemBackground.resolveFrom(context);
         case ColorToken.onSurface:
