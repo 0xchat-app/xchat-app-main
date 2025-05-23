@@ -142,4 +142,8 @@ class CustomRouteFadeIn<T> extends PageRouteBuilder<T> {
             );
           },
         );
+
+  // The color used behind the presented page, matching iOS present style background.
+  @override
+  Color? get barrierColor => Colors.black;
 }

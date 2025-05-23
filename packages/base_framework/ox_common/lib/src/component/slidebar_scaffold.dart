@@ -1,6 +1,7 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:ox_common/component.dart';
+import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 
 class SidebarScaffoldController {
@@ -61,19 +62,11 @@ class _SidebarScaffoldState extends State<SidebarScaffold> {
   }
 
   void _showSidebar(BuildContext context) {
-    showCupertinoModalPopup(
-      context: context,
-      builder: (context) => Align(
-        alignment: Alignment.centerLeft,
-        child: Material(
-          color: Colors.transparent,
-          child: Container(
-            height: double.infinity,
-            color: CupertinoColors.systemBackground.resolveFrom(context),
-            child: widget.sidebar,
-          ),
-        ),
-      ),
+    OXNavigator.pushPage(
+      context,
+      (_) => widget.sidebar,
+      type: OXPushPageType.present,
+      fullscreenDialog: false,
     );
   }
 }
