@@ -57,7 +57,7 @@ class _SidebarScaffoldState extends State<SidebarScaffold> {
       );
     }
     // Cupertino style: simplified, modal sidebar
-    return widget.body;
+    return CLScaffold(body: widget.body);
   }
 
   void _showSidebar(BuildContext context) {
