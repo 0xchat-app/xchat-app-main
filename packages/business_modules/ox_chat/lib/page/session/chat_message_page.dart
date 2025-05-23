@@ -33,7 +33,7 @@ class ChatMessagePage extends StatefulWidget {
   @override
   State<ChatMessagePage> createState() => _ChatMessagePageState();
 
-  static open({
+  static Future<T?> open<T>({
     required BuildContext context,
     required ChatSessionModelISAR communityItem,
     String? anchorMsgId,
@@ -81,7 +81,7 @@ class ChatMessagePage extends StatefulWidget {
         break ;
     }
 
-    if (pageWidget == null) return ;
+    if (pageWidget == null) return null;
     if (isLongPressShow){
       handler.isPreviewMode = true;
       if (fromWhere == 1){

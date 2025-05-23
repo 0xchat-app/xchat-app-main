@@ -1,17 +1,19 @@
 import 'package:flutter/widgets.dart';
 import 'package:nostr_core_dart/nostr.dart';
 import 'package:ox_cache_manager/ox_cache_manager.dart';
-import 'package:ox_common/business_interface/ox_chat/interface.dart';
+import 'package:ox_chat/page/session/chat_message_page.dart';
 import 'package:ox_common/business_interface/ox_usercenter/interface.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
+import 'package:ox_common/utils/ox_chat_binding.dart';
 import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/utils/storage_key_tool.dart';
 import 'package:ox_common/widgets/common_hint_dialog.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 
 import '../widgets/home_header_bar.dart';
+import '../widgets/session_list_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -25,6 +27,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   SidebarScaffoldController sidebarController = SidebarScaffoldController();
+  SessionListDataController sessionDataController = SessionListDataController();
 
   CircleItem? selectedCircle;
   List<CircleItem> circleList = [
@@ -37,6 +40,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     Localized.addLocaleChangedCallback(onLocaleChange);
     signerCheck();
+    sessionDataController.initialized();
   }
 
   @override
@@ -56,7 +60,7 @@ class _HomePageState extends State<HomePage> {
             left: 0,
             right: 0,
             bottom: 0,
-            child:buildSessionList(),
+            child: buildSessionList(),
           ),
           Positioned(
             top: 0,
@@ -88,8 +92,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget buildSessionList() {
-    return OXChatInterface.chatSessionListPageWidget(
-      context,
+    return SessionListWidget(
+      controller: sessionDataController,
+      itemOnTap: sessionItemOnTap,
     );
   }
 
@@ -126,5 +131,26 @@ class _HomePageState extends State<HomePage> {
     if (mounted) {
       setState(() {});
     }
+  }
+
+  void sessionItemOnTap(SessionListViewModel item) {
+    final session = item.sessionModel;
+    final unreadMessageCount = session.unreadCount;
+
+    ChatMessagePage.open(
+      context: context,
+      communityItem: session,
+      unreadMessageCount: unreadMessageCount,
+    ).then((_) {
+      item.rebuild();
+    });
+
+    session.unreadCount = 0;
+    OXChatBinding.sharedInstance.updateChatSession(
+      session.chatId,
+      unreadCount: 0,
+    );
+
+    item.rebuild();
   }
 }

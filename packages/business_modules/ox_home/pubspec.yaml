@@ -1,11 +1,12 @@
 name: ox_home
 description: A new Flutter project.
 version: 0.0.1
-homepage:
+
+publish_to: 'none'
 
 environment:
-  sdk: '>=2.19.3 <3.0.0'
-  flutter: ">=2.5.0"
+  sdk: ">=3.0.5 <4.0.0"
+  flutter: ">=3.27.0"
 
 dependencies:
   flutter:
@@ -24,12 +25,17 @@ dependencies:
     path: ../../base_framework/ox_theme
   ox_localizable:
     path: ../../base_framework/ox_localizable
-
+  ox_chat:
+    path: ../../business_modules/ox_chat
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
+
+dependency_overrides:
+  nostr_mls_package:
+    path: ../../nostr-mls-package
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
