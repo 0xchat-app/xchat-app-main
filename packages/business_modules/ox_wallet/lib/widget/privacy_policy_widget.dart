@@ -87,12 +87,22 @@ class PrivacyPolicyWidget extends StatelessWidget {
   }
 
   void _openLinkURL(BuildContext context, {required String url, required String title}) {
-    OXNavigator.presentPage(context, (context) => CommonWebView(url, title: title,),);
+    OXNavigator.pushPage(
+      context,
+      (context) => CommonWebView(url, title: title,),
+      type: OXPushPageType.present,
+    );
   }
 
   Future<void> _openDisclaimerLocalLink(BuildContext context,{required String title}) async {
     String htmlContent = await WalletUtils.loadLocalHTML('packages/ox_wallet/assets/template/wallet_disclaimer.html');
     String url = Uri.dataFromString(htmlContent, mimeType: 'text/html', encoding: Encoding.getByName('utf-8')).toString();
-    if(context.mounted) OXNavigator.presentPage(context, (context) => CommonWebView(url, title: title,isLocalHtmlResource: true,), fullscreenDialog: true);
+    if(context.mounted)
+      OXNavigator.pushPage(
+        context,
+        (context) => CommonWebView(url, title: title,isLocalHtmlResource: true,),
+        fullscreenDialog: true,
+        type: OXPushPageType.present,
+      );
   }
 }

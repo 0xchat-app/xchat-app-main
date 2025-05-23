@@ -161,11 +161,13 @@ class OXChat extends OXFlutterModule {
           msg: params?['url'] ?? '',
         ));
       case 'ChatVideoPlayPage':
-        return OXNavigator.presentPage(context, (context) => ChatVideoPlayPage(
+        return OXNavigator.pushPage(context, (context) => ChatVideoPlayPage(
           videoUrl: params?['videoUrl'] ?? '',
-        ),fullscreenDialog:true);
+        ),fullscreenDialog:true,
+          type: OXPushPageType.present,
+        );
       case 'UserSelectionPage':
-        return OXNavigator.presentPage(context, (context) => UserSelectionPage(
+        return OXNavigator.pushPage(context, (context) => UserSelectionPage(
           title: params?['title'] ?? '',
           userList: params?['userList'],
           defaultSelected: params?['defaultSelected'] ?? [],
@@ -173,7 +175,9 @@ class OXChat extends OXFlutterModule {
           isMultiSelect: params?['isMultiSelect'] ?? false,
           allowFetchUserFromRelay: params?['allowFetchUserFromRelay'] ?? false,
           shouldPop: params?['shouldPop'],
-        ),);
+        ),
+          type: OXPushPageType.present,
+        );
       case 'UnifiedSearchPage':
         return UnifiedSearchPage(initialIndex: params?['initialIndex']).show(context);
     }

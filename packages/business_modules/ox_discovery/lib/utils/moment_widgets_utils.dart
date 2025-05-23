@@ -169,7 +169,12 @@ class MomentWidgetsUtils {
   static Widget youtubeSurfaceMoment(context,String videoUrl) {
     return GestureDetector(
       onTap: () {
-        OXNavigator.presentPage(context, (context) => YoutubePlayerWidget(videoUrl: videoUrl),fullscreenDialog: true);
+        OXNavigator.pushPage(
+          context,
+          (context) => YoutubePlayerWidget(videoUrl: videoUrl),
+          fullscreenDialog: true,
+          type: OXPushPageType.present,
+        );
       },
       child: Container(
         margin: EdgeInsets.only(

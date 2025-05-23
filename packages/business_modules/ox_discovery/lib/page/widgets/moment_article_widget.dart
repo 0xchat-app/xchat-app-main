@@ -104,7 +104,11 @@ class MomentArticleWidgetState extends State<MomentArticleWidget> {
     if (info == null) return MomentWidgetsUtils.emptyNoteMomentWidget(null,100);
     return GestureDetector(
       onTap: () {
-        OXNavigator.presentPage(context, (context) => MomentArticlePage(naddr: widget.naddr));
+        OXNavigator.pushPage(
+          context,
+          (context) => MomentArticlePage(naddr: widget.naddr),
+          type: OXPushPageType.present,
+        );
 
       },
       child: Container(
@@ -187,12 +191,18 @@ class MomentArticleWidgetState extends State<MomentArticleWidget> {
                     // maxLines: 1,
                     isShowAllContent: false,
                     clickBlankCallback: ()  {
-                    OXNavigator.presentPage(context, (context) => MomentArticlePage(naddr: widget.naddr));
-
+                      OXNavigator.pushPage(
+                        context,
+                        (context) => MomentArticlePage(naddr: widget.naddr),
+                        type: OXPushPageType.present,
+                      );
                     },
                     showMoreCallback: ()  {
-                    OXNavigator.presentPage(context, (context) => MomentArticlePage(naddr: widget.naddr));
-
+                      OXNavigator.pushPage(
+                        context,
+                        (context) => MomentArticlePage(naddr: widget.naddr),
+                        type: OXPushPageType.present,
+                      );
                     },
                   ),
                 ],

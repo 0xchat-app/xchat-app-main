@@ -150,8 +150,11 @@ class _IntelligentInputBoxWidgetState extends State<IntelligentInputBoxWidget> {
               setState(() {
                 saveCursorPosition = widget.textController.selection.start;
               });
-              final result = await OXNavigator.presentPage(
-                  context, (context) => const SelectMentionPage());
+              final result = await OXNavigator.pushPage(
+                context,
+                (context) => const SelectMentionPage(),
+                type: OXPushPageType.present,
+              );
               if(isShowModalBottomSheet){
                 OXNavigator.pop(context);
                 FocusScope.of(context).requestFocus(_replyFocusNode);

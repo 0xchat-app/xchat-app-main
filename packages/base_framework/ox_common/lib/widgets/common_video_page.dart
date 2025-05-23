@@ -27,10 +27,11 @@ class CommonVideoPage extends StatefulWidget {
   State<CommonVideoPage> createState() => _CommonVideoPageState();
 
   static show(String videoUrl, {BuildContext? context}) {
-    return OXNavigator.presentPage(
+    return OXNavigator.pushPage(
       context,
       (context) => CommonVideoPage(videoUrl: videoUrl),
       fullscreenDialog: true,
+      type: OXPushPageType.present,
     );
   }
 }

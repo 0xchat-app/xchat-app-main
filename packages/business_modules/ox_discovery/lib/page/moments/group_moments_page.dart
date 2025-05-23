@@ -94,13 +94,15 @@ class GroupMomentsPageState extends State<GroupMomentsPage>
         package: 'ox_discovery',
       ),
       onLongPress: ()async {
-       await OXNavigator.presentPage(
+       await OXNavigator.pushPage(
             context,
             (context) => CreateMomentsPage(
                 type: EMomentType.content,
                 groupId: widget.groupId,
                 sendMomentsType: EOptionMomentsType.group,
-            ));
+            ),
+         type: OXPushPageType.present,
+       );
        updateNotesList(true);
       },
       onTap: () async{
@@ -111,7 +113,7 @@ class GroupMomentsPageState extends State<GroupMomentsPage>
           final imageList = type == EMomentType.picture ? createMomentMediaDraft.imageList : null;
           final videoPath = type == EMomentType.video ? createMomentMediaDraft.videoPath : null;
           final videoImagePath = type == EMomentType.video ? createMomentMediaDraft.videoImagePath : null;
-         await OXNavigator.presentPage(
+         await OXNavigator.pushPage(
             context,
             (context) => CreateMomentsPage(
               type: type,
@@ -121,15 +123,18 @@ class GroupMomentsPageState extends State<GroupMomentsPage>
               groupId: widget.groupId,
               sendMomentsType: EOptionMomentsType.group,
             ),
+           type: OXPushPageType.present,
           );
           updateNotesList(true);
           return;
         }
-       await OXNavigator.presentPage(context, (context) => CreateMomentsPage(
+       await OXNavigator.pushPage(context, (context) => CreateMomentsPage(
           type: null,
           groupId: widget.groupId,
           sendMomentsType: EOptionMomentsType.group,
-        ));
+        ),
+         type: OXPushPageType.present,
+       );
         updateNotesList(true);
       },
     );
@@ -174,7 +179,7 @@ class GroupMomentsPageState extends State<GroupMomentsPage>
             onTap: () {
               OXNavigator.pop(context);
               AlbumUtils.openCamera(context, (List<String> imageList)async {
-               await OXNavigator.presentPage(
+               await OXNavigator.pushPage(
                   context,
                   (context) => CreateMomentsPage(
                     type: EMomentType.picture,
@@ -182,6 +187,7 @@ class GroupMomentsPageState extends State<GroupMomentsPage>
                     groupId: widget.groupId,
                     sendMomentsType: EOptionMomentsType.group,
                   ),
+                 type: OXPushPageType.present,
                 );
               });
             },
@@ -197,7 +203,7 @@ class GroupMomentsPageState extends State<GroupMomentsPage>
               OXNavigator.pop(context);
               AlbumUtils.openAlbum(context, type: 1,
                   callback: (List<String> imageList) async{
-               await OXNavigator.presentPage(
+               await OXNavigator.pushPage(
                   context,
                   (context) => CreateMomentsPage(
                     type: EMomentType.picture,
@@ -205,6 +211,7 @@ class GroupMomentsPageState extends State<GroupMomentsPage>
                     groupId: widget.groupId,
                     sendMomentsType: EOptionMomentsType.group,
                   ),
+                 type: OXPushPageType.present,
                 );
               });
             },
@@ -220,7 +227,7 @@ class GroupMomentsPageState extends State<GroupMomentsPage>
               OXNavigator.pop(context);
               AlbumUtils.openAlbum(context, type: 2, selectCount: 1,
                   callback: (List<String> imageList) async{
-               await OXNavigator.presentPage(
+               await OXNavigator.pushPage(
                   context,
                   (context) => CreateMomentsPage(
                     type: EMomentType.video,
@@ -229,6 +236,7 @@ class GroupMomentsPageState extends State<GroupMomentsPage>
                     groupId: widget.groupId,
                     sendMomentsType: EOptionMomentsType.group,
                   ),
+                 type: OXPushPageType.present,
                 );
               });
             },

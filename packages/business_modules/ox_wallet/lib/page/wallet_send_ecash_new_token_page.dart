@@ -62,9 +62,11 @@ class _WalletSendEcashNewTokenPageState extends State<WalletSendEcashNewTokenPag
               ThemeButton(
                   text: Localized.text('ox_wallet.share'),
                   height: 48.px,
-                  onTap: () => OXNavigator.presentPage(
-                      context,
-                      (context) => ContactChoosePage<UserDBISAR>(contactType: ContactType.contact, onSubmitted: _shareCashuToken,)),
+                  onTap: () => OXNavigator.pushPage(
+                    context,
+                    (context) => ContactChoosePage<UserDBISAR>(contactType: ContactType.contact, onSubmitted: _shareCashuToken,),
+                    type: OXPushPageType.present,
+                  ),
               ).setPaddingOnly(top: 24.px),
             ],
           ).setPadding(EdgeInsets.symmetric(horizontal: 24.px)),

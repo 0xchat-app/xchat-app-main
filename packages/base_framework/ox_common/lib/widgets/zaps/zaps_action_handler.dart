@@ -143,7 +143,7 @@ class ZapsActionHandler {
     }
 
     if (isAssistedProcess) {
-      OXNavigator.presentPage(
+      OXNavigator.pushPage(
         context,
         (context) => ZapsAssistedPage(
           userDB: userDB,
@@ -151,6 +151,7 @@ class ZapsActionHandler {
           lnurl: lnurl,
           handler: this,
         ),
+        type: OXPushPageType.present,
       );
     } else {
       // final showLoading = !isDefaultEcashWallet && !isDefaultNWCWallet;

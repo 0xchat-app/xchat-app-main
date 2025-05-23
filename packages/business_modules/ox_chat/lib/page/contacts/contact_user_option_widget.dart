@@ -1152,9 +1152,10 @@ class _ContactUserOptionWidgetState extends State<ContactUserOptionWidget> with 
             _clearMessage();
             break;
           case EMoreOptionType.secretChat:
-            OXNavigator.presentPage(
+            OXNavigator.pushPage(
               context,
-                  (context) => ContactCreateSecret(userDB: userDB),
+              (context) => ContactCreateSecret(userDB: userDB),
+              type: OXPushPageType.present,
             );
           case EMoreOptionType.remark:
             OXNavigator.pushPage(

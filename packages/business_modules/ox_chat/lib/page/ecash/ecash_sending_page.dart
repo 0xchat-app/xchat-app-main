@@ -552,7 +552,7 @@ class _EcashSendingPageState extends State<EcashSendingPage> with
 
   Future receiverOnTap() async {
     final members = await widget.membersGetter() ?? [];
-    final selectedUser = await OXNavigator.presentPage<List<UserDBISAR>>(
+    final selectedUser = await OXNavigator.pushPage<List<UserDBISAR>>(
       null, (context) => UserSelectionPage(
         title: 'group_member'.localized(),
         userList: members,
@@ -575,6 +575,7 @@ class _EcashSendingPageState extends State<EcashSendingPage> with
           return true;
         },
       ),
+      type: OXPushPageType.present,
     );
 
     if (selectedUser == null) return ;
@@ -602,7 +603,7 @@ class _EcashSendingPageState extends State<EcashSendingPage> with
 
   Future signatureOnTap() async {
     final members = await widget.membersGetter() ?? [];
-    final selectedUser = await OXNavigator.presentPage<List<UserDBISAR>>(
+    final selectedUser = await OXNavigator.pushPage<List<UserDBISAR>>(
       null, (context) => UserSelectionPage(
         title: 'group_member'.localized(),
         userList: members,
@@ -625,6 +626,7 @@ class _EcashSendingPageState extends State<EcashSendingPage> with
           return true;
         },
       ),
+      type: OXPushPageType.present,
     );
     if (selectedUser == null) return ;
 

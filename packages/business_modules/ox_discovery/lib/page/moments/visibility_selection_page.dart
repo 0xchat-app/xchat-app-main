@@ -165,7 +165,7 @@ class _VisibilitySelectionPageState extends State<VisibilitySelectionPage> {
             _currentVisibleType = VisibleType.values[index];
           });
           if (isSpecial) {
-            OXNavigator.presentPage(
+            OXNavigator.pushPage(
               context,
               (context) => ContactChoosePage<UserDBISAR>(
                 title: Localized.text('ox_discovery.selected_friends_title'),
@@ -173,6 +173,7 @@ class _VisibilitySelectionPageState extends State<VisibilitySelectionPage> {
                 onSubmitted: _selectedOnChanged,
                 selectedContactList: _excludeContacts,
               ),
+              type: OXPushPageType.present,
             );
           }
         },

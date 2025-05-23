@@ -31,23 +31,26 @@ class GroupShareUtils{
         if (result == GroupMenuType.copy) {
           TookKit.copyKey(context, groupNevent ??'');
         } else if (result == GroupMenuType.share){
-          OXNavigator.presentPage(
+          OXNavigator.pushPage(
             context,
                 (context) => ContactGroupMemberPage(
               groupId: groupId,
               groupListAction: GroupListAction.send,
               groupType: groupType,
             ),
+            type: OXPushPageType.present,
           );
         }
       }
     } else {
-      OXNavigator.presentPage(
+      OXNavigator.pushPage(
         context,
             (context) => ContactGroupMemberPage(
           groupId: groupId,
           groupListAction: GroupListAction.send,
-        ),);
+        ),
+        type: OXPushPageType.present,
+      );
     }
   }
 }

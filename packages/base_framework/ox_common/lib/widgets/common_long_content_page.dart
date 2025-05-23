@@ -44,11 +44,13 @@ class CommonLongContentPage extends StatefulWidget {
     UserDBISAR? author,
     int? timeStamp,
   }) {
-    OXNavigator.presentPage(context, (context) => CommonLongContentPage(
+    OXNavigator.pushPage(context, (context) => CommonLongContentPage(
       content: content,
       author: author,
       timeStamp: timeStamp,
-    ));
+    ),
+      type: OXPushPageType.present,
+    );
   }
 }
 

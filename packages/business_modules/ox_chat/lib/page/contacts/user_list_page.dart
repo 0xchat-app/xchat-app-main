@@ -45,9 +45,10 @@ class UserSelectionPage extends StatefulWidget {
       groupMembers = groupMembers.where((user) => user != OXUserInfoManager.sharedInstance.currentUserInfo).toList();
     }
 
-    return OXNavigator.presentPage(
+    return OXNavigator.pushPage(
       null,
-      (context) => UserSelectionPage(title: title ?? 'group_member'.localized(), userList: groupMembers,)
+      (context) => UserSelectionPage(title: title ?? 'group_member'.localized(), userList: groupMembers,),
+      type: OXPushPageType.present,
     );
   }
 }

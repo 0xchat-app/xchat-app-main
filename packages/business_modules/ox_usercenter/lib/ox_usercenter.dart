@@ -95,7 +95,7 @@ class OXUserCenter extends OXFlutterModule {
      String defaultWalletName = UserConfigTool.getSetting(StorageSettingKey.KEY_DEFAULT_WALLET.name,defaultValue: '');
      final ecashWalletName = WalletModel.walletsWithEcash.first.title;
      if(isShowWalletSelector || defaultWalletName == ecashWalletName){
-       return OXNavigator.presentPage(
+       return OXNavigator.pushPage(
          context,
          (context) {
            return ZapsInvoiceDialog(
@@ -104,6 +104,7 @@ class OXUserCenter extends OXFlutterModule {
              isShowEcashWallet: !isCalledFromEcashWallet,
            );
          },
+         type: OXPushPageType.present,
        );
      }
      else if(defaultWalletName == 'NWC'){

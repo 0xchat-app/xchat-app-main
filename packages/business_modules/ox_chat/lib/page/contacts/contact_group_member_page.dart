@@ -116,7 +116,11 @@ class _ContactGroupMemberState extends ContactGroupListPageState {
 
   @override
   buildViewPressed() {
-    OXNavigator.presentPage(context, (context) => ContactGroupMemberPage(groupId:groupId,groupListAction: GroupListAction.add,));
+    OXNavigator.pushPage(
+      context,
+      (context) => ContactGroupMemberPage(groupId:groupId,groupListAction: GroupListAction.add,),
+      type: OXPushPageType.present,
+    );
   }
 
   @override

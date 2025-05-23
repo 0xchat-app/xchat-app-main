@@ -409,7 +409,7 @@ class _MomentWidgetState extends State<MomentWidget> {
           await TookKit.copyKey(context, noteDB.content);
           break;
         case EMomentMoreOptionType.shareNoted:
-         OXNavigator.presentPage(
+         OXNavigator.pushPage(
           context,
           (context) => ContactChoosePage<UserDBISAR>(
             title: 'Choose Friends',
@@ -424,7 +424,8 @@ class _MomentWidgetState extends State<MomentWidget> {
               }
 
             },
-          ));
+          ),
+           type: OXPushPageType.present,);
           break;
         case EMomentMoreOptionType.block:
           _blockOptionFn(noteAuthor);

@@ -203,9 +203,10 @@ class _ContactGroupChatCreatePageState extends State<ContactGroupChatCreatePage>
       title:  Localized.text('ox_chat.relay'),
       content: _chatRelay,
       onTap: () async {
-        var result = await OXNavigator.presentPage(
+        var result = await OXNavigator.pushPage(
           context,
               (context) => CommonSelectRelayPage(),
+          type: OXPushPageType.present,
         );
         if (result != null && _isWssWithValidURL(result as String)) {
           _chatRelay = result;

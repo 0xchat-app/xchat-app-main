@@ -57,8 +57,9 @@ class OXDiscovery extends OXFlutterModule {
         return OXNavigator.pushPage(context,
                 (context) => DiscoveryPage(typeInt: params?['typeInt'], isSecondPage: params?['isSecondPage'] ?? true));
       case 'CreateMomentsPage':
-        return OXNavigator.presentPage(context,
-                (context) => const CreateMomentsPage());
+        return OXNavigator.pushPage(context,
+                (context) => const CreateMomentsPage(),
+          type: OXPushPageType.present,);
     }
     return null;
   }

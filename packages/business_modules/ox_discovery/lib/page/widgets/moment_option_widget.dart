@@ -157,7 +157,8 @@ class _MomentOptionWidgetState extends State<MomentOptionWidget> with SingleTick
     switch (type) {
       case EMomentOptionType.reply:
         return () async{
-          await OXNavigator.presentPage(context, (context) => ReplyMomentsPage(notedUIModel: notedUIModel),fullscreenDialog:true);
+          await OXNavigator.pushPage(context, (context) => ReplyMomentsPage(notedUIModel: notedUIModel),fullscreenDialog:true,
+            type: OXPushPageType.present,);
           _updateNoteDB();
         };
       case EMomentOptionType.repost:
@@ -298,7 +299,8 @@ class _MomentOptionWidgetState extends State<MomentOptionWidget> with SingleTick
             index: 1,
             onTap: () {
               OXNavigator.pop(context);
-              OXNavigator.presentPage(context, (context) => CreateMomentsPage(type: EMomentType.quote,notedUIModel: notedUIModel));
+              OXNavigator.pushPage(context, (context) => CreateMomentsPage(type: EMomentType.quote,notedUIModel: notedUIModel),
+                type: OXPushPageType.present,);
             },
           ),
           Container(

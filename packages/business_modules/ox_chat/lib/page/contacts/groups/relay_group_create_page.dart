@@ -212,7 +212,11 @@ class _RelayGroupCreatePageState extends State<RelayGroupCreatePage> {
       title: Localized.text('ox_chat.relay'),
       content: _chatRelay,
       onTap: () async {
-        var result = await OXNavigator.presentPage(context, (context) => CommonSelectRelayPage(defaultRelayList: Relays.sharedInstance.recommendGroupRelays));
+        var result = await OXNavigator.pushPage(
+          context,
+          (context) => CommonSelectRelayPage(defaultRelayList: Relays.sharedInstance.recommendGroupRelays),
+          type: OXPushPageType.present,
+        );
         if (result != null) {
           _chatRelay = result as String;
           setState(() {});

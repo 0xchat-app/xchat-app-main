@@ -127,10 +127,11 @@ class OXCommon extends OXFlutterModule {
         print(e.toString() + 'Cannot open $url');
       }
     } else {
-      OXNavigator.presentPage(
+      OXNavigator.pushPage(
         context,
         (context) => CommonWebView(url, title: '0xchat', urlCallback: calllBack, isLocalHtmlResource: isLocalHtmlResource),
         fullscreenDialog: fullscreenDialog ?? true,
+        type: OXPushPageType.present,
       );
     }
   }

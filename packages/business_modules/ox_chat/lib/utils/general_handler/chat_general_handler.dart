@@ -885,7 +885,7 @@ extension ChatInputMoreHandlerEx on ChatGeneralHandler {
 
   Future ecashPressHandler(BuildContext context) async {
     if (!OXWalletInterface.checkWalletActivate()) return ;
-    await OXNavigator.presentPage<Map<String, String>>(
+    await OXNavigator.pushPage<Map<String, String>>(
       context, (_) =>
         EcashSendingPage(
           isGroupEcash: session.hasMultipleUsers,
@@ -918,6 +918,7 @@ extension ChatInputMoreHandlerEx on ChatGeneralHandler {
             OXNavigator.pop(context);
           },
         ),
+      type: OXPushPageType.present,
     );
   }
 

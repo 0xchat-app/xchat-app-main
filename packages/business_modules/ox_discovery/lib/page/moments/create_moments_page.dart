@@ -618,7 +618,7 @@ class _CreateMomentsPageState extends State<CreateMomentsPage> {
   }
 
   void _visibleToUser() {
-    OXNavigator.presentPage(
+    OXNavigator.pushPage(
       context,
       (context) => VisibilitySelectionPage(
         visibleType: _visibleType,
@@ -630,6 +630,7 @@ class _CreateMomentsPageState extends State<CreateMomentsPage> {
           });
         },
       ),
+      type: OXPushPageType.present,
     );
   }
 
@@ -659,9 +660,10 @@ class _CreateMomentsPageState extends State<CreateMomentsPage> {
               title:  Localized.text('ox_chat.relay'),
               content: _chatRelay,
               onTap: () async {
-                var result = await OXNavigator.presentPage(
+                var result = await OXNavigator.pushPage(
                   context,
                       (context) => CommonSelectRelayPage(),
+                  type: OXPushPageType.present,
                 );
                 if (result != null) {
                   _chatRelay = result as String;

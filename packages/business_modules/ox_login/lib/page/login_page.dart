@@ -344,6 +344,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _loginWithQRCode() {
-    OXNavigator.presentPage(context, (context) => LoginWithQRCodePage(), fullscreenDialog: true);
+    OXNavigator.pushPage(context, (context) => LoginWithQRCodePage(), fullscreenDialog: true,
+      type: OXPushPageType.present,);
   }
 }

@@ -32,12 +32,13 @@ class _ContactCreateGroupChatState extends ContactGroupListPageState {
   Widget buildEditButton() {
     return GestureDetector(
       onTap: () {
-        OXNavigator.presentPage(
+        OXNavigator.pushPage(
           context,
           (context) => ContactGroupChatCreatePage(
             userList: selectedUserList,
             groupType: widget.groupType ?? GroupType.openGroup,
           ),
+          type: OXPushPageType.present,
         );
       },
       child: ShaderMask(

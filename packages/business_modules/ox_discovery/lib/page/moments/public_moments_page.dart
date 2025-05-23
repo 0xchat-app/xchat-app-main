@@ -191,10 +191,12 @@ class PublicMomentsPageState extends State<PublicMomentsPage>
           right: 20.px,
           child: GestureDetector(
             onLongPress: () {
-              OXNavigator.presentPage(
+              OXNavigator.pushPage(
                   context,
                   (context) =>
-                      const CreateMomentsPage(type: EMomentType.content));
+                      const CreateMomentsPage(type: EMomentType.content),
+                type: OXPushPageType.present,
+              );
             },
             onTap: () {
               CreateMomentDraft? createMomentMediaDraft =
@@ -211,7 +213,7 @@ class PublicMomentsPageState extends State<PublicMomentsPage>
                     ? createMomentMediaDraft.videoImagePath
                     : null;
 
-                OXNavigator.presentPage(
+                OXNavigator.pushPage(
                   context,
                   (context) => CreateMomentsPage(
                     type: type,
@@ -219,11 +221,14 @@ class PublicMomentsPageState extends State<PublicMomentsPage>
                     videoPath: videoPath,
                     videoImagePath: videoImagePath,
                   ),
+                  type: OXPushPageType.present,
                 );
                 return;
               }
-              OXNavigator.presentPage(
-                  context, (context) => const CreateMomentsPage(type: null));
+              OXNavigator.pushPage(
+                  context, (context) => const CreateMomentsPage(type: null),
+                type: OXPushPageType.present,
+              );
             },
             child: CommonImage(
               iconName: 'theme_add_icon.png',

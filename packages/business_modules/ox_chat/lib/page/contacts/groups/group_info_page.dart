@@ -554,12 +554,13 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
 
   void _shareGroupFn() {
     if (!_isGroupMember) return _DisableShareDialog();
-    OXNavigator.presentPage(
+    OXNavigator.pushPage(
       context,
       (context) => ContactGroupMemberPage(
         groupId: widget.groupId,
         groupListAction: GroupListAction.send,
       ),
+      type: OXPushPageType.present,
     );
   }
 
@@ -583,13 +584,14 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
   void _groupMemberOptionFn(GroupListAction action) async {
     if (!_isGroupMember) return;
     // if (GroupListAction.add == action && !_isGroupOwner) return _shareGroupFn();
-    bool? result = await OXNavigator.presentPage(
+    bool? result = await OXNavigator.pushPage(
       context,
       (context) => ContactGroupMemberPage(
         groupId: widget.groupId,
         groupListAction: action,
         groupType: GroupType.privateGroup,
       ),
+      type: OXPushPageType.present,
     );
     if (result != null && result) _groupInfoInit();
   }

@@ -40,10 +40,11 @@ extension UserCenterPageUI on UserCenterPageState{
                 ),
               ),
               onPressed: () {
-                OXNavigator.presentPage(
+                OXNavigator.pushPage(
                   context,
                   fullscreenDialog: true,
                       (_) => const ProfileSetUpPage(),
+                  type: OXPushPageType.present,
                 ).then((value) {
                   setState(() {});
                 });
@@ -122,10 +123,11 @@ extension UserCenterPageUI on UserCenterPageState{
               ),
             ),
             onTap: () {
-              OXNavigator.presentPage(
+              OXNavigator.pushPage(
                 context,
                 fullscreenDialog: true,
                     (_) => const ProfileSetUpPage(),
+                type: OXPushPageType.present,
               ).then((value) {
                 _updateState();
               });
