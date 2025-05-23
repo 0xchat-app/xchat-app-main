@@ -39,17 +39,20 @@ void main() async {
     await AppInitializer.shared.initialize();
     runApp(
       ValueListenableBuilder<double>(
-      valueListenable: textScaleFactorNotifier,
-      builder: (context, scaleFactor, child) {
-        return MainApp(window.defaultRouteName, scaleFactor: scaleFactor);
-      },
-    ),
+        valueListenable: textScaleFactorNotifier,
+        builder: (context, scaleFactor, child) {
+          return MainApp(window.defaultRouteName, scaleFactor: scaleFactor);
+        },
+      ),
     );
   }, (error, stackTrace) async {
     try {
-      bool openDevLog = UserConfigTool.getSetting(StorageSettingKey.KEY_OPEN_DEV_LOG.name, defaultValue: false);
+      bool openDevLog = UserConfigTool.getSetting(
+          StorageSettingKey.KEY_OPEN_DEV_LOG.name,
+          defaultValue: false);
       if (openDevLog) {
-        ErrorUtils.logErrorToFile(error.toString() + '\n' + stackTrace.toString());
+        ErrorUtils.logErrorToFile(
+            error.toString() + '\n' + stackTrace.toString());
       }
       print(error);
       print(stackTrace);
@@ -139,7 +142,6 @@ class MainState extends State<MainApp>
 
   @override
   void didChangePlatformBrightness() {
-
     final style = themeManager.themeStyle;
     if (style != ThemeStyle.system) return;
 
@@ -172,45 +174,45 @@ class MainState extends State<MainApp>
   @override
   Widget build(BuildContext context) {
     return CLApp(
-        key: UniqueKey(),
-        navigatorKey: OXNavigator.navigatorKey,
-        navigatorObservers: [OXNavigator.routeObserver],
-        themeMode: ThemeManager.themeMode,
-        themeData: CLThemeData.fromSeed(null),
-        home: WillPopScope(
-            child: MultiRouteUtils.widgetForRoute(widget.routeName, context),
-            onWillPop: () async {
-              if (Platform.isAndroid) {
-                OXCommon.backToDesktop();
-              }
-              return Future.value(false);
-            },
-        ),
-        localizationsDelegates: [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          CupertinoLocalizationsDelegate()
-        ],
-        supportedLocales: Localized.supportedLocales(),
-        builder: (BuildContext context, Widget? child) {
-          return OXLoading.init()(
-            context,
-            Directionality(
-              textDirection: Localized.getTextDirectionForLang(),
-              child: MediaQuery(
-                ///Text size does not change with system Settings
-                data: MediaQuery.of(context).copyWith(textScaleFactor: widget.scaleFactor),
-                child: child!,
-              ),
-            ),
-          );
+      key: UniqueKey(),
+      navigatorKey: OXNavigator.navigatorKey,
+      navigatorObservers: [OXNavigator.routeObserver],
+      themeMode: ThemeManager.themeMode,
+      themeData: CLThemeData.fromSeed(null),
+      home: WillPopScope(
+        child: MultiRouteUtils.widgetForRoute(widget.routeName, context),
+        onWillPop: () async {
+          if (Platform.isAndroid) {
+            OXCommon.backToDesktop();
+          }
+          return Future.value(false);
         },
+      ),
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        CupertinoLocalizationsDelegate()
+      ],
+      supportedLocales: Localized.supportedLocales(),
+      builder: (BuildContext context, Widget? child) {
+        return OXLoading.init()(
+          context,
+          Directionality(
+            textDirection: Localized.getTextDirectionForLang(),
+            child: MediaQuery(
+              ///Text size does not change with system Settings
+              data: MediaQuery.of(context)
+                  .copyWith(textScaleFactor: widget.scaleFactor),
+              child: child!,
+            ),
+          ),
+        );
+      },
     );
   }
 
   @override
-  void didLoginSuccess(UserDBISAR? userInfo) {
-  }
+  void didLoginSuccess(UserDBISAR? userInfo) {}
 
   @override
   void didLogout() {}
@@ -225,20 +227,29 @@ class MainState extends State<MainApp>
     switch (state) {
       case AppLifecycleState.resumed:
         PromptToneManager.sharedInstance.isAppPaused = false;
-        if (OXUserInfoManager.sharedInstance.isLogin) NotificationHelper.sharedInstance.setOnline();
+        if (OXUserInfoManager.sharedInstance.isLogin)
+          NotificationHelper.sharedInstance.setOnline();
         SchemeHelper.tryHandlerForOpenAppScheme();
         OXUserInfoManager.sharedInstance.resetHeartBeat();
-        if (lastUserInteractionTime != 0 && DateTime.now().millisecondsSinceEpoch - lastUserInteractionTime > const Duration(minutes: 5).inMilliseconds) {
+        if (lastUserInteractionTime != 0 &&
+            DateTime.now().millisecondsSinceEpoch - lastUserInteractionTime >
+                const Duration(minutes: 5).inMilliseconds) {
           lastUserInteractionTime = 0;
           showPasswordDialog();
         }
         break;
       case AppLifecycleState.paused:
         PromptToneManager.sharedInstance.isAppPaused = true;
-        if (OXUserInfoManager.sharedInstance.isLogin) NotificationHelper.sharedInstance.setOffline();
+        if (OXUserInfoManager.sharedInstance.isLogin)
+          NotificationHelper.sharedInstance.setOffline();
         lastUserInteractionTime = DateTime.now().millisecondsSinceEpoch;
-        if (CallManager.instance.getInCallIng && CallManager.instance.isAudioVoice){
-          OXCommon.channelPreferences.invokeMethod('startVoiceCallService', {'notice_voice_title': CallManager.instance.otherName, 'notice_voice_content': Localized.text('ox_calling.str_voice_call_in_use')});
+        if (CallManager.instance.getInCallIng &&
+            CallManager.instance.isAudioVoice) {
+          OXCommon.channelPreferences.invokeMethod('startVoiceCallService', {
+            'notice_voice_title': CallManager.instance.otherName,
+            'notice_voice_content':
+                Localized.text('ox_calling.str_voice_call_in_use')
+          });
         }
         break;
       default:
@@ -247,9 +258,13 @@ class MainState extends State<MainApp>
   }
 
   void showPasswordDialog() async {
-    String localPasscode = UserConfigTool.getSetting(StorageSettingKey.KEY_PASSCODE.name, defaultValue: '');
-    if (localPasscode.isNotEmpty && OXNavigator.navigatorKey.currentContext != null)
-      OXModuleService.pushPage(OXNavigator.navigatorKey.currentContext!, 'ox_usercenter', 'VerifyPasscodePage', {});
+    String localPasscode = UserConfigTool.getSetting(
+        StorageSettingKey.KEY_PASSCODE.name,
+        defaultValue: '');
+    if (localPasscode.isNotEmpty &&
+        OXNavigator.navigatorKey.currentContext != null)
+      OXModuleService.pushPage(OXNavigator.navigatorKey.currentContext!,
+          'ox_usercenter', 'VerifyPasscodePage', {});
   }
 
   void printMemoryUsage() {
@@ -258,17 +273,18 @@ class MainState extends State<MainApp>
     print('Max RSS memory usage: ${ProcessInfo.maxRss / (1024 * 1024)} MB');
   }
 
-  void nip46ConnectStatusInit(){
+  void nip46ConnectStatusInit() {
     Future.delayed(const Duration(seconds: 3), () {
-      Account.sharedInstance.nip46connectionStatusCallback = (status) => _nip46connectionStatusCallback(status);
+      Account.sharedInstance.nip46connectionStatusCallback =
+          (status) => _nip46connectionStatusCallback(status);
     });
   }
 
-  void _nip46connectionStatusCallback(NIP46ConnectionStatus status){
+  void _nip46connectionStatusCallback(NIP46ConnectionStatus status) {
     print('🔗connectStatus: ${status}');
     UserDBISAR? user = OXUserInfoManager.sharedInstance.currentUserInfo;
-    if(user == null) return;
-    NIP46StatusNotifier.sharedInstance.notify(status,user);
+    if (user == null) return;
+    NIP46StatusNotifier.sharedInstance.notify(status, user);
   }
 }
 
@@ -298,7 +314,7 @@ class MyObserver extends NavigatorObserver {
   @override
   void didReplace({Route? newRoute, Route? oldRoute}) {
     OXNavigator.observer.forEach(
-            (obs) => obs.didReplace(newRoute: newRoute, oldRoute: oldRoute));
+        (obs) => obs.didReplace(newRoute: newRoute, oldRoute: oldRoute));
   }
 
   @override
