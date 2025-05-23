@@ -83,3 +83,13 @@ class NoAnimationPageRoute<T> extends PageRouteBuilder<T> {
     },
   );
 }
+
+class OXCupertinoSheetRoute<T> extends CupertinoSheetRoute<T> {
+  OXCupertinoSheetRoute({
+    super.settings,
+    required super.builder,
+  });
+
+  @override
+  bool get fullscreenDialog => true;
+}

@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ox_common/navigator/page_router.dart';
@@ -7,6 +8,7 @@ enum OXPushPageType {
   noAnimation,
   opacity,
   transparent,
+  present,
 }
 
 enum OXStackPageOption {
@@ -155,7 +157,7 @@ class OXNavigator extends Navigator {
       pageId: pageId,
       isShortLived: isShortLived,
     );
-    PageRoute<T> route;
+    TransitionRoute<T> route;
 
     switch (type) {
       case OXPushPageType.slideToLeft:
@@ -179,51 +181,31 @@ class OXNavigator extends Navigator {
           builder: builder,
           settings: routeSettings,
         );
+      case OXPushPageType.present:
+        if (fullscreenDialog) {
+          route = generalPageRouter<T>(
+            builder: builder,
+            pageName: pageName,
+            pageId: pageId,
+            isShortLived: isShortLived,
+            fullscreenDialog: true,
+          );
+        } else {
+          route = OXCupertinoSheetRoute<T>(
+            builder: (ctx) => MediaQuery.removePadding(
+              context: ctx,
+              removeTop: true,
+              child: builder(ctx),
+            ),
+            settings: routeSettings,
+          );
+        }
     }
 
     return OXNavigator._push(
       context,
       route,
     );
-  }
-
-  static Future<T?> presentPage<T extends Object?>(
-      BuildContext? context,
-      Widget Function(BuildContext? context) builder, {
-        String? pageName,
-        Object? pageId,
-        bool? isShortLived,
-        bool fullscreenDialog = false,
-        bool allowPageScroll = false,
-      }) {
-    context ??= navigatorKey.currentContext;
-    if (context == null) return Future.value(null);
-
-    pageName ??= builder(null).runtimeType.toString();
-    if (fullscreenDialog) {
-      return OXNavigator._push(
-        context,
-        generalPageRouter<T>(
-          builder: builder,
-          pageName: pageName,
-          pageId: pageId,
-          isShortLived: isShortLived,
-          fullscreenDialog: true,
-        ),
-      );
-    } else {
-      return showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        enableDrag: !allowPageScroll,
-        backgroundColor: Colors.transparent,
-        builder: (BuildContext context) =>
-            Container(
-              height: MediaQuery.of(context).size.height * 0.9,
-              child: builder(context),
-            ),
-      );
-    }
   }
 
   static PageRoute<T> generalPageRouter<T>({
