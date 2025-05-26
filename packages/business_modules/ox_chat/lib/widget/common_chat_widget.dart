@@ -12,6 +12,7 @@ import 'package:ox_chat/widget/chat_highlight_message_widget.dart';
 import 'package:ox_chat/utils/general_handler/chat_mention_handler.dart';
 import 'package:ox_chat/utils/general_handler/message_data_controller.dart';
 import 'package:ox_chat_ui/ox_chat_ui.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/chat_prompt_tone.dart';
@@ -38,7 +39,7 @@ class CommonChatWidget extends StatefulWidget {
   // Basic
 
   final ChatGeneralHandler handler;
-  final PreferredSizeWidget? navBar;
+  final CLAppBar? navBar;
 
   // Custom
 
@@ -129,9 +130,7 @@ class CommonChatWidgetState extends State<CommonChatWidget> {
       );
     }
 
-    return Scaffold(
-      backgroundColor: ThemeColor.color200,
-      resizeToAvoidBottomInset: false,
+    return CLScaffold(
       appBar: widget.navBar,
       body: pasteActionListenerWrapper(
         child: buildChatContentWidget(),

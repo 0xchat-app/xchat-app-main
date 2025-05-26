@@ -9,6 +9,7 @@ import 'package:ox_chat/widget/not_contact_top_widget.dart';
 import 'package:ox_chat/widget/secret_hint_widget.dart';
 import 'package:ox_chat_ui/ox_chat_ui.dart';
 import 'package:ox_common/business_interface/ox_chat/utils.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
 import 'package:ox_common/utils/ox_chat_observer.dart';
@@ -133,37 +134,33 @@ class _ChatSecretMessagePageState extends State<ChatSecretMessagePage> with OXCh
     );
   }
 
-  PreferredSizeWidget buildNavBar() {
-    return CommonChatNavBar(
-      handler: handler,
-      title: otherUser?.getUserShowName() ?? '',
-      titleWidget: Center(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: EdgeInsets.only(top: Adapt.px(2)),
-              child: CommonImage(
-                iconName: 'icon_lock_secret.png',
-                width: Adapt.px(16),
-                height: Adapt.px(16),
-                package: 'ox_chat',
-              ),
+  CLAppBar buildNavBar() {
+    return CLAppBar(
+      title: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: EdgeInsets.only(top: Adapt.px(2)),
+            child: CommonImage(
+              iconName: 'icon_lock_secret.png',
+              width: Adapt.px(16),
+              height: Adapt.px(16),
+              package: 'ox_chat',
             ),
-            SizedBox(
-              width: Adapt.px(4),
+          ),
+          SizedBox(
+            width: Adapt.px(4),
+          ),
+          Text(
+            otherUser?.getUserShowName() ?? '',
+            style: TextStyle(
+              color: ThemeColor.color0,
+              fontSize: Adapt.px(17),
+              fontWeight: FontWeight.bold,
             ),
-            Text(
-              otherUser?.getUserShowName() ?? '',
-              style: TextStyle(
-                color: ThemeColor.color0,
-                fontSize: Adapt.px(17),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
       actions: [
         Container(
@@ -182,6 +179,54 @@ class _ChatSecretMessagePageState extends State<ChatSecretMessagePage> with OXCh
         ),
       ],
     );
+    // return CommonChatNavBar(
+    //   handler: handler,
+    //   title: otherUser?.getUserShowName() ?? '',
+    //   titleWidget: Center(
+    //     child: Row(
+    //       crossAxisAlignment: CrossAxisAlignment.center,
+    //       mainAxisSize: MainAxisSize.min,
+    //       children: [
+    //         Container(
+    //           padding: EdgeInsets.only(top: Adapt.px(2)),
+    //           child: CommonImage(
+    //             iconName: 'icon_lock_secret.png',
+    //             width: Adapt.px(16),
+    //             height: Adapt.px(16),
+    //             package: 'ox_chat',
+    //           ),
+    //         ),
+    //         SizedBox(
+    //           width: Adapt.px(4),
+    //         ),
+    //         Text(
+    //           otherUser?.getUserShowName() ?? '',
+    //           style: TextStyle(
+    //             color: ThemeColor.color0,
+    //             fontSize: Adapt.px(17),
+    //             fontWeight: FontWeight.bold,
+    //           ),
+    //         ),
+    //       ],
+    //     ),
+    //   ),
+    //   actions: [
+    //     Container(
+    //       alignment: Alignment.center,
+    //       child: OXUserAvatar(
+    //         isSecretChat:true,
+    //         chatId: session.chatId,
+    //         user: otherUser,
+    //         size: Adapt.px(36),
+    //         isClickable: true,
+    //         onReturnFromNextPage: () {
+    //           if (!mounted) return ;
+    //           setState(() {});
+    //         },
+    //       ),
+    //     ),
+    //   ],
+    // );
   }
 
   @override

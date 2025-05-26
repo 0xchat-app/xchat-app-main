@@ -43,11 +43,11 @@ class OXUserCenterInterface {
       },) ?? {};
   }
 
-  static Widget settingSlider() {
+  static Widget settingSliderBuilder(BuildContext ctx) {
     return OXModuleService.invoke<Widget>(
       OXUserCenterInterface.moduleName,
-      'settingSlider',
-      [null],
+      'settingSliderBuilder',
+      [ctx],
     ) ?? const SizedBox();
   }
 }

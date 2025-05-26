@@ -52,7 +52,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return SidebarScaffold(
       controller: sidebarController,
-      sidebar: OXUserCenterInterface.settingSlider(),
+      sidebarBuilder: OXUserCenterInterface.settingSliderBuilder,
       body: Stack(
         children: [
           Positioned(
@@ -76,7 +76,7 @@ class _HomePageState extends State<HomePage> {
               },
               selectedCircle: selectedCircle,
               onAvatarTap: () {
-                sidebarController.open();
+                sidebarController.open(context);
               },
               onJoinTap: () {
 

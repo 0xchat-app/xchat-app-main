@@ -7,6 +7,7 @@ import 'package:ox_chat/widget/common_chat_widget.dart';
 import 'package:ox_chat_ui/ox_chat_ui.dart';
 import 'package:ox_chat/utils/general_handler/chat_general_handler.dart';
 import 'package:ox_chat/utils/chat_log_utils.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/ox_chat_observer.dart';
 import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
@@ -88,11 +89,10 @@ class _ChatRelayGroupMsgPageState extends State<ChatRelayGroupMsgPage> with OXCh
     );
   }
 
-  PreferredSizeWidget buildNavBar() {
+  CLAppBar buildNavBar() {
     RelayGroupDBISAR? tempDb = RelayGroup.sharedInstance.groups[groupId]?.value;
     String showName = tempDb?.name ?? '';
-    return CommonChatNavBar(
-      handler: handler,
+    return CLAppBar(
       title: showName,
       actions: [
         Container(
@@ -109,6 +109,24 @@ class _ChatRelayGroupMsgPageState extends State<ChatRelayGroupMsgPage> with OXCh
         ),
       ],
     );
+    // return CommonChatNavBar(
+    //   handler: handler,
+    //   title: showName,
+    //   actions: [
+    //     Container(
+    //       alignment: Alignment.center,
+    //       child: OXRelayGroupAvatar(
+    //         relayGroup: relayGroup,
+    //         size: 36,
+    //         isClickable: true,
+    //         onReturnFromNextPage: () {
+    //           if (!mounted) return ;
+    //           setState(() { });
+    //         },
+    //       ),
+    //     ),
+    //   ],
+    // );
   }
 
   void _updateChatStatus() {

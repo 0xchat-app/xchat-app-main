@@ -1,4 +1,5 @@
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_chat/utils/chat_session_utils.dart';
 import 'package:ox_common/business_interface/ox_chat/utils.dart';
@@ -116,10 +117,13 @@ class SessionListWidget extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 16.px, vertical: 8.px),
           child: Row(
             children: [
-              _buildItemIcon(item).setPaddingOnly(right: 16.px),
+              _buildItemIcon(item),
               Expanded(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 6.px),
+                  padding: EdgeInsets.symmetric(
+                    vertical: 6.px,
+                    horizontal: 16.px,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -139,7 +143,10 @@ class SessionListWidget extends StatelessWidget {
                     item.updateTime,
                   ),
                   if (item.unreadCountText.isNotEmpty)
-                    Badge(label: Text(item.unreadCountText),).setPaddingOnly(top: 4.px),
+                    Badge(
+                      label: Text(item.unreadCountText),
+                      backgroundColor: ColorToken.error.of(context),
+                    ).setPaddingOnly(top: 4.px),
                 ],
               ),
             ],
@@ -206,7 +213,14 @@ class SessionListWidget extends StatelessWidget {
   }
 
   Widget separatorBuilder(BuildContext context, int index) {
-    return const SizedBox.shrink();
+    if (PlatformStyle.isUseMaterial) return const SizedBox.shrink();
+    return Padding(
+      padding: EdgeInsets.only(left: 72.px),
+      child: Container(
+        height: 0.5,
+        color: CupertinoColors.separator,
+      ),
+    );
   }
 }
 

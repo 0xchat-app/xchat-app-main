@@ -124,7 +124,7 @@ class SettingSliderState extends State<SettingSlider> {
   @override
   Widget build(BuildContext context) {
     return CLScaffold(
-      appBar: CLAppBar(title: title),
+      appBar: PlatformStyle.isUseMaterial ? null : CLAppBar(title: title),
       isSectionListPage: true,
       body: buildBody(),
     );

@@ -51,7 +51,7 @@ class OXUserCenter extends OXFlutterModule {
         'showZapsInvoiceDialog': _showZapsInvoiceDialog,
         'getInvoice': _getInvoice,
         'showUserCenterBadgeWallPage':showUserCenterBadgeWallPage,
-        'settingSlider': settingSlider
+        'settingSliderBuilder': settingSliderBuilder
       };
 
   @override
@@ -193,7 +193,7 @@ class OXUserCenter extends OXFlutterModule {
     return  UsercenterBadgeWallPage(userDB: userDB, isShowTabBar:isShowTabBar,isShowBadgeAwards:isShowBadgeAwards);
   }
 
-  Widget settingSlider(BuildContext? context) {
+  Widget settingSliderBuilder(BuildContext context) {
     return const SettingSlider();
   }
 }

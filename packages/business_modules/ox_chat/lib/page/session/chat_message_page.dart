@@ -13,6 +13,7 @@ import 'package:ox_chat/widget/not_contact_top_widget.dart';
 import 'package:ox_chat/utils/general_handler/chat_general_handler.dart';
 import 'package:ox_chat/widget/session_longpress_menu_dialog.dart';
 import 'package:ox_common/business_interface/ox_chat/utils.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/widgets/avatar.dart';
@@ -136,10 +137,9 @@ class _ChatMessagePageState extends State<ChatMessagePage> {
     );
   }
 
-  PreferredSizeWidget buildNavBar() {
-    return CommonChatNavBar(
-      handler: handler,
-      title: otherUser?.getUserShowName() ?? '',
+  CLAppBar buildNavBar() {
+    return CLAppBar(
+      title: otherUser?.getUserShowName(),
       actions: [
         Container(
           alignment: Alignment.center,
@@ -156,6 +156,25 @@ class _ChatMessagePageState extends State<ChatMessagePage> {
         ),
       ],
     );
+    // return CommonChatNavBar(
+    //   handler: handler,
+    //   title: otherUser?.getUserShowName() ?? '',
+    //   actions: [
+    //     Container(
+    //       alignment: Alignment.center,
+    //       child: OXUserAvatar(
+    //         chatId: session.chatId,
+    //         user: otherUser,
+    //         size: Adapt.px(36),
+    //         isClickable: true,
+    //         onReturnFromNextPage: () {
+    //           if (!mounted) return ;
+    //           setState(() { });
+    //         },
+    //       ),
+    //     ),
+    //   ],
+    // );
   }
 
   void _hideContactMenu() {
