@@ -1,6 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ox_localizable/ox_localizable.dart';
 
 import 'platform_style.dart';
 import 'text.dart';
@@ -76,7 +77,7 @@ class CLAppBar extends StatelessWidget {
     return CupertinoNavigationBar(
       middle: title,
       previousPageTitle: previousPageTitle,
-      trailing: _buildCupertinoTrailing(),
+      trailing: _buildCupertinoTrailing(context),
       backgroundColor: backgroundColor,
     );
   }
@@ -115,15 +116,32 @@ class CLAppBar extends StatelessWidget {
   Widget _buildCupertinoSliverAppBar(BuildContext context) {
     return CupertinoSliverNavigationBar(
       largeTitle: title,
-      trailing: _buildCupertinoTrailing(),
+      trailing: _buildCupertinoTrailing(context),
       backgroundColor: backgroundColor,
     );
   }
 
-  Widget _buildCupertinoTrailing() {
+  Widget _buildCupertinoTrailing(BuildContext context) {
+    final actions = [...this.actions];
+    if (actions.isEmpty) {
+      actions.add(_buildCupertinoDefaultCloseButton(context));
+    }
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: actions,
+    );
+  }
+
+  Widget _buildCupertinoDefaultCloseButton(BuildContext context) {
+    final hasParentSheet = CupertinoSheetRoute.hasParentSheet(context);
+    if (!hasParentSheet) return const SizedBox.shrink();
+
+    return CupertinoButton(
+      padding: EdgeInsets.zero,
+      onPressed: () {
+        CupertinoSheetRoute.popSheet(context);
+      },
+      child: Text(Localized.text('ox_common.complete')),
     );
   }
 }
