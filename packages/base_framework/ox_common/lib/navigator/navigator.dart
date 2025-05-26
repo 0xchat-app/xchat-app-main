@@ -1,4 +1,5 @@
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ox_common/navigator/page_router.dart';
@@ -141,16 +142,17 @@ class OXNavigator extends Navigator {
   @optionalTypeArgs
   static Future<T?> pushPage<T extends Object?>(
       BuildContext? context,
-      Widget Function(BuildContext? context) builder, {
+      WidgetBuilder builder, {
         String? pageName,
         Object? pageId,
         bool? isShortLived,
         bool fullscreenDialog = false,
         OXPushPageType type = OXPushPageType.slideToLeft,
       }) {
-    pageName ??= builder(null).runtimeType.toString();
     context ??= navigatorKey.currentContext;
     if (context == null) return Future.value(null);
+
+    pageName ??= builder(context).runtimeType.toString();
 
     final routeSettings = OXRouteSettings(
       name: pageName,
@@ -195,7 +197,12 @@ class OXNavigator extends Navigator {
             builder: (ctx) => MediaQuery.removePadding(
               context: ctx,
               removeTop: true,
-              child: builder(ctx),
+              child: Navigator(
+                observers: [
+                  HeroController(),
+                ],
+                onGenerateRoute: (_) => CupertinoPageRoute(builder: builder),
+              ),
             ),
             settings: routeSettings,
           );
@@ -209,7 +216,7 @@ class OXNavigator extends Navigator {
   }
 
   static PageRoute<T> generalPageRouter<T>({
-    required Widget Function(BuildContext? context) builder,
+    required WidgetBuilder builder,
     String? pageName,
     Object? pageId,
     bool? isShortLived,

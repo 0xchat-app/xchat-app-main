@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 
 /// iOS Router Style
 class SlideLeftToRightRoute<T> extends PageRoute<T> with CupertinoRouteTransitionMixin {
-  final Widget Function(BuildContext? context) builder;
+  final WidgetBuilder builder;
   final bool fullscreenDialog;
   final RouteSettings settings;
 

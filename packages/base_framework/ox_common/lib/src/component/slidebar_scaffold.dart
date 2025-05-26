@@ -5,10 +5,10 @@ import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 
 class SidebarScaffoldController {
-  late VoidCallback _open;
+  late Function(BuildContext ctx) _open;
 
-  void open() {
-    _open();
+  void open(BuildContext ctx) {
+    _open(ctx);
   }
 }
 
@@ -16,13 +16,13 @@ class SidebarScaffold extends StatefulWidget {
   SidebarScaffold({
     Key? key,
     required this.body,
-    required this.sidebar,
+    required this.sidebarBuilder,
     SidebarScaffoldController? controller,
   })  : controller = controller ?? SidebarScaffoldController(),
         super(key: key);
 
   final Widget body;
-  final Widget sidebar;
+  final WidgetBuilder sidebarBuilder;
   final SidebarScaffoldController controller;
 
   @override
@@ -35,11 +35,11 @@ class _SidebarScaffoldState extends State<SidebarScaffold> {
   @override
   void initState() {
     super.initState();
-    widget.controller._open = () {
+    widget.controller._open = (ctx) {
       if (PlatformStyle.isUseMaterial) {
         _scaffoldKey.currentState?.openDrawer();
       } else {
-        _showSidebar(context);
+        _showSidebar(ctx);
       }
     };
   }
@@ -51,7 +51,7 @@ class _SidebarScaffoldState extends State<SidebarScaffold> {
         key: _scaffoldKey,
         drawer: Drawer(
           width: 332.px,
-          child: widget.sidebar,
+          child: widget.sidebarBuilder(context),
         ),
         drawerEdgeDragWidth: 100.px,
         body: widget.body,
@@ -64,9 +64,8 @@ class _SidebarScaffoldState extends State<SidebarScaffold> {
   void _showSidebar(BuildContext context) {
     OXNavigator.pushPage(
       context,
-      (_) => widget.sidebar,
+      widget.sidebarBuilder,
       type: OXPushPageType.present,
-      fullscreenDialog: false,
     );
   }
 }

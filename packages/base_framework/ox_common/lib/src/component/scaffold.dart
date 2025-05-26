@@ -21,17 +21,17 @@ class CLScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bodyWidget = extendBody ? body : SafeArea(bottom: false, child: body);
+    final safeBody = extendBody ? body : SafeArea(bottom: false, child: body);
     if (PlatformStyle.isUseMaterial) {
       return Scaffold(
         appBar: appBar?.buildMaterialAppBar(context),
-        body: bodyWidget,
+        body: safeBody,
       );
     } else {
       return CupertinoPageScaffold(
         navigationBar: appBar?.buildCupertinoAppBar(context),
         backgroundColor: isSectionListPage ? CupertinoColors.systemGroupedBackground : null,
-        child: bodyWidget,
+        child: safeBody,
       );
     }
   }
