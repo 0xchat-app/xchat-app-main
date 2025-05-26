@@ -194,16 +194,7 @@ class OXNavigator extends Navigator {
           );
         } else {
           route = OXCupertinoSheetRoute<T>(
-            builder: (ctx) => MediaQuery.removePadding(
-              context: ctx,
-              removeTop: true,
-              child: Navigator(
-                observers: [
-                  HeroController(),
-                ],
-                onGenerateRoute: (_) => CupertinoPageRoute(builder: builder),
-              ),
-            ),
+            builder: builder,
             settings: routeSettings,
           );
         }

@@ -87,9 +87,24 @@ class NoAnimationPageRoute<T> extends PageRouteBuilder<T> {
 class OXCupertinoSheetRoute<T> extends CupertinoSheetRoute<T> {
   OXCupertinoSheetRoute({
     super.settings,
-    required super.builder,
-  });
-
-  @override
-  bool get fullscreenDialog => true;
+    required WidgetBuilder builder,
+  }) : super(
+    builder: (ctx) => FractionallySizedBox(
+      alignment: Alignment.topCenter,
+      // Fix issue in CupertinoSheetRoute where only offset was applied without reducing content height, causing bottom overflow
+      heightFactor: 1 - 0.08,
+      child: MediaQuery.removePadding(
+        context: ctx,
+        removeTop: true,
+        child: Navigator(
+          observers: [
+            HeroController(),
+          ],
+          onGenerateRoute: (_) => CupertinoPageRoute(
+            builder: builder,
+          ),
+        ),
+      ),
+    ),
+  );
 }
