@@ -11,14 +11,19 @@ import 'package:ox_common/widgets/common_image.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_usercenter/utils/text_scale_slider.dart';
 
-class ChatSettingPage extends StatefulWidget {
-  const ChatSettingPage({super.key});
+class FontSizeSettingsPage extends StatefulWidget {
+  const FontSizeSettingsPage({
+    super.key,
+    this.previousPageTitle,
+  });
+
+  final String? previousPageTitle;
 
   @override
-  State<ChatSettingPage> createState() => _ChatSettingPageState();
+  State<FontSizeSettingsPage> createState() => _FontSizeSettingsPageState();
 }
 
-class _ChatSettingPageState extends State<ChatSettingPage> {
+class _FontSizeSettingsPageState extends State<FontSizeSettingsPage> {
   double _textScale = textScaleFactorNotifier.value;
 
   @override

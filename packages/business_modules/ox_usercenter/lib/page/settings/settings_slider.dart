@@ -13,6 +13,7 @@ import 'package:ox_theme/ox_theme.dart';
 import 'package:ox_usercenter/page/settings/language_settings_page.dart';
 import 'package:ox_usercenter/page/settings/theme_settings_page.dart';
 
+import 'font_size_settings_page.dart';
 import 'profile_settings_page.dart';
 
 class SettingSlider extends StatefulWidget {

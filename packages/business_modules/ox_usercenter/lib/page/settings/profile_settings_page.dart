@@ -16,8 +16,8 @@ import 'package:ox_common/widgets/common_toast.dart';
 
 import '../../widget/select_asset_dialog.dart';
 import '../set_up/avatar_preview_page.dart';
-import '../set_up/bio_settings_page.dart';
-import '../set_up/nickname_settings_page.dart';
+import 'bio_settings_page.dart';
+import 'nickname_settings_page.dart';
 
 class ProfileSettingsPage extends StatefulWidget {
   const ProfileSettingsPage({
