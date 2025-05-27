@@ -40,6 +40,19 @@ class CLListTile extends StatelessWidget {
     if (model is CustomItemModel) return _ListViewCustomItemWidget(model);
     throw Exception('Unknown item model type');
   }
+
+  static Widget buildDefaultTrailing(GestureTapCallback? onTap) {
+    if (PlatformStyle.isUseMaterial) return const SizedBox.shrink();;
+    if (onTap == null) return const SizedBox.shrink();;
+    return Padding(
+      padding: EdgeInsets.only(left: 10),
+      child: Icon(
+        CupertinoIcons.chevron_forward,
+        size: 20,
+        color: CupertinoColors.systemGrey,
+      ),
+    );
+  }
 }
 
 class _ListViewItemBaseWidget extends StatelessWidget {
@@ -96,7 +109,12 @@ class _ListViewItemBaseWidget extends StatelessWidget {
         title: title ?? _buildTitle(),
         subtitle: subtitle ?? _buildSubtitle(),
         leading: leading ?? _buildLeading(),
-        trailing: trailing,
+        trailing: Row(
+          children: [
+            trailing ?? const SizedBox.shrink(),
+            CLListTile.buildDefaultTrailing(onTap),
+          ],
+        ),
         onTap: onTap,
       );
     } else {
@@ -104,7 +122,12 @@ class _ListViewItemBaseWidget extends StatelessWidget {
         title: title ?? _buildTitle(),
         subtitle: subtitle ?? _buildSubtitle(),
         leading: leading ?? _buildLeading(),
-        trailing: trailing,
+        trailing: Row(
+          children: [
+            trailing ?? const SizedBox.shrink(),
+            CLListTile.buildDefaultTrailing(onTap),
+          ],
+        ),
         onTap: onTap,
       );
     }
