@@ -1,13 +1,12 @@
 
 import 'package:flutter/widgets.dart';
 import 'package:chatcore/chat-core.dart';
-import 'package:ox_common/component.dart';
 import 'package:ox_common/navigator/navigator.dart';
-import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
+import 'package:ox_usercenter/page/settings/single_setting_page.dart';
 
 class NicknameSettingsPage extends StatelessWidget {
   NicknameSettingsPage({
@@ -15,46 +14,19 @@ class NicknameSettingsPage extends StatelessWidget {
     this.previousPageTitle,
   });
 
-  final TextEditingController controller = TextEditingController();
   final String? previousPageTitle;
 
   @override
   Widget build(BuildContext context) {
-    final nickname = OXUserInfoManager.sharedInstance.currentUserInfo?.name ?? '';
-    controller.text = nickname;
-    controller.selection = TextSelection.collapsed(offset: nickname.length);
-    return CLScaffold(
-      appBar: CLAppBar(
-        title: 'Nickname',
-        previousPageTitle: previousPageTitle,
-        autoTrailing: false,
-      ),
-      body: GestureDetector(
-        onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-        child: ListView(
-          padding: EdgeInsets.symmetric(
-            horizontal: 16.px,
-            vertical: 12.px,
-          ),
-          children: [
-            CLTextField(
-              controller: controller,
-              autofocus: true,
-              placeholder: 'Nickname',
-            ),
-            SizedBox(height: 20.px,),
-            CLButton.filled(
-              padding: EdgeInsets.symmetric(vertical: 12.px),
-              text: Localized.text('ox_common.save'),
-              onTap: () => buttonHandler(context),
-            )
-          ],
-        ),
-      ),
+    return SingleSettingPage(
+      previousPageTitle: previousPageTitle,
+      title: 'Nickname',
+      initialValue: OXUserInfoManager.sharedInstance.currentUserInfo?.name ?? '',
+      saveAction: buttonHandler,
     );
   }
 
-  void buttonHandler(BuildContext context) async {
+  void buttonHandler(BuildContext context, String value) async {
     final user = OXUserInfoManager.sharedInstance.currentUserInfo;
 
     if (user == null) {
@@ -62,11 +34,12 @@ class NicknameSettingsPage extends StatelessWidget {
       return;
     }
 
-    final newNickname = controller.text;
+    final newNickname = value;
     if (newNickname.isEmpty) {
       CommonToast.instance.show(context, Localized.text('ox_usercenter.enter_username_tips'));
       return;
     }
+    if (OXUserInfoManager.sharedInstance.currentUserInfo?.name == newNickname) return;
 
     user.name = newNickname;
 

@@ -1,13 +1,12 @@
 
 import 'package:flutter/widgets.dart';
 import 'package:chatcore/chat-core.dart';
-import 'package:ox_common/component.dart';
 import 'package:ox_common/navigator/navigator.dart';
-import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/widgets/common_toast.dart';
-import 'package:ox_localizable/ox_localizable.dart';
+
+import 'single_setting_page.dart';
 
 class BioSettingsPage extends StatelessWidget {
   BioSettingsPage({
@@ -20,40 +19,15 @@ class BioSettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bio = OXUserInfoManager.sharedInstance.currentUserInfo?.about ?? '';
-    controller.text = bio;
-    controller.selection = TextSelection.collapsed(offset: bio.length);
-    return CLScaffold(
-      appBar: CLAppBar(
-        title: 'Bio',
-        previousPageTitle: previousPageTitle,
-        autoTrailing: false,
-      ),
-      body: GestureDetector(
-        onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-        child: ListView(
-          padding: EdgeInsets.symmetric(
-            horizontal: 16.px,
-            vertical: 12.px,
-          ),
-          children: [
-            CLTextField(
-              controller: controller,
-              autofocus: true,
-              placeholder: 'bio',
-            ),
-            SizedBox(height: 20.px,),
-            CLButton.filled(
-              text: Localized.text('ox_common.save'),
-              onTap: () => buttonHandler(context),
-            )
-          ],
-        ),
-      ),
+    return SingleSettingPage(
+      previousPageTitle: previousPageTitle,
+      title: 'Bio',
+      initialValue: OXUserInfoManager.sharedInstance.currentUserInfo?.about ?? '',
+      saveAction: buttonHandler,
     );
   }
 
-  void buttonHandler(BuildContext context) async {
+  void buttonHandler(BuildContext context, String value) async {
     final user = OXUserInfoManager.sharedInstance.currentUserInfo;
 
     if (user == null) {
@@ -61,7 +35,9 @@ class BioSettingsPage extends StatelessWidget {
       return;
     }
 
-    final newBio = controller.text;
+    final newBio = value;
+    if (OXUserInfoManager.sharedInstance.currentUserInfo?.about == newBio) return;
+
     user.about = newBio;
 
     final newUser = await Account.sharedInstance.updateProfile(user);
