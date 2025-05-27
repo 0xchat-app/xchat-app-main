@@ -10,10 +10,10 @@ import 'package:ox_common/utils/extension.dart';
 import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_theme/ox_theme.dart';
-import 'package:ox_usercenter/page/set_up/language_settings_page.dart';
-import 'package:ox_usercenter/page/set_up/theme_settings_page.dart';
+import 'package:ox_usercenter/page/settings/language_settings_page.dart';
+import 'package:ox_usercenter/page/settings/theme_settings_page.dart';
 
-import 'set_up/profile_settings_page.dart';
+import 'profile_settings_page.dart';
 
 class SettingSlider extends StatefulWidget {
   const SettingSlider({super.key});
@@ -176,6 +176,11 @@ class SettingSliderState extends State<SettingSlider> {
                   ),
                 ],
               ),
+            ),
+            // _kNotchedPadding = EdgeInsets.symmetric(horizontal: 14.0);
+            Padding(
+              padding: const EdgeInsets.only(right: 14),
+              child: CLListTile.buildDefaultTrailing(profileItemOnTap),
             ),
           ],
         ),

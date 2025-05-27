@@ -22,7 +22,7 @@ import 'package:ox_usercenter/page/set_up/verify_passcode_page.dart';
 import 'package:ox_usercenter/page/set_up/zaps_invoice_dialog.dart';
 import 'package:ox_usercenter/page/set_up/zaps_page.dart';
 import 'package:ox_usercenter/page/set_up/zaps_record_page.dart';
-import 'package:ox_usercenter/page/settings_slider.dart';
+import 'package:ox_usercenter/page/settings/settings_slider.dart';
 import 'package:ox_usercenter/page/usercenter_page.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_usercenter/utils/zaps_helper.dart';
