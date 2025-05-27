@@ -19,12 +19,14 @@ class CLAppBar extends StatelessWidget {
     this.actions = const [],
     this.backgroundColor,
     this.barType,
+    this.autoTrailing = true,
   }) : title = preferTitle(title);
 
   final Widget? title;
   final String? previousPageTitle;
   final List<Widget> actions;
   final Color? backgroundColor;
+  final bool autoTrailing;
 
   final MaterialBarType? barType;
 
@@ -123,7 +125,7 @@ class CLAppBar extends StatelessWidget {
 
   Widget _buildCupertinoTrailing(BuildContext context) {
     final actions = [...this.actions];
-    if (actions.isEmpty) {
+    if (actions.isEmpty && autoTrailing) {
       actions.add(_buildCupertinoDefaultCloseButton(context));
     }
     return Row(

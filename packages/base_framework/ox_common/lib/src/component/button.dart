@@ -100,12 +100,14 @@ class CLButton {
     double? width,
     double? height,
     EdgeInsetsGeometry? padding,
+    Size? minimumSize,
   }) {
     child ??= _defaultText(text ?? '');
     child = _alignIfNeeded(child, alignment);
 
     return _sizeWrapper(
       CLTonalButton(
+        minimumSize: minimumSize,
         padding: padding,
         onTap: onTap,
         child: child,

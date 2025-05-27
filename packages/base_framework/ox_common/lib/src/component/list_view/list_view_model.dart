@@ -23,7 +23,7 @@ enum ListViewItemStyle {
 }
 
 /// Model class representing a single item in a sectioned list.
-/// [icon], [title], and [valueNty] are required fields; [onTap] is optional.
+/// [icon], [title], and [value$] are required fields; [onTap] is optional.
 abstract class ListViewItem {
   ListViewItem({
     this.style = ListViewItemStyle.normal,
@@ -40,7 +40,7 @@ abstract class ListViewItem {
   bool isCupertinoListTileBaseStyle = true;
 
   @protected
-  ValueNotifier<dynamic>? get valueNty;
+  ValueNotifier<dynamic>? get value$;
 }
 
 class LabelItemModel<T> extends ListViewItem {
@@ -49,13 +49,13 @@ class LabelItemModel<T> extends ListViewItem {
     super.icon,
     required super.title,
     super.subtitle,
-    this.valueNty,
+    this.value$,
     this.valueMapper = defaultValueMapper,
     this.onTap,
   });
 
   @override
-  ValueNotifier<T>? valueNty;
+  ValueNotifier<T>? value$;
 
   String Function(T value) valueMapper;
 
@@ -71,11 +71,11 @@ class SwitcherItemModel extends ListViewItem {
     super.icon,
     required super.title,
     super.subtitle,
-    required this.valueNty,
+    required this.value$,
   });
 
   @override
-  ValueNotifier<bool> valueNty;
+  ValueNotifier<bool> value$;
 }
 
 class SelectedItemModel<T> extends ListViewItem {
@@ -84,15 +84,15 @@ class SelectedItemModel<T> extends ListViewItem {
     required super.title,
     super.subtitle,
     required this.value,
-    required this.selectedValueNty,
+    required this.selected$,
 
   });
 
   final T value;
-  final ValueNotifier<T> selectedValueNty;
+  final ValueNotifier<T> selected$;
 
   @override
-  ValueNotifier<T> get valueNty => selectedValueNty;
+  ValueNotifier<T> get value$ => selected$;
 }
 
 class CustomItemModel extends ListViewItem {
@@ -109,7 +109,7 @@ class CustomItemModel extends ListViewItem {
   });
 
   @override
-  ValueNotifier? get valueNty => null;
+  ValueNotifier? get value$ => null;
 
   Widget? leading;
   Widget? titleWidget;

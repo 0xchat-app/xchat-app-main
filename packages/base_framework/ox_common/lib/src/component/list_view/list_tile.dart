@@ -149,7 +149,7 @@ class _ListViewLabelItemWidget extends StatelessWidget {
   );
 
   Widget? buildValueListenable() {
-    final valueNty = model.valueNty;
+    final valueNty = model.value$;
     if (valueNty == null) {
       return null;
     }
@@ -176,14 +176,14 @@ class _ListViewSwitcherItemWidget extends StatelessWidget {
   );
 
   Widget? buildValueListenable() {
-    final valueNty = model.valueNty;
+    final valueNty = model.value$;
     return ValueListenableBuilder(
       valueListenable: valueNty,
       builder: (_, value, child) {
         return CLSwitch(
           value: value,
           onChanged: (newValue) {
-            model.valueNty.value = newValue;
+            model.value$.value = newValue;
           },
         );
       },
@@ -225,7 +225,7 @@ class _ListViewSelectedItemWidget extends StatelessWidget {
   }
 
   Widget buildValueListenable() {
-    final valueNty = model.valueNty;
+    final valueNty = model.value$;
     return ValueListenableBuilder(
       valueListenable: valueNty,
       builder: (_, value, child) {
@@ -238,7 +238,7 @@ class _ListViewSelectedItemWidget extends StatelessWidget {
   }
 
   void itemOnTap() {
-    model.selectedValueNty.value = model.value;
+    model.selected$.value = model.value;
   }
 }
 

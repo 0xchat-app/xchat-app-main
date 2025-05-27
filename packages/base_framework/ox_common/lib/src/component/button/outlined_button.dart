@@ -8,11 +8,13 @@ import '../platform_style.dart';
 class CLOutlinedButton extends StatelessWidget {
   CLOutlinedButton({
     required this.child,
+    this.minimumSize,
     this.padding,
     this.onTap,
   });
 
   final Widget child;
+  final Size? minimumSize;
   final EdgeInsetsGeometry? padding;
   final VoidCallback? onTap;
 
@@ -23,6 +25,8 @@ class CLOutlinedButton extends StatelessWidget {
         onPressed: onTap,
         style: OutlinedButton.styleFrom(
           padding: padding,
+          minimumSize: minimumSize,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
         child: child,
       );
@@ -35,6 +39,7 @@ class CLOutlinedButton extends StatelessWidget {
         ),
         child: CupertinoButton(
           padding: padding,
+          minSize: minimumSize?.height,
           onPressed: onTap,
           child: child,
         ),

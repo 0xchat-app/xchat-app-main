@@ -7,11 +7,13 @@ import '../platform_style.dart';
 class CLElevatedButton extends StatelessWidget {
   CLElevatedButton({
     required this.child,
+    this.minimumSize,
     this.padding,
     this.onTap,
   });
 
   final Widget child;
+  final Size? minimumSize;
   final EdgeInsetsGeometry? padding;
   final VoidCallback? onTap;
 
@@ -22,6 +24,8 @@ class CLElevatedButton extends StatelessWidget {
         onPressed: onTap,
         style: ElevatedButton.styleFrom(
           padding: padding,
+          minimumSize: minimumSize,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
         child: child,
       );
@@ -29,6 +33,7 @@ class CLElevatedButton extends StatelessWidget {
       return CupertinoButton.tinted(
         color: CupertinoColors.systemGrey,
         padding: padding,
+        minSize: minimumSize?.height,
         onPressed: onTap,
         child: child,
       );

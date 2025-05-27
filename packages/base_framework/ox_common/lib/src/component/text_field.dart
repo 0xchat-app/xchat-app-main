@@ -18,6 +18,7 @@ class CLTextField extends StatelessWidget {
     this.onSubmitted,
     this.maxLines = 1,
     this.enabled = true,
+    this.autofocus = false,
   });
 
   final TextEditingController? controller;
@@ -31,6 +32,7 @@ class CLTextField extends StatelessWidget {
   final ValueChanged<String>? onSubmitted;
   final int maxLines;
   final bool enabled;
+  final bool autofocus;
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +53,7 @@ class CLTextField extends StatelessWidget {
       onSubmitted: onSubmitted,
       maxLines: maxLines,
       enabled: enabled,
+      autofocus: autofocus,
       decoration: InputDecoration(
         labelText: placeholder,
         prefixIcon: prefixIcon,
@@ -70,6 +73,7 @@ class CLTextField extends StatelessWidget {
       onSubmitted: onSubmitted,
       maxLines: maxLines,
       enabled: enabled,
+      autofocus: autofocus,
       prefix: prefixIcon,
       suffix: suffixIcon,
     );

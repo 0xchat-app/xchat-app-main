@@ -7,11 +7,13 @@ import '../platform_style.dart';
 class CLTonalButton extends StatelessWidget {
   CLTonalButton({
     required this.child,
+    this.minimumSize,
     this.padding,
     this.onTap,
   });
 
   final Widget child;
+  final Size? minimumSize;
   final EdgeInsetsGeometry? padding;
   final VoidCallback? onTap;
 
@@ -22,6 +24,8 @@ class CLTonalButton extends StatelessWidget {
         onPressed: onTap,
         style: FilledButton.styleFrom(
           padding: padding,
+          minimumSize: minimumSize,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
         child: child,
       );
@@ -29,6 +33,7 @@ class CLTonalButton extends StatelessWidget {
       return CupertinoButton.tinted(
         onPressed: onTap,
         padding: padding,
+        minSize: minimumSize?.height,
         child: child,
       );
     }
