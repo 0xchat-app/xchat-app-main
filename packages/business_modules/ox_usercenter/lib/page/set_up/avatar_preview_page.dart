@@ -51,7 +51,6 @@ class _AvatarPreviewPageState extends State<AvatarPreviewPage> with WidgetsBindi
         useLargeTitle: false,
         centerTitle: true,
         canBack: true,
-        backCallback: () => OXNavigator.pop(context, imageFile),
         actions: !_isShowMenu
             ? null
             : <Widget>[

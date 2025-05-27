@@ -9,10 +9,11 @@ import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/utils/extension.dart';
 import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_localizable/ox_localizable.dart';
-import 'package:chatcore/chat-core.dart';
 import 'package:ox_theme/ox_theme.dart';
 import 'package:ox_usercenter/page/set_up/language_settings_page.dart';
 import 'package:ox_usercenter/page/set_up/theme_settings_page.dart';
+
+import 'set_up/profile_settings_page.dart';
 
 class SettingSlider extends StatefulWidget {
   const SettingSlider({super.key});
@@ -28,7 +29,7 @@ class SettingSliderState extends State<SettingSlider> {
   late ValueNotifier themeItemNty;
   late ValueNotifier languageItemNty;
 
-  UserDBISAR? user;
+  late MutableUser userNotifier;
   late List<SectionListViewItem> pageData;
 
   @override
@@ -46,7 +47,7 @@ class SettingSliderState extends State<SettingSlider> {
   void prepareData() {
     prepareNotifier();
     prepareLiteData();
-    user = OXUserInfoManager.sharedInstance.currentUserInfo;
+    userNotifier = OXUserInfoManager.sharedInstance.userNotifier;
   }
 
   void prepareNotifier() {
@@ -57,7 +58,9 @@ class SettingSliderState extends State<SettingSlider> {
   void prepareLiteData() {
     pageData = [
       SectionListViewItem(data: [
-        CustomItemModel(customWidgetBuilder: buildUserInfoWidget),
+        CustomItemModel(
+          customWidgetBuilder: buildUserInfoWidget,
+        ),
         // LabelItemModel(
         //   style: ListViewItemStyle.theme,
         //   icon: ListViewIcon(iconName: 'icon_setting_add.png', package: 'ox_usercenter'),
@@ -71,7 +74,7 @@ class SettingSliderState extends State<SettingSlider> {
         LabelItemModel(
           icon: ListViewIcon(iconName: 'icon_setting_circles.png', package: 'ox_usercenter'),
           title: 'Circles',
-          valueNty: ValueNotifier('6'),
+          value$: ValueNotifier('6'),
         ),
       ]),
       // SectionListViewItem(data: [
@@ -93,19 +96,19 @@ class SettingSliderState extends State<SettingSlider> {
         LabelItemModel(
           icon: ListViewIcon(iconName: 'icon_setting_theme.png', package: 'ox_usercenter'),
           title: 'Theme',
-          valueNty: themeItemNty,
+          value$: themeItemNty,
           onTap: themeItemOnTap,
         ),
         LabelItemModel(
           icon: ListViewIcon(iconName: 'icon_setting_lang.png', package: 'ox_usercenter'),
           title: 'Language',
-          valueNty: languageItemNty,
+          value$: languageItemNty,
           onTap: languageItemOnTap,
         ),
         LabelItemModel(
           icon: ListViewIcon(iconName: 'icon_setting_textsize.png', package: 'ox_usercenter'),
           title: 'Text Size',
-          valueNty: ValueNotifier('20'),
+          value$: ValueNotifier('20'),
         ),
         // LabelItemModel(
         //   icon: ListViewIcon(iconName: 'icon_setting_sound.png', package: 'ox_usercenter'),
@@ -115,7 +118,7 @@ class SettingSliderState extends State<SettingSlider> {
         LabelItemModel(
           icon: ListViewIcon(iconName: 'icon_setting_version.png', package: 'ox_usercenter'),
           title: 'Version',
-          valueNty: ValueNotifier('1.00'),
+          value$: ValueNotifier('1.00'),
         ),
       ]),
     ];
@@ -137,28 +140,51 @@ class SettingSliderState extends State<SettingSlider> {
   }
 
   Widget buildUserInfoWidget(BuildContext context) {
-    return Container(
-      height: 72.px,
-      margin: EdgeInsets.symmetric(vertical: 12.px),
-      child: Row(
-        children: [
-          OXUserAvatar(
-            user: user,
-            size: 60.px,
-          ).setPadding(EdgeInsets.symmetric(horizontal: 16.px)),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CLText.bodyLarge(user?.name ?? ''),
-                CLText.bodyMedium(user?.encodedPubkey.truncate(20) ?? ''),
-              ],
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: profileItemOnTap,
+      child: Container(
+        height: 72.px,
+        margin: EdgeInsets.symmetric(vertical: 12.px),
+        child: Row(
+          children: [
+            ValueListenableBuilder(
+              valueListenable: userNotifier.avatarUrl$,
+              builder: (context, avatarUrl, _) {
+                return OXUserAvatar(
+                  imageUrl: avatarUrl,
+                  size: 60.px,
+                ).setPadding(EdgeInsets.symmetric(horizontal: 16.px));
+              }
             ),
-          ),
-        ],
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ValueListenableBuilder(
+                    valueListenable: userNotifier.name$,
+                    builder: (context, name, _) {
+                      return CLText.bodyLarge(name);
+                    }
+                  ),
+                  ValueListenableBuilder(
+                    valueListenable: userNotifier.encodedPubkey$,
+                    builder: (context, encodedPubkey, _) {
+                      return CLText.bodyMedium(encodedPubkey.truncate(20));
+                    }
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  void profileItemOnTap() {
+    OXNavigator.pushPage(context, (_) => ProfileSettingsPage(previousPageTitle: title,));
   }
 
   void themeItemOnTap() {

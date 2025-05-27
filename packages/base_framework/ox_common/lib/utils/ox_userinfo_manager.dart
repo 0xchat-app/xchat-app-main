@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:cashu_dart/business/wallet/cashu_manager.dart';
 import 'package:chatcore/chat-core.dart';
@@ -10,10 +9,8 @@ import 'package:nostr_core_dart/nostr.dart';
 import 'package:ox_cache_manager/ox_cache_manager.dart';
 import 'package:ox_common/const/common_constant.dart';
 import 'package:ox_common/log_util.dart';
-import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/ox_common.dart';
 import 'package:ox_common/utils/cashu_helper.dart';
-import 'package:ox_common/utils/nip46_callback_dialog_manager.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
 import 'package:ox_common/utils/ox_moment_manager.dart';
 import 'package:ox_common/utils/ox_server_manager.dart';
@@ -38,6 +35,19 @@ enum _ContactType {
   relayGroups,
 }
 
+class MutableUser {
+  MutableUser({
+    required this.encodedPubkey$,
+    required this.name$,
+    required this.avatarUrl$,
+    required this.bio$,
+  });
+  ValueNotifier<String> encodedPubkey$;
+  ValueNotifier<String> name$;
+  ValueNotifier<String> avatarUrl$;
+  ValueNotifier<String> bio$;
+}
+
 class OXUserInfoManager {
 
   static final OXUserInfoManager sharedInstance = OXUserInfoManager._internal();
@@ -55,6 +65,12 @@ class OXUserInfoManager {
   bool get isLogin => (currentUserInfo != null);
 
   UserDBISAR? currentUserInfo;
+  MutableUser userNotifier = MutableUser(
+    encodedPubkey$: ValueNotifier<String>(''),
+    name$: ValueNotifier<String>(''),
+    avatarUrl$: ValueNotifier<String>(''),
+    bio$: ValueNotifier<String>(''),
+  );
 
   Map<String, dynamic> settingsMap = {};
 
@@ -121,6 +137,7 @@ class OXUserInfoManager {
             if (tempUserDB != null) {
               UserConfigTool.compatibleOld(tempUserDB);
               currentUserInfo = tempUserDB;
+              updateUserInfo(currentUserInfo);
               _initDatas();
               return;
             }
@@ -136,6 +153,7 @@ class OXUserInfoManager {
         if (tempUserDB != null) {
           UserConfigTool.compatibleOld(tempUserDB);
           currentUserInfo = tempUserDB;
+          updateUserInfo(currentUserInfo);
           _initDatas();
           return;
         }
@@ -149,6 +167,7 @@ class OXUserInfoManager {
 
   Future<void> loginSuccess(UserDBISAR userDB, {bool isAmber = false}) async {
     currentUserInfo = Account.sharedInstance.me;
+    updateUserInfo(currentUserInfo);
     OXCacheManager.defaultOXCacheManager.saveForeverData(StorageKeyTool.KEY_PUBKEY, userDB.pubKey);
     OXCacheManager.defaultOXCacheManager.saveForeverData('${userDB.pubKey}${StorageKeyTool.KEY_IS_LOGIN_AMBER}', isAmber);
     UserConfigTool.saveUser(userDB);
@@ -281,7 +300,12 @@ class OXUserInfoManager {
     };
   }
 
-  void updateUserInfo(UserDBISAR userDB) {}
+  void updateUserInfo(UserDBISAR? userDB) {
+    userNotifier.encodedPubkey$.value = userDB?.encodedPubkey ?? '';
+    userNotifier.name$.value = userDB?.name ?? '';
+    userNotifier.bio$.value = userDB?.about ?? '';
+    userNotifier.avatarUrl$.value = userDB?.picture ?? '';
+  }
 
   void updateSuccess() {
     for (OXUserInfoObserver observer in _observers) {
@@ -328,6 +352,7 @@ class OXUserInfoManager {
     signatureVerifyFailed = false;
     OXCacheManager.defaultOXCacheManager.saveForeverData(StorageKeyTool.KEY_PUBKEY, null);
     currentUserInfo = null;
+    updateUserInfo(currentUserInfo);
     _contactFinishFlags = {
       _ContactType.contacts: false,
       _ContactType.channels: false,

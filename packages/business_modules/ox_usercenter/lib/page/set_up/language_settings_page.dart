@@ -43,7 +43,7 @@ class _LanguageSettingsPageState extends State<LanguageSettingsPage> with Single
 
     const types = LocaleType.values;
     data = types.map((e) =>
-        SelectedItemModel(title: e.languageText, value: e, selectedValueNty: selectedNty),
+        SelectedItemModel(title: e.languageText, value: e, selected$: selectedNty),
     ).toList();
   }
 

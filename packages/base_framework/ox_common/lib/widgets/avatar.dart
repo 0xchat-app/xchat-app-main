@@ -78,6 +78,7 @@ class OXUserAvatar extends StatefulWidget {
     this.isCircular = true,
     this.isClickable = false,
     this.onReturnFromNextPage,
+    this.onTap,
     this.onLongPress,
   }) : this.size = size ?? Adapt.px(48);
 
@@ -89,6 +90,7 @@ class OXUserAvatar extends StatefulWidget {
   final bool isCircular;
   final bool isClickable;
   final VoidCallback? onReturnFromNextPage;
+  final GestureTapCallback? onTap;
   final GestureLongPressCallback? onLongPress;
 
   @override
@@ -107,8 +109,8 @@ class OXUserAvatarState extends State<OXUserAvatar> {
       defaultImageName: defaultImageName,
       size: widget.size,
       isCircular: widget.isCircular,
-      isClickable: widget.isClickable,
-      onTap: () async {
+      isClickable: widget.onTap != null || widget.isClickable,
+      onTap: widget.onTap ?? () async {
         final user = widget.user;
         if (user == null) {
           CommonToast.instance.show(context, 'User not found');

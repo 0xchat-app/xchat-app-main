@@ -99,11 +99,11 @@ class ComponentDemoPageState extends State<ComponentDemoPage> with TickerProvide
           items: [
             LabelItemModel(
               title: 'LabelItemModel',
-              valueNty: ValueNotifier('AAA'),
+              value$: ValueNotifier('AAA'),
             ),
             SwitcherItemModel(
               title: 'SwitcherItemModel',
-              valueNty: ValueNotifier(false),
+              value$: ValueNotifier(false),
             ),
             CustomItemModel(
               title: 'CustomItemModel',

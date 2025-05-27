@@ -48,7 +48,7 @@ class _ThemeSettingsPage extends State<ThemeSettingsPage> {
 
     const types = ThemeStyle.values;
     data = types.map((e) =>
-      SelectedItemModel(title: e.text, value: e, selectedValueNty: selectedNty),
+      SelectedItemModel(title: e.text, value: e, selected$: selectedNty),
     ).toList();
   }
 
