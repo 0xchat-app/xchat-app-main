@@ -211,4 +211,23 @@ class CLText extends StatelessWidget {
       resolver: (theme) => theme.labelSmall,
     );
   }
+
+  factory CLText.headlineSmall(String text, {
+    Key? key,
+    ColorToken? colorToken,
+    Color? customColor,
+    TextAlign? textAlign,
+    int? maxLines,
+    TextOverflow? overflow,
+  }) {
+    return CLText(
+      text,
+      colorToken: colorToken,
+      customColor: customColor,
+      textAlign: textAlign,
+      maxLines: maxLines,
+      overflow: overflow,
+      resolver: (theme) => theme.headlineSmall,
+    );
+  }
 }

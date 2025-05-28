@@ -110,6 +110,7 @@ class SettingSliderState extends State<SettingSlider> {
           icon: ListViewIcon(iconName: 'icon_setting_textsize.png', package: 'ox_usercenter'),
           title: 'Text Size',
           value$: ValueNotifier('20'),
+          onTap: textSizeItemOnTap,
         ),
         // LabelItemModel(
         //   icon: ListViewIcon(iconName: 'icon_setting_sound.png', package: 'ox_usercenter'),
@@ -199,5 +200,9 @@ class SettingSliderState extends State<SettingSlider> {
 
   void languageItemOnTap() {
     OXNavigator.pushPage(context, (_) => LanguageSettingsPage(previousPageTitle: title,));
+  }
+
+  void textSizeItemOnTap() {
+    OXNavigator.pushPage(context, (_) => FontSizeSettingsPage(previousPageTitle: title,));
   }
 }

@@ -38,8 +38,7 @@ dependencies:
   dart_ping_ios: ^1.1.0
   lpinyin: ^2.0.0
   flutter_sticky_header: ^0.7.0
-  syncfusion_flutter_core: '>=20.4.51 <20.4.52'
-  syncfusion_flutter_sliders: '>=20.4.51 <20.4.52'
+  syncfusion_flutter_sliders: 29.1.38
   html: ^0.15.0
   rive: ^0.13.20
   marquee: ^2.2.0
