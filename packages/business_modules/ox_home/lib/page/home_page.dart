@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:nostr_core_dart/nostr.dart';
 import 'package:ox_cache_manager/ox_cache_manager.dart';
@@ -11,6 +12,7 @@ import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/utils/storage_key_tool.dart';
 import 'package:ox_common/widgets/common_hint_dialog.dart';
 import 'package:ox_localizable/ox_localizable.dart';
+import 'package:ox_theme/ox_theme.dart';
 
 import '../widgets/home_header_bar.dart';
 import '../widgets/session_list_widget.dart';
@@ -41,6 +43,9 @@ class _HomePageState extends State<HomePage> {
     Localized.addLocaleChangedCallback(onLocaleChange);
     signerCheck();
     sessionDataController.initialized();
+
+    final style = themeManager.themeStyle.toOverlayStyle;
+    SystemChrome.setSystemUIOverlayStyle(style);
   }
 
   @override

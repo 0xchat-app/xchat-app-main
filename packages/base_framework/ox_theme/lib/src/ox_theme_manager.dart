@@ -35,6 +35,12 @@ extension ThemeStyleEx on ThemeStyle {
         return Brightness.light;
     }
   }
+
+  SystemUiOverlayStyle get toOverlayStyle =>
+      switch (brightness) {
+        Brightness.light => SystemUiOverlayStyle.dark,
+        Brightness.dark  => SystemUiOverlayStyle.light,
+      };
 }
 
 extension BrightnessEx on Brightness {

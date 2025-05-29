@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/storage_key_tool.dart';
 import 'package:ox_common/utils/user_config_tool.dart';
 import 'package:ox_module_service/ox_module_service.dart';
@@ -33,6 +34,8 @@ class LaunchPageViewState extends State<LaunchPageView> {
   void initState() {
     super.initState();
     _loadData();
+
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
   }
 
   void _loadData() async {
@@ -48,8 +51,7 @@ class LaunchPageViewState extends State<LaunchPageView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
+    return CLScaffold(
       body: buildBody(context),
     );
   }

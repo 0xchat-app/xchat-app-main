@@ -1,5 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
+import 'package:ox_theme/ox_theme.dart';
 
 /// iOS Router Style
 class SlideLeftToRightRoute<T> extends PageRoute<T> with CupertinoRouteTransitionMixin {
@@ -107,4 +109,27 @@ class OXCupertinoSheetRoute<T> extends CupertinoSheetRoute<T> {
       ),
     ),
   );
+
+  @override
+  void install() {
+    super.install();
+    animation?.addStatusListener(_onStatusChanged);
+  }
+
+  void _onStatusChanged(AnimationStatus status) async {
+    if (status == AnimationStatus.dismissed) {
+      // HACK: delegatedTransition in CupertinoSheetRoute calls setSystemUIOverlayStyle
+      // too early (before the sheet is fully removed), so we wait an extra 100ms
+      // to ensure the sheet is actually dismissed before restoring the app's overlay style.
+      await Future.delayed(Duration(milliseconds: 100));
+      final style = themeManager.themeStyle.toOverlayStyle;
+      SystemChrome.setSystemUIOverlayStyle(style);
+    }
+  }
+
+  @override
+  void dispose() {
+    animation?.removeStatusListener(_onStatusChanged);
+    super.dispose();
+  }
 }
