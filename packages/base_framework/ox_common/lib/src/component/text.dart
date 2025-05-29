@@ -1,9 +1,11 @@
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'color_token.dart';
+import 'platform_style.dart';
 
-typedef _StyleResolver = TextStyle? Function(TextTheme theme);
+typedef _StyleResolver = TextStyle? Function(BuildContext context);
 
 class CLText extends StatelessWidget {
   const CLText(this.text, {
@@ -29,7 +31,7 @@ class CLText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final style = _resolver?.call(Theme.of(context).textTheme) ?? TextStyle();
+    final style = _resolver?.call(context) ?? TextStyle();
     return Text(
       text,
       style: style.copyWith(
@@ -56,7 +58,7 @@ class CLText extends StatelessWidget {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      resolver: (theme) => theme.titleLarge,
+      resolver: (context) => Theme.of(context).textTheme.titleLarge,
     );
   }
 
@@ -75,7 +77,10 @@ class CLText extends StatelessWidget {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      resolver: (theme) => theme.titleMedium,
+      resolver: (context) => PlatformStyle
+          .isUseMaterial
+          ? Theme.of(context).textTheme.titleMedium
+          : CupertinoTheme.of(context).textTheme.actionSmallTextStyle,
     );
   }
 
@@ -94,7 +99,7 @@ class CLText extends StatelessWidget {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      resolver: (theme) => theme.titleSmall,
+      resolver: (context) => Theme.of(context).textTheme.titleSmall,
     );
   }
 
@@ -113,7 +118,7 @@ class CLText extends StatelessWidget {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      resolver: (theme) => theme.bodyLarge,
+      resolver: (context) => Theme.of(context).textTheme.bodyLarge,
     );
   }
 
@@ -132,7 +137,7 @@ class CLText extends StatelessWidget {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      resolver: (theme) => theme.bodyMedium,
+      resolver: (context) => Theme.of(context).textTheme.bodyMedium,
     );
   }
 
@@ -151,7 +156,7 @@ class CLText extends StatelessWidget {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      resolver: (theme) => theme.bodySmall,
+      resolver: (context) => Theme.of(context).textTheme.bodySmall,
     );
   }
 
@@ -170,7 +175,7 @@ class CLText extends StatelessWidget {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      resolver: (theme) => theme.labelLarge,
+      resolver: (context) => Theme.of(context).textTheme.labelLarge,
     );
   }
 
@@ -189,7 +194,7 @@ class CLText extends StatelessWidget {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      resolver: (theme) => theme.labelMedium,
+      resolver: (context) => Theme.of(context).textTheme.labelMedium,
     );
   }
 
@@ -208,7 +213,7 @@ class CLText extends StatelessWidget {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      resolver: (theme) => theme.labelSmall,
+      resolver: (context) => Theme.of(context).textTheme.labelSmall,
     );
   }
 
@@ -227,7 +232,7 @@ class CLText extends StatelessWidget {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      resolver: (theme) => theme.headlineSmall,
+      resolver: (context) => Theme.of(context).textTheme.headlineSmall,
     );
   }
 }

@@ -31,9 +31,10 @@ class CLTonalButton extends StatelessWidget {
       );
     } else {
       return CupertinoButton.tinted(
-        onPressed: onTap,
         padding: padding,
         minSize: minimumSize?.height,
+        sizeStyle: CupertinoButtonSize.medium,
+        onPressed: onTap,
         child: child,
       );
     }

@@ -34,6 +34,7 @@ class CLElevatedButton extends StatelessWidget {
         color: CupertinoColors.systemGrey,
         padding: padding,
         minSize: minimumSize?.height,
+        sizeStyle: CupertinoButtonSize.medium,
         onPressed: onTap,
         child: child,
       );

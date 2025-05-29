@@ -40,6 +40,7 @@ class CLOutlinedButton extends StatelessWidget {
         child: CupertinoButton(
           padding: padding,
           minSize: minimumSize?.height,
+          sizeStyle: CupertinoButtonSize.medium,
           onPressed: onTap,
           child: child,
         ),

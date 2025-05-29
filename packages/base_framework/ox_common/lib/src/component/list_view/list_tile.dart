@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_common/utils/adapt.dart';
+import 'package:ox_common/utils/widget_tool.dart';
 
 import '../../../component.dart';
 
@@ -76,7 +77,7 @@ class _ListViewItemBaseWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (PlatformStyle.isUseMaterial) {
+    if (PlatformStyle.isUseMaterial || model.isUseMaterial == true) {
       return _buildMaterialListTile(context);
     } else {
       return _buildCupertinoListTile();
@@ -112,9 +113,10 @@ class _ListViewItemBaseWidget extends StatelessWidget {
         trailing: Row(
           children: [
             trailing ?? const SizedBox.shrink(),
-            CLListTile.buildDefaultTrailing(onTap),
+            if (model.isCupertinoAutoTrailing)
+              CLListTile.buildDefaultTrailing(onTap),
           ],
-        ),
+        ).setPaddingOnly(left: 16.px),
         onTap: onTap,
       );
     } else {
@@ -125,9 +127,10 @@ class _ListViewItemBaseWidget extends StatelessWidget {
         trailing: Row(
           children: [
             trailing ?? const SizedBox.shrink(),
-            CLListTile.buildDefaultTrailing(onTap),
+            if (model.isCupertinoAutoTrailing)
+              CLListTile.buildDefaultTrailing(onTap),
           ],
-        ),
+        ).setPaddingOnly(left: 16.px),
         onTap: onTap,
       );
     }

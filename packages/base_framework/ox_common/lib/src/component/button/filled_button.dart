@@ -31,9 +31,10 @@ class CLFilledButton extends StatelessWidget {
       );
     } else {
       return CupertinoButton.filled(
-        onPressed: onTap,
         padding: padding,
         minSize: minimumSize?.height,
+        sizeStyle: CupertinoButtonSize.medium,
+        onPressed: onTap,
         child: child,
       );
     }

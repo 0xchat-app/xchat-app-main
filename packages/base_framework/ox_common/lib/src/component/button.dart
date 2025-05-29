@@ -1,5 +1,6 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/widgets/common_image.dart';
@@ -10,14 +11,15 @@ import 'button/icon_button.dart';
 import 'button/outlined_button.dart';
 import 'button/text_button.dart';
 import 'button/tonal_button.dart';
-import 'text.dart';
 
 class CLButton {
   static Widget _defaultText(String text) {
     return CLText(
       text,
-      resolver: (theme) {
-        final textStyle = theme.titleMedium;
+      resolver: (context) {
+        final textStyle = PlatformStyle.isUseMaterial
+            ? Theme.of(context).textTheme.titleMedium
+            : CupertinoTheme.of(context).textTheme.actionSmallTextStyle;
         return TextStyle().copyWith(
           fontSize: textStyle?.fontSize,
           fontWeight: textStyle?.fontWeight,

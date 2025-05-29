@@ -30,14 +30,19 @@ abstract class ListViewItem {
     this.icon,
     required this.title,
     this.subtitle,
+    this.isCupertinoAutoTrailing = true,
+    this.isUseMaterial,
   });
 
-  ListViewItemStyle style;
-  ListViewIcon? icon;
-  String title;
-  String? subtitle;
+  final ListViewItemStyle style;
+  final ListViewIcon? icon;
+  final String title;
+  final String? subtitle;
 
+  final bool isCupertinoAutoTrailing;
   bool isCupertinoListTileBaseStyle = true;
+
+  bool? isUseMaterial;
 
   @protected
   ValueNotifier<dynamic>? get value$;
@@ -49,6 +54,7 @@ class LabelItemModel<T> extends ListViewItem {
     super.icon,
     required super.title,
     super.subtitle,
+    super.isUseMaterial,
     this.value$,
     this.valueMapper = defaultValueMapper,
     this.onTap,
@@ -71,6 +77,7 @@ class SwitcherItemModel extends ListViewItem {
     super.icon,
     required super.title,
     super.subtitle,
+    super.isUseMaterial,
     required this.value$,
   });
 
@@ -83,9 +90,10 @@ class SelectedItemModel<T> extends ListViewItem {
     super.icon,
     required super.title,
     super.subtitle,
+    super.isCupertinoAutoTrailing = false,
+    super.isUseMaterial,
     required this.value,
     required this.selected$,
-
   });
 
   final T value;
@@ -100,13 +108,16 @@ class CustomItemModel extends ListViewItem {
     super.icon,
     super.title = '',
     super.subtitle,
+    super.isUseMaterial,
     this.leading,
     this.titleWidget,
     this.subtitleWidget,
     this.trailing,
     this.customWidgetBuilder,
     this.onTap,
-  });
+  }) : super(
+    isCupertinoAutoTrailing: trailing == null,
+  );
 
   @override
   ValueNotifier? get value$ => null;

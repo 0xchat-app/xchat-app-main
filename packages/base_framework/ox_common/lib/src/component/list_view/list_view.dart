@@ -1,5 +1,6 @@
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:ox_common/component.dart';
 
 class CLListView extends StatelessWidget {
@@ -28,38 +29,39 @@ class CLListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (PlatformStyle.isUseMaterial) {
-      return ListView.separated(
-        shrinkWrap: shrinkWrap,
-        physics: shrinkWrap ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
-        padding: padding,
-        itemCount: items.length,
-        itemBuilder: (context, index) => CLListTile(model: items[index]),
-        separatorBuilder: (_, index) => buildSeparator(items[index]),
-      );
-    } else {
-      return ListView(
-        shrinkWrap: shrinkWrap,
-        physics: shrinkWrap ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
-        padding: padding,
-        children: [
-          if (padding == EdgeInsets.zero)
-            CupertinoListSection.insetGrouped(
-              hasLeading: hasLeading,
-              topMargin: 0,
-              margin: EdgeInsets.zero,
-              backgroundColor: ColorToken.surface.of(context),
-              children: asCupertinoSectionChildren(true),
-            )
-          else
-            CupertinoListSection.insetGrouped(
-              hasLeading: hasLeading,
-              backgroundColor: ColorToken.surface.of(context),
-              children: asCupertinoSectionChildren(true),
-            )
-        ],
-      );
-    }
+    final items = this.items.map((e) => e..isUseMaterial = true).toList();
+    // if (PlatformStyle.isUseMaterial) {
+    return ListView.separated(
+      shrinkWrap: shrinkWrap,
+      physics: shrinkWrap ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
+      padding: padding,
+      itemCount: items.length,
+      itemBuilder: (context, index) => CLListTile(model: items[index]),
+      separatorBuilder: (_, index) => buildSeparator(items[index]),
+    );
+    // } else {
+    //   return ListView(
+    //     shrinkWrap: shrinkWrap,
+    //     physics: shrinkWrap ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
+    //     padding: padding,
+    //     children: [
+    //       if (padding == EdgeInsets.zero)
+    //         CupertinoListSection.insetGrouped(
+    //           hasLeading: hasLeading,
+    //           topMargin: 0,
+    //           margin: EdgeInsets.zero,
+    //           backgroundColor: ColorToken.surface.of(context),
+    //           children: asCupertinoSectionChildren(false),
+    //         )
+    //       else
+    //         CupertinoListSection.insetGrouped(
+    //           hasLeading: hasLeading,
+    //           backgroundColor: ColorToken.surface.of(context),
+    //           children: asCupertinoSectionChildren(false),
+    //         )
+    //     ],
+    //   );
+    // }
   }
 
   Widget buildSeparator(ListViewItem item) {
