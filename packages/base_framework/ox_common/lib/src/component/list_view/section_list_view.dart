@@ -14,6 +14,7 @@ class CLSectionListView extends StatelessWidget {
   final bool shrinkWrap;
   final EdgeInsetsGeometry? padding;
   final Widget? header;
+  final Widget? footer;
 
   const CLSectionListView({
     super.key,
@@ -22,22 +23,27 @@ class CLSectionListView extends StatelessWidget {
     this.shrinkWrap = false,
     this.padding,
     this.header,
+    this.footer,
   });
 
   @override
   Widget build(BuildContext context) {
     final headerCount = header == null ? 0 : 1;
+    final footerCount = footer == null ? 0 : 1;
+    final itemCount = items.length + headerCount + footerCount;
     return ListView.separated(
       shrinkWrap: shrinkWrap,
       physics: shrinkWrap ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
       padding: padding,
-      itemCount: items.length + headerCount,
+      itemCount: itemCount,
       itemBuilder: (context, index) {
         if (headerCount > 0 && index < headerCount) return header;
+        if (footerCount > 0 && index > itemCount - footerCount - 1) return footer;
         return buildItemWidget(items[index - headerCount]);
       },
       separatorBuilder: (_, index) {
         if (headerCount > 0 && index < headerCount) return const SizedBox.shrink();
+        if (footerCount > 0 && index > itemCount - footerCount - 2) return SizedBox(height: 12.px,);
         return buildSectionSeparator(items[index - headerCount]);
       },
     );
