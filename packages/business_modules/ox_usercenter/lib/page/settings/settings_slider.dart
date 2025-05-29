@@ -13,6 +13,7 @@ import 'package:ox_theme/ox_theme.dart';
 import 'package:ox_usercenter/page/settings/language_settings_page.dart';
 import 'package:ox_usercenter/page/settings/theme_settings_page.dart';
 
+import '../set_up/keys_page.dart';
 import 'font_size_settings_page.dart';
 import 'profile_settings_page.dart';
 
@@ -71,6 +72,7 @@ class SettingSliderState extends State<SettingSlider> {
         LabelItemModel(
           icon: ListViewIcon(iconName: 'icon_setting_security.png', package: 'ox_usercenter'),
           title: 'Keys',
+          onTap: keysItemOnTap,
         ),
         LabelItemModel(
           icon: ListViewIcon(iconName: 'icon_setting_circles.png', package: 'ox_usercenter'),
@@ -188,6 +190,10 @@ class SettingSliderState extends State<SettingSlider> {
         ),
       ),
     );
+  }
+
+  void keysItemOnTap() {
+    OXNavigator.pushPage(context, (_) => KeysPage(previousPageTitle: title,));
   }
 
   void profileItemOnTap() {
