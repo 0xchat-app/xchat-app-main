@@ -16,5 +16,4 @@ export 'src/component/text_field.dart';
 export 'src/component/progress_indicators.dart';
 export 'src/component/radio.dart';
 export 'src/component/scaffold.dart';
-export 'src/component/slidebar_scaffold.dart';
 export 'src/component/switch.dart';

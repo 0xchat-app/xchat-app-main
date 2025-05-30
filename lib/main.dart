@@ -38,12 +38,7 @@ void main() async {
   runZonedGuarded(() async {
     await AppInitializer.shared.initialize();
     runApp(
-      ValueListenableBuilder<double>(
-        valueListenable: textScaleFactorNotifier,
-        builder: (context, scaleFactor, child) {
-          return MainApp(window.defaultRouteName, scaleFactor: scaleFactor);
-        },
-      ),
+      MainApp(window.defaultRouteName),
     );
   }, (error, stackTrace) async {
     try {
@@ -67,9 +62,8 @@ void main() async {
 
 class MainApp extends StatefulWidget {
   final String routeName;
-  final double scaleFactor;
 
-  MainApp(this.routeName, {required this.scaleFactor});
+  MainApp(this.routeName,);
 
   @override
   State<StatefulWidget> createState() {
@@ -197,14 +191,20 @@ class MainState extends State<MainApp>
       builder: (BuildContext context, Widget? child) {
         return OXLoading.init()(
           context,
-          Directionality(
-            textDirection: Localized.getTextDirectionForLang(),
-            child: MediaQuery(
-              ///Text size does not change with system Settings
-              data: MediaQuery.of(context)
-                  .copyWith(textScaleFactor: widget.scaleFactor),
-              child: child!,
-            ),
+          ValueListenableBuilder<double>(
+            valueListenable: textScaleFactorNotifier,
+            builder: (context, scaleFactor, child) {
+              return Directionality(
+                textDirection: Localized.getTextDirectionForLang(),
+                child: MediaQuery(
+                  ///Text size does not change with system Settings
+                  data: MediaQuery.of(context)
+                      .copyWith(textScaler: TextScaler.linear(scaleFactor)),
+                  child: child!,
+                ),
+              );
+            },
+            child: child,
           ),
         );
       },
@@ -269,8 +269,8 @@ class MainState extends State<MainApp>
 
   void printMemoryUsage() {
     final memoryUsage = ProcessInfo.currentRss;
-    print('Current RSS memory usage: ${memoryUsage / (1024 * 1024)} MB');
-    print('Max RSS memory usage: ${ProcessInfo.maxRss / (1024 * 1024)} MB');
+    // print('Current RSS memory usage: ${memoryUsage / (1024 * 1024)} MB');
+    // print('Max RSS memory usage: ${ProcessInfo.maxRss / (1024 * 1024)} MB');
   }
 
   void nip46ConnectStatusInit() {

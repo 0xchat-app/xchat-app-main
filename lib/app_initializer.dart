@@ -58,7 +58,6 @@ class AppInitializer {
         await Localized.init();
         await _setupModules();
         await OXUserInfoManager.sharedInstance.initLocalData();
-        SystemChrome.setSystemUIOverlayStyle(ThemeManager.getCurrentThemeStyle().toOverlayStyle());
         ThemeManager.addOnThemeChangedCallback(onThemeStyleChange);
         double fontSize = await OXCacheManager.defaultOXCacheManager.getForeverData(StorageKeyTool.APP_FONT_SIZE, defaultValue: 1.0);
         textScaleFactorNotifier.value = fontSize;
@@ -85,7 +84,6 @@ class AppInitializer {
 
   onThemeStyleChange() async {
     print("******  changeTheme int ${ThemeManager.getCurrentThemeStyle().name}");
-    SystemChrome.setSystemUIOverlayStyle(ThemeManager.getCurrentThemeStyle().toOverlayStyle());
   }
 
   Future<void> _setupModules() async {
@@ -129,30 +127,6 @@ class AppInitializer {
       }
     };
   }
-}
-
-extension ThemeStyleOverlayEx on ThemeStyle {
-  SystemUiOverlayStyle toOverlayStyle() => SystemUiOverlayStyle(
-        systemNavigationBarIconBrightness: systemNavigationBarIconBrightness,
-        systemNavigationBarColor: Colors.transparent,
-        statusBarIconBrightness: statusBarIconBrightness,
-        statusBarBrightness: statusBarBrightness,
-        statusBarColor: statusBarColor,
-      );
-
-  Brightness get systemNavigationBarIconBrightness =>
-      this == ThemeStyle.dark ? Brightness.light : Brightness.dark;
-
-  Color get systemNavigationBarColor =>
-      this == ThemeStyle.dark ? ThemeColor.dark02 : ThemeColor.white01;
-
-  Brightness get statusBarIconBrightness =>
-      this == ThemeStyle.dark ? Brightness.light : Brightness.dark;
-
-  Brightness get statusBarBrightness =>
-      this == ThemeStyle.dark ? Brightness.light : Brightness.dark;
-
-  Color get statusBarColor => Colors.transparent;
 }
 
 class OXHttpOverrides extends HttpOverrides {
