@@ -12,7 +12,6 @@ import 'package:ox_common/widgets/common_hint_dialog.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_theme/ox_theme.dart';
 
-import '../widgets/home_header_bar.dart';
 import '../widgets/session_list_widget.dart';
 import 'home_scaffold.dart';
 
