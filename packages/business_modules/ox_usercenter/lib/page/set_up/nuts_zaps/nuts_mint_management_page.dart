@@ -1,17 +1,14 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:ox_common/utils/adapt.dart';
 
 import 'package:ox_common/utils/theme_color.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/common_appbar.dart';
-import 'package:ox_common/widgets/common_image.dart';
 
 import '../../../utils/widget_tool.dart';
 
 class NutsMintManagementPage extends StatefulWidget {
-  NutsMintManagementPage({Key? key}) : super(key: key);
+  const NutsMintManagementPage({Key? key}) : super(key: key);
 
   @override
   NutsMintManagementPageState createState() => NutsMintManagementPageState();
@@ -97,7 +94,7 @@ class NutsMintManagementPageState extends State<NutsMintManagementPage> {
                 labelWidget(
                   title: 'Set as Default mint',
                   showDivider: true,
-                  rightWidget: Container(
+                  rightWidget: SizedBox(
                     height: 20.px,
                     child: Switch(
                       value: setAsDefaultMintStatus,

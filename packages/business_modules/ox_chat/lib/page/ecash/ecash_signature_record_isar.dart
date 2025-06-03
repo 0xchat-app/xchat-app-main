@@ -1,5 +1,4 @@
 
-import 'package:chatcore/chat-core.dart';
 import 'package:isar/isar.dart';
 
 part 'ecash_signature_record_isar.g.dart';

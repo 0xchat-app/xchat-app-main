@@ -1,9 +1,7 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_chat_ui/ox_chat_ui.dart' show InputFacePage;
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/upload/file_type.dart';
-import 'package:ox_common/utils/uplod_aliyun_utils.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/common_appbar.dart';
 import 'package:ox_common/utils/adapt.dart';
@@ -18,7 +16,6 @@ import 'package:ox_discovery/utils/moment_content_analyze_utils.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_module_service/ox_module_service.dart';
 
-import '../../enum/moment_enum.dart';
 import '../../model/moment_ui_model.dart';
 import '../../utils/album_utils.dart';
 import '../widgets/moment_rich_text_widget.dart';

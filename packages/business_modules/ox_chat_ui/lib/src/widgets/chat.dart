@@ -26,7 +26,6 @@ import 'input/input_more_page.dart';
 import 'message/message.dart';
 import 'message/system_message.dart';
 import 'message/text_message.dart';
-import 'pop_menu/custom_pop_up_menu.dart';
 import 'state/inherited_chat_theme.dart';
 import 'state/inherited_l10n.dart';
 import 'state/inherited_user.dart';

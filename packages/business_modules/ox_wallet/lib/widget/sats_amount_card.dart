@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_wallet/widget/common_card.dart';
-import 'package:ox_wallet/widget/currency_sats_conversion.dart';
 import 'package:ox_wallet/widget/sats_amount_textfield.dart';
 
 class SatsAmountCard extends StatelessWidget {

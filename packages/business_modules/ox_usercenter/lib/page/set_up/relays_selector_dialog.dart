@@ -4,7 +4,6 @@ import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/theme_color.dart';
 import 'package:ox_common/widgets/common_image.dart';
-import 'package:ox_common/widgets/common_loading.dart';
 import 'package:chatcore/chat-core.dart';
 
 ///Title: relays_selector_page
@@ -28,7 +27,7 @@ class RelaySelectorModule{
 }
 
 class _RelaysSelectorPageState extends State<RelaysSelectorPage> {
-  late List<RelaySelectorModule> _relayList = [];
+  late final List<RelaySelectorModule> _relayList = [];
 
   @override
   void initState() {

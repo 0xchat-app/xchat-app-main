@@ -1,14 +1,11 @@
-import 'dart:ui';
 import 'package:chatcore/chat-core.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_common/navigator/navigator.dart';
-import 'package:ox_common/utils/ox_moment_manager.dart';
 import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/common_appbar.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/theme_color.dart';
-import 'package:flutter/services.dart';
 import 'package:ox_common/widgets/common_hint_dialog.dart';
 import 'package:ox_common/widgets/common_image.dart';
 import 'package:ox_common/widgets/common_loading.dart';
@@ -346,7 +343,7 @@ class _NotificationsMomentsPageState extends State<NotificationsMomentsPage> {
     );
     if(noteNotifier == null) return null;
 
-    return noteNotifier!.noteDB;
+    return noteNotifier.noteDB;
   }
 
   void _clearNotifications(){

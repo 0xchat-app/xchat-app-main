@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:cashu_dart/cashu_dart.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/file_utils.dart';
 import 'package:ox_wallet/widget/ecash_scan_page.dart';

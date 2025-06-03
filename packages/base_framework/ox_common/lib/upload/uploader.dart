@@ -1,4 +1,3 @@
-import 'nostr_build_uploader.dart';
 import 'pomf2_lain_la.dart';
 import 'blossom_uploader.dart';
 import 'nip96_uploader.dart';
@@ -64,5 +63,6 @@ class Uploader {
     } catch (e) {
       rethrow;
     }
+    return null;
   }
 }

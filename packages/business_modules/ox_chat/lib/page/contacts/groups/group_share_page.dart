@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ox_chat/manager/chat_data_manager_models.dart';
 import 'package:ox_chat/model/option_model.dart';
 import 'package:ox_chat/page/session/chat_message_page.dart';
-import 'package:ox_chat/page/session/chat_relay_group_msg_page.dart';
 import 'package:ox_common/log_util.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'package:ox_common/model/chat_type.dart';
@@ -21,7 +19,6 @@ import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 
-import '../../session/chat_group_message_page.dart';
 
 class GroupSharePage extends StatefulWidget {
   final String groupId;

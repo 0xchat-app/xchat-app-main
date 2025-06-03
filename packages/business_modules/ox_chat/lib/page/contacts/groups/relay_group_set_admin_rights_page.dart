@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_chat/utils/widget_tool.dart';
 import 'package:ox_common/log_util.dart';
@@ -7,7 +6,6 @@ import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/date_utils.dart';
 import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/utils/theme_color.dart';
-import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_common/widgets/common_appbar.dart';
 
@@ -15,7 +13,6 @@ import 'package:chatcore/chat-core.dart';
 import 'package:nostr_core_dart/nostr.dart';
 import 'package:ox_common/widgets/common_image.dart';
 import 'package:ox_common/widgets/common_loading.dart';
-import 'package:ox_common/widgets/common_menu_dialog.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 
 ///Title: relay_group_set_admin_rights_page
@@ -50,13 +47,13 @@ class _RelayGroupSetAdminRightsPageState extends State<RelayGroupSetAdminRightsP
   void _loadData() {
     _showPermissions = GroupActionKind.values;
     UserDBISAR? myUserDB = OXUserInfoManager.sharedInstance.currentUserInfo;
-    if (widget.relayGroupDB.admins != null && widget.relayGroupDB.admins!.length > 0) {
+    if (widget.relayGroupDB.admins.length > 0) {
       try {
         if (myUserDB != null) {
-          List<GroupActionKind> userPermissions = widget.relayGroupDB.admins!.firstWhere((admin) => admin.pubkey == myUserDB.pubKey).permissions;
+          List<GroupActionKind> userPermissions = widget.relayGroupDB.admins.firstWhere((admin) => admin.pubkey == myUserDB.pubKey).permissions;
           _myPermissionKinds = userPermissions.toSet();
         }
-        List<GroupActionKind> selectedUserPermissions = widget.relayGroupDB.admins!.firstWhere((admin) => admin.pubkey == widget.userDB.pubKey).permissions;
+        List<GroupActionKind> selectedUserPermissions = widget.relayGroupDB.admins.firstWhere((admin) => admin.pubkey == widget.userDB.pubKey).permissions;
         _currentPermissionKinds = selectedUserPermissions.toSet();
       } catch (e) {
         LogUtil.e('No admin found with pubkey: ${widget.userDB.pubKey}');

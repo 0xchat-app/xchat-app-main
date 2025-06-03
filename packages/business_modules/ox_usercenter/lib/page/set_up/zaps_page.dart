@@ -15,7 +15,6 @@ import 'package:ox_common/widgets/common_hint_dialog.dart';
 import 'package:ox_common/widgets/common_image.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/widgets/common_toast.dart';
-import 'package:ox_common/widgets/common_webview.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_module_service/ox_module_service.dart';
 import 'package:ox_usercenter/model/zaps_record.dart';
@@ -398,7 +397,7 @@ class _ZapsPageState extends State<ZapsPage> {
           OXNavigator.pop(context);
           OXModuleService.invoke('ox_common', 'gotoWebView', [context, 'https://nwc.getalby.com/', true, true, null, (url){
             if(url.startsWith('nostr+walletconnect://')) {
-              ScanUtils.analysis(context!, url);
+              ScanUtils.analysis(context, url);
             }
           },]);
         }

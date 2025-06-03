@@ -1,8 +1,6 @@
 import 'dart:convert';
 
 import 'package:ox_common/log_util.dart';
-import 'package:ox_common/network/network_general.dart';
-import 'package:ox_network/network_manager.dart';
 import 'nip96_server_adaptation.dart';
 import 'package:http/http.dart' as http;
 

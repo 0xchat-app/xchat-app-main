@@ -24,7 +24,7 @@ class _GiphyTabBarState extends State<GiphyTabBar> {
         controller: widget.controller,
         labelColor: ThemeColor.color0,
         unselectedLabelColor: ThemeColor.color110,
-        overlayColor: MaterialStateProperty.all(Colors.transparent),
+        overlayColor: WidgetStateProperty.all(Colors.transparent),
         labelPadding: EdgeInsets.zero,
         indicatorWeight: 0,
         indicator: CustomTabIndicator(

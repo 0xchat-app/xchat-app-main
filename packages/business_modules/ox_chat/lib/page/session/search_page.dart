@@ -1,17 +1,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:grouped_list/grouped_list.dart';
-import 'package:ox_chat/manager/chat_message_helper.dart';
 import 'package:ox_chat/model/group_ui_model.dart';
 import 'package:ox_chat/model/recent_search_user_isar.dart';
 import 'package:ox_chat/model/search_chat_model.dart';
 import 'package:ox_chat/model/search_history_model.dart';
 import 'package:ox_chat/model/search_history_model_isar.dart';
-import 'package:ox_chat/page/session/chat_channel_message_page.dart';
-import 'package:ox_chat/page/session/chat_group_message_page.dart';
 import 'package:ox_chat/page/session/chat_message_page.dart';
-import 'package:ox_chat/page/session/chat_relay_group_msg_page.dart';
-import 'package:ox_chat/page/session/chat_secret_message_page.dart';
 import 'package:ox_chat/page/session/search_discover_ui.dart';
 import 'package:ox_chat/utils/search_txt_util.dart';
 import 'package:ox_chat/utils/widget_tool.dart';

@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:math' as math;
 import 'dart:math';
 
-import 'package:dio/dio.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -155,7 +154,7 @@ class _CommonImageGalleryState extends State<CommonImageGallery>
     super.initState();
     print('Jeff: --_CommonImageGalleryState--initState----');
     _pageController = ExtendedPageController(
-      initialPage: widget.initialPage!,
+      initialPage: widget.initialPage,
       pageSpacing: 50,
       shouldIgnorePointerWhenScrolling: false,
     )..addListener(() {

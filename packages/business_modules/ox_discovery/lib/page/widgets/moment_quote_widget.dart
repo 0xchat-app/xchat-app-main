@@ -142,7 +142,7 @@ class MomentQuoteWidgetState extends State<MomentQuoteWidget> {
 
   Widget _showReplyContactWidget() {
     NotedUIModel? modelNotifier = notedUIModel;
-    if (modelNotifier == null || modelNotifier == null) return const SizedBox();
+    if (modelNotifier == null) return const SizedBox();
     String replyId = modelNotifier.noteDB.getReplyId ?? '';
     if(replyId.isEmpty) return const SizedBox();
     return ReplyContactWidget(notedUIModel: notedUIModel);
@@ -150,7 +150,7 @@ class MomentQuoteWidgetState extends State<MomentQuoteWidget> {
 
   Widget quoteMoment() {
     NotedUIModel? modelNotifier = notedUIModel;
-    if (modelNotifier == null || modelNotifier == null) {
+    if (modelNotifier == null) {
       return MomentWidgetsUtils.emptyNoteMomentWidget(null, 100);
     }
 

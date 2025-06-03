@@ -1,5 +1,4 @@
 import 'package:chatcore/chat-core.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
@@ -415,14 +414,12 @@ class _MomentWidgetState extends State<MomentWidget> {
             title: 'Choose Friends',
             contactType: ContactType.contact,
             onSubmitted: (List<UserDBISAR> userList) {
-              if(userList is List<UserDBISAR>){
-                for(UserDBISAR user in userList)  {
-                  OXModuleService.invoke('ox_chat', 'sendTextMsg', [context,user.pubKey,noteDB.encodedNoteId]);
-                }
-                CommonToast.instance.show(context, "Share successfully");
-                OXNavigator.pop(context);
+              for(UserDBISAR user in userList)  {
+                OXModuleService.invoke('ox_chat', 'sendTextMsg', [context,user.pubKey,noteDB.encodedNoteId]);
               }
-
+              CommonToast.instance.show(context, "Share successfully");
+              OXNavigator.pop(context);
+            
             },
           ),
            type: OXPushPageType.present,);

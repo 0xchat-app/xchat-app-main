@@ -25,7 +25,7 @@ import 'package:ox_cache_manager/ox_cache_manager.dart';
 ///@author Michael
 ///CreateTime: 2024/12/5 18:34
 class TabBarLongPressDialog {
-  double _dialogItemWidth = 180.px;
+  final double _dialogItemWidth = 180.px;
   TabbarMenuModel? currentUser;
   List<HomeTabBarType> typeList;
   double horizontalPadding;
@@ -231,13 +231,14 @@ class TabBarLongPressDialog {
     OXNavigator.pop(context);
     switch(model.type) {
       case MenuItemType.userType:
-        String pubKey = model.pubKey ?? '';
+        String pubKey = model.pubKey;
         if (pubKey.isEmpty) {
           CommonToast.instance.show(context, 'PubKey is empty, try other.');
           return;
         }
-        if (pubKey == OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey)
+        if (pubKey == OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey) {
           return;
+        }
         await OXLoading.show();
         await OXUserInfoManager.sharedInstance.switchAccount(pubKey);
         await OXLoading.dismiss();

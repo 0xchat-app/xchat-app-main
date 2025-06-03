@@ -78,8 +78,6 @@ abstract class CustomMessage extends Message {
     String? decryptKey,
     int? updatedAt,
     int? expiration,
-    List<Reaction>? reactions,
-    List<ZapsInfo>? zapsInfoList,
     required bool viewWithoutBubble,
   }) =>
       _CustomMessage(

@@ -1,8 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_chat/model/community_menu_option_model.dart';
-import 'package:ox_chat/page/contacts/contact_view_friends.dart';
-import 'package:ox_chat/page/session/search_page.dart';
 import 'package:ox_chat/page/session/unified_search_page.dart';
 import 'package:ox_chat/utils/widget_tool.dart';
 import 'package:ox_chat/widget/contact.dart';

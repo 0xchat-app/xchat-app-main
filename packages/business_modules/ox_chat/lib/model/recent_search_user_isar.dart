@@ -1,4 +1,3 @@
-import 'package:chatcore/chat-core.dart';
 import 'package:isar/isar.dart';
 
 part 'recent_search_user_isar.g.dart';

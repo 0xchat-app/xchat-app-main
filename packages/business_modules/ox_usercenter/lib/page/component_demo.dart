@@ -4,7 +4,7 @@ import 'package:ox_common/component.dart';
 import 'package:ox_common/navigator/navigator.dart';
 
 class ComponentDemoPage extends StatefulWidget {
-  ComponentDemoPage([this.index = 0]);
+  const ComponentDemoPage([this.index = 0]);
   final int index;
 
   @override
@@ -61,7 +61,7 @@ class ComponentDemoPageState extends State<ComponentDemoPage> with TickerProvide
         CLButton.tonal(text: 'Play', onTap: onTap, expanded: true,),
         CLButton.outlined(text: 'Play', onTap: onTap, expanded: true,),
         CLButton.text(text: 'Play', onTap: onTap, expanded: true,),
-        CLTextField(placeholder: 'test hint'),
+        const CLTextField(placeholder: 'test hint'),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -85,7 +85,7 @@ class ComponentDemoPageState extends State<ComponentDemoPage> with TickerProvide
             });
           },
         ),
-        Container(
+        SizedBox(
           height: 350,
           child: CLTabBar(
             dataController: tabBarController,
@@ -113,7 +113,7 @@ class ComponentDemoPageState extends State<ComponentDemoPage> with TickerProvide
             ),
           ],
         ),
-        SizedBox(height: 400,),
+        const SizedBox(height: 400,),
       ],
     );
   }

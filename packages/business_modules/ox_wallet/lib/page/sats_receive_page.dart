@@ -80,7 +80,7 @@ class _SatsReceivePageState extends State<SatsReceivePage> {
       context,
       (context) => WalletSuccessfulPage.invoicePaid(
         amount: receipt.amount,
-        onTap: () => OXNavigator.popToPage(context!,
+        onTap: () => OXNavigator.popToPage(context,
             pageType: const WalletHomePage().runtimeType.toString()),
       ),
     );

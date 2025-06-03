@@ -58,10 +58,7 @@ class DBTools {
   }
 
   bool isOpen() {
-    if (_db != null) {
-      return _db.isOpen;
-    }
-    return false;
+    return _db.isOpen;
   }
 
   void closDatabase() async {

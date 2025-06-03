@@ -5,7 +5,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cashu_dart/cashu_dart.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:ox_common/business_interface/ox_chat/interface.dart';
 import 'package:ox_common/business_interface/ox_wallet/interface.dart';
 import 'package:ox_common/log_util.dart';
@@ -70,7 +69,7 @@ class UserCenterPageState extends State<UserCenterPage>
   bool _isShowZapBadge = false;
   bool _isShowMomentUnread = false;
   final ScrollController _appBarScrollController = ScrollController();
-  double _appBarHeight = 66.px;
+  final double _appBarHeight = 66.px;
   bool _sliverPinned = false;
 
   @override

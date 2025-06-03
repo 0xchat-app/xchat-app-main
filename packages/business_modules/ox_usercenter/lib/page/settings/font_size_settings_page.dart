@@ -29,7 +29,7 @@ class _FontSizeSettingsPageState extends State<FontSizeSettingsPage> {
   Widget build(BuildContext context) {
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(
-        textScaleFactor: _textScale,
+        textScaler: TextScaler.linear(_textScale),
       ),
       child: CLScaffold(
         appBar: CLAppBar(

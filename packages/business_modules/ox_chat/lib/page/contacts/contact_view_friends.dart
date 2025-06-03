@@ -7,8 +7,6 @@ import 'package:ox_common/mixin/common_state_view_mixin.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
 import 'package:ox_common/utils/ox_chat_observer.dart';
 import 'package:ox_common/utils/ox_userinfo_manager.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
-import 'package:ox_common/utils/platform_utils.dart';
 
 /// Contact - Friends List
 const String systemUserType = "10000";

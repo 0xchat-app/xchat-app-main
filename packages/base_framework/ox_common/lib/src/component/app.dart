@@ -1,9 +1,7 @@
 
-import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 import 'platform_style.dart';
 import 'theme_data.dart';

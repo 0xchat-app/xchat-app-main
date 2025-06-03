@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
@@ -14,7 +13,7 @@ import 'nuts_mint_discovery_page.dart';
 import 'nuts_mint_management_page.dart';
 
 class NutsMintPage extends StatefulWidget {
-  NutsMintPage({Key? key}) : super(key: key);
+  const NutsMintPage({Key? key}) : super(key: key);
 
   @override
   NutsMintPageState createState() => NutsMintPageState();
@@ -52,7 +51,7 @@ class NutsMintPageState extends State<NutsMintPage> {
             CommonButton.themeButton(
                 onTap: () {
                   OXNavigator.pushPage(
-                      context, (context) => NutsMintDiscoveryPage());
+                      context, (context) => const NutsMintDiscoveryPage());
                 },
                 text: 'Add Mint'),
           ],
@@ -85,7 +84,7 @@ class NutsMintPageState extends State<NutsMintPage> {
             showDivider: true,
             rightWidget: _circleWidget(),
             onTap: () {
-              OXNavigator.pushPage(context, (context) => NutsMintManagementPage());
+              OXNavigator.pushPage(context, (context) => const NutsMintManagementPage());
             },
           ),
           labelWidget(
@@ -93,7 +92,7 @@ class NutsMintPageState extends State<NutsMintPage> {
             rightWidget: _circleWidget(),
             showDivider: true,
             onTap: () {
-              OXNavigator.pushPage(context, (context) => NutsMintManagementPage());
+              OXNavigator.pushPage(context, (context) => const NutsMintManagementPage());
             },
           ),
           labelWidget(
@@ -101,7 +100,7 @@ class NutsMintPageState extends State<NutsMintPage> {
             rightWidget: _circleWidget(),
             showDivider: true,
             onTap: () {
-              OXNavigator.pushPage(context, (context) => NutsMintManagementPage());
+              OXNavigator.pushPage(context, (context) => const NutsMintManagementPage());
             },
           ),
           labelWidget(
@@ -109,7 +108,7 @@ class NutsMintPageState extends State<NutsMintPage> {
             rightWidget: _circleWidget(),
             showDivider: true,
             onTap: () {
-              OXNavigator.pushPage(context, (context) => NutsMintManagementPage());
+              OXNavigator.pushPage(context, (context) => const NutsMintManagementPage());
             },
           ),
           labelWidget(
@@ -117,7 +116,7 @@ class NutsMintPageState extends State<NutsMintPage> {
             rightWidget: _circleWidget(),
             showDivider: true,
             onTap: () {
-              OXNavigator.pushPage(context, (context) => NutsMintManagementPage());
+              OXNavigator.pushPage(context, (context) => const NutsMintManagementPage());
             },
           ),
           labelWidget(
@@ -128,7 +127,7 @@ class NutsMintPageState extends State<NutsMintPage> {
               height: Adapt.px(24),
             ),
             onTap: () {
-              OXNavigator.pushPage(context, (context) => NutsMintManagementPage());
+              OXNavigator.pushPage(context, (context) => const NutsMintManagementPage());
             },
           ),
         ],

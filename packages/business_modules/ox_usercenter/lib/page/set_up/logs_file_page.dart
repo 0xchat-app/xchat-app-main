@@ -28,7 +28,7 @@ class LogsFilePage extends StatefulWidget {
 }
 
 class _LogsFilePageState extends State<LogsFilePage> {
-  List<File> _filePaths = [];
+  final List<File> _filePaths = [];
   double  fillH = 200;
 
   @override

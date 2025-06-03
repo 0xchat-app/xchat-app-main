@@ -3,10 +3,6 @@ import 'dart:convert';
 
 import 'package:chatcore/chat-core.dart';
 import 'package:flutter/material.dart';
-import 'package:ox_common/const/common_constant.dart';
-import 'package:ox_common/log_util.dart';
-import 'package:ox_common/network/network_general.dart';
-import 'package:ox_network/network_manager.dart';
 
 ///Title: badge_model
 ///Description: TODO(Fill in by oneself)

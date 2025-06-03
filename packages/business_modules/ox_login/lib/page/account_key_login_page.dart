@@ -21,7 +21,6 @@ import '../component/lose_focus_wrap.dart';
 // plugin
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:chatcore/chat-core.dart';
-import 'package:nostr_core_dart/nostr.dart';
 
 ///Title: account_key_login_page
 ///Description: TODO(Fill in by oneself)

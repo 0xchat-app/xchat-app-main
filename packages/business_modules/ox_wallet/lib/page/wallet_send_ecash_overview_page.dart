@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:chatcore/chat-core.dart';
-import 'package:flutter/widgets.dart';
 import 'package:ox_common/business_interface/ox_chat/utils.dart';
 import 'package:ox_common/business_interface/ox_wallet/interface.dart';
 import 'package:ox_common/utils/list_extension.dart';

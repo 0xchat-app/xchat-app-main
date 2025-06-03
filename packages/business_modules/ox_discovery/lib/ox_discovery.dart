@@ -10,7 +10,6 @@ import 'package:ox_discovery/page/moments/moments_page.dart';
 import 'package:ox_discovery/page/moments/personal_moments_page.dart';
 import 'package:ox_discovery/page/moments/public_moments_page.dart';
 import 'package:ox_discovery/page/widgets/moment_rich_text_widget.dart';
-import 'package:ox_discovery/utils/discovery_utils.dart';
 import 'package:ox_module_service/ox_module_service.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/ox_moment_manager.dart';

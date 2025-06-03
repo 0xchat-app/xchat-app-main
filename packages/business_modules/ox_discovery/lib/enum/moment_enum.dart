@@ -1,4 +1,3 @@
-import 'package:chatcore/chat-core.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 
 enum EMomentMoreOptionType {

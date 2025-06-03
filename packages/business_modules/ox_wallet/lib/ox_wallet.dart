@@ -14,7 +14,6 @@ import 'package:ox_wallet/page/wallet_successful_page.dart';
 import 'package:ox_wallet/page/wallet_transaction_record.dart';
 import 'package:ox_wallet/services/ecash_manager.dart';
 import 'package:ox_wallet/services/ecash_network_interceptor.dart';
-import 'package:ox_wallet/utils/lightning_utils.dart';
 import 'package:ox_wallet/widget/mint_indicator_item.dart';
 
 class OXWallet extends OXFlutterModule {
@@ -34,7 +33,7 @@ class OXWallet extends OXFlutterModule {
           context,
           (context) => WalletSuccessfulPage.redeemClaimed(
             amount: params?['amount'] ?? '',
-            onTap: () => OXNavigator.pop(context!),
+            onTap: () => OXNavigator.pop(context),
           ),
         );
       case 'WalletSendLightningPage':

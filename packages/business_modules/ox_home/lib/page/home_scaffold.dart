@@ -9,7 +9,7 @@ import 'package:ox_common/utils/adapt.dart';
 import 'home_header_components.dart';
 
 class HomeScaffold extends StatefulWidget {
-  HomeScaffold({
+  const HomeScaffold({
     super.key,
     required this.body,
   });

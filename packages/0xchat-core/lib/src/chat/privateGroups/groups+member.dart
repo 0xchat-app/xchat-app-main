@@ -1,9 +1,7 @@
 import 'dart:async';
 
 import 'package:chatcore/chat-core.dart';
-import 'package:isar/isar.dart';
 import 'package:nostr_core_dart/nostr.dart';
-import 'package:sqflite_sqlcipher/sqflite.dart';
 
 extension Member on Groups {
   // Future<OKEvent> inviteGroup(

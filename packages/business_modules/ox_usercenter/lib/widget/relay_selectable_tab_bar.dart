@@ -51,7 +51,7 @@ class _RelaySelectableTabBarState extends State<RelaySelectableTabBar>
         TabBar(
           isScrollable: true,
           controller: _tabController,
-          overlayColor: MaterialStateProperty.all(Colors.transparent),
+          overlayColor: WidgetStateProperty.all(Colors.transparent),
           labelPadding: EdgeInsets.only(right: 12.px),
           labelColor: ThemeColor.color0,
           unselectedLabelColor: ThemeColor.color100,

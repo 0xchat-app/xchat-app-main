@@ -76,8 +76,6 @@ abstract class FileMessage extends Message {
     Status? status,
     int? updatedAt,
     int? expiration,
-    List<Reaction>? reactions,
-    List<ZapsInfo>? zapsInfoList,
   }) =>
       _FileMessage(
         author: author,

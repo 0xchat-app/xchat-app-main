@@ -98,7 +98,7 @@ class TranslucentNavigationBarState extends State<TranslucentNavigationBar> with
   List<river.Artboard?> riveArtboards = [];
   final Map<HomeTabBarType, int> _unreadMap = {};
 
-  List<GlobalKey> _navItemKeyList = [];
+  final List<GlobalKey> _navItemKeyList = [];
   List<TabbarMenuModel> _userCacheList = [];
   TabbarMenuModel? _currentUser;
 

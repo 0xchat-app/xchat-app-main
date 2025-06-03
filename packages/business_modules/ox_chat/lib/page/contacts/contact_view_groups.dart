@@ -11,10 +11,8 @@ import 'package:ox_common/mixin/common_state_view_mixin.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
 import 'package:ox_common/utils/ox_chat_observer.dart';
 import 'package:ox_common/utils/ox_userinfo_manager.dart';
-import 'package:ox_common/utils/platform_utils.dart';
 import 'package:ox_common/widgets/common_pull_refresher.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
 
 class ContactViewGroups extends StatefulWidget {
   final bool shrinkWrap;

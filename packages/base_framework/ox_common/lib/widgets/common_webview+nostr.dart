@@ -184,7 +184,7 @@ window.nostr = {
 
   Future<bool> getAgreement(String title, String content, String key) async {
     Completer<bool> completer = Completer<bool>();
-    var uri = Uri.parse((widget as CommonWebView).url);
+    var uri = Uri.parse(widget.url);
     var host = uri.host;
     bool agree = await OXCacheManager.defaultOXCacheManager
             .getForeverData('$host.$key') ??

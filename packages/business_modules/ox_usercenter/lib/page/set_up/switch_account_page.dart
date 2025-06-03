@@ -1,7 +1,5 @@
 import 'package:chatcore/chat-core.dart';
 import 'package:flutter/material.dart';
-import 'package:ox_common/log_util.dart';
-import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/utils/theme_color.dart';
@@ -14,7 +12,6 @@ import 'package:ox_module_service/ox_module_service.dart';
 import 'package:ox_theme/ox_theme.dart';
 import 'package:ox_usercenter/utils/widget_tool.dart';
 import 'package:ox_usercenter/widget/clear_account_selector_dialog.dart';
-import 'package:ox_common/utils/app_relay_hint_dialog.dart';
 
 ///Title: switch_account_page
 ///Description: TODO(Fill in by oneself)
@@ -30,7 +27,7 @@ class SwitchAccountPage extends StatefulWidget {
 
 class _SwitchAccountPageState extends State<SwitchAccountPage> with OXUserInfoObserver{
   ThemeStyle? themeStyle;
-  int _selectedIndex = -1;
+  final int _selectedIndex = -1;
   Map<String, MultipleUserModel> _currentUserMap = {};
   List<MultipleUserModel> _userCacheList = [];
 

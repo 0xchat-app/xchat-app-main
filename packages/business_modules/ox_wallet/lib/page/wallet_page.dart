@@ -85,7 +85,7 @@ class _WalletPageState extends State<WalletPage> {
       (context) => WalletMintManagementAddPage(
         action: ImportAction.add,
         scenarioType: ScenarioType.activate,
-        callback: () => OXNavigator.pushPage(context!, (context) => const WalletHomePage()),
+        callback: () => OXNavigator.pushPage(context, (context) => const WalletHomePage()),
       ),
     );
   }
@@ -109,7 +109,7 @@ class _WalletPageState extends State<WalletPage> {
     OXNavigator.pushPage(context, (context) => WalletMintManagementAddPage(
         action: ImportAction.import,
         scenarioType: ScenarioType.activate,
-        callback: () => OXNavigator.pushPage(context!, (context) => const WalletHomePage()),
+        callback: () => OXNavigator.pushPage(context, (context) => const WalletHomePage()),
       ),
     );
   }

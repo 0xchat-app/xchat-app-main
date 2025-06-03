@@ -1,4 +1,3 @@
-import 'package:ox_chat/model/search_chat_model.dart';
 import 'package:ox_chat/utils/widget_tool.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 

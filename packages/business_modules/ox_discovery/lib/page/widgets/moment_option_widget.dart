@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:chatcore/chat-core.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_cache_manager/ox_cache_manager.dart';
 import 'package:ox_common/mixin/common_navigator_observer_mixin.dart';
@@ -21,7 +20,6 @@ import '../../model/moment_ui_model.dart';
 import '../moments/create_moments_page.dart';
 import '../moments/reply_moments_page.dart';
 
-import 'package:flutter/services.dart';
 import 'package:nostr_core_dart/nostr.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 

@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:ox_cache_manager/ox_cache_manager.dart';
 import 'package:ox_common/utils/storage_key_tool.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:ox_common/utils/user_config_tool.dart';

@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_chat_ui/ox_chat_ui.dart';
 import 'package:ox_common/navigator/navigator.dart';
@@ -8,7 +7,6 @@ import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/theme_color.dart';
 import 'package:ox_common/widgets/common_image.dart';
 import 'package:ox_common/widgets/common_image_gallery.dart';
-import 'package:ox_common/widgets/common_network_image.dart';
 import 'package:ox_common/widgets/common_network_image.dart';
 import 'package:ox_discovery/utils/album_utils.dart';
 import '../../utils/moment_widgets_utils.dart';

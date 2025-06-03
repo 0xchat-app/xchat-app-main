@@ -1,8 +1,6 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:ox_common/log_util.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/date_utils.dart';
@@ -23,7 +21,7 @@ import 'package:ox_usercenter/utils/widget_tool.dart';
 class DevLogDetailPage extends StatefulWidget {
   final File file;
 
-  DevLogDetailPage({Key? key, required this.file}) : super(key: key);
+  const DevLogDetailPage({Key? key, required this.file}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -133,7 +131,7 @@ class _DevLogDetailPageState extends State<DevLogDetailPage> {
                   ),
                 ),
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
             ],
           ),
         ),

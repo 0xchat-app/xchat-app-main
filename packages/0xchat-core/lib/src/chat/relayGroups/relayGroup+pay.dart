@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:chatcore/chat-core.dart';
-import 'package:nostr_core_dart/nostr.dart';
 
 extension PayRelayGroup on RelayGroup {
   Future<PaymentResponse?> createLightningPayment(String groupId, int level, String levelPeriod) async {

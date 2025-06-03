@@ -1,5 +1,4 @@
 
-import 'package:chatcore/chat-core.dart';
 import 'package:isar/isar.dart';
 
 part 'search_history_model_isar.g.dart';

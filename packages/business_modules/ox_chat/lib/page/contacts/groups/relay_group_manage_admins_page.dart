@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_chat/page/contacts/groups/relay_group_add_admin_page.dart';
 import 'package:ox_chat/page/contacts/groups/relay_group_set_admin_rights_page.dart';

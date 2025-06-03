@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:chatcore/chat-core.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:nostr_core_dart/nostr.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_common/log_util.dart';
@@ -152,7 +151,7 @@ class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
       String dns = _dnsTextEditingController.text;
       String lnurl = _bltTextEditingController.text;
       bool result;
-      LogUtil.e('Michael: --dns =${dns}');
+      LogUtil.e('Michael: --dns =$dns');
       if (dns.isEmpty || dns == mCurrentUserInfo!.dns) {
         result = true;
       } else if (dns != mCurrentUserInfo!.dns) {
@@ -167,7 +166,7 @@ class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
       } else {
         result = true;
       }
-      LogUtil.e('Michael: --dns set result =${result}');
+      LogUtil.e('Michael: --dns set result =$result');
       if (result) {
         mCurrentUserInfo!.dns = dns;
       } else {

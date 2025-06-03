@@ -5,7 +5,6 @@ import 'package:cashu_dart/cashu_dart.dart';
 import 'package:ox_chat/utils/widget_tool.dart';
 import 'package:ox_common/business_interface/ox_chat/call_message_type.dart';
 import 'package:ox_common/business_interface/ox_chat/custom_message_type.dart';
-import 'package:ox_common/utils/string_utils.dart';
 
 extension CustomMessageEx on types.CustomMessage {
 

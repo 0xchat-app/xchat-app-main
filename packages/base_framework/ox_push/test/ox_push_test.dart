@@ -1,6 +1,5 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ox_push/push_lib.dart';
 
 void main() {
   const MethodChannel channel = MethodChannel('ox_network');

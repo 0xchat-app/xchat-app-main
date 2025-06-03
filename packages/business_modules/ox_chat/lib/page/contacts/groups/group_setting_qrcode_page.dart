@@ -6,12 +6,8 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:ox_chat/model/option_model.dart';
-import 'package:ox_chat/model/search_chat_model.dart';
 import 'package:ox_chat/utils/group_share_utils.dart';
-import 'package:ox_chat/widget/group_share_menu_dialog.dart';
-import 'package:ox_common/const/common_constant.dart';
 import 'package:ox_common/utils/custom_uri_helper.dart';
-import 'package:ox_common/utils/took_kit.dart';
 import 'package:ox_common/widgets/common_appbar.dart';
 import 'package:ox_common/widgets/common_image.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
@@ -26,8 +22,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:chatcore/chat-core.dart';
 
-import '../contact_group_list_page.dart';
-import '../contact_group_member_page.dart';
 
 class GroupSettingQrcodePage extends StatefulWidget {
 

@@ -125,7 +125,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
   }
 
   void nickNameOnTap() {
-    OXNavigator.pushPage(context, (_) => NicknameSettingsPage());
+    OXNavigator.pushPage(context, (_) => const NicknameSettingsPage());
   }
 
   void bioOnTap() {

@@ -1,6 +1,5 @@
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/ox_userinfo_manager.dart';
@@ -115,7 +114,7 @@ class HomeHeaderComponents {
             builder: (context, isShowExtendBody, _) {
               return AnimatedRotation(
                 turns: isShowExtendBody ? 0.5 : 0,
-                duration: Duration(milliseconds: 300),
+                duration: const Duration(milliseconds: 300),
                 child: Icon(
                   Icons.arrow_drop_down,
                   color: ColorToken.onSurface.of(context),
@@ -169,7 +168,7 @@ class HomeHeaderComponents {
           TextSpan(
               children: [
                 if (selected)
-                  TextSpan(text: '--ms · '),
+                  const TextSpan(text: '--ms · '),
                 TextSpan(text: item.relayUrl),
               ]
           )

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:ox_cache_manager/ox_cache_manager.dart';
 import 'package:ox_common/model/ice_server_model.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/ox_server_manager.dart';
 import 'package:ox_common/utils/platform_utils.dart';
-import 'package:ox_common/utils/storage_key_tool.dart';
 import 'package:ox_common/utils/theme_color.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/common_appbar.dart';
@@ -45,7 +43,7 @@ class _ICEServerPageState extends State<ICEServerPage> {
   }
 
   Future<void> _initData() async {
-    List<ICEServerModel> iCEServerList = await OXServerManager.sharedInstance.getICEServerList();
+    List<ICEServerModel> iCEServerList = OXServerManager.sharedInstance.getICEServerList();
     setState(() {
       _connectICEServerList = iCEServerList;
     });
@@ -195,7 +193,7 @@ class _ICEServerPageState extends State<ICEServerPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Container(
+          SizedBox(
             width: Adapt.px(24),
             height: Adapt.px(24),
             child: CommonImage(

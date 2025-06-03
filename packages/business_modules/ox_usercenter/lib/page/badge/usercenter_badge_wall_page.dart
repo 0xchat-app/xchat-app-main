@@ -12,7 +12,6 @@ import 'package:ox_common/widgets/common_appbar.dart';
 import 'package:ox_common/widgets/common_image.dart';
 import 'package:ox_common/model/badge_model.dart';
 import 'package:ox_common/widgets/common_network_image.dart';
-import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_usercenter/page/badge/usercenter_badge_detail_page.dart';
 import 'package:chatcore/chat-core.dart';

@@ -3,8 +3,8 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/took_kit.dart';
+
 import 'platform/platform.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
 
 enum PressType {
   longPress,

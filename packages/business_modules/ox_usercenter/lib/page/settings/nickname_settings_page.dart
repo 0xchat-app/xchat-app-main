@@ -9,7 +9,7 @@ import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_usercenter/page/settings/single_setting_page.dart';
 
 class NicknameSettingsPage extends StatelessWidget {
-  NicknameSettingsPage({
+  const NicknameSettingsPage({
     super.key,
     this.previousPageTitle,
   });

@@ -86,8 +86,6 @@ abstract class ImageMessage extends Message {
     int? updatedAt,
     EncryptionType fileEncryptionType = EncryptionType.none,
     int? expiration,
-    List<Reaction>? reactions,
-    List<ZapsInfo>? zapsInfoList,
   }) =>
       _ImageMessage(
         author: author,

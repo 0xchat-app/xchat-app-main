@@ -8,7 +8,6 @@ import 'package:ox_common/widgets/common_appbar.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_common/const/common_constant.dart';
-import 'package:ox_common/widgets/common_loading.dart';
 
 import 'package:ox_login/page/save_account_page.dart';
 import 'package:ox_module_service/ox_module_service.dart';

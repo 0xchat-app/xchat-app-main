@@ -12,7 +12,7 @@ import '../../../utils/widget_tool.dart';
 import 'nuts_relays_discovery_page.dart';
 
 class NutsRelayPage extends StatefulWidget {
-  NutsRelayPage({Key? key}) : super(key: key);
+  const NutsRelayPage({Key? key}) : super(key: key);
 
   @override
   NutsRelayPageState createState() => NutsRelayPageState();
@@ -48,7 +48,7 @@ class NutsRelayPageState extends State<NutsRelayPage> {
           children: [
             _mintListWidget().setPaddingOnly(top: 12.px, bottom: 24.px),
             CommonButton.themeButton(onTap: () {
-              OXNavigator.pushPage(context, (context) => NutsRelaysDiscoveryPage());
+              OXNavigator.pushPage(context, (context) => const NutsRelaysDiscoveryPage());
             }, text: 'Add Relay'),
           ],
         ).setPadding(

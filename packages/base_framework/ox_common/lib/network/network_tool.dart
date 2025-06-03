@@ -1,7 +1,6 @@
 import 'package:chatcore/chat-core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:ox_cache_manager/ox_cache_manager.dart';
-import 'package:ox_common/const/common_constant.dart';
 import 'package:ox_common/utils/storage_key_tool.dart';
 
 ///Title: network_tool

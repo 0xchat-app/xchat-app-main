@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:ui';
 import 'package:chatcore/chat-core.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/upload/file_type.dart';
@@ -13,7 +11,6 @@ import 'package:ox_common/widgets/common_image.dart';
 import 'package:ox_common/widgets/common_select_relay_page.dart';
 
 
-import 'package:flutter/services.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_discovery/enum/visible_type.dart';
@@ -21,7 +18,6 @@ import 'package:ox_discovery/page/moments/visibility_selection_page.dart';
 import 'package:ox_discovery/page/widgets/send_progress_widget.dart';
 import 'package:ox_discovery/utils/discovery_utils.dart';
 import 'package:ox_localizable/ox_localizable.dart';
-import 'package:ox_module_service/ox_module_service.dart';
 
 import '../../enum/moment_enum.dart';
 import '../../model/moment_extension_model.dart';

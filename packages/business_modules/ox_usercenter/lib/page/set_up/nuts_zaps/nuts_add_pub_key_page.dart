@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_common/utils/adapt.dart';
 
@@ -8,7 +7,7 @@ import 'package:ox_common/widgets/common_appbar.dart';
 import 'package:ox_common/widgets/common_button.dart';
 
 class NutsAddPubKeyPage extends StatefulWidget {
-  NutsAddPubKeyPage({Key? key}) : super(key: key);
+  const NutsAddPubKeyPage({Key? key}) : super(key: key);
 
   @override
   NutsAddPubKeyPageState createState() => NutsAddPubKeyPageState();

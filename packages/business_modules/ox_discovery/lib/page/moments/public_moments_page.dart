@@ -27,7 +27,6 @@ import 'create_moments_page.dart';
 import 'group_moments_page.dart';
 import 'moments_page.dart';
 import 'notifications_moments_page.dart';
-import 'package:flutter/services.dart';
 
 enum EPublicMomentsPageType { contacts, reacted, private }
 
@@ -383,7 +382,7 @@ class PublicMomentsPageState extends State<PublicMomentsPage>
           MomentWidgetsUtils.clipImage(
             borderRadius: 16,
             child: OXCachedNetworkImage(
-              imageUrl: groupDB?.picture ?? '',
+              imageUrl: groupDB.picture ?? '',
               fit: BoxFit.cover,
               placeholder: (context, url) =>
                   MomentWidgetsUtils.badgePlaceholderImage(),

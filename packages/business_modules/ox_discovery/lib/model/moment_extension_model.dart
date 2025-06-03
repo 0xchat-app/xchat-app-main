@@ -1,6 +1,4 @@
 import 'package:chatcore/chat-core.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/utils/web_url_helper.dart';
 
 import '../enum/moment_enum.dart';

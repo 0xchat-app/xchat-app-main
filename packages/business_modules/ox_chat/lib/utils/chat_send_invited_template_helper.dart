@@ -1,7 +1,6 @@
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_chat/model/option_model.dart';
 import 'package:ox_chat/utils/general_handler/chat_general_handler.dart';
-import 'package:ox_common/log_util.dart';
 import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_common/utils/custom_uri_helper.dart';
 import 'package:ox_common/utils/ox_userinfo_manager.dart';

@@ -1,4 +1,3 @@
-import 'package:chatcore/chat-core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_common/navigator/navigator.dart';
@@ -10,7 +9,6 @@ import 'package:ox_discovery/page/widgets/moment_widget.dart';
 import 'package:ox_discovery/utils/moment_widgets_utils.dart';
 
 import '../../model/moment_ui_model.dart';
-import '../../utils/discovery_utils.dart';
 import '../moments/moments_page.dart';
 
 class MomentReplyAbbreviateWidget extends StatefulWidget {
@@ -46,7 +44,7 @@ class _MomentReplyAbbreviateWidgetState extends State<MomentReplyAbbreviateWidge
 
   void _getNotedUIModel() async {
     NotedUIModel? notedUIModelDraft = widget.notedUIModel;
-    if (notedUIModelDraft == null || !notedUIModelDraft!.noteDB.isReply || !widget.isShowReplyWidget) {
+    if (notedUIModelDraft == null || !notedUIModelDraft.noteDB.isReply || !widget.isShowReplyWidget) {
       // Preventing a bug where the internal component fails to update in a timely manner when the outer ListView.builder array is updated with a non-reply note.
       notedUIModel = null;
       hasReplyWidget = false;

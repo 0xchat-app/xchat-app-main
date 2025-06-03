@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:chatcore/chat-core.dart';
 import 'package:nostr_core_dart/nostr.dart';
 import 'package:ox_chat/model/option_model.dart';
-import 'package:ox_chat/utils/custom_message_utils.dart';
 import 'package:ox_common/business_interface/ox_discovery/interface.dart';
 import 'package:ox_common/const/common_constant.dart';
 import 'package:ox_common/utils/custom_uri_helper.dart';

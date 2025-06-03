@@ -588,11 +588,11 @@ class _FollowButtonState extends State<FollowButton> {
       child: OutlinedButton(
         child: const Text('Follow'),
         style: ButtonStyle(
-          textStyle: MaterialStateProperty.all(
+          textStyle: WidgetStateProperty.all(
             const TextStyle(color: Colors.white),
           ),
-          foregroundColor: MaterialStateProperty.all(Colors.white),
-          side: MaterialStateProperty.all(
+          foregroundColor: WidgetStateProperty.all(Colors.white),
+          side: WidgetStateProperty.all(
             const BorderSide(
               color: Colors.orange,
             ),

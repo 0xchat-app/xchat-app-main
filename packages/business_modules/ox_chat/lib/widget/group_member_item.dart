@@ -4,7 +4,6 @@ import 'package:ox_common/utils/theme_color.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/common_network_image.dart';
-import 'package:path/path.dart';
 
 class GroupMemberItem extends StatelessWidget {
 

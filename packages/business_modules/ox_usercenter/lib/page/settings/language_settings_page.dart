@@ -1,15 +1,7 @@
 
 import 'package:flutter/material.dart';
-import 'package:ox_cache_manager/ox_cache_manager.dart';
 import 'package:ox_common/component.dart';
-import 'package:ox_common/utils/adapt.dart';
-import 'package:ox_common/utils/platform_utils.dart';
-import 'package:ox_common/utils/theme_color.dart';
-import 'package:ox_common/utils/widget_tool.dart';
-import 'package:ox_common/widgets/common_appbar.dart';
-import 'package:ox_common/widgets/common_image.dart';
 import 'package:ox_localizable/ox_localizable.dart';
-import 'dart:ui' as ui;
 
 
 class LanguageSettingsPage extends StatefulWidget {

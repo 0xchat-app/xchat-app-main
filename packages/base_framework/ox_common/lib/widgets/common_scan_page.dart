@@ -11,7 +11,6 @@ import 'package:ox_common/utils/permission_utils.dart';
 import 'package:ox_common/utils/string_utils.dart';
 import 'package:ox_common/utils/theme_color.dart';
 import 'package:ox_common/widgets/common_toast.dart';
-import 'package:ox_common/widgets/custom_scanner_overlay.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_module_service/ox_module_service.dart';
 import 'package:flutter_zxing/flutter_zxing.dart';

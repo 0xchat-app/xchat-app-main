@@ -12,7 +12,7 @@ import 'nuts_pub_key_page.dart';
 import 'nuts_relay_page.dart';
 
 class NutsZapsPage extends StatefulWidget {
-  NutsZapsPage({Key? key}) : super(key: key);
+  const NutsZapsPage({Key? key}) : super(key: key);
 
   @override
   NutsZapsPageState createState() => NutsZapsPageState();
@@ -65,20 +65,20 @@ class NutsZapsPageState extends State<NutsZapsPage> {
               subTitle: '6',
               showDivider: true,
               onTap: () {
-                OXNavigator.pushPage(context, (context) => NutsMintPage());
+                OXNavigator.pushPage(context, (context) => const NutsMintPage());
               }),
           labelWidget(
               title: 'Relay',
               subTitle: '6',
               showDivider: true,
               onTap: () {
-                OXNavigator.pushPage(context, (context) => NutsRelayPage());
+                OXNavigator.pushPage(context, (context) => const NutsRelayPage());
               }),
           labelWidget(
               title: 'Receive Pubkey',
               subTitle: 'Key01',
               onTap: () {
-                OXNavigator.pushPage(context, (context) => NutsPubKeyPage());
+                OXNavigator.pushPage(context, (context) => const NutsPubKeyPage());
               }),
         ],
       ),

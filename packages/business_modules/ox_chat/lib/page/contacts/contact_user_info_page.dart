@@ -1,7 +1,5 @@
 import 'package:chatcore/chat-core.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:ox_common/utils/platform_utils.dart';
 import 'package:ox_common/widgets/common_gradient_tab_bar.dart';
 
@@ -10,8 +8,6 @@ import 'package:ox_common/utils/theme_color.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 
 import 'package:ox_common/widgets/common_appbar.dart';
-import 'package:ox_common/widgets/common_image.dart';
-import 'package:ox_localizable/ox_localizable.dart';
 
 import 'package:ox_module_service/ox_module_service.dart';
 

@@ -1,5 +1,3 @@
-import 'package:chatcore/chat-core.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
@@ -8,15 +6,11 @@ import 'package:ox_common/utils/uplod_aliyun_utils.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/common_image.dart';
 import 'package:ox_common/widgets/common_network_image.dart';
-import 'package:ox_discovery/page/widgets/moment_rich_text_widget.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_module_service/ox_module_service.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-import '../model/moment_ui_model.dart';
-import '../page/moments/moments_page.dart';
 import '../page/widgets/youtube_player_widget.dart';
-import 'discovery_utils.dart';
 
 class MomentWidgetsUtils {
   static Widget clipImage({

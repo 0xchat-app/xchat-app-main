@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:ox_common/utils/adapt.dart';
 
 import 'package:ox_common/utils/theme_color.dart';
@@ -8,10 +6,9 @@ import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/common_appbar.dart';
 import 'package:ox_common/widgets/common_image.dart';
 
-import '../../../utils/widget_tool.dart';
 
 class NutsMintDiscoveryPage extends StatefulWidget {
-  NutsMintDiscoveryPage({Key? key}) : super(key: key);
+  const NutsMintDiscoveryPage({Key? key}) : super(key: key);
 
   @override
   NutsMintDiscoveryPageState createState() => NutsMintDiscoveryPageState();
@@ -94,7 +91,7 @@ class NutsMintDiscoveryPageState extends State<NutsMintDiscoveryPage> {
                 height: 32.px,
                 color: ThemeColor.color100,
               ),
-              Column(
+              const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Defualt Mint'),

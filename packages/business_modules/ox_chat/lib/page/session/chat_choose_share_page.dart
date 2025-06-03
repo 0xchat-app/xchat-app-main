@@ -20,7 +20,6 @@ import 'package:ox_common/widgets/common_image.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_localizable/ox_localizable.dart';
-import 'package:ox_chat/utils/chat_send_invited_template_helper.dart';
 import 'package:ox_chat/utils/widget_tool.dart';
 import 'package:grouped_list/grouped_list.dart';
 

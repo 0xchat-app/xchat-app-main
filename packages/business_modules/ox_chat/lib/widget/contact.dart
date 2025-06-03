@@ -21,7 +21,6 @@ import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_common/widgets/common_image.dart';
 import 'package:ox_common/widgets/common_network_image.dart';
 import 'package:ox_localizable/ox_localizable.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
 
 
 double itemHeight = Adapt.px(68.0);

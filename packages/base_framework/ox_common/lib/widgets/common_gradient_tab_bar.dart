@@ -43,7 +43,7 @@ class _CommonGradientTabBarState extends State<CommonGradientTabBar> with Single
   Widget build(BuildContext context) {
     return TabBar(
       isScrollable: true,
-      overlayColor: MaterialStateProperty.all(Colors.transparent),
+      overlayColor: WidgetStateProperty.all(Colors.transparent),
       controller: _controller,
       enableFeedback: true,
       automaticIndicatorColorAdjustment: true,

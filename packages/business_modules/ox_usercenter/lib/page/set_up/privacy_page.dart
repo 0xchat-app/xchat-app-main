@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ox_cache_manager/ox_cache_manager.dart';
 import 'package:ox_common/log_util.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
@@ -18,7 +17,6 @@ import 'package:ox_usercenter/model/secure_model.dart';
 import 'package:ox_usercenter/page/set_up/passcode_page.dart';
 import 'package:ox_usercenter/page/set_up/privacy_blocked_page.dart';
 import 'package:ox_usercenter/utils/security_auth_utils.dart';
-import 'package:chatcore/chat-core.dart';
 
 class PrivacyPage extends StatefulWidget {
   const PrivacyPage({super.key});
@@ -163,7 +161,7 @@ class _PrivacyPageState extends State<PrivacyPage> {
                 package: 'ox_usercenter',
               ),
               content: Localized.text(model.title),
-              actions: model.isShowSwitch ? Container(
+              actions: model.isShowSwitch ? SizedBox(
                 height: 20.px,
                 child: Switch(
                   value: model.switchValue,

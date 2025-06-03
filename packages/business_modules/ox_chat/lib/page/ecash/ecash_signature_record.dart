@@ -1,6 +1,5 @@
 
 import 'package:chatcore/chat-core.dart';
-import 'package:ox_chat/page/ecash/ecash_info_isar.dart';
 import 'package:ox_chat/page/ecash/ecash_signature_record_isar.dart';
 
 @reflector

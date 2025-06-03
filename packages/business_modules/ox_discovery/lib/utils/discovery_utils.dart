@@ -7,13 +7,8 @@ import 'package:ox_common/business_interface/ox_chat/interface.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:chatcore/chat-core.dart';
-import 'package:nostr_core_dart/nostr.dart';
-import 'package:path/path.dart';
-import '../model/moment_extension_model.dart';
-import '../model/moment_ui_model.dart';
 import 'moment_content_analyze_utils.dart';
 import 'dart:math' as Math;
-import 'moment_widgets_utils.dart';
 
 class DiscoveryUtils {
   static String formatTimeAgo(int timestamp) {

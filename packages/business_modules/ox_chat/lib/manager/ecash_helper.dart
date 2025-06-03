@@ -1,12 +1,9 @@
 
-import 'dart:math';
 
 import 'package:cashu_dart/cashu_dart.dart';
 import 'package:chatcore/chat-core.dart';
-import 'package:ox_chat/manager/chat_message_helper.dart';
 import 'package:ox_chat/page/ecash/ecash_info_isar.dart';
 import 'package:ox_chat/page/ecash/ecash_info.dart';
-import 'package:ox_chat/page/ecash/ecash_signature_record.dart';
 import 'package:ox_chat/page/ecash/ecash_signature_record_isar.dart';
 import 'package:ox_chat/utils/custom_message_utils.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;

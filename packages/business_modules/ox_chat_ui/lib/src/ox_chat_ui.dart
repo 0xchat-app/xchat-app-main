@@ -17,7 +17,5 @@ class OXChatUI extends OXFlutterModule {
   Map<String, Function> get interfaces => { };
 
   @override
-  Future<T?>? navigateToPage<T>(BuildContext context, String pageName, Map<String, dynamic>? params) {
-    return null;
-  }
+  Future<T?>? navigateToPage<T>(BuildContext context, String pageName, Map<String, dynamic>? params) => null;
 }

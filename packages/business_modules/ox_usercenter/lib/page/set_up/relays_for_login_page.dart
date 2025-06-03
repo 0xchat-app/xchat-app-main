@@ -15,7 +15,6 @@ import 'package:chatcore/chat-core.dart';
 import 'package:ox_usercenter/page/set_up/relay_detail_page.dart';
 import 'package:ox_usercenter/widget/ping_delay_time_widget.dart';
 import 'package:ox_usercenter/widget/relay_recommend_widget.dart';
-import 'package:ox_usercenter/widget/relay_selectable_tab_bar.dart';
 
 ///Title: relays_for_login_page
 ///Description: TODO(Fill in by oneself)
@@ -34,7 +33,7 @@ class RelaysForLoginPage extends StatefulWidget {
 
 class _RelaysForLoginPageState extends State<RelaysForLoginPage> with WidgetsBindingObserver, NavigatorObserverMixin {
   final TextEditingController _relayTextFieldControll = TextEditingController();
-  late List<RelayDBISAR> _relayList = [];
+  late final List<RelayDBISAR> _relayList = [];
   late List<RelayDBISAR> _recommendRelayList = [];
   bool _isEditing = false;
   bool _isShowDelete = false;
@@ -363,7 +362,7 @@ class _RelaysForLoginPageState extends State<RelaysForLoginPage> with WidgetsBin
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Container(
+            SizedBox(
               width: Adapt.px(24),
               height: Adapt.px(24),
               child: CommonImage(
@@ -495,8 +494,8 @@ class _RelaysForLoginPageState extends State<RelaysForLoginPage> with WidgetsBin
 
 
 class RelayConnectStatus {
-  static final int connecting = 0;
-  static final int open = 1;
-  static final int closing = 2;
-  static final int closed = 3;
+  static const int connecting = 0;
+  static const int open = 1;
+  static const int closing = 2;
+  static const int closed = 3;
 }

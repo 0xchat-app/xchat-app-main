@@ -11,9 +11,7 @@ import 'package:ox_common/widgets/common_image.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../../ox_chat_ui.dart';
-import '../../chat_ui_config.dart';
 import '../../util.dart';
-import '../pop_menu/custom_pop_up_menu.dart';
 import '../state/inherited_chat_theme.dart';
 import '../state/inherited_user.dart';
 import 'audio_message_page.dart';
@@ -255,8 +253,8 @@ class MessageState extends State<Message> {
         onSwipeComplete: () {
           widget.replySwipeTriggerCallback?.call(widget.message);
         },
-        child: content,
         offset: currentUserIsAuthor ? Offset(50.px, 0) : Offset.zero,
+        child: content,
       );
     }
 
@@ -614,7 +612,6 @@ class _SwipeToReply extends StatefulWidget {
   final VoidCallback onSwipeComplete;
 
   const _SwipeToReply({
-    super.key,
     required this.child,
     required this.revealIconBuilder,
     required this.onSwipeComplete,

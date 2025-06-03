@@ -8,7 +8,6 @@ import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_module_service/ox_module_service.dart';
 
 import '../../model/moment_ui_model.dart';
-import '../../utils/discovery_utils.dart';
 
 class ReplyContactWidget extends StatefulWidget {
   final NotedUIModel? notedUIModel;
@@ -63,9 +62,9 @@ class _ReplyContactWidgetState extends State<ReplyContactWidget> {
     NotedUIModel? notedUIModelCache = OXMomentCacheManager.getValueNotifierNoteToCache(getReplyId);
     if(notedUIModelCache != null){
 
-      noteAuthor = (notedUIModelCache as NotedUIModel).noteDB.author;
+      noteAuthor = notedUIModelCache.noteDB.author;
 
-      _getMomentUserInfo(notedUIModelCache as NotedUIModel);
+      _getMomentUserInfo(notedUIModelCache);
       if (mounted) {
         setState(() {});
       }
@@ -85,9 +84,9 @@ class _ReplyContactWidgetState extends State<ReplyContactWidget> {
       return;
     }
 
-    noteAuthor = (replyNotifier as NotedUIModel).noteDB.author;
+    noteAuthor = replyNotifier.noteDB.author;
 
-    _getMomentUserInfo(replyNotifier as NotedUIModel);
+    _getMomentUserInfo(replyNotifier);
     if (mounted) {
       setState(() {});
     }

@@ -1,6 +1,5 @@
 import 'package:chatcore/chat-core.dart';
 
-import '../enum/moment_enum.dart';
 import '../utils/discovery_utils.dart';
 import '../utils/moment_content_analyze_utils.dart';
 

@@ -87,8 +87,6 @@ abstract class VideoMessage extends Message {
     int? updatedAt,
     EncryptionType fileEncryptionType = EncryptionType.none,
     int? expiration,
-    List<Reaction>? reactions,
-    List<ZapsInfo>? zapsInfoList,
   }) =>
       _VideoMessage(
         author: author,

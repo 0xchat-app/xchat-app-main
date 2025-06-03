@@ -1,5 +1,3 @@
-import 'package:avatar_stack/avatar_stack.dart';
-import 'package:avatar_stack/positions.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:flutter/material.dart';
 import 'package:nostr_core_dart/nostr.dart';
@@ -25,7 +23,6 @@ import 'package:ox_common/widgets/common_appbar.dart';
 import 'package:ox_common/widgets/common_hint_dialog.dart';
 import 'package:ox_common/widgets/common_image.dart';
 import 'package:ox_common/widgets/common_loading.dart';
-import 'package:ox_common/widgets/common_network_image.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_common/widgets/custom_avatar_stack.dart';
 import 'package:ox_localizable/ox_localizable.dart';
@@ -675,7 +672,7 @@ class _RelayGroupInfoPageState extends State<RelayGroupInfoPage> {
     RelayGroup.sharedInstance.getGroupMetadataFromRelay(widget.groupId).then((relayGroupDB) {
       if (!mounted) return ;
       if (relayGroupDB != null) {
-        LogUtil.e('Michael: ----_loadDataFromRelay---admins.length =${relayGroupDB.admins?.length ?? 'admins null'}');
+        LogUtil.e('Michael: ----_loadDataFromRelay---admins.length =${relayGroupDB.admins.length ?? 'admins null'}');
         setState(() {
           groupDBInfo = relayGroupDB;
           _isMute = relayGroupDB.mute;

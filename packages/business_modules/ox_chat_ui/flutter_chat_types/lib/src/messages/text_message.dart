@@ -71,8 +71,6 @@ abstract class TextMessage extends Message {
     Status? status,
     int? updatedAt,
     int? expiration,
-    List<Reaction>? reactions,
-    List<ZapsInfo>? zapsInfoList,
   }) =>
       _TextMessage(
         author: author,

@@ -1,12 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/theme_color.dart';
 import 'package:ox_common/utils/web_url_helper.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/common_network_image.dart';
-import 'package:ox_common/widgets/common_webview.dart';
 import 'package:ox_discovery/utils/moment_widgets_utils.dart';
 import 'package:ox_module_service/ox_module_service.dart';
 

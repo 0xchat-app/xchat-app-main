@@ -1,8 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:chatcore/chat-core.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nostr_core_dart/nostr.dart';
@@ -19,7 +17,6 @@ import 'package:ox_common/utils/custom_uri_helper.dart';
 import 'package:ox_common/utils/platform_utils.dart';
 import 'package:ox_common/utils/took_kit.dart';
 import 'package:ox_common/widgets/common_action_dialog.dart';
-import 'package:ox_common/widgets/common_platform_widget.dart';
 
 import 'package:ox_common/widgets/common_time_dialog.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
@@ -42,7 +39,6 @@ import 'package:ox_module_service/ox_module_service.dart';
 
 import 'contact_create_secret_chat.dart';
 
-import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 
 class TabModel {
   Function onTap;

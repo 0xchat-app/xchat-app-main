@@ -1,12 +1,9 @@
 import 'package:chatcore/chat-core.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_chat/model/option_model.dart';
 import 'package:ox_chat/page/contacts/contact_group_list_page.dart';
 import 'package:ox_chat/page/contacts/contact_group_member_page.dart';
-import 'package:ox_chat/utils/widget_tool.dart';
 import 'package:ox_chat/widget/group_share_menu_dialog.dart';
-import 'package:ox_common/log_util.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/took_kit.dart';
 

@@ -422,7 +422,7 @@ class _RelaysPageState extends State<RelaysPage> with WidgetsBindingObserver, Na
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Container(
+            SizedBox(
               width: Adapt.px(24),
               height: Adapt.px(24),
               child: CommonImage(
@@ -626,8 +626,8 @@ extension RelayTypeExtension on RelayType {
 }
 
 class RelayConnectStatus {
-  static final int connecting = 0;
-  static final int open = 1;
-  static final int closing = 2;
-  static final int closed = 3;
+  static const int connecting = 0;
+  static const int open = 1;
+  static const int closing = 2;
+  static const int closed = 3;
 }

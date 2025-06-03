@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:chatcore/chat-core.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_common/mixin/common_navigator_observer_mixin.dart';
@@ -7,7 +6,6 @@ import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/common_appbar.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/theme_color.dart';
-import 'package:flutter/services.dart';
 import 'package:ox_common/widgets/common_image.dart';
 import 'package:ox_common/widgets/common_network_image.dart';
 import 'package:ox_discovery/model/moment_extension_model.dart';
@@ -367,7 +365,7 @@ class MomentRootNotedWidgetState extends State<MomentRootNotedWidget> {
       );
 
       if(noteNotifier == null ) return;
-      noted = noteNotifier as NotedUIModel;
+      noted = noteNotifier;
     }
   }
 

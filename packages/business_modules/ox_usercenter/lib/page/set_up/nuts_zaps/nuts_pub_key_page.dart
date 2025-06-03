@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
@@ -12,7 +11,7 @@ import 'package:ox_common/widgets/common_image.dart';
 import 'nuts_add_pub_key_page.dart';
 
 class NutsPubKeyPage extends StatefulWidget {
-  NutsPubKeyPage({Key? key}) : super(key: key);
+  const NutsPubKeyPage({Key? key}) : super(key: key);
 
   @override
   NutsPubKeyPageState createState() => NutsPubKeyPageState();
@@ -50,7 +49,7 @@ class NutsPubKeyPageState extends State<NutsPubKeyPage> {
             _pubKeyWidget(isSelect: false),
             SizedBox(height: 24.px),
             CommonButton.themeButton(onTap: () {
-              OXNavigator.pushPage(context, (context) => NutsAddPubKeyPage());
+              OXNavigator.pushPage(context, (context) => const NutsAddPubKeyPage());
             }, text: 'Add Pub Key'),
           ],
         ).setPadding(
@@ -123,7 +122,7 @@ class NutsPubKeyPageState extends State<NutsPubKeyPage> {
                   fontWeight: FontWeight.w400,
                 ),
               ).setPaddingOnly(bottom: 4.px),
-              Container(
+              SizedBox(
                 width: 280.px,
                 child: Text(
                   'lnbc1pjky30tpp59shnkt9qe4vfvzmmk2k0yevqj5c9wu2ra0fvrw28vz7slr6wctusdqqcqzzsxqyz5vqsp5qple5cdqlpnf34pa0643xd7csv9',

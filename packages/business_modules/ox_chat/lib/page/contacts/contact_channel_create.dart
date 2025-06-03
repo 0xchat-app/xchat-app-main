@@ -12,7 +12,6 @@ import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_common/model/badge_model.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'package:ox_common/model/chat_type.dart';
-import 'package:ox_chat/page/session/chat_channel_message_page.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
 import 'package:ox_chat/widget/badge_selector_dialog.dart';
 import 'package:ox_common/navigator/navigator.dart';

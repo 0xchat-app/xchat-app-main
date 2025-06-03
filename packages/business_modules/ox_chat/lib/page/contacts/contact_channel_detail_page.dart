@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:extended_sliver/extended_sliver.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_chat/page/contacts/contact_channel_create.dart';
 import 'package:ox_chat/page/contacts/my_idcard_dialog.dart';
@@ -26,7 +25,6 @@ import 'package:chatcore/chat-core.dart';
 import 'package:nostr_core_dart/nostr.dart';
 import 'package:ox_theme/ox_theme.dart';
 
-import '../session/chat_channel_message_page.dart';
 
 ///Title: message_channel_detail_page
 ///Description: ()

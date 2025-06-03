@@ -2,8 +2,6 @@ import 'dart:core';
 import 'package:chatcore/chat-core.dart';
 import 'package:reflectable/mirrors.dart';
 import 'package:sqflite_sqlcipher/sqlite_api.dart';
-import 'db.dart';
-import 'db_object.dart';
 
 class DBHelper {
   static DateTime createDateTime(int milSeconds) {

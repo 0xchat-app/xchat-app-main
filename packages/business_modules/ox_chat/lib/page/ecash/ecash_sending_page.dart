@@ -4,8 +4,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:cashu_dart/cashu_dart.dart';
-import 'package:ox_chat/manager/chat_message_helper.dart';
-import 'package:ox_chat/manager/ecash_helper.dart';
 import 'package:ox_chat/page/contacts/user_list_page.dart';
 import 'package:ox_chat/utils/widget_tool.dart';
 

@@ -1,10 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:chatcore/chat-core.dart';
-import 'package:ox_common/component.dart';
 import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_common/utils/custom_uri_helper.dart';
-import 'package:ox_common/utils/ox_chat_binding.dart';
 import 'package:ox_module_service/ox_module_service.dart';
 
 class OXChatInterface {

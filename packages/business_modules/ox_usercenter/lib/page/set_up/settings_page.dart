@@ -195,7 +195,7 @@ class _SettingsPageState extends State<SettingsPage> with OXChatObserver {
             OXNavigator.pushPage(context, (context) => const ZapsPage());
             break;
           case SettingItemType.nutsZaps:
-            OXNavigator.pushPage(context, (context) => NutsZapsPage());
+            OXNavigator.pushPage(context, (context) => const NutsZapsPage());
             break;
           case SettingItemType.privacy:
             OXNavigator.pushPage(context, (context) => const PrivacyPage());

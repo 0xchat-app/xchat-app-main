@@ -11,7 +11,6 @@ import 'package:ox_common/widgets/common_pull_refresher.dart';
 import 'package:ox_discovery/model/moment_extension_model.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 
-import '../../enum/moment_enum.dart';
 import '../../model/moment_ui_model.dart';
 import '../widgets/moment_widget.dart';
 import 'moments_page.dart';

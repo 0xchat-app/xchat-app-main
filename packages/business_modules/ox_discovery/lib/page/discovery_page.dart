@@ -1,8 +1,6 @@
-import 'dart:ui';
 
 import 'package:chatcore/chat-core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:ox_cache_manager/ox_cache_manager.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/common_appbar.dart';
@@ -20,7 +18,6 @@ import 'package:ox_localizable/ox_localizable.dart';
 import 'moments/notifications_moments_page.dart';
 import 'moments/public_moments_page.dart';
 import 'package:ox_common/business_interface/ox_discovery/ox_discovery_model.dart';
-import 'package:flutter/cupertino.dart';
 
 enum EDiscoveryPageType { moment, group }
 
