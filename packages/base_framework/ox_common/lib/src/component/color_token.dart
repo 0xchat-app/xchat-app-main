@@ -62,7 +62,7 @@ extension AppColorResolver on ColorToken {
           final surface = CupertinoColors.systemBackground.resolveFrom(context);
           return Color.alphaBlend(base, surface);
         case ColorToken.onPrimaryContainer:
-          return cupertino.primaryContrastingColor;
+          return cupertino.primaryColor;
         case ColorToken.secondary:
           return cupertino.primaryColor;
         case ColorToken.onSecondary:

@@ -188,7 +188,7 @@ class ChatSessionUtils {
     }
   }
 
-  static void setChatMute(ChatSessionModelISAR model, bool muteValue) async {
+  static Future setChatMute(ChatSessionModelISAR model, bool muteValue) async {
     switch (model.chatType) {
       case ChatType.chatChannel:
         if (muteValue) {

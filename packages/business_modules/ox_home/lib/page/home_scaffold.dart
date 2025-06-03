@@ -62,7 +62,7 @@ class _HomeScaffoldState extends State<HomeScaffold> {
           width: 332.px,
           child: OXUserCenterInterface.settingSliderBuilder(context),
         ),
-        drawerEdgeDragWidth: 100.px,
+        drawerEdgeDragWidth: 50.px,
         body: buildBody(headerComponents),
       );
     }
