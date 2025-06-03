@@ -8,8 +8,8 @@ class PlatformStyle {
   static const isMock = true;
 
   static bool _isUseMaterial = false;
-  // static bool get isUseMaterial => _isUseMaterial;
-  static bool get isUseMaterial => true;
+  static bool get isUseMaterial => _isUseMaterial;
+  // static bool get isUseMaterial => true;
 
   static TargetPlatform? get mockPlatform {
     if (!isMock) return null;

@@ -86,7 +86,8 @@ class NotificationHelper {
     startHeartBeat();
   }
 
-  Future<OKEvent> logout() async {
+  Future logout() async {
+    if (serverPubkey.isEmpty) return;
     Map map = {'online': 0, 'deviceId': ''};
     Event event = await _encode(serverPubkey, jsonEncode(map), '');
     Completer<OKEvent> completer = Completer<OKEvent>();

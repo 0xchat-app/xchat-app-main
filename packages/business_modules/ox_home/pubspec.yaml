@@ -27,6 +27,8 @@ dependencies:
     path: ../../base_framework/ox_localizable
   ox_chat:
     path: ../../business_modules/ox_chat
+  ox_login:
+    path: ../../business_modules/ox_login
 
 dev_dependencies:
   flutter_test:

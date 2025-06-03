@@ -13,7 +13,7 @@ import 'button/text_button.dart';
 import 'button/tonal_button.dart';
 
 class CLButton {
-  static Widget _defaultText(String text) {
+  static Widget _defaultText(String text, [Color? color]) {
     return CLText(
       text,
       resolver: (context) {
@@ -28,6 +28,7 @@ class CLButton {
           height: textStyle?.height,
         );
       },
+      customColor: color,
     );
   }
 
@@ -172,6 +173,7 @@ class CLButton {
 
   static Widget text({
     String? text,
+    Color? color,
     AlignmentGeometry? alignment,
     VoidCallback? onTap,
     bool expanded = false,
@@ -179,7 +181,7 @@ class CLButton {
     double? height,
     EdgeInsetsGeometry? padding,
   }) {
-    Widget child = _defaultText(text ?? '');
+    Widget child = _defaultText(text ?? '', color);
     child = _alignIfNeeded(child, alignment);
 
     return _sizeWrapper(

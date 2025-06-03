@@ -116,7 +116,9 @@ class LaunchPageViewState extends State<LaunchPageView> {
         OXModuleService.pushPage(context, 'ox_usercenter', 'VerifyPasscodePage', {});
       } else {
         await userInfoInitializer;
-        Navigator.of(context).pushReplacement(CustomRouteFadeIn(const HomePage()));
+        Navigator.of(context).pushReplacement(
+          CustomRouteFadeIn(const HomePage())
+        );
       }
     });
   }

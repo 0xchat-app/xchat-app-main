@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_common/component.dart';
+import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/took_kit.dart';
 import 'package:ox_common/utils/ox_userinfo_manager.dart';
@@ -86,7 +88,13 @@ class _KeysPageState extends State<KeysPage>{
           ],
           footer: Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.px),
-            child: buildShowButton(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                buildShowButton(),
+                buildLogoutButton(),
+              ],
+            ),
           ),
         );
       },
@@ -102,6 +110,25 @@ class _KeysPageState extends State<KeysPage>{
       ),
       text: 'Show Private Key',
       onTap: () => isShowPriv$.value = true,
+    );
+  }
+
+  Widget buildLogoutButton() {
+    return CLButton.text(
+      padding: EdgeInsets.symmetric(
+        horizontal: 12.px,
+        vertical: 12.px,
+      ),
+      color: ColorToken.error.of(context),
+      text: 'Logout',
+      onTap: () {
+        OXUserInfoManager.sharedInstance.logout();
+        if (PlatformStyle.isUseMaterial) {
+          OXNavigator.popToRoot(context);
+        } else {
+          CupertinoSheetRoute.popSheet(context);
+        }
+      }
     );
   }
 
