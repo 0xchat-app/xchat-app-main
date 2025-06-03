@@ -84,7 +84,6 @@ class MainState extends State<MainApp>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    LogUtil.e("getCurrentLanguage : ${Localized.getCurrentLanguage()}");
     Localized.addLocaleChangedCallback(onLocaleChange);
     OXUserInfoManager.sharedInstance.addObserver(this);
     if (OXUserInfoManager.sharedInstance.isLogin) {

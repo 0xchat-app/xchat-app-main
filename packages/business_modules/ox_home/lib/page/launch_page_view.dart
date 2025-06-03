@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ox_common/component.dart';
+import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/utils/storage_key_tool.dart';
 import 'package:ox_common/utils/user_config_tool.dart';
 import 'package:ox_module_service/ox_module_service.dart';
@@ -30,12 +31,16 @@ class LaunchPageViewState extends State<LaunchPageView> {
 
   String _localPasscode = '';
 
+  late Future userInfoInitializer;
+
   @override
   void initState() {
     super.initState();
     _loadData();
 
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+
+    userInfoInitializer = OXUserInfoManager.sharedInstance.initLocalData();
   }
 
   void _loadData() async {
@@ -105,11 +110,12 @@ class LaunchPageViewState extends State<LaunchPageView> {
     }
   }
 
-  void _onLoaded() {
+  void _onLoaded() async {
     Future.delayed(const Duration(milliseconds: 2500), () async {
       if (_localPasscode.isNotEmpty) {
         OXModuleService.pushPage(context, 'ox_usercenter', 'VerifyPasscodePage', {});
       } else {
+        await userInfoInitializer;
         Navigator.of(context).pushReplacement(CustomRouteFadeIn(const HomePage()));
       }
     });

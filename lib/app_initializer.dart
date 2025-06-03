@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:chatcore/chat-core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:ox_calling/ox_calling.dart';
 import 'package:ox_chat/ox_chat.dart';
 import 'package:ox_chat_ui/ox_chat_ui.dart';
@@ -13,9 +12,7 @@ import 'package:ox_common/log_util.dart';
 import 'package:ox_common/ox_common.dart';
 import 'package:ox_common/utils/error_utils.dart';
 import 'package:ox_common/utils/font_size_notifier.dart';
-import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/utils/storage_key_tool.dart';
-import 'package:ox_common/utils/theme_color.dart';
 import 'package:ox_common/utils/user_config_tool.dart';
 import 'package:ox_cache_manager/ox_cache_manager.dart';
 import 'package:ox_discovery/ox_discovery.dart';
@@ -48,29 +45,11 @@ class AppInitializer {
   Future initialize() async {
     await _safeHandle(() async {
       try {
-        WidgetsFlutterBinding.ensureInitialized();
-        await windowManager.initWindow();
-        HttpOverrides.global = OXHttpOverrides(); //ignore all ssl
-        initializeReflectable();
-        await RustLib.init();
-        await ThemeManager.init();
-        PlatformStyle.initialized();
-        await Localized.init();
-        await _setupModules();
-        await OXUserInfoManager.sharedInstance.initLocalData();
-        ThemeManager.addOnThemeChangedCallback(onThemeStyleChange);
-        double fontSize = await OXCacheManager.defaultOXCacheManager.getForeverData(StorageKeyTool.APP_FONT_SIZE, defaultValue: 1.0);
-        textScaleFactorNotifier.value = fontSize;
-        DartPingIOS.register();
-        FlutterError.onError = (FlutterErrorDetails details) async {
-          bool openDevLog = UserConfigTool.getSetting(StorageSettingKey.KEY_OPEN_DEV_LOG.name,
-              defaultValue: false);
-          if (openDevLog) {
-            FlutterError.presentError(details);
-            ErrorUtils.logErrorToFile(details.toString() + '\n' + details.stack.toString());
-          }
-        };
-        improveErrorWidget();
+        await coreInitializer();
+        await Future.wait([
+          uiInitializer(),
+          businessInitializer(),
+        ]);
         if (kDebugMode) {
           getApplicationDocumentsDirectory().then((value) {
             LogUtil.d('[App start] Application Documents Path: $value');
@@ -80,6 +59,36 @@ class AppInitializer {
         initializeErrors.add(OXErrorInfo(error, stack));
       }
     });
+  }
+
+  Future coreInitializer() async {
+    initializeReflectable();
+    await RustLib.init();
+    improveOnErrorHandler();
+    improveErrorWidget();
+  }
+
+  Future businessInitializer() async {
+    HttpOverrides.global = OXHttpOverrides(); //ignore all ssl
+    await Future.wait([
+      ThemeManager.init(),
+      Localized.init(),
+    ]);
+    await _setupModules();
+
+    ThemeManager.addOnThemeChangedCallback(onThemeStyleChange);
+    DartPingIOS.register();
+  }
+
+  Future uiInitializer() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await windowManager.initWindow();
+    PlatformStyle.initialized();
+    double fontSize = await OXCacheManager.defaultOXCacheManager.getForeverData(
+      StorageKeyTool.APP_FONT_SIZE,
+      defaultValue: 1.0,
+    );
+    textScaleFactorNotifier.value = fontSize;
   }
 
   onThemeStyleChange() async {
@@ -111,6 +120,17 @@ class AppInitializer {
         rethrow;
       }
     }
+  }
+
+  void improveOnErrorHandler() {
+    FlutterError.onError = (FlutterErrorDetails details) async {
+      bool openDevLog = UserConfigTool.getSetting(StorageSettingKey.KEY_OPEN_DEV_LOG.name,
+          defaultValue: false);
+      if (openDevLog) {
+        FlutterError.presentError(details);
+        ErrorUtils.logErrorToFile(details.toString() + '\n' + details.stack.toString());
+      }
+    };
   }
 
   void improveErrorWidget() {
