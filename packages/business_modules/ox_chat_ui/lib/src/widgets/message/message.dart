@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/platform_utils.dart';
 import 'package:ox_common/utils/theme_color.dart';
@@ -285,7 +286,7 @@ class MessageState extends State<Message> {
     final currentUserIsAuthor = user.id == widget.message.author.id;
     final avatarBuilder = widget.uiConfig.avatarBuilder;
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       textDirection: widget.bubbleRtlAlignment == BubbleRtlAlignment.left
           ? null
@@ -303,10 +304,6 @@ class MessageState extends State<Message> {
             ],
           ),
         ),
-        if (currentUserIsAuthor && avatarBuilder != null)
-          _avatarBuilder(avatarBuilder(widget.message)).setPaddingOnly(
-            left: avatarPadding,
-          ),
       ],
     );
   }
@@ -330,15 +327,17 @@ class MessageState extends State<Message> {
     )
         : BorderRadius.only(
       bottomLeft: Radius.circular(
-        messageBorderRadius,
+        currentUserIsAuthor ? messageBorderRadius : 0,
       ),
       bottomRight: Radius.circular(
+        currentUserIsAuthor ? 0 : messageBorderRadius,
+      ),
+      topLeft: Radius.circular(
         messageBorderRadius,
       ),
-      topLeft:
-      Radius.circular(currentUserIsAuthor ? messageBorderRadius : 0),
-      topRight:
-      Radius.circular(currentUserIsAuthor ? 0 : messageBorderRadius),
+      topRight: Radius.circular(
+        messageBorderRadius,
+      ),
     );
     final enlargeEmojis =
         widget.emojiEnlargementBehavior != EmojiEnlargementBehavior.never &&
@@ -424,15 +423,9 @@ class MessageState extends State<Message> {
       bubble = Container(
         decoration: useBubbleBg ? BoxDecoration(
           borderRadius: borderRadius,
-          gradient: currentUserIsAuthor ? LinearGradient(
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-            colors: [
-              ThemeColor.gradientMainEnd,
-              ThemeColor.gradientMainStart
-            ],
-          ) : null,
-          color: ThemeColor.color180,
+          color: currentUserIsAuthor
+              ? ColorToken.primary.of(context)
+              : ColorToken.surfaceContainer.of(context),
         ) : null,
         child: ClipRRect(
           borderRadius: borderRadius,

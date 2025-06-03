@@ -6,7 +6,6 @@ import 'package:ox_chat/widget/common_chat_widget.dart';
 import 'package:ox_chat_ui/ox_chat_ui.dart';
 import 'package:ox_chat/utils/general_handler/chat_general_handler.dart';
 import 'package:ox_chat/utils/chat_log_utils.dart';
-import 'package:ox_common/component.dart';
 import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
@@ -58,17 +57,10 @@ class _ChatGroupMessagePageState extends State<ChatGroupMessagePage> {
 
   @override
   Widget build(BuildContext context) {
-    return CommonChatWidget(
-      handler: handler,
-      navBar: buildNavBar(),
-      bottomHintParam: bottomHintParam,
-    );
-  }
-
-  CLAppBar buildNavBar() {
     GroupDBISAR? group = Groups.sharedInstance.groups[groupId]?.value;
     String showName = group?.name ?? '';
-    return CLAppBar(
+    return CommonChatWidget(
+      handler: handler,
       title: showName,
       actions: [
         Container(
@@ -84,25 +76,8 @@ class _ChatGroupMessagePageState extends State<ChatGroupMessagePage> {
           ),
         ),
       ],
+      bottomHintParam: bottomHintParam,
     );
-    // return CommonChatNavBar(
-    //   handler: handler,
-    //   title: showName,
-    //   actions: [
-    //     Container(
-    //       alignment: Alignment.center,
-    //       child: OXGroupAvatar(
-    //         group: group,
-    //         size: 36,
-    //         isClickable: true,
-    //         onReturnFromNextPage: () {
-    //           if (!mounted) return ;
-    //           setState(() { });
-    //         },
-    //       ),
-    //     ),
-    //   ],
-    // );
   }
 
   void _updateChatStatus() {

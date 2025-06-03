@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:ox_chat/widget/common_chat_widget.dart';
 import 'package:ox_chat_ui/ox_chat_ui.dart';
 import 'package:ox_chat/utils/general_handler/chat_general_handler.dart';
-import 'package:ox_common/component.dart';
 import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
@@ -66,17 +65,10 @@ class _ChatChannelMessagePageState extends State<ChatChannelMessagePage> {
 
   @override
   Widget build(BuildContext context) {
-    return CommonChatWidget(
-      handler: handler,
-      navBar: buildNavBar(),
-      bottomHintParam: bottomHintParam,
-    );
-  }
-
-  CLAppBar buildNavBar() {
     ChannelDBISAR? channelDB = Channels.sharedInstance.channels[channelId]?.value;
     String showName = channelDB?.name ?? '';
-    return CLAppBar(
+    return CommonChatWidget(
+      handler: handler,
       title: showName,
       actions: [
         Container(
@@ -92,25 +84,8 @@ class _ChatChannelMessagePageState extends State<ChatChannelMessagePage> {
           ),
         ),
       ],
+      bottomHintParam: bottomHintParam,
     );
-    // return CommonChatNavBar(
-    //   handler: handler,
-    //   title: showName,
-    //   actions: [
-    //     Container(
-    //       alignment: Alignment.center,
-    //       child: OXChannelAvatar(
-    //         channel: channel,
-    //         size: 36,
-    //         isClickable: true,
-    //         onReturnFromNextPage: () {
-    //           if (!mounted) return ;
-    //           setState(() { });
-    //         },
-    //       ),
-    //     ),
-    //   ],
-    // );
   }
 
   void _updateChatStatus() {

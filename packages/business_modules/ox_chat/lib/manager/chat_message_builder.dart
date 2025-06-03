@@ -11,6 +11,8 @@ import 'package:ox_common/business_interface/ox_chat/call_message_type.dart';
 import 'package:ox_common/business_interface/ox_chat/custom_message_type.dart';
 import 'package:ox_common/business_interface/ox_chat/utils.dart';
 import 'package:ox_common/business_interface/ox_chat/interface.dart';
+import 'package:ox_common/component.dart';
+import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/upload/upload_utils.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/date_utils.dart';
@@ -30,6 +32,18 @@ part 'chat_message_builder_custom.dart';
 part 'chat_message_builder_reaction.dart';
 
 class ChatMessageBuilder {
+  static Widget bubbleWrapper({
+    required bool isMe,
+    required Widget child,
+  }) {
+    final ctx = OXNavigator.navigatorKey.currentContext!;
+    return Container(
+      color: isMe
+          ? ColorToken.primary.of(ctx)
+          : ColorToken.surfaceContainer.of(ctx),
+      child: child,
+    );
+  }
 
   static Widget buildRepliedMessageView(types.Message message, {
     required int messageWidth,
@@ -221,7 +235,7 @@ class ChatMessageBuilder {
 
     switch (type) {
       case CustomMessageType.zaps:
-        return ChatMessageBuilderCustomEx._buildZapsMessage(message, reactionWidget);
+        return ChatMessageBuilderCustomEx._buildZapsMessage(message, reactionWidget, isMe);
       case CustomMessageType.call:
         return ChatMessageBuilderCustomEx._buildCallMessage(message, isMe);
       case CustomMessageType.template:
@@ -231,11 +245,11 @@ class ChatMessageBuilder {
       case CustomMessageType.ecash:
         return ChatMessageBuilderCustomEx._buildEcashMessage(message, reactionWidget, isMe);
       case CustomMessageType.ecashV2:
-        return ChatMessageBuilderCustomEx._buildEcashV2Message(message, reactionWidget);
+        return ChatMessageBuilderCustomEx._buildEcashV2Message(message, reactionWidget, isMe);
       case CustomMessageType.imageSending:
-        return ChatMessageBuilderCustomEx._buildImageSendingMessage(message, messageWidth, reactionWidget, receiverPubkey);
+        return ChatMessageBuilderCustomEx._buildImageSendingMessage(message, messageWidth, reactionWidget, receiverPubkey, isMe);
       case CustomMessageType.video:
-        return ChatMessageBuilderCustomEx._buildVideoMessage(message, messageWidth, reactionWidget, receiverPubkey, messageUpdateCallback);
+        return ChatMessageBuilderCustomEx._buildVideoMessage(message, messageWidth, reactionWidget, receiverPubkey, isMe, messageUpdateCallback);
       default:
         return SizedBox();
     }

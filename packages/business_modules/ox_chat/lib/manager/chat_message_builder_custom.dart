@@ -33,18 +33,9 @@ extension ChatMessageBuilderCustomEx on ChatMessageBuilder {
     ));
   }
 
-  static Widget _buildZapsMessage(types.CustomMessage message, Widget reactionWidget) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          colors: [
-            ThemeColor.gradientMainEnd,
-            ThemeColor.gradientMainStart
-          ],
-        ),
-      ),
+  static Widget _buildZapsMessage(types.CustomMessage message, Widget reactionWidget, bool isMe) {
+    return ChatMessageBuilder.bubbleWrapper(
+      isMe: isMe,
       child: IntrinsicWidth(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -120,35 +111,28 @@ extension ChatMessageBuilderCustomEx on ChatMessageBuilder {
     final text = CallMessageEx(message).callText;
     final type = CallMessageEx(message).callType;
     final tintColor = isMe ? ThemeColor.white : ThemeColor.color0;
-    return Container(
-      padding: EdgeInsets.all(Adapt.px(10)),
-      decoration: isMe ? BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          colors: [
-            ThemeColor.gradientMainEnd,
-            ThemeColor.gradientMainStart,
+    return ChatMessageBuilder.bubbleWrapper(
+      isMe: isMe,
+      child: Padding(
+        padding: EdgeInsets.all(Adapt.px(10)),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              text,
+              style: TextStyle(
+                  color: tintColor,
+                  fontSize: 14
+              ),
+            ).setPadding(EdgeInsets.only(right: Adapt.px(10))),
+            CommonImage(
+              iconName: type?.iconName ?? '',
+              size: Adapt.px(20),
+              color: tintColor,
+              package: OXChatInterface.moduleName,
+            ),
           ],
         ),
-      ) : null,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            text,
-            style: TextStyle(
-                color: tintColor,
-                fontSize: 14
-            ),
-          ).setPadding(EdgeInsets.only(right: Adapt.px(10))),
-          CommonImage(
-            iconName: type?.iconName ?? '',
-            size: Adapt.px(20),
-            color: tintColor,
-            package: OXChatInterface.moduleName,
-          ),
-        ],
       ),
     );
   }
@@ -330,17 +314,8 @@ extension ChatMessageBuilderCustomEx on ChatMessageBuilder {
     final isOpened = EcashMessageEx(message).isOpened;
     return Opacity(
       opacity: isOpened ? 0.5 : 1,
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-            colors: [
-              ThemeColor.gradientMainEnd,
-              ThemeColor.gradientMainStart,
-            ],
-          ),
-        ),
+      child: ChatMessageBuilder.bubbleWrapper(
+        isMe: isMe,
         child: Column(
           children: [
             Container(
@@ -416,20 +391,11 @@ extension ChatMessageBuilderCustomEx on ChatMessageBuilder {
     );
   }
 
-  static Widget _buildEcashV2Message(types.CustomMessage message, Widget reactionWidget) {
+  static Widget _buildEcashV2Message(types.CustomMessage message, Widget reactionWidget, bool isMe) {
     final isOpened = EcashV2MessageEx(message).isOpened;
     final opacity = isOpened ? 0.5 : 1.0;
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          colors: [
-            ThemeColor.gradientMainEnd.withOpacity(opacity),
-            ThemeColor.gradientMainStart.withOpacity(opacity),
-          ],
-        ),
-      ),
+    return ChatMessageBuilder.bubbleWrapper(
+      isMe: isMe,
       child: IntrinsicWidth(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -543,6 +509,7 @@ extension ChatMessageBuilderCustomEx on ChatMessageBuilder {
     int messageWidth,
     Widget reactionWidget,
     String? receiverPubkey,
+    bool isMe,
   ) {
     final uri = ImageSendingMessageEx(message).uri;
     final url = ImageSendingMessageEx(message).url;
@@ -578,17 +545,8 @@ extension ChatMessageBuilderCustomEx on ChatMessageBuilder {
     );
 
     if (message.hasReactions) {
-      widget = Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-            colors: [
-              ThemeColor.gradientMainEnd,
-              ThemeColor.gradientMainStart,
-            ],
-          ),
-        ),
+      widget = ChatMessageBuilder.bubbleWrapper(
+        isMe: isMe,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -610,6 +568,7 @@ extension ChatMessageBuilderCustomEx on ChatMessageBuilder {
     int messageWidth,
     Widget reactionWidget,
     String? receiverPubkey,
+    bool isMe,
     Function(types.Message newMessage)? messageUpdateCallback,
   ) {
 
@@ -622,17 +581,8 @@ extension ChatMessageBuilderCustomEx on ChatMessageBuilder {
     );
 
     if (message.hasReactions) {
-      widget = Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-            colors: [
-              ThemeColor.gradientMainEnd,
-              ThemeColor.gradientMainStart,
-            ],
-          ),
-        ),
+      widget = ChatMessageBuilder.bubbleWrapper(
+        isMe: isMe,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

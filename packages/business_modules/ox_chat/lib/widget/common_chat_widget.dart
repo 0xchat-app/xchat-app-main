@@ -28,7 +28,8 @@ class CommonChatWidget extends StatefulWidget {
 
   CommonChatWidget({
     required this.handler,
-    this.navBar,
+    this.title,
+    this.actions = const [],
     this.customTopWidget,
     this.customCenterWidget,
     this.customBottomWidget,
@@ -38,7 +39,9 @@ class CommonChatWidget extends StatefulWidget {
   // Basic
 
   final ChatGeneralHandler handler;
-  final CLAppBar? navBar;
+
+  dynamic title;
+  final List<Widget> actions;
 
   // Custom
 
@@ -123,17 +126,24 @@ class CommonChatWidgetState extends State<CommonChatWidget> {
     if (widget.handler.isPreviewMode) {
       return Column(
         children: [
-          widget.navBar ?? const SizedBox(),
+          buildAppBar(),
           Expanded(child: buildChatContentWidget()),
         ],
       );
     }
 
     return CLScaffold(
-      appBar: widget.navBar,
+      appBar: buildAppBar(),
       body: pasteActionListenerWrapper(
         child: buildChatContentWidget(),
       ),
+    );
+  }
+
+  CLAppBar buildAppBar() {
+    return CLAppBar(
+      title: widget.title,
+      actions: widget.actions,
     );
   }
 
