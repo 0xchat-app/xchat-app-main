@@ -556,12 +556,7 @@ class ChatState extends State<Chat> {
                     ),
                     Visibility(
                       visible: widget.enableBottomWidget,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: Adapt.px(12),
-                        ),
-                        child: widget.customBottomWidget ?? _buildBottomInputArea(),
-                      ),
+                      child: widget.customBottomWidget ?? _buildBottomInputArea(),
                     ),
                   ],
                 ),

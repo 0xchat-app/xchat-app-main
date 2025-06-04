@@ -76,17 +76,6 @@ class _GiphyPickerState extends State<GiphyPicker> with SingleTickerProviderStat
     child: CustomScrollView(
         controller: _scrollController,
         slivers: [
-          SliverAppBar(
-            toolbarHeight: 0,
-            backgroundColor: Colors.transparent,
-            bottom: GiphyTabBar(controller: _tabController,),
-            // bottom: PreferredSize(preferredSize: Size.fromHeight(Adapt.px(38)),child: _buildTabBar(),),
-          ),
-            SliverToBoxAdapter(
-              child: SizedBox(
-                height: Adapt.px(12),
-              ),
-            ),
           _isAgreeUseGiphy && GiphyCategory.values[_selectedIndex] != GiphyCategory.EMOJIS && GiphyCategory.values[_selectedIndex] != GiphyCategory.COLLECT ? SliverPadding(
               padding: EdgeInsets.only(bottom: Adapt.px(12)),
               sliver: SliverToBoxAdapter(

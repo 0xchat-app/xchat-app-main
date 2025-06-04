@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/widgets/common_image.dart';
 
 import '../state/inherited_chat_theme.dart';
@@ -27,7 +28,7 @@ class SendButton extends StatelessWidget {
           iconName: 'chat_send.png',
           size: size,
           package: 'ox_chat_ui',
-          color: InheritedChatTheme.of(context).theme.inputTextColor,
+          color: ColorToken.onSurface.of(context),
           onPressed: onPressed,
           padding: padding,
         ),

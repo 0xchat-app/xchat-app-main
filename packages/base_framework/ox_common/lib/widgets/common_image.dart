@@ -75,8 +75,9 @@ class CommonIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  GestureDetector(
+    return GestureDetector(
       onTap: onPressed,
+      behavior: HitTestBehavior.translucent,
       child: Padding(
         padding: padding ?? EdgeInsets.zero,
         child: CommonImage(

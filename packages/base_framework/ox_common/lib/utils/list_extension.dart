@@ -50,4 +50,16 @@ extension ListEx<T> on List<T> {
 
     return uniqueList;
   }
+
+  List<List<T>> chunk(int chunkSize) {
+    assert(chunkSize > 0);
+
+    final source = this;
+    final List<List<T>> result = [];
+    for (var i = 0; i < source.length; i += chunkSize) {
+      final end = (i + chunkSize < source.length) ? i + chunkSize : source.length;
+      result.add(source.sublist(i, end));
+    }
+    return result;
+  }
 }

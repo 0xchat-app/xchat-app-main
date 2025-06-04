@@ -96,7 +96,7 @@ class MainState extends State<MainApp>
     showErrorDialogIfNeeded();
 
     if (!Adapt.isInitialized) {
-      Adapt.init(standardW: 375, standardH: 812);
+      Adapt.init();
     }
     nip46ConnectStatusInit();
 
@@ -145,7 +145,7 @@ class MainState extends State<MainApp>
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!Adapt.isInitialized) {
-      Adapt.init(standardW: 375, standardH: 812);
+      Adapt.init();
       setState(() {});
     }
   }

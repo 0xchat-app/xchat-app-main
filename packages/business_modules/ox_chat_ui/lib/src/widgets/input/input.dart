@@ -1,21 +1,14 @@
 import 'dart:math';
 
-import 'package:chatcore/chat-core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-import 'package:ox_common/model/chat_session_model_isar.dart';
-import 'package:ox_common/navigator/navigator.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/adapt.dart';
-import 'package:ox_common/utils/ox_chat_binding.dart';
 import 'package:ox_common/utils/platform_utils.dart';
-import 'package:ox_common/utils/theme_color.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/common_image.dart';
-import 'package:ox_common/widgets/common_time_dialog.dart';
-import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
-import 'package:ox_module_service/ox_module_service.dart';
 
 import '../../models/giphy_image.dart';
 import '../../models/input_clear_mode.dart';
@@ -95,7 +88,7 @@ class Input extends StatefulWidget {
 /// [Input] widget state.
 class InputState extends State<Input>{
 
-  final _itemSpacing = Adapt.px(12);
+  double get _itemSpacing => 8.px;
   double get inputSuffixIconSize => 24.pxWithTextScale;
 
   InputType inputType = InputType.inputTypeDefault;
@@ -120,21 +113,8 @@ class InputState extends State<Input>{
   bool _sendButtonVisible = false;
   late TextEditingController _textController;
 
-  bool safeAreaBottomInsetsInit = false;
-  double safeAreaBottomInsets = 0.0;
-
-  ChatSessionModelISAR? get _chatSessionModel {
-    if(widget.chatId == null) return null;
-    final model = OXChatBinding.sharedInstance.sessionMap[widget.chatId];
-    return model;
-  }
-
-  // auto delete
-  int get _autoDelExTime {
-    final autoDelExpiration = _chatSessionModel?.expiration;
-    if(autoDelExpiration == null) return 0;
-    return autoDelExpiration;
-  }
+  Curve get animationCurves => Curves.ease;
+  Duration get animationDuration => Duration(milliseconds: 200);
 
   void dissMissMoreView(){
     changeInputType(InputType.inputTypeDefault);
@@ -155,18 +135,6 @@ class InputState extends State<Input>{
     _textController.dispose();
     // WidgetsBinding.instance.removeObserver(this);
     super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (!safeAreaBottomInsetsInit) {
-      safeAreaBottomInsetsInit = true;
-      safeAreaBottomInsets = MediaQuery.of(context).padding.bottom;
-    }
-    return GestureDetector(
-      onTap: () => _inputFocusNode.requestFocus(),
-      child: _inputBuilder(),
-    );
   }
 
   @override
@@ -193,15 +161,45 @@ class InputState extends State<Input>{
     widget.onFocusNodeInitialized?.call(_inputFocusNode);
   }
 
-  Widget getInputWidget(EdgeInsets buttonPadding,EdgeInsetsGeometry textPadding) =>
-      Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          defaultInputWidget(buttonPadding, textPadding),
-          widget.inputBottomView ?? SizedBox(),
-          getMyMoreView(),
-        ],
-      );
+  @override
+  Widget build(BuildContext context) {
+    return _inputBuilder();
+  }
+
+  Widget _inputBuilder() {
+    final buttonPadding = InheritedChatTheme.of(context)
+        .theme
+        .inputPadding
+        .copyWith(left: Adapt.px(12), right: Adapt.px(12));
+    final textPadding = InheritedChatTheme.of(context)
+        .theme
+        .inputPadding;
+    return Container(
+      decoration: BoxDecoration(
+        color: ColorToken.surfaceContainer.of(context),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: getInputWidget(buttonPadding, textPadding),
+    );
+  }
+
+  Widget getInputWidget(EdgeInsets buttonPadding,EdgeInsetsGeometry textPadding) {
+    final keyboardHeight = getKeyboardHeight();
+    final safeBottomHeight = getSafeBottomHeight();
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        defaultInputWidget(buttonPadding, textPadding),
+        widget.inputBottomView ?? SizedBox(),
+        getMyMoreView(),
+        Container(
+          height: keyboardHeight + safeBottomHeight,
+          alignment: Alignment.topCenter,
+        ),
+      ],
+    );
+  }
+
 
   Widget getMyMoreView() {
     Widget? contentWidget;
@@ -209,21 +207,24 @@ class InputState extends State<Input>{
       contentWidget = InputMorePage(items: widget.items,);
     } else if (inputType == InputType.inputTypeEmoji) {
       contentWidget = GiphyPicker(
-          onSelected: (value) {
-            if (widget.onGifSend != null) {
-              widget.onGifSend!(value);
-            }
-          },
-          textController: _textController);
-    } else if (inputType == InputType.inputTypeVoice){
-      contentWidget = InputVoicePage(onPressed: (_path, duration) {
-        if(widget.onVoiceSend != null){
-          widget.onVoiceSend!(_path, duration);
-        }
-      }, onCancel: () { },);
+        onSelected: (value) {
+          if (widget.onGifSend != null) {
+            widget.onGifSend!(value);
+          }
+        },
+        textController: _textController,
+      );
+    } else if (inputType == InputType.inputTypeVoice) {
+      contentWidget = InputVoicePage(
+        onPressed: (_path, duration) {
+          if (widget.onVoiceSend != null) {
+            widget.onVoiceSend?.call(_path, duration);
+          }
+        },
+        onCancel: () { },
+      );
     }
 
-    final animationDuration = Duration(milliseconds: 200);
     var height = 0.0;
     switch (inputType) {
       case InputType.inputTypeEmoji:
@@ -238,8 +239,14 @@ class InputState extends State<Input>{
       default:
         break ;
     }
-    height += safeAreaBottomInsets;
 
+    return AnimatedContainer(
+      duration: animationDuration,
+      curve: animationCurves,
+      height: height,
+      alignment: Alignment.topCenter,
+      child: contentWidget,
+    );
     if (contentWidget != null) {
         return AnimatedContainer(
           duration: animationDuration,
@@ -256,7 +263,9 @@ class InputState extends State<Input>{
         duration: animationDuration,
         curve: Curves.easeInOut,
         height: height, // Dynamic height adjustment
-        child:Container(),
+        child: Container(
+          color: ColorToken.surfaceContainer.of(context),
+        ),
         onEnd: () {
           widget.customInputViewChanged?.call(inputType);
           if(inputType == InputType.inputTypeText){
@@ -268,50 +277,43 @@ class InputState extends State<Input>{
   }
 
   Widget defaultInputWidget(EdgeInsets buttonPadding, EdgeInsetsGeometry textPadding) {
-    final verticalPadding = EdgeInsets.symmetric(vertical: 8.px,);
+    final verticalPadding = EdgeInsets.symmetric(vertical: 8.px);
     return Container(
-      decoration: BoxDecoration(
-        color: ThemeColor.color190,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      margin: EdgeInsets.only(bottom: Adapt.px(10)),
       padding: EdgeInsets.symmetric(
-        vertical: Adapt.px(8),
+        vertical: 16.px,
       ),
       child: Row(
         textDirection: TextDirection.ltr,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          _buildMoreButton().setPadding(verticalPadding),
+          _buildMoreButton().setPaddingOnly(left: verticalPadding.vertical),
+          _buildEmojiButton().setPaddingOnly(right: verticalPadding.vertical),
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: ThemeColor.color180,
-                borderRadius: BorderRadius.circular(12),
+                color: ColorToken.surfaceContainerHigh.of(context),
+                borderRadius: BorderRadius.circular(28.px),
               ),
-              padding: verticalPadding,
+              padding: EdgeInsets.only(left: 12.px),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Expanded(
                     child: _buildInputTextField().setPadding(
                       EdgeInsets.only(left: _itemSpacing),
                     ),
                   ),
-                  _buildChatTimeButton(),
-                  _buildEmojiButton(),
+                  AnimatedCrossFade(
+                    duration: const Duration(milliseconds: 200),
+                    firstChild: _buildSendButton(),
+                    secondChild: _buildVoiceButton(),
+                    crossFadeState: _sendButtonVisible
+                        ? CrossFadeState.showFirst
+                        : CrossFadeState.showSecond,
+                  ).setPadding(verticalPadding),
                 ],
               ),
-            ),
+            ).setPaddingOnly(right: 16.px),
           ),
-          AnimatedCrossFade(
-            duration: const Duration(milliseconds: 200),
-            firstChild: _buildSendButton(),
-            secondChild: _buildVoiceButton(),
-            crossFadeState: _sendButtonVisible
-                ? CrossFadeState.showFirst
-                : CrossFadeState.showSecond,
-          ).setPadding(verticalPadding),
         ],
       ),
     );
@@ -330,64 +332,54 @@ class InputState extends State<Input>{
     );
   }
 
-  Widget _buildInputTextField() =>
-      Container(
-        constraints: BoxConstraints(minHeight: inputSuffixIconSize),
-        child: TextField(
-          enabled: widget.options.enabled,
-          autocorrect: widget.options.autocorrect,
-          enableSuggestions: widget.options.enableSuggestions,
-          controller: _textController,
-          cursorColor: InheritedChatTheme.of(context)
-              .theme
-              .inputTextCursorColor,
-          decoration: InheritedChatTheme.of(context)
-              .theme
-              .inputTextDecoration
-              .copyWith(
-            hintStyle: InheritedChatTheme.of(context)
-                .theme
-                .inputTextStyle
-                .copyWith(
-              color: InheritedChatTheme.of(context)
-                  .theme
-                  .inputTextColor
-                  .withOpacity(0.5),
-            ),
-            hintText: Localized.text('ox_chat_ui.chat_input_hint_text'),
-            hintMaxLines: 1,
-            // InheritedL10n.of(context).l10n.inputPlaceholder,
+  Widget _buildInputTextField() {
+    final textStyle = Theme.of(context).textTheme.bodyLarge!;
+    final textColor = ColorToken.onSurfaceVariant.of(context);
+    return Container(
+      constraints: BoxConstraints(minHeight: inputSuffixIconSize),
+      child: TextField(
+        enabled: widget.options.enabled,
+        autocorrect: widget.options.autocorrect,
+        enableSuggestions: widget.options.enableSuggestions,
+        controller: _textController,
+        cursorColor: ColorToken.primary.of(context),
+        decoration: InheritedChatTheme.of(context)
+            .theme
+            .inputTextDecoration
+            .copyWith(
+          hintStyle: textStyle.copyWith(
+            color: textColor.withValues(alpha: 0.5),
           ),
-          focusNode: _inputFocusNode,
-          keyboardType: widget.options.keyboardType,
-          maxLines: 10,
-          minLines: 1,
-          onChanged: widget.options.onTextChanged,
-          onTap: (){
-            widget.options.onTextFieldTap;
-            changeInputType(InputType.inputTypeText);
-          },
-          style: InheritedChatTheme.of(context)
-              .theme
-              .inputTextStyle
-              .copyWith(
-            color: InheritedChatTheme.of(context)
-                .theme
-                .inputTextColor,
-          ),
-          textCapitalization: TextCapitalization.sentences,
-          contentInsertionConfiguration:  ContentInsertionConfiguration(
-            allowedMimeTypes: const <String>['image/png', 'image/gif', 'image/webp'],
-            onContentInserted: (KeyboardInsertedContent data) async {
-              if (data.data != null) {
-                widget.onInsertedContent?.call(data);
-              }
-            },
-          ),
-          contextMenuBuilder: widget.options.contextMenuBuilder ?? (_, editableTextState) =>
-              AdaptiveTextSelectionToolbar.editableText(editableTextState: editableTextState),
+          hintText: Localized.text('ox_chat_ui.chat_input_hint_text'),
+          hintMaxLines: 1,
+          // InheritedL10n.of(context).l10n.inputPlaceholder,
         ),
-      );
+        focusNode: _inputFocusNode,
+        keyboardType: widget.options.keyboardType,
+        maxLines: 10,
+        minLines: 1,
+        onChanged: widget.options.onTextChanged,
+        onTap: (){
+          widget.options.onTextFieldTap;
+          changeInputType(InputType.inputTypeText);
+        },
+        style: textStyle.copyWith(
+          color: textColor,
+        ),
+        textCapitalization: TextCapitalization.sentences,
+        contentInsertionConfiguration:  ContentInsertionConfiguration(
+          allowedMimeTypes: const <String>['image/png', 'image/gif', 'image/webp'],
+          onContentInserted: (KeyboardInsertedContent data) async {
+            if (data.data != null) {
+              widget.onInsertedContent?.call(data);
+            }
+          },
+        ),
+        contextMenuBuilder: widget.options.contextMenuBuilder ?? (_, editableTextState) =>
+            AdaptiveTextSelectionToolbar.editableText(editableTextState: editableTextState),
+      ),
+    );
+  }
 
   Widget _buildSendButton() =>
       SendButton(
@@ -396,20 +388,6 @@ class InputState extends State<Input>{
         size: inputSuffixIconSize,
       );
 
-  Widget _buildChatTimeButton() {
-    if(widget.chatId == null || _autoDelExTime == 0) return Container();
-    return GestureDetector(
-      onTap: _selectChatTimeDialog,
-      child: CommonImage(
-        iconName: 'chat_time.png',
-        size: inputSuffixIconSize,
-        useTheme: true,
-        package: 'ox_chat',
-      ),
-    );
-  }
-
-
   Widget _buildEmojiButton() =>
       CommonIconButton(
         onPressed: () {
@@ -417,8 +395,9 @@ class InputState extends State<Input>{
         },
         iconName: 'chat_emoti_icon.png',
         size: inputSuffixIconSize,
+        color: ColorToken.onSurface.of(context),
         package: 'ox_chat_ui',
-        padding: EdgeInsets.symmetric(horizontal: _itemSpacing),
+        padding: EdgeInsets.all(_itemSpacing),
       );
 
   Widget _buildMoreButton() =>
@@ -428,50 +407,26 @@ class InputState extends State<Input>{
         },
         iconName: 'chat_more_icon.png',
         size: inputSuffixIconSize,
+        color: ColorToken.onSurface.of(context),
         package: 'ox_chat_ui',
-        padding: EdgeInsets.symmetric(horizontal: _itemSpacing),
+        padding: EdgeInsets.all(_itemSpacing),
       );
 
+  double getKeyboardHeight() {
+    final bottomInset = View.of(context).viewInsets.bottom;
+    final devicePixelRatio = View.of(context).devicePixelRatio;
+    double keyboardHeight;
+    if (devicePixelRatio == 0) {
+      keyboardHeight = 0;
+    } else {
+      keyboardHeight = bottomInset / devicePixelRatio;
+    }
+    return keyboardHeight;
+  }
 
-  void _selectChatTimeDialog() {
-
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (BuildContext context) => CommonTimeDialog(callback: (int time) async {
-          await OXChatBinding.sharedInstance.updateChatSession(widget.chatId!,expiration: time);
-
-          final username = Account.sharedInstance.me?.name ?? '';
-
-          String timeStr;
-          if(time >= 24 * 3600){
-            timeStr = (time ~/ (24*3600)).toString() + ' ' + Localized.text('ox_chat.day');
-          } else if (time >= 3600){
-            timeStr = '${(time ~/ 3600).toString()} ${Localized.text('ox_chat.hours')} ${Localized.text('ox_chat.and')} ${((time % 3600) ~/ 60).toString()} ${Localized.text('ox_chat.minutes')}';
-          } else {
-            timeStr = (time ~/ 60).toString() + ' ' + Localized.text('ox_chat.minutes');
-          }
-
-          final setMsgContent = Localized.text('ox_chat.set_msg_auto_delete_system').replaceAll(r'${username}', username).replaceAll(r'${time}', timeStr );
-          final disableMsgContent = Localized.text('ox_chat.disabled_msg_auto_delete_system').replaceAll(r'${username}', username);
-          final content =  time > 0 ? setMsgContent : disableMsgContent;
-
-          OXModuleService.invoke('ox_chat', 'sendSystemMsg', [
-            context
-          ], {
-            Symbol('content'): content,
-            Symbol('localTextKey'): content,
-            Symbol('chatId'): widget.chatId,
-          });
-
-          setState(() {});
-          await CommonToast.instance.show(context, 'Success');
-          OXNavigator.pop(context);
-        },
-          expiration: _autoDelExTime
-      ),
-    );
+  double getSafeBottomHeight() {
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+    return bottomPadding;
   }
 
   void _handleSendButtonVisibilityModeChange() {
@@ -507,32 +462,6 @@ class InputState extends State<Input>{
     setState(() {
       _sendButtonVisible = _textController.text.trim() != '';
     });
-  }
-
-  Widget _inputBuilder() {
-    final buttonPadding = InheritedChatTheme.of(context)
-        .theme
-        .inputPadding
-        .copyWith(left: Adapt.px(12), right: Adapt.px(12));
-    final textPadding = InheritedChatTheme.of(context)
-        .theme
-        .inputPadding;
-    final query = MediaQuery.of(context);
-    var bottomInset = isMobile ? query.viewInsets.bottom : 0.0;
-    bottomInset -= safeAreaBottomInsets;
-    bottomInset = max(0.0, bottomInset);
-    return Focus(
-      autofocus: true,
-      child: Material(
-        color: Colors.transparent,
-        child: Container(
-          decoration:
-              InheritedChatTheme.of(context).theme.inputContainerDecoration,
-          padding: EdgeInsets.only(bottom: bottomInset),
-          child: getInputWidget(buttonPadding, textPadding),
-      ),
-        ),
-    );
   }
 
   void changeInputType(InputType type) {

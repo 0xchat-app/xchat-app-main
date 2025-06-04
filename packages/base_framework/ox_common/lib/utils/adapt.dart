@@ -22,9 +22,12 @@ class Adapt {
 
   static get isInitialized => _ratioW != null;
 
-  static init({int standardW = 0, int standardH = 0}) {
+  static init() {
     final context = OXNavigator.navigatorKey.currentContext;
     final view = context != null ? View.of(context) : window;
+
+    final standardW = 412;
+    final standardH = 917;
 
     mediaQuery = MediaQueryData.fromView(view);
     _width = mediaQuery?.size.width;
@@ -52,7 +55,7 @@ class Adapt {
       return double.tryParse(number.toString()) ?? 0.0;
     }
     if (!(_ratioW is double || _ratioW is int)) {
-      Adapt.init(standardW: 375, standardH: 812);
+      Adapt.init();
     }
     return number * _ratioW;
   }
@@ -64,7 +67,7 @@ class Adapt {
 
   static py(number) {
     if (!(_ratioH is double || _ratioH is int)) {
-      Adapt.init(standardW: 375, standardH: 812);
+      Adapt.init();
     }
     return number * _ratioH;
   }

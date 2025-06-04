@@ -1,8 +1,11 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/adapt.dart';
+import 'package:ox_common/utils/list_extension.dart';
 import 'package:ox_common/utils/theme_color.dart';
+import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/common_image.dart';
 
 class InputMoreItem {
@@ -11,6 +14,10 @@ class InputMoreItem {
   final String Function() title;
   final String iconName;
   final Function(BuildContext context) action;
+}
+
+class InputMoreEmptyItem extends InputMoreItem {
+  InputMoreEmptyItem() : super(id: '', title: () => '', iconName: '', action: (_) {});
 }
 
 class InputMorePage extends StatefulWidget {
@@ -24,113 +31,106 @@ class InputMorePage extends StatefulWidget {
 
 class _InputMorePageState extends State<InputMorePage> {
 
+  int crossCount = 4;
+  int rowCount = 2;
+
+  double get iconSize => 56.px;
+  EdgeInsets get iconPadding => EdgeInsets.only(
+    bottom: 4.px,
+    left: 10.px,
+    right: 10.px,
+  );
+
+  double get runSpacing => 16.px;
+
+  late List<InputMoreItem> items;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
+    final maxCount = crossCount * rowCount;
+    assert(widget.items.length <= maxCount);
+
+    items = [
+      ...widget.items,
+      ...List.generate(maxCount - widget.items.length, (_) => InputMoreEmptyItem())
+    ];
   }
 
   @override
   Widget build(BuildContext context) {
-    final maxAvailableWidth = MediaQuery.of(context).size.width - MediaQuery.of(context).padding.horizontal;
-    final margin = EdgeInsets.only(top: 4.px);
-    final padding = EdgeInsets.symmetric(
-      horizontal: 14.px,
-      vertical: 20.px,
-    );
-    final crossAxisCount = 4;
-    final crossAxisSpacing = 22.px;
-
-    final iconSize = 48.px;
-    final iconPadding = EdgeInsets.only(bottom: 8.px);
-    final itemTitleFont = 12;
-    final itemWidth = ((maxAvailableWidth - Adapt.px(12) * 2 - margin.horizontal * 2 - padding.horizontal * 2 - (crossAxisCount - 1) * crossAxisSpacing) / crossAxisCount).floor();
-    final itemHeight = (iconSize + iconPadding.top + iconPadding.bottom + itemTitleFont.spWithTextScale * 1.2).ceil();
-
-    final childAspectRatio = itemWidth / itemHeight;
-    return Container(
-      decoration: BoxDecoration(
-        color: ThemeColor.color190,
-        borderRadius: BorderRadius.circular(12),
+    final data = items.chunk(crossCount);
+    return ListView.separated(
+      padding: EdgeInsets.symmetric(
+        horizontal: 26.px,
+        vertical: 12.px,
       ),
-      child: Container(
-        margin: margin,
-        child: GridView.count(
-          crossAxisCount: crossAxisCount, // The number of columns displayed per row
-          childAspectRatio: childAspectRatio,
-          padding: padding,
-          mainAxisSpacing: 12.px, // Line spacing
-          crossAxisSpacing: crossAxisSpacing, // Space between columns
-          children: List.generate(widget.items.length, (index) {
-            final item = widget.items[index];
-            return GestureDetector(
-              child: Container(
-                color: Colors.transparent, // Background color for each grid
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: iconSize,
-                      height: iconSize,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(6),
-                        color: ThemeColor.color180,
-                      ),
-                      margin: iconPadding,
-                      child: Center(
-                        child: CommonImage(
-                          iconName: item.iconName,
-                          size: 24.px,
-                          package: 'ox_chat_ui',
-                        ),
-                      ),
-                    ),
-                    Text(
-                      '${item.title()}',
-                      style: TextStyle(
-                        fontSize: itemTitleFont.sp,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-              onTap: () => item.action(context),
-            );
-          }),
-        ),
-      ),
+      itemBuilder: (_, index) {
+        final items = data[index];
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: items.map((item) => itemBuilder(item)).toList(),
+        );
+      },
+      separatorBuilder: (_, __) => SizedBox(height: runSpacing,),
+      itemCount: data.length,
     );
   }
 
-  Widget _buildItem(InputMoreItem item) =>
-    GestureDetector(
-      child: Container(
-        color: Colors.transparent, // Background color for each grid
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: Adapt.px(48),
-              height: Adapt.px(48),
-              margin: EdgeInsets.only(bottom: Adapt.px(8)),
-              child: CommonImage(
-                iconName: item.iconName,
-                package: 'ox_chat_ui',
-                useTheme: true,
-              ),
+  Widget itemBuilder(InputMoreItem item) {
+    if (item is InputMoreEmptyItem) return emptyItemBuilder();
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: iconSize,
+            height: iconSize,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: ColorToken.onSecondary.of(context),
             ),
-            Text(
-              '${item.title()}',
-              style: TextStyle(fontSize: 12.0),
+            margin: iconPadding,
+            alignment: Alignment.center,
+            child: CommonImage(
+              iconName: item.iconName,
+              size: 24.px,
+              package: 'ox_chat_ui',
             ),
-          ],
-        ),
+          ),
+          SizedBox(
+            width: iconSize + iconPadding.horizontal,
+            child: CLText.bodyMedium(
+              item.title(),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+            ),
+          ),
+        ],
       ),
       onTap: () => item.action(context),
     );
+  }
+
+  Widget emptyItemBuilder() => Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Container(
+        width: iconSize,
+        height: iconSize,
+        margin: iconPadding,
+      ),
+      SizedBox(
+        width: iconSize + iconPadding.horizontal,
+        child: CLText.bodyMedium(
+          '',
+          textAlign: TextAlign.center,
+          maxLines: 1,
+        ),
+      ),
+    ],
+  );
 }

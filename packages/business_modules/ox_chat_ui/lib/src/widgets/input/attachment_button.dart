@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/widgets/common_image.dart';
 
 import '../state/inherited_chat_theme.dart';
@@ -31,6 +32,7 @@ class AttachmentButton extends StatelessWidget {
         child: CommonIconButton(
           iconName: 'chat_voice_icon.png',
           size: size,
+          color: ColorToken.onSurface.of(context),
           package: 'ox_chat_ui',
           onPressed: onPressed ?? () {},
           padding: padding,

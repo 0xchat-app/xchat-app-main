@@ -134,6 +134,7 @@ class CommonChatWidgetState extends State<CommonChatWidget> {
 
     return CLScaffold(
       appBar: buildAppBar(),
+      resizeToAvoidBottomInset: false,
       body: pasteActionListenerWrapper(
         child: buildChatContentWidget(),
       ),
