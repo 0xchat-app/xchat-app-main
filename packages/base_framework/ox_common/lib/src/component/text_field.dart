@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -12,6 +11,7 @@ class CLTextField extends StatelessWidget {
     this.placeholder,
     this.obscureText = false,
     this.keyboardType,
+    this.textInputAction,
     this.prefixIcon,
     this.suffixIcon,
     this.onChanged,
@@ -23,14 +23,15 @@ class CLTextField extends StatelessWidget {
 
   final TextEditingController? controller;
   final FocusNode? focusNode;
-  final String? placeholder;                 // Material -> InputDecoration.hintText
+  final String? placeholder; // Material -> InputDecoration.hintText
   final bool obscureText;
   final TextInputType? keyboardType;
-  final Widget? prefixIcon;                  // Cupertino: prefix; Material: prefixIcon
-  final Widget? suffixIcon;                  // Cupertino: suffix; Material: suffixIcon
+  final TextInputAction? textInputAction;
+  final Widget? prefixIcon; // Cupertino: prefix; Material: prefixIcon
+  final Widget? suffixIcon; // Cupertino: suffix; Material: suffixIcon
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onSubmitted;
-  final int maxLines;
+  final int? maxLines;
   final bool enabled;
   final bool autofocus;
 
@@ -49,6 +50,7 @@ class CLTextField extends StatelessWidget {
       focusNode: focusNode,
       obscureText: obscureText,
       keyboardType: keyboardType,
+      textInputAction: textInputAction,
       onChanged: onChanged,
       onSubmitted: onSubmitted,
       maxLines: maxLines,
@@ -69,6 +71,7 @@ class CLTextField extends StatelessWidget {
       placeholder: placeholder,
       obscureText: obscureText,
       keyboardType: keyboardType,
+      textInputAction: textInputAction,
       onChanged: onChanged,
       onSubmitted: onSubmitted,
       maxLines: maxLines,

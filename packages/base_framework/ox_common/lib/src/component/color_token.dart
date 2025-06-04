@@ -15,7 +15,9 @@ enum ColorToken {
   onError,
   surface,
   onSurface,
+  onSurfaceVariant,
   surfaceContainer,
+  surfaceContainerHigh,
 }
 
 extension AppColorResolver on ColorToken {
@@ -47,8 +49,12 @@ extension AppColorResolver on ColorToken {
           return scheme.surface;
         case ColorToken.onSurface:
           return scheme.onSurface;
+        case ColorToken.onSurfaceVariant:
+          return scheme.onSurfaceVariant;
         case ColorToken.surfaceContainer:
           return scheme.surfaceContainer;
+        case ColorToken.surfaceContainerHigh:
+          return scheme.surfaceContainerHigh;
       }
     } else {
       final cupertino = CupertinoTheme.of(context);
@@ -80,7 +86,11 @@ extension AppColorResolver on ColorToken {
         case ColorToken.onSurface:
           return cupertino.textTheme.textStyle.color ??
               CupertinoColors.label.resolveFrom(context);
+        case ColorToken.onSurfaceVariant:
+          return CupertinoColors.secondaryLabel.resolveFrom(context);
         case ColorToken.surfaceContainer:
+          return CupertinoColors.secondarySystemFill.resolveFrom(context);
+        case ColorToken.surfaceContainerHigh:
           return CupertinoColors.secondarySystemFill.resolveFrom(context);
       }
     }

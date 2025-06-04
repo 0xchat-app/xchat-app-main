@@ -183,8 +183,11 @@ class _ListViewLabelItemWidget extends StatelessWidget {
     return ValueListenableBuilder(
       valueListenable: valueNty,
       builder: (_, value, child) {
-        final label = model.getValueMapData(value);
-        return CLText(label);
+        String label = model.getValueMapData(value);
+        return ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: 150.px),
+          child: CLText(label),
+        );
       },
     );
   }
