@@ -1,4 +1,5 @@
 
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_common/navigator/navigator.dart';
@@ -24,6 +25,8 @@ class BioSettingsPage extends StatelessWidget {
       title: 'Bio',
       initialValue: OXUserInfoManager.sharedInstance.currentUserInfo?.about ?? '',
       saveAction: buttonHandler,
+      maxLines: null,
+      textInputAction: TextInputAction.newline,
     );
   }
 

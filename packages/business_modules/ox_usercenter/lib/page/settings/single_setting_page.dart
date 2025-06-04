@@ -1,40 +1,57 @@
 
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 
-class SingleSettingPage extends StatelessWidget {
+class SingleSettingPage extends StatefulWidget {
   SingleSettingPage({
     super.key,
     this.previousPageTitle,
     this.title,
     this.initialValue = '',
     required this.saveAction,
+    this.maxLines = 1,
+    this.textInputAction = TextInputAction.done,
   });
 
   final String? previousPageTitle;
   final String? title;
   final String initialValue;
+  final int? maxLines;
+  final TextInputAction textInputAction;
 
   final Function(BuildContext ctx, String value) saveAction;
+
+  @override
+  State<StatefulWidget> createState() => SingleSettingPageState();
+}
+
+class SingleSettingPageState extends State<SingleSettingPage> {
 
   final TextEditingController controller = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+
+    controller.text = widget.initialValue;
+    controller.selection = TextSelection.collapsed(offset: widget.initialValue.length);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    controller.text = initialValue;
-    controller.selection = TextSelection.collapsed(offset: initialValue.length);
     return CLScaffold(
       appBar: CLAppBar(
-        title: title,
-        previousPageTitle: previousPageTitle,
+        title: widget.title,
+        previousPageTitle: widget.previousPageTitle,
         autoTrailing: false,
         actions: [
           if (!PlatformStyle.isUseMaterial)
             CLButton.text(
               text: 'Save',
-              onTap: () => saveAction(context, controller.text),
+              onTap: () => widget.saveAction(context, controller.text),
             ),
         ],
       ),
@@ -49,14 +66,16 @@ class SingleSettingPage extends StatelessWidget {
             CLTextField(
               controller: controller,
               autofocus: true,
-              placeholder: title,
+              placeholder: widget.title,
+              maxLines: null,
+              textInputAction: widget.textInputAction,
             ),
             SizedBox(height: 20.px,),
             if (PlatformStyle.isUseMaterial)
               CLButton.filled(
                 padding: EdgeInsets.symmetric(vertical: 12.px),
                 text: Localized.text('ox_common.save'),
-                onTap: () => saveAction(context, controller.text),
+                onTap: () => widget.saveAction(context, controller.text),
               )
           ],
         ),
