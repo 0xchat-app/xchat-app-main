@@ -1,3 +1,6 @@
+[submodule "packages/0xchat-core"]
+	path = packages/0xchat-core
+	url = https://github.com/0xchat-app/0xchat-core.git
 [submodule "packages/nostr-dart"]
 	path = packages/nostr-dart
 	url = https://github.com/0xchat-app/nostr-dart.git
