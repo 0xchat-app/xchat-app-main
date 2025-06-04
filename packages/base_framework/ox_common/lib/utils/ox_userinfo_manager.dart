@@ -441,27 +441,23 @@ class OXUserInfoManager {
     _initFeedback();
     await OXCacheManager.defaultOXCacheManager.saveForeverData(StorageSettingKey.KEY_CHAT_RUN_STATUS.name, true);
     OXServerManager.sharedInstance.loadConnectICEServer();
-    addChatCallBack();
     initDataActions.forEach((fn) {
       fn();
     });
     await UserConfigTool.migrateSharedPreferencesData();
-    await EventCache.sharedInstance.loadAllEventsFromDB();
-    Relays.sharedInstance.init().then((value) {
-      Contacts.sharedInstance.initContacts(Contacts.sharedInstance.contactUpdatedCallBack);
-      Channels.sharedInstance.init(callBack: Channels.sharedInstance.myChannelsUpdatedCallBack);
-      Groups.sharedInstance.init(callBack: Groups.sharedInstance.myGroupsUpdatedCallBack);
-      RelayGroup.sharedInstance.init(callBack: RelayGroup.sharedInstance.myGroupsUpdatedCallBack);
-      Moment.sharedInstance.init();
-      BadgesHelper.sharedInstance.init();
-      Zaps.sharedInstance.init();
-      _initMessage();
-    });
+    addChatCallBack();
+    await ChatCoreManager().initChatCore(
+        isLite: true,
+        circleRelay: 'wss://relay.0xchat.com',
+        contactUpdatedCallBack: Contacts.sharedInstance.contactUpdatedCallBack,
+        channelsUpdatedCallBack: Channels.sharedInstance.myChannelsUpdatedCallBack,
+        groupsUpdatedCallBack: Groups.sharedInstance.myGroupsUpdatedCallBack,
+        relayGroupsUpdatedCallBack: RelayGroup.sharedInstance.myGroupsUpdatedCallBack);
+    _initMessage();
     LogUtil.e('Michael: data await Friends Channels init friends =${Contacts.sharedInstance.allContacts.values.toList().toString()}');
   }
 
   void _initMessage() {
-    Messages.sharedInstance.init();
     if (Platform.isAndroid) {
       OXCommon.channelPreferences.invokeMethod(
         'isAppInBackground',
