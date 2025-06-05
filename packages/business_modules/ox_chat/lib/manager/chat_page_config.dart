@@ -46,16 +46,16 @@ class ChatPageConfig {
       InputMoreItemEx.album(handler),
       if(isMobile) InputMoreItemEx.camera(handler),
       if(isMobile) InputMoreItemEx.video(handler),
-      InputMoreItemEx.ecash(handler),
+      // InputMoreItemEx.ecash(handler),
     ];
 
-    final otherUser = handler.otherUser;
-    if (handler.session.chatType == ChatType.chatSingle && otherUser != null) {
-      items.add(InputMoreItemEx.zaps(handler, otherUser));
-      if(isMobile){
-        items.add(InputMoreItemEx.call(handler, otherUser));
-      }
-    }
+    // final otherUser = handler.otherUser;
+    // if (handler.session.chatType == ChatType.chatSingle && otherUser != null) {
+    //   items.add(InputMoreItemEx.zaps(handler, otherUser));
+    //   if(isMobile){
+    //     items.add(InputMoreItemEx.call(handler, otherUser));
+    //   }
+    // }
 
     return items;
   }

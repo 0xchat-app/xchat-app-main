@@ -33,7 +33,6 @@ class CommonImage extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Image.asset(
         useTheme ? ThemeManager.images('assets/images/$iconName') : 'assets/images/$iconName',
         width: this.width,
@@ -50,15 +49,15 @@ class CommonIconButton extends StatelessWidget {
     required this.iconName,
     this.useTheme = false,
     this.color,
-    double? height,
-    double? width,
     double? size,
+    double? iconSize,
     this.package = 'ox_common',
     this.fit,
-    this.padding,
     required this.onPressed,
-  }): this.height = size ?? height,
-      this.width = size ?? width;
+  }): this.height = size,
+      this.width = size,
+      this.iconHeight = iconSize,
+      this.iconWidth = iconSize;
 
   final String iconName;
   ///Whether to use a theme image
@@ -66,11 +65,12 @@ class CommonIconButton extends StatelessWidget {
   final Color? color;
   final double? height;
   final double? width;
+  final double? iconHeight;
+  final double? iconWidth;
   final BoxFit? fit;
   ///plugin name
   final String? package;
 
-  final EdgeInsetsGeometry? padding;
   final VoidCallback onPressed;
 
   @override
@@ -78,12 +78,14 @@ class CommonIconButton extends StatelessWidget {
     return GestureDetector(
       onTap: onPressed,
       behavior: HitTestBehavior.translucent,
-      child: Padding(
-        padding: padding ?? EdgeInsets.zero,
+      child: Container(
+        width: width,
+        height: height,
+        alignment: Alignment.center,
         child: CommonImage(
           iconName: iconName,
-          height: height,
-          width: width,
+          height: iconHeight,
+          width: iconWidth,
           color: color,
           package: package,
         ),

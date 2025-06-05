@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,7 +12,6 @@ import 'package:ox_localizable/ox_localizable.dart';
 import '../../models/giphy_image.dart';
 import '../../models/input_clear_mode.dart';
 import '../../models/send_button_visibility_mode.dart';
-import '../../util.dart';
 import '../giphy/giphy_picker.dart';
 import '../state/inherited_chat_theme.dart';
 import 'attachment_button.dart';
@@ -89,7 +87,10 @@ class Input extends StatefulWidget {
 class InputState extends State<Input>{
 
   double get _itemSpacing => 8.px;
-  double get inputSuffixIconSize => 24.pxWithTextScale;
+  double get iconSize => 24.pxWithTextScale;
+  double get iconButtonSize => 40.pxWithTextScale;
+  double get containerHeight => 88.px;
+  double get inputContainerHeight => 56.px;
 
   InputType inputType = InputType.inputTypeDefault;
   late final _inputFocusNode = FocusNode(
@@ -110,6 +111,9 @@ class InputState extends State<Input>{
       return KeyEventResult.ignored;
     },
   );
+  bool get isOnInput =>
+      (inputType == InputType.inputTypeText && _inputFocusNode.hasFocus)
+      || inputType == InputType.inputTypeEmoji;
   bool _sendButtonVisible = false;
   late TextEditingController _textController;
 
@@ -163,43 +167,27 @@ class InputState extends State<Input>{
 
   @override
   Widget build(BuildContext context) {
-    return _inputBuilder();
-  }
-
-  Widget _inputBuilder() {
-    final buttonPadding = InheritedChatTheme.of(context)
-        .theme
-        .inputPadding
-        .copyWith(left: Adapt.px(12), right: Adapt.px(12));
-    final textPadding = InheritedChatTheme.of(context)
-        .theme
-        .inputPadding;
+    final keyboardHeight = getKeyboardHeight();
+    final safeBottomHeight = getSafeBottomHeight();
     return Container(
       decoration: BoxDecoration(
         color: ColorToken.surfaceContainer.of(context),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: getInputWidget(buttonPadding, textPadding),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          defaultInputWidget(),
+          widget.inputBottomView ?? SizedBox(),
+          getMyMoreView(),
+          Container(
+            height: keyboardHeight + safeBottomHeight,
+            alignment: Alignment.topCenter,
+          ),
+        ],
+      ),
     );
   }
-
-  Widget getInputWidget(EdgeInsets buttonPadding,EdgeInsetsGeometry textPadding) {
-    final keyboardHeight = getKeyboardHeight();
-    final safeBottomHeight = getSafeBottomHeight();
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        defaultInputWidget(buttonPadding, textPadding),
-        widget.inputBottomView ?? SizedBox(),
-        getMyMoreView(),
-        Container(
-          height: keyboardHeight + safeBottomHeight,
-          alignment: Alignment.topCenter,
-        ),
-      ],
-    );
-  }
-
 
   Widget getMyMoreView() {
     Widget? contentWidget;
@@ -247,60 +235,48 @@ class InputState extends State<Input>{
       alignment: Alignment.topCenter,
       child: contentWidget,
     );
-    if (contentWidget != null) {
-        return AnimatedContainer(
-          duration: animationDuration,
-          curve: Curves.ease,
-          height: height,
-          child: contentWidget,
-          onEnd: () {
-            widget.customInputViewChanged?.call(inputType);
-            _inputFocusNode.unfocus();
-          },
-        );
-    } else {
-      return AnimatedContainer(
-        duration: animationDuration,
-        curve: Curves.easeInOut,
-        height: height, // Dynamic height adjustment
-        child: Container(
-          color: ColorToken.surfaceContainer.of(context),
-        ),
-        onEnd: () {
-          widget.customInputViewChanged?.call(inputType);
-          if(inputType == InputType.inputTypeText){
-            _inputFocusNode.requestFocus();
-          }
-        },
-      );
-    }
   }
 
-  Widget defaultInputWidget(EdgeInsets buttonPadding, EdgeInsetsGeometry textPadding) {
-    final verticalPadding = EdgeInsets.symmetric(vertical: 8.px);
+  Widget defaultInputWidget() {
+    final containerVertical = (containerHeight - inputContainerHeight) / 2;
+    final iconButtonVertical = (inputContainerHeight - iconButtonSize) / 2;
+    final generalHorizontal = 8.px;
     return Container(
       padding: EdgeInsets.symmetric(
-        vertical: 16.px,
+        vertical: containerVertical,
       ),
       child: Row(
         textDirection: TextDirection.ltr,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          _buildMoreButton().setPaddingOnly(left: verticalPadding.vertical),
-          _buildEmojiButton().setPaddingOnly(right: verticalPadding.vertical),
+          _buildMoreButton().setPaddingOnly(
+            left: generalHorizontal,
+            top: iconButtonVertical,
+            bottom: iconButtonVertical,
+          ),
+          _buildEmojiButton().setPaddingOnly(
+            right: generalHorizontal,
+            top: iconButtonVertical,
+            bottom: iconButtonVertical,
+          ),
           Expanded(
             child: Container(
               decoration: BoxDecoration(
                 color: ColorToken.surfaceContainerHigh.of(context),
                 borderRadius: BorderRadius.circular(28.px),
               ),
-              padding: EdgeInsets.only(left: 12.px),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Expanded(
-                    child: _buildInputTextField().setPadding(
-                      EdgeInsets.only(left: _itemSpacing),
-                    ),
+                    child: Container(
+                      constraints: BoxConstraints(
+                        minHeight: inputContainerHeight,
+                      ),
+                      padding: EdgeInsets.symmetric(vertical: 12.px),
+                      alignment: Alignment.center,
+                      child: _buildInputTextField(),
+                    ).setPaddingOnly(left: 12.px),
                   ),
                   AnimatedCrossFade(
                     duration: const Duration(milliseconds: 200),
@@ -309,7 +285,12 @@ class InputState extends State<Input>{
                     crossFadeState: _sendButtonVisible
                         ? CrossFadeState.showFirst
                         : CrossFadeState.showSecond,
-                  ).setPadding(verticalPadding),
+                  ).setPadding(
+                    EdgeInsets.symmetric(
+                      vertical: 8.px,
+                      horizontal: generalHorizontal,
+                    ),
+                  ),
                 ],
               ),
             ).setPaddingOnly(right: 16.px),
@@ -319,24 +300,23 @@ class InputState extends State<Input>{
     );
   }
 
-  Widget _buildVoiceButton(){
-    if(PlatformUtils.isDesktop) return SizedBox().setPadding(EdgeInsets.symmetric(horizontal: _itemSpacing));
+  Widget _buildVoiceButton() {
+    if(PlatformUtils.isDesktop) return SizedBox().setPadding(EdgeInsets.all(_itemSpacing));
     return AttachmentButton(
       isLoading: widget.isAttachmentUploading ?? false,
-      // onPressed: widget.onAttachmentPressed,
+      size: iconButtonSize,
+      iconSize: iconSize,
       onPressed: (){
         changeInputType(InputType.inputTypeVoice);
       },
-      padding: EdgeInsets.symmetric(horizontal: _itemSpacing),
-      size: inputSuffixIconSize,
     );
   }
 
   Widget _buildInputTextField() {
     final textStyle = Theme.of(context).textTheme.bodyLarge!;
-    final textColor = ColorToken.onSurfaceVariant.of(context);
+    final textColor = ColorToken.onSurface.of(context);
     return Container(
-      constraints: BoxConstraints(minHeight: inputSuffixIconSize),
+      constraints: BoxConstraints(minHeight: iconSize),
       child: TextField(
         enabled: widget.options.enabled,
         autocorrect: widget.options.autocorrect,
@@ -384,8 +364,8 @@ class InputState extends State<Input>{
   Widget _buildSendButton() =>
       SendButton(
         onPressed: _handleSendPressed,
-        padding: EdgeInsets.symmetric(horizontal: _itemSpacing),
-        size: inputSuffixIconSize,
+        size: iconButtonSize,
+        iconSize: iconSize,
       );
 
   Widget _buildEmojiButton() =>
@@ -394,23 +374,38 @@ class InputState extends State<Input>{
           changeInputType(InputType.inputTypeEmoji);
         },
         iconName: 'chat_emoti_icon.png',
-        size: inputSuffixIconSize,
+        size: iconButtonSize,
+        iconSize: iconSize,
         color: ColorToken.onSurface.of(context),
         package: 'ox_chat_ui',
-        padding: EdgeInsets.all(_itemSpacing),
       );
 
-  Widget _buildMoreButton() =>
-      CommonIconButton(
-        onPressed: () {
-          changeInputType(InputType.inputTypeMore);
-        },
-        iconName: 'chat_more_icon.png',
-        size: inputSuffixIconSize,
-        color: ColorToken.onSurface.of(context),
-        package: 'ox_chat_ui',
-        padding: EdgeInsets.all(_itemSpacing),
-      );
+  Widget _buildMoreButton() {
+    final isOnInput = this.isOnInput;
+    return AnimatedAlign(
+      alignment: Alignment.center,
+      widthFactor: isOnInput ? 0.0 : 1.0,
+      duration: animationDuration,
+      child: AnimatedScale(
+        scale: isOnInput ? 0.0 : 1.0,
+        duration: animationDuration,
+        child: AnimatedOpacity(
+          opacity: isOnInput ? 0.0 : 1.0,
+          duration: animationDuration,
+          child: CommonIconButton(
+            onPressed: () {
+              changeInputType(InputType.inputTypeMore);
+            },
+            iconName: 'chat_more_icon.png',
+            size: iconButtonSize,
+            iconSize: iconSize,
+            color: ColorToken.onSurface.of(context),
+            package: 'ox_chat_ui',
+          ),
+        ),
+      ),
+    );
+  }
 
   double getKeyboardHeight() {
     final bottomInset = View.of(context).viewInsets.bottom;
@@ -467,6 +462,7 @@ class InputState extends State<Input>{
   void changeInputType(InputType type) {
     if (inputType == type) return;
 
+    print('zhw==============>type: $type');
     setState(() {
       inputType = type;
       if (type != InputType.inputTypeText && _inputFocusNode.hasFocus) {

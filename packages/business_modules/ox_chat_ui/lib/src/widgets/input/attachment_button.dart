@@ -11,8 +11,8 @@ class AttachmentButton extends StatelessWidget {
     super.key,
     this.isLoading = false,
     this.onPressed,
-    this.padding = EdgeInsets.zero,
     required this.size,
+    required this.iconSize,
   });
 
   /// Show a loading indicator instead of the button.
@@ -22,9 +22,9 @@ class AttachmentButton extends StatelessWidget {
   final VoidCallback? onPressed;
 
   /// Padding around the button.
-  final EdgeInsets padding;
-
   final double size;
+
+  final double iconSize;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -32,10 +32,10 @@ class AttachmentButton extends StatelessWidget {
         child: CommonIconButton(
           iconName: 'chat_voice_icon.png',
           size: size,
+          iconSize: iconSize,
           color: ColorToken.onSurface.of(context),
           package: 'ox_chat_ui',
           onPressed: onPressed ?? () {},
-          padding: padding,
         ),
       );
 }
