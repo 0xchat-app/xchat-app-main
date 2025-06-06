@@ -94,7 +94,8 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
         ).setPaddingOnly(top: 8.px),
         CLButton.tonal(
           child: CLText.labelLarge('Edit Photo'),
-          minimumSize: Size(90.px, 30.px),
+          height: 30.px,
+          width: 90.px,
           padding: EdgeInsets.symmetric(
             horizontal: 12.px,
             vertical: 5.px,

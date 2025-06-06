@@ -33,7 +33,7 @@ class CLFilledButton extends StatelessWidget {
       return CupertinoButton.filled(
         padding: padding,
         minSize: minimumSize?.height,
-        sizeStyle: CupertinoButtonSize.medium,
+        // sizeStyle: CupertinoButtonSize.medium,
         onPressed: onTap,
         child: child,
       );

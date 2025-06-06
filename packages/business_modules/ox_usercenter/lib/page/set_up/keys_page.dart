@@ -103,11 +103,12 @@ class _KeysPageState extends State<KeysPage>{
 
   Widget buildShowButton() {
     return CLButton.tonal(
-      minimumSize: Size(90.px, 48.px),
+      height: 48,
       padding: EdgeInsets.symmetric(
         horizontal: 12.px,
         vertical: 12.px,
       ),
+      expanded: true,
       text: 'Show Private Key',
       onTap: () => isShowPriv$.value = true,
     );

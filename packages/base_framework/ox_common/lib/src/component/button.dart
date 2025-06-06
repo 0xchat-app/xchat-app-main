@@ -82,15 +82,19 @@ class CLButton {
     child ??= _defaultText(text ?? '');
     child = _alignIfNeeded(child, alignment);
 
+    Size? minimumSize;
+    if (width != null || height != null) {
+      minimumSize = Size(width ?? 0.0, height ?? 0.0);
+    }
+
     return _sizeWrapper(
       CLFilledButton(
+        minimumSize: minimumSize,
         padding: padding,
         onTap: onTap,
         child: child,
       ),
       expanded: expanded,
-      width: width,
-      height: height,
     );
   }
 
@@ -103,10 +107,14 @@ class CLButton {
     double? width,
     double? height,
     EdgeInsetsGeometry? padding,
-    Size? minimumSize,
   }) {
     child ??= _defaultText(text ?? '');
     child = _alignIfNeeded(child, alignment);
+
+    Size? minimumSize;
+    if (width != null || height != null) {
+      minimumSize = Size(width ?? 0.0, height ?? 0.0);
+    }
 
     return _sizeWrapper(
       CLTonalButton(
@@ -134,8 +142,14 @@ class CLButton {
     child ??= _defaultText(text ?? '');
     child = _alignIfNeeded(child, alignment);
 
+    Size? minimumSize;
+    if (width != null || height != null) {
+      minimumSize = Size(width ?? 0.0, height ?? 0.0);
+    }
+
     return _sizeWrapper(
       CLElevatedButton(
+        minimumSize: minimumSize,
         padding: padding,
         onTap: onTap,
         child: child,
@@ -159,8 +173,14 @@ class CLButton {
     child ??= _defaultText(text ?? '');
     child = _alignIfNeeded(child, alignment);
 
+    Size? minimumSize;
+    if (width != null || height != null) {
+      minimumSize = Size(width ?? 0.0, height ?? 0.0);
+    }
+
     return _sizeWrapper(
       CLOutlinedButton(
+        minimumSize: minimumSize,
         padding: padding,
         onTap: onTap,
         child: child,
