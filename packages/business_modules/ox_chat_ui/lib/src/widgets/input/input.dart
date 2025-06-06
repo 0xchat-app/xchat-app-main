@@ -462,7 +462,6 @@ class InputState extends State<Input>{
   void changeInputType(InputType type) {
     if (inputType == type) return;
 
-    print('zhw==============>type: $type');
     setState(() {
       inputType = type;
       if (type != InputType.inputTypeText && _inputFocusNode.hasFocus) {

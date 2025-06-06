@@ -26,6 +26,7 @@ class ChatSessionUtils {
     switch (model.chatType) {
       case ChatType.chatSingle:
       case ChatType.chatSecret:
+      case ChatType.chatStranger:
         valueNotifier = Account.sharedInstance.getUserNotifier(model.getOtherPubkey);
         break;
       case ChatType.chatChannel:

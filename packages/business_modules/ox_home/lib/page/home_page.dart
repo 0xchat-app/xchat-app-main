@@ -1,4 +1,3 @@
-
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:chatcore/src/account/model/userDB_isar.dart';
@@ -14,7 +13,9 @@ import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_login/page/login_page.dart';
 import 'package:ox_theme/ox_theme.dart';
 
+import '../widgets/session_list_data_controller.dart';
 import '../widgets/session_list_widget.dart';
+import '../widgets/session_view_model.dart';
 import 'home_scaffold.dart';
 
 class HomePage extends StatefulWidget {
@@ -27,7 +28,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with OXUserInfoObserver {
-
   SessionListDataController sessionDataController = SessionListDataController();
 
   @override
@@ -61,7 +61,7 @@ class _HomePageState extends State<HomePage> with OXUserInfoObserver {
   void didSwitchUser(UserDBISAR? userInfo) {
     setState(() {});
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final isLogin = OXUserInfoManager.sharedInstance.isLogin;
@@ -72,9 +72,8 @@ class _HomePageState extends State<HomePage> with OXUserInfoObserver {
       transitionBuilder: (Widget child, Animation<double> animation) {
         return FadeTransition(opacity: animation, child: child);
       },
-      child: isLogin
-          ? HomeScaffold(body: buildSessionList())
-          : const LoginPage(),
+      child:
+          isLogin ? HomeScaffold(body: buildSessionList()) : const LoginPage(),
     );
   }
 
@@ -86,22 +85,28 @@ class _HomePageState extends State<HomePage> with OXUserInfoObserver {
   }
 
   void signerCheck() async {
-    final bool? localIsLoginAmber = await OXCacheManager.defaultOXCacheManager.getForeverData('${OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey??''}${StorageKeyTool.KEY_IS_LOGIN_AMBER}');
+    final bool? localIsLoginAmber = await OXCacheManager.defaultOXCacheManager
+        .getForeverData(
+            '${OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? ''}${StorageKeyTool.KEY_IS_LOGIN_AMBER}');
     if (localIsLoginAmber != null && localIsLoginAmber) {
       bool isInstalled = await CoreMethodChannel.isInstalledAmber();
-      if (mounted && (!isInstalled || OXUserInfoManager.sharedInstance.signatureVerifyFailed)){
+      if (mounted &&
+          (!isInstalled ||
+              OXUserInfoManager.sharedInstance.signatureVerifyFailed)) {
         String showTitle = '';
         String showContent = '';
         if (!isInstalled) {
           showTitle = 'ox_common.open_singer_app_error_title';
           showContent = 'ox_common.open_singer_app_error_content';
-        } else if (OXUserInfoManager.sharedInstance.signatureVerifyFailed){
+        } else if (OXUserInfoManager.sharedInstance.signatureVerifyFailed) {
           showTitle = 'ox_common.tips';
           showContent = 'ox_common.str_singer_app_verify_failed_hint';
         }
         OXUserInfoManager.sharedInstance.resetData();
         OXCommonHintDialog.show(
-          context, title: Localized.text(showTitle), content: Localized.text(showContent),
+          context,
+          title: Localized.text(showTitle),
+          content: Localized.text(showContent),
           actionList: [
             OXCommonHintAction.sure(
                 text: Localized.text('ox_common.confirm'),

@@ -5,11 +5,8 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:ox_chat/utils/chat_session_utils.dart';
 import 'package:ox_common/business_interface/ox_chat/utils.dart';
 import 'package:ox_common/component.dart';
-import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
-import 'package:ox_common/utils/date_utils.dart';
-import 'package:ox_common/utils/ox_chat_binding.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/avatar.dart';
 import 'package:chatcore/chat-core.dart';
@@ -17,75 +14,8 @@ import 'package:ox_common/widgets/common_hint_dialog.dart';
 import 'package:ox_common/widgets/common_image.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 
-class SessionListViewModel {
-  SessionListViewModel(this._raw) {
-    updateGroupMemberIfNeeded();
-  }
-
-  final ChatSessionModelISAR _raw;
-  ChatSessionModelISAR get sessionModel => _raw;
-
-  late ValueNotifier entity$ = ChatSessionUtils.getChatValueNotifier(_raw)
-      ?? ValueNotifier(null);
-
-  final ValueNotifier<bool> _build$ = ValueNotifier(false);
-
-  final ValueNotifier<List<String>> groupMember$ = ValueNotifier([]);
-
-  String get subtitle => _raw.content ?? '';
-  String get draft => _raw.draft ?? '';
-  bool get isMentioned => _raw.mentionMessageIds.isNotEmpty;
-  bool get isMute => ChatSessionUtils.getChatMute(sessionModel);
-
-  String get updateTime => OXDateUtils.convertTimeFormatString2(_raw.createTime * 1000, pattern: 'MM-dd');
-
-  String get unreadCountText {
-    final count = _raw.unreadCount;
-    if (count > 99) return '99+';
-    if (count > 0 ) return count.toString();
-    return '';
-  }
-
-  void updateGroupMemberIfNeeded() async {
-    if (_raw.hasMultipleUsers) {
-      final groupId = _raw.groupId ?? '';
-      List<UserDBISAR> groupList = await Groups.sharedInstance.getAllGroupMembers(groupId);
-      List<String> avatars = groupList.map((e) => e.picture ?? '').toList();
-      avatars.removeWhere((e) => e.isEmpty);
-
-      groupMember$.value = avatars;
-    }
-  }
-
-  void rebuild() {
-    _build$.value = !_build$.value;
-  }
-}
-
-class SessionListDataController {
-  ValueNotifier<List<SessionListViewModel>> sessionList$ = ValueNotifier([]);
-
-  void initialized() {
-    final data = OXChatBinding.sharedInstance.sessionList;
-
-    data.sort((session1, session2) =>
-      session2.createTime.compareTo(session1.createTime),
-    );
-
-    sessionList$.value = data.map((e) => SessionListViewModel(e)).toList();
-  }
-
-  Future deleteSession(SessionListViewModel session) async {
-    final count = await OXChatBinding.sharedInstance.deleteSession([
-      session.sessionModel.chatId,
-    ]);
-    if (count > 0) {
-      final list = [...sessionList$.value];
-      list.remove(session);
-      sessionList$.value = list;
-    }
-  }
-}
+import 'session_list_data_controller.dart';
+import 'session_view_model.dart';
 
 class SessionListWidget extends StatelessWidget {
   const SessionListWidget({
@@ -114,7 +44,7 @@ class SessionListWidget extends StatelessWidget {
 
   Widget? itemBuilder(BuildContext context, SessionListViewModel item) {
     return ValueListenableBuilder(
-      valueListenable: item._build$,
+      valueListenable: item.build$,
       builder: (context, value, _) {
         return GestureDetector(
           behavior: HitTestBehavior.translucent,
@@ -398,6 +328,8 @@ extension _AdaptHelperEx on dynamic {
     if (obj is GroupDBISAR || obj is ChannelDBISAR || obj is RelayGroupDBISAR) {
       return 'icon_group_default.png';
     }
+
+    assert(false, 'obj type: ${obj.runtimeType}');
     return '';
   }
 

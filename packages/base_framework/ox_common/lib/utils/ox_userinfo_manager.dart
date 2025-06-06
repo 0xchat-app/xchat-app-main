@@ -201,10 +201,12 @@ class OXUserInfoManager {
     };
     Contacts.sharedInstance.secretChatMessageCallBack = (MessageDBISAR message) {
       LogUtil.d("Michael: init secretChatMessageCallBack message.id =${message.messageId}");
+      OXChatBinding.sharedInstance.didReceiveMessageHandler(message);
       OXChatBinding.sharedInstance.secretChatMessageCallBack(message);
     };
     Contacts.sharedInstance.privateChatMessageCallBack = (MessageDBISAR message) {
       LogUtil.d("Michael: init privateChatMessageCallBack message.id =${message.messageId}");
+      OXChatBinding.sharedInstance.didReceiveMessageHandler(message);
       OXChatBinding.sharedInstance.privateChatMessageCallBack(message);
     };
 
@@ -219,10 +221,12 @@ class OXUserInfoManager {
 
     Channels.sharedInstance.channelMessageCallBack = (MessageDBISAR messageDB) async {
       LogUtil.d('Michael: init  channelMessageCallBack');
+      OXChatBinding.sharedInstance.didReceiveMessageHandler(messageDB);
       OXChatBinding.sharedInstance.channalMessageCallBack(messageDB);
     };
     Groups.sharedInstance.groupMessageCallBack = (MessageDBISAR messageDB) async {
       LogUtil.d('Michael: init  groupMessageCallBack');
+      OXChatBinding.sharedInstance.didReceiveMessageHandler(messageDB);
       OXChatBinding.sharedInstance.groupMessageCallBack(messageDB);
     };
     Messages.sharedInstance.deleteCallBack = (List<MessageDBISAR> delMessages) {
@@ -230,6 +234,7 @@ class OXUserInfoManager {
     };
     RelayGroup.sharedInstance.groupMessageCallBack = (MessageDBISAR messageDB) async {
       LogUtil.d('Michael: init  relayGroupMessageCallBack');
+      OXChatBinding.sharedInstance.didReceiveMessageHandler(messageDB);
       OXChatBinding.sharedInstance.groupMessageCallBack(messageDB);
     };
     RelayGroup.sharedInstance.joinRequestCallBack = (JoinRequestDBISAR joinRequestDB) async {
@@ -447,7 +452,7 @@ class OXUserInfoManager {
     await UserConfigTool.migrateSharedPreferencesData();
     addChatCallBack();
     await ChatCoreManager().initChatCore(
-        isLite: true,
+        isLite: false,
         circleRelay: 'wss://relay.0xchat.com',
         contactUpdatedCallBack: Contacts.sharedInstance.contactUpdatedCallBack,
         channelsUpdatedCallBack: Channels.sharedInstance.myChannelsUpdatedCallBack,

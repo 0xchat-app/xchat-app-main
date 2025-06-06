@@ -41,7 +41,7 @@ class OXChatBinding {
 
   final List<OXChatObserver> _observers = <OXChatObserver>[];
 
-  String? Function(MessageDBISAR messageDB)? sessionMessageTextBuilder;
+  String Function(MessageDBISAR messageDB)? sessionMessageTextBuilder;
   bool Function(MessageDBISAR messageDB)? msgIsReaded;
 
   Future<void> initLocalSession() async {
@@ -521,6 +521,12 @@ class OXChatBinding {
     await updateChatSession(ssDB.sessionId, content: 'secret_chat_rejected_tips'.commonLocalized({r"${name}": user.name ?? ''}));
     for (OXChatObserver observer in _observers) {
       observer.didSecretChatRejectCallBack(ssDB);
+    }
+  }
+
+  void didReceiveMessageHandler(MessageDBISAR message) {
+    for (OXChatObserver observer in _observers) {
+      observer.didReceiveMessageCallBack(message);
     }
   }
 

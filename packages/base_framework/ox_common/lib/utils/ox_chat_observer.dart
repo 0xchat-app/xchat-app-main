@@ -12,6 +12,8 @@ import 'package:ox_common/utils/user_config_tool.dart';
 abstract mixin class OXChatObserver {
   void didSecretChatRequestCallBack() {}
 
+  void didReceiveMessageCallBack(MessageDBISAR message) {}
+
   void didPrivateMessageCallBack(MessageDBISAR message) {}
 
   void didChatMessageUpdateCallBack(MessageDBISAR message, String replacedMessageId) {}

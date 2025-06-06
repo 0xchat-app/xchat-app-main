@@ -33,7 +33,7 @@ class ChatMessageHelper {
 
   static MessageCheckLogger? logger; // = MessageCheckLogger('9c2d9fb78c95079c33f4d6e67556cd6edfd86b206930f97e0578987214864db2');
 
-  static String? sessionMessageTextBuilder(MessageDBISAR message) {
+  static String sessionMessageTextBuilder(MessageDBISAR message) {
     final type = MessageDBISAR.stringtoMessageType(message.type);
     final decryptContent = message.decryptContent;
     return getMessagePreviewText(decryptContent, type, message.sender);
