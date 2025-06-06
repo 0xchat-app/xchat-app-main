@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:chatcore/chat-core.dart';
 import 'package:flutter/material.dart';
 import 'package:nostr_core_dart/nostr.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/const/common_constant.dart';
 // ox_common
 import 'package:ox_common/navigator/navigator.dart';
@@ -38,51 +39,69 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CommonAppBar(
-        title: '',
-        useLargeTitle: false,
-        centerTitle: true,
-        backgroundColor: ThemeColor.color200,
-        leading: Container(),
-        actions: [_appBarActions()],
-      ),
-      backgroundColor: ThemeColor.color200,
-      body: _body(),
-    );
-  }
-
-  Widget _appBarActions() {
-    return GestureDetector(
-      onTap: () => OXNavigator.pop(context),
-      child: CommonImage(
-        iconName: 'close_icon_white.png',
-        fit: BoxFit.contain,
-        width: Adapt.px(24),
-        height: Adapt.px(24),
-        useTheme: true,
-      ),
+    return CLScaffold(
+      body: SafeArea(child: _body()),
     );
   }
 
   Widget _body() {
-    return SafeArea(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-          buildLogoIcon(),
-          buildTips(),
-          Column(
-            children: [
-              buildCreateAccountButton().setPaddingOnly(bottom: 18.px),
-              buildLoginButton().setPaddingOnly(bottom: 18.px),
-              buildQrCodeLoginWidget().setPaddingOnly(bottom: 18.px),
-              buildPrivacyWidget().setPaddingOnly(bottom: 18.px),
-              buildAmberLoginWidget(),
-            ],
-          ),
-        ],
-      ).setPadding(EdgeInsets.symmetric(horizontal: 30.px)),
+    return Column(
+      children: <Widget>[
+        const Spacer(),
+        BannerCarousel(
+          items: [
+            BannerItem(
+              image: CommonImage(
+                iconName: 'image_guide_1.png',
+                size: 280.px,
+                package: 'ox_login',
+              ),
+              title: 'End-to-End Encryption',
+              text: 'Only you and your contact can read the messages. No one else.',
+            ),
+            BannerItem(
+              image: CommonImage(
+                iconName: 'image_guide_2.png',
+                size: 280.px,
+                package: 'ox_login',
+              ),
+              title: 'Decentralized Network',
+              text: 'No central servers. No control. Just private communication.',
+            ),
+            BannerItem(
+              image: CommonImage(
+                iconName: 'image_guide_3.png',
+                size: 280.px,
+                package: 'ox_login',
+              ),
+              title: 'Encrypted Local Storage',
+              text: 'Chats are stored only on your device — encrypted and secure.',
+            ),
+            BannerItem(
+              image: CommonImage(
+                iconName: 'image_guide_4.png',
+                size: 280.px,
+                package: 'ox_login',
+              ),
+              title: 'Anonymous Messaging',
+              text: 'No phone number. No email. Just pure anonymity.',
+            ),
+          ],
+          height: 460.py,
+          padding: EdgeInsets.symmetric(horizontal: 32.px),
+        ),
+        const Spacer(),
+        Column(
+          children: [
+            buildCreateAccountButton().setPaddingOnly(bottom: 18.px),
+            buildLoginButton().setPaddingOnly(bottom: 18.px),
+            // buildQrCodeLoginWidget().setPaddingOnly(bottom: 18.px),
+            // buildPrivacyWidget().setPaddingOnly(bottom: 18.px),
+            buildAmberLoginWidget(),
+          ],
+        ).setPadding(EdgeInsets.symmetric(horizontal: 32.px)),
+        SizedBox(height: 12.py,),
+      ],
     );
   }
 
@@ -102,56 +121,18 @@ class _LoginPageState extends State<LoginPage> {
     ),
   );
 
-  Widget buildCreateAccountButton() => GestureDetector(
-    behavior: HitTestBehavior.translucent,
+  Widget buildCreateAccountButton() => CLButton.filled(
     onTap: _createAccount,
-    child: Container(
-      width: double.infinity,
-      height: Adapt.px(48),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        color: ThemeColor.color180,
-        gradient: LinearGradient(
-          colors: [
-            ThemeColor.gradientMainEnd,
-            ThemeColor.gradientMainStart,
-          ],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-        ),
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        Localized.text('ox_login.create_account'),
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 16.sp,
-        ),
-      ),
-    ),
+    height: 48.py,
+    expanded: true,
+    text: Localized.text('ox_login.create_account'),
   );
 
-  Widget buildLoginButton() => GestureDetector(
-    behavior: HitTestBehavior.translucent,
+  Widget buildLoginButton() => CLButton.tonal(
     onTap: _login,
-    child: Container(
-      width: double.infinity,
-      height: Adapt.px(48),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        color: ThemeColor.color180,
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        Localized.text('ox_login.login_button'),
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 16.sp,
-        ),
-      ),
-    ),
+    height: 48.py,
+    expanded: true,
+    text: Localized.text('ox_login.login_button'),
   );
 
   Widget buildQrCodeLoginWidget() =>
@@ -233,17 +214,28 @@ class _LoginPageState extends State<LoginPage> {
         height: 70.px,
         child: Stack(
           children: [
-            Positioned(top: 24.px, left: 0, right: 0, child: Container(width: double.infinity, height: 0.5.px, color: ThemeColor.color160)),
-            Align(alignment: Alignment.topCenter, child: CommonImage(iconName: iconName, width: 48.px, height: 48.px, package: 'ox_login')),
+            Positioned(
+              top: 24.px,
+              left: 0,
+              right: 0,
+              child: Container(
+                width: double.infinity,
+                height: 0.5.px,
+                color: ThemeColor.color160,
+              ),
+            ),
             Align(
-                alignment: Alignment.bottomCenter,
-                child: Text(
-                  text,
-                  style: TextStyle(
-                      color: ThemeColor.color120,
-                      fontSize: Adapt.px(12)
-                  ),
-                )
+              alignment: Alignment.topCenter,
+              child: CommonImage(
+                iconName: iconName,
+                width: 48.px,
+                height: 48.px,
+                package: 'ox_login',
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: CLText.labelSmall(text),
             ),
           ],
         ),
