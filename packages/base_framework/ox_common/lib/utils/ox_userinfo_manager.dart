@@ -179,33 +179,24 @@ class OXUserInfoManager {
   }
 
   void addChatCallBack() {
-    Contacts.sharedInstance.secretChatRequestCallBack = (SecretSessionDBISAR ssDB) async {
-      LogUtil.d("Michael: init secretChatRequestCallBack ssDB.sessionId =${ssDB.sessionId}");
-      OXChatBinding.sharedInstance.secretChatRequestCallBack(ssDB);
-    };
+    Contacts.sharedInstance.secretChatRequestCallBack = (SecretSessionDBISAR ssDB) {};
     Contacts.sharedInstance.secretChatAcceptCallBack = (SecretSessionDBISAR ssDB) {
-      LogUtil.d("Michael: init secretChatAcceptCallBack ssDB.sessionId =${ssDB.sessionId}");
       OXChatBinding.sharedInstance.secretChatAcceptCallBack(ssDB);
     };
     Contacts.sharedInstance.secretChatRejectCallBack = (SecretSessionDBISAR ssDB) {
-      LogUtil.d("Michael: init secretChatRejectCallBack ssDB.sessionId =${ssDB.sessionId}");
       OXChatBinding.sharedInstance.secretChatRejectCallBack(ssDB);
     };
     Contacts.sharedInstance.secretChatUpdateCallBack = (SecretSessionDBISAR ssDB) {
-      LogUtil.d("Michael: init secretChatUpdateCallBack ssDB.sessionId =${ssDB.sessionId}");
       OXChatBinding.sharedInstance.secretChatUpdateCallBack(ssDB);
     };
     Contacts.sharedInstance.secretChatCloseCallBack = (SecretSessionDBISAR ssDB) {
-      LogUtil.d("Michael: init secretChatCloseCallBack");
       OXChatBinding.sharedInstance.secretChatCloseCallBack(ssDB);
     };
     Contacts.sharedInstance.secretChatMessageCallBack = (MessageDBISAR message) {
-      LogUtil.d("Michael: init secretChatMessageCallBack message.id =${message.messageId}");
       OXChatBinding.sharedInstance.didReceiveMessageHandler(message);
       OXChatBinding.sharedInstance.secretChatMessageCallBack(message);
     };
     Contacts.sharedInstance.privateChatMessageCallBack = (MessageDBISAR message) {
-      LogUtil.d("Michael: init privateChatMessageCallBack message.id =${message.messageId}");
       OXChatBinding.sharedInstance.didReceiveMessageHandler(message);
       OXChatBinding.sharedInstance.privateChatMessageCallBack(message);
     };
@@ -220,12 +211,10 @@ class OXUserInfoManager {
     RelayGroup.sharedInstance.groupMessageUpdateCallBack = messageUpdateCallBack;
 
     Channels.sharedInstance.channelMessageCallBack = (MessageDBISAR messageDB) async {
-      LogUtil.d('Michael: init  channelMessageCallBack');
       OXChatBinding.sharedInstance.didReceiveMessageHandler(messageDB);
       OXChatBinding.sharedInstance.channalMessageCallBack(messageDB);
     };
     Groups.sharedInstance.groupMessageCallBack = (MessageDBISAR messageDB) async {
-      LogUtil.d('Michael: init  groupMessageCallBack');
       OXChatBinding.sharedInstance.didReceiveMessageHandler(messageDB);
       OXChatBinding.sharedInstance.groupMessageCallBack(messageDB);
     };
@@ -233,35 +222,27 @@ class OXUserInfoManager {
       OXChatBinding.sharedInstance.messageDeleteCallback(delMessages);
     };
     RelayGroup.sharedInstance.groupMessageCallBack = (MessageDBISAR messageDB) async {
-      LogUtil.d('Michael: init  relayGroupMessageCallBack');
       OXChatBinding.sharedInstance.didReceiveMessageHandler(messageDB);
       OXChatBinding.sharedInstance.groupMessageCallBack(messageDB);
     };
     RelayGroup.sharedInstance.joinRequestCallBack = (JoinRequestDBISAR joinRequestDB) async {
-      LogUtil.d('Michael: init  relayGroupJoinReqCallBack');
       OXChatBinding.sharedInstance.relayGroupJoinReqCallBack(joinRequestDB);
     };
     RelayGroup.sharedInstance.offlineGroupMessageFinishCallBack = () async {
-      LogUtil.d('Michael: init  offlineGroupMessageFinishCallBack');
       OXChatBinding.sharedInstance.offlineGroupMessageFinishCallBack();
     };
     Contacts.sharedInstance.contactUpdatedCallBack = () {
-      LogUtil.d("Michael: init contactUpdatedCallBack  Contacts.sharedInstance.allContacts = ${Contacts.sharedInstance.allContacts.length}");
       _fetchFinishHandler(_ContactType.contacts);
       OXChatBinding.sharedInstance.contactUpdatedCallBack();
-      OXChatBinding.sharedInstance.syncSessionTypesByContact();
     };
     Channels.sharedInstance.myChannelsUpdatedCallBack = () async {
-      LogUtil.d('Michael: init myChannelsUpdatedCallBack');
       _fetchFinishHandler(_ContactType.channels);
       OXChatBinding.sharedInstance.channelsUpdatedCallBack();
     };
     Groups.sharedInstance.myGroupsUpdatedCallBack = () async {
-      LogUtil.d('Michael: init  myGroupsUpdatedCallBack');
       OXChatBinding.sharedInstance.groupsUpdatedCallBack();
     };
     RelayGroup.sharedInstance.myGroupsUpdatedCallBack = () async {
-      LogUtil.d('Michael: init RelayGroup myGroupsUpdatedCallBack');
       _fetchFinishHandler(_ContactType.relayGroups);
       OXChatBinding.sharedInstance.relayGroupsUpdatedCallBack();
     };
@@ -269,15 +250,12 @@ class OXUserInfoManager {
       OXChatBinding.sharedInstance.relayGroupsUpdatedCallBack();
     };
     Contacts.sharedInstance.offlinePrivateMessageFinishCallBack = () {
-      LogUtil.d('Michael: init  offlinePrivateMessageFinishCallBack');
       OXChatBinding.sharedInstance.offlinePrivateMessageFinishCallBack();
     };
     Contacts.sharedInstance.offlineSecretMessageFinishCallBack = () {
-      LogUtil.d('Michael: init  offlineSecretMessageFinishCallBack');
       OXChatBinding.sharedInstance.offlineSecretMessageFinishCallBack();
     };
     Channels.sharedInstance.offlineChannelMessageFinishCallBack = () {
-      LogUtil.d('Michael: init  offlineChannelMessageFinishCallBack');
       OXChatBinding.sharedInstance.offlineChannelMessageFinishCallBack();
     };
 
@@ -364,7 +342,7 @@ class OXUserInfoManager {
       // _ContactType.groups: false,
       _ContactType.relayGroups: false,
     };
-    OXChatBinding.sharedInstance.clearSession();
+    // OXChatBinding.sharedInstance.clearSession();
     if (needObserver) {
       for (OXUserInfoObserver observer in _observers) {
         observer.didLogout();
@@ -459,7 +437,6 @@ class OXUserInfoManager {
         groupsUpdatedCallBack: Groups.sharedInstance.myGroupsUpdatedCallBack,
         relayGroupsUpdatedCallBack: RelayGroup.sharedInstance.myGroupsUpdatedCallBack);
     _initMessage();
-    LogUtil.e('Michael: data await Friends Channels init friends =${Contacts.sharedInstance.allContacts.values.toList().toString()}');
   }
 
   void _initMessage() {

@@ -15,7 +15,6 @@ import 'package:ox_chat/model/search_history_model_isar.dart';
 import 'package:ox_chat/page/contacts/contact_channel_detail_page.dart';
 import 'package:ox_chat/page/contacts/contact_user_choose_page.dart';
 import 'package:ox_chat/page/contacts/contact_user_info_page.dart';
-import 'package:ox_chat/page/contacts/contacts_page.dart';
 import 'package:ox_chat/page/contacts/groups/group_info_page.dart';
 import 'package:ox_chat/page/contacts/groups/group_share_page.dart';
 import 'package:ox_chat/page/contacts/groups/relay_group_info_page.dart';
@@ -28,7 +27,6 @@ import 'package:ox_chat/page/ecash/ecash_signature_record.dart';
 import 'package:ox_chat/page/ecash/ecash_signature_record_isar.dart';
 import 'package:ox_chat/page/session/chat_choose_share_page.dart';
 import 'package:ox_chat/page/session/chat_message_page.dart';
-import 'package:ox_chat/page/session/chat_session_list_page.dart';
 import 'package:ox_chat/page/session/chat_video_play_page.dart';
 import 'package:ox_chat/page/session/search_page.dart';
 import 'package:ox_chat/page/session/unified_search_page.dart';
@@ -48,7 +46,6 @@ import 'package:ox_common/utils/aes_encrypt_utils.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
 import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/utils/string_utils.dart';
-import 'package:ox_common/widgets/base_page_state.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_module_service/ox_module_service.dart';
@@ -63,7 +60,6 @@ class OXChat extends OXFlutterModule {
   Future<void> setup() async {
     super.setup();
     OXUserInfoManager.sharedInstance.initDataActions.add(() async {
-      await OXChatBinding.sharedInstance.initLocalSession();
       await ChatDataCache.shared.setup();
     });
     OXChatBinding.sharedInstance.sessionMessageTextBuilder = ChatMessageHelper.sessionMessageTextBuilder;
@@ -73,8 +69,6 @@ class OXChat extends OXFlutterModule {
   @override
   Map<String, Function> get interfaces => {
     'showMyIdCardDialog': _showMyIdCardDialog,
-    'chatSessionListPageWidget': _chatSessionListPageWidget,
-    'contractsPageWidget': _contractsPageWidget,
     'groupSharePage': _jumpGroupSharePage,
     'sendSystemMsg': _sendSystemMsg,
     'contactUserInfoPage': _contactUserInfoPage,
@@ -197,18 +191,6 @@ class OXChat extends OXFlutterModule {
         });
   }
 
-  Widget _chatSessionListPageWidget(BuildContext context, {
-    GlobalKey<BasePageState>? homeGlobalKey,
-  }) {
-    return ChatSessionListPage(
-      key: homeGlobalKey,
-    );
-  }
-
-  Widget _contractsPageWidget(BuildContext context, {GlobalKey<ContactBasePageState>? contactGlobalKey}) {
-    return ContractsPage(key: contactGlobalKey);
-  }
-
   void _jumpGroupSharePage(BuildContext? context,{required String groupPic, required String groupName, required String groupOwner, required String groupId, String? inviterPubKey, int? groupTypeIndex}){
     GroupType groupType = GroupType.privateGroup;
     groupTypeIndex ??= GroupType.privateGroup.index;
@@ -261,7 +243,7 @@ class OXChat extends OXFlutterModule {
   void _sendSystemMsg(BuildContext context,{required String chatId,required String content, required String localTextKey}){
     UserDBISAR? userDB = OXUserInfoManager.sharedInstance.currentUserInfo;
 
-    ChatSessionModelISAR? sessionModel = OXChatBinding.sharedInstance.sessionMap[chatId];
+    ChatSessionModelISAR? sessionModel = OXChatBinding.sharedInstance.sessionModelFetcher?.call(chatId);
     if(sessionModel == null) return;
 
     ChatGeneralHandler chatGeneralHandler = ChatGeneralHandler(

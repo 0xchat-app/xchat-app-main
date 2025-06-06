@@ -151,8 +151,9 @@ extension OtherInfoItemStr on EOtherInfoItemType {
 
 class _ContactUserOptionWidgetState extends State<ContactUserOptionWidget> with SingleTickerProviderStateMixin {
   ChatSessionModelISAR? get _chatSessionModel {
-    ChatSessionModelISAR? model =
-    OXChatBinding.sharedInstance.sessionMap[widget.chatId];
+    ChatSessionModelISAR? model = OXChatBinding.sharedInstance.getSessionModel(
+      widget.chatId ?? '',
+    );
     return model;
   }
 

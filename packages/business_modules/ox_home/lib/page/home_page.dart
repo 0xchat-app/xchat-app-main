@@ -21,20 +21,25 @@ import 'home_scaffold.dart';
 class HomePage extends StatefulWidget {
   const HomePage({
     Key? key,
+    required this.ownerPubkey,
   }) : super(key: key);
+
+  final String ownerPubkey;
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> with OXUserInfoObserver {
-  SessionListDataController sessionDataController = SessionListDataController();
+  late SessionListDataController sessionDataController;
 
   @override
   void initState() {
     super.initState();
     Localized.addLocaleChangedCallback(onLocaleChange);
     signerCheck();
+
+    sessionDataController = SessionListDataController(widget.ownerPubkey);
     sessionDataController.initialized();
 
     final style = themeManager.themeStyle.toOverlayStyle;

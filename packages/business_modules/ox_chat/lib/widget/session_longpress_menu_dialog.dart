@@ -200,25 +200,13 @@ class SessionMenuOptionModel {
 
   static void optionsOnTap(BuildContext context, LongPressOptionEnum optionModel, ChatSessionModelISAR sessionModelISAR, {bool isMute = false}) async {
     if (optionModel == LongPressOptionEnum.markAsUnreadOrRead) {
-      int unReadStrangerSessionCount = OXChatBinding.sharedInstance.unReadStrangerSessionCount;
-      List<ChatSessionModelISAR> msgDatas = OXChatBinding.sharedInstance.sessionList;
-      int readCount = 0;
-      for (ChatSessionModelISAR i in msgDatas) {
-        if (i.unreadCount > 0) {
-          readCount += i.unreadCount;
-        }
-      }
-      int currentSessionUnread = sessionModelISAR.unreadCount;
-      if (currentSessionUnread > 0) {
-        readCount = readCount - currentSessionUnread + unReadStrangerSessionCount;
-        if (context.mounted) {
-          MsgNotification(msgNum: readCount).dispatch(context);
-        }
-        currentSessionUnread = 0;
+      var unreadCount = sessionModelISAR.unreadCount;
+      if (unreadCount > 0) {
+        unreadCount = 0;
       } else {
-        currentSessionUnread = 1;
+        unreadCount = 1;
       }
-      OXChatBinding.sharedInstance.updateChatSession(sessionModelISAR.chatId, unreadCount: currentSessionUnread);
+      OXChatBinding.sharedInstance.updateChatSession(sessionModelISAR.chatId, unreadCount: unreadCount);
     } else if (optionModel == LongPressOptionEnum.muteOrUnmute) {
       bool value = !isMute;
       ChatSessionUtils.setChatMute(sessionModelISAR, value);

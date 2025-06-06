@@ -154,7 +154,7 @@ class _MediaMessageViewerState extends State<MediaMessageViewer> {
         chatId = message.groupId;
         break;
     }
-    final sessionModel = OXChatBinding.sharedInstance.sessionMap[chatId];
+    final sessionModel = OXChatBinding.sharedInstance.getSessionModel(chatId);
     if (sessionModel == null) return;
     switch (type) {
       case ChatType.chatSingle:

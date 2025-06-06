@@ -12,8 +12,6 @@ import 'package:ox_common/utils/user_config_tool.dart';
 abstract mixin class OXChatObserver {
   void didSecretChatRequestCallBack() {}
 
-  void didReceiveMessageCallBack(MessageDBISAR message) {}
-
   void didPrivateMessageCallBack(MessageDBISAR message) {}
 
   void didChatMessageUpdateCallBack(MessageDBISAR message, String replacedMessageId) {}
@@ -67,4 +65,16 @@ abstract mixin class OXChatObserver {
   void didOfflineSecretMessageFinishCallBack() {}
   void didOfflineChannelMessageFinishCallBack() {}
   void didOfflineGroupMessageFinishCallBack() {}
+
+  // Lite Feature
+  void deleteSessionCallback(List<String> chatIds) {}
+
+  void didReceiveMessageCallback(MessageDBISAR message) {}
+  void deleteMessageHandler(MessageDBISAR delMessage, String newSessionSubtitle) {}
+
+  void addReactionMessageCallback(String chatId, String messageId) {}
+  void removeReactionMessageCallback(String chatId, [bool sendNotification = true]) {}
+
+  void addMentionMessageCallback(String chatId, String messageId) {}
+  void removeMentionMessageCallback(String chatId, [bool sendNotification = true]) {}
 }

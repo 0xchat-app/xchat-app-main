@@ -9,7 +9,7 @@ import 'package:ox_common/utils/string_utils.dart';
 
 class ChatStrategyFactory {
   static ChatStrategy getStrategy(ChatSessionModelISAR session) {
-    var s = OXChatBinding.sharedInstance.sessionMap[session.chatId];
+    var s = OXChatBinding.sharedInstance.getSessionModel(session.chatId);
     if (s != null) session = s;
     switch (session.chatType) {
       case ChatType.chatGroup:

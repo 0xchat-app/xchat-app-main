@@ -432,7 +432,7 @@ class _GroupSharePageState extends State<GroupSharePage> {
   }
 
   Future<void> _gotoGroupChat() async {
-    ChatSessionModelISAR? session = OXChatBinding.sharedInstance.sessionMap[widget.groupId];
+    ChatSessionModelISAR? session = OXChatBinding.sharedInstance.getSessionModel(widget.groupId);
     int tempCreateTime = DateTime.now().millisecondsSinceEpoch;
     if(session == null){
       session = ChatSessionModelISAR(

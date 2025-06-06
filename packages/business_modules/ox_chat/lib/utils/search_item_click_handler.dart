@@ -48,7 +48,7 @@ class SearchItemClickHandler {
       ChatMessage item,
       ) {
     final type = item.chatType;
-    final sessionModel = OXChatBinding.sharedInstance.sessionMap[item.chatId];
+    final sessionModel = OXChatBinding.sharedInstance.getSessionModel(item.chatId);
     if (sessionModel == null) return;
     switch (type) {
       case ChatType.chatSingle:

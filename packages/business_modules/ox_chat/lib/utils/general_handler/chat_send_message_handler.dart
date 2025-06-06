@@ -122,7 +122,7 @@ extension ChatMessageSendEx on ChatGeneralHandler {
     final sender = OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? '';
     if (sender.isEmpty) return null;
 
-    final session = OXChatBinding.sharedInstance.sessionMap[receiverPubkey];
+    final session = OXChatBinding.sharedInstance.getSessionModel(receiverPubkey);
     if (session != null) return session;
 
     return ChatSessionModelISAR.getDefaultSession(

@@ -71,7 +71,6 @@ class ChatDataCache with OXChatObserver {
   @override
   void didPrivateMessageCallBack(MessageDBISAR message) async {
     receiveMessageHandler(message);
-    updateSessionExpiration(message);
   }
 
   @override
@@ -80,7 +79,6 @@ class ChatDataCache with OXChatObserver {
   @override
   void didSecretChatMessageCallBack(MessageDBISAR message) async {
     receiveMessageHandler(message);
-    updateSessionExpiration(message);
   }
 
   @override
@@ -91,28 +89,6 @@ class ChatDataCache with OXChatObserver {
   @override
   void didChannalMessageCallBack(MessageDBISAR message) async {
     receiveMessageHandler(message);
-  }
-
-  @override
-  void didSecretChatAcceptCallBack(SecretSessionDBISAR ssDB) async {
-    final toPubkey = ssDB.toPubkey ?? '';
-    final sessionModel = OXChatBinding.sharedInstance.sessionMap[ssDB.sessionId];
-    if (sessionModel == null || toPubkey.isEmpty) {
-      ChatLogUtils.error(
-        className: 'ChatDataCache',
-        funcName: 'didSecretChatAcceptCallBack',
-        message: 'sessionModel: $sessionModel, toPubkey: $toPubkey',
-      );
-      return ;
-    }
-    final toUser = await Account.sharedInstance.getUserInfo(toPubkey);
-    final userName = toUser?.getUserShowName() ?? '';
-
-    ChatMessageSendEx.sendSystemMessageHandler(
-      sessionModel.getOtherPubkey,
-      '$userName joined Secret Chat',
-      secretSessionId: sessionModel.chatId,
-    );
   }
 
   @override
@@ -168,24 +144,6 @@ class ChatDataCache with OXChatObserver {
   void didOfflineGroupMessageFinishCallBack() {
     if (!offlineGroupMessageFlag.isCompleted) {
       offlineGroupMessageFlag.complete();
-    }
-  }
-
-  void updateSessionExpiration(MessageDBISAR message) {
-    final sessionId = message.chatTypeKey?.sessionId;
-    if (sessionId == null || sessionId.isEmpty) return ;
-
-    final myPubkey = OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey;
-    if(message.receiver != myPubkey) return;
-
-    ChatSessionModelISAR? sessionModel = OXChatBinding.sharedInstance.sessionMap[sessionId];
-
-    if (sessionModel != null && message.createTime >= sessionModel.createTime) {
-      int expiration = 0;
-      if(message.expiration != null && message.expiration! > message.createTime) {
-        expiration = message.expiration! - message.createTime;
-      }
-      OXChatBinding.sharedInstance.updateChatSession(sessionId, expiration: expiration);
     }
   }
 

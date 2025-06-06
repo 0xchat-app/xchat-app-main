@@ -353,7 +353,7 @@ class _ChatSecretMessagePageState extends State<ChatSecretMessagePage> with OXCh
         session.chatId,
         content: 'secret_chat_accepted_tips'.localized({r"${name}": otherUser?.name ?? ''}),
       );
-      OXChatBinding.sharedInstance.changeChatSessionType(session, true);
+      // OXChatBinding.sharedInstance.changeChatSessionType(session, true);
       setState(() {});
     } else {
       CommonToast.instance.show(context, okEvent.message);
