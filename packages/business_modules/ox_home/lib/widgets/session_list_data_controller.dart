@@ -20,85 +20,6 @@ class SessionListDataController with OXChatObserver {
   HashMap<String, SessionListViewModel> sessionCache =
       HashMap<String, SessionListViewModel>();
 
-  void initialized() async {
-    final isar = DBISAR.sharedInstance.isar;
-    final List<ChatSessionModelISAR> sessionList = await isar
-        .chatSessionModelISARs
-        .where()
-        .chatIdNotEqualTo('')
-        .sortByCreateTimeDesc()
-        .findAll();
-
-    final viewModelData = <SessionListViewModel>[];
-    for (var sessionModel in sessionList) {
-      final viewModel = SessionListViewModel(sessionModel);
-      viewModelData.add(viewModel);
-      sessionCache[sessionModel.chatId] = viewModel;
-    }
-
-    sessionList$.value = viewModelData;
-
-    OXChatBinding.sharedInstance.addObserver(this);
-    OXChatBinding.sharedInstance.sessionModelFetcher =
-        (chatId) => sessionCache[chatId]?.sessionModel;
-    OXChatBinding.sharedInstance.updateChatSessionFn = updateChatSession;
-    OXChatBinding.sharedInstance.sessionListFetcher =
-        () => sessionList$.value.map((e) => e.sessionModel).toList();
-  }
-
-  Future deleteSession(SessionListViewModel viewModel) async {
-    final chatId = viewModel.sessionModel.chatId;
-    if (chatId.isEmpty) return;
-
-    final isar = DBISAR.sharedInstance.isar;
-    int count = 0;
-    await isar.writeTxn(() async {
-      count = await isar.chatSessionModelISARs
-          .where()
-          .chatIdEqualTo(chatId)
-          .deleteAll();
-    });
-    if (count > 0) {
-      _removeViewModel(viewModel);
-    }
-  }
-
-  Future<bool> updateChatSession(String chatId, {
-    String? chatName,
-    String? content,
-    String? pic,
-    int? unreadCount,
-    bool? alwaysTop,
-    String? draft,
-    String? replyMessageId,
-    int? messageKind,
-    bool? isMentioned,
-    int? expiration,
-  }) async {
-    if (chatId.isEmpty) return true;
-
-    final viewModel = sessionCache[chatId];
-    if (viewModel == null) return true;
-
-    final sessionModel = viewModel.sessionModel;
-
-    sessionModel.chatName = chatName ?? sessionModel.chatName;
-    sessionModel.content = content ?? sessionModel.content;
-    sessionModel.avatar = pic ?? sessionModel.avatar;
-    sessionModel.unreadCount = unreadCount ?? sessionModel.unreadCount;
-    sessionModel.alwaysTop = alwaysTop ?? sessionModel.alwaysTop;
-    sessionModel.draft = draft ?? sessionModel.draft;
-    sessionModel.replyMessageId = replyMessageId ?? sessionModel.replyMessageId;
-    sessionModel.isMentioned = isMentioned ?? sessionModel.isMentioned;
-    sessionModel.messageKind = messageKind ?? sessionModel.messageKind;
-    sessionModel.expiration = expiration ?? sessionModel.expiration;
-
-    viewModel.rebuild();
-    ChatSessionModelISAR.saveChatSessionModelToDB(sessionModel);
-
-    return true;
-  }
-
   @override
   void deleteSessionCallback(List<String> chatIds) async {
     chatIds = chatIds.where((e) => e.isNotEmpty).toList();
@@ -234,6 +155,87 @@ class SessionListDataController with OXChatObserver {
   }
 }
 
+extension SessionDCInterface on SessionListDataController {
+  void initialized() async {
+    final isar = DBISAR.sharedInstance.isar;
+    final List<ChatSessionModelISAR> sessionList = await isar
+        .chatSessionModelISARs
+        .where()
+        .chatIdNotEqualTo('')
+        .sortByCreateTimeDesc()
+        .findAll();
+
+    final viewModelData = <SessionListViewModel>[];
+    for (var sessionModel in sessionList) {
+      final viewModel = SessionListViewModel(sessionModel);
+      viewModelData.add(viewModel);
+      sessionCache[sessionModel.chatId] = viewModel;
+    }
+
+    sessionList$.value = viewModelData;
+
+    OXChatBinding.sharedInstance.addObserver(this);
+    OXChatBinding.sharedInstance.sessionModelFetcher =
+        (chatId) => sessionCache[chatId]?.sessionModel;
+    OXChatBinding.sharedInstance.updateChatSessionFn = updateChatSession;
+    OXChatBinding.sharedInstance.sessionListFetcher =
+        () => sessionList$.value.map((e) => e.sessionModel).toList();
+  }
+
+  Future deleteSession(SessionListViewModel viewModel) async {
+    final chatId = viewModel.sessionModel.chatId;
+    if (chatId.isEmpty) return;
+
+    final isar = DBISAR.sharedInstance.isar;
+    int count = 0;
+    await isar.writeTxn(() async {
+      count = await isar.chatSessionModelISARs
+          .where()
+          .chatIdEqualTo(chatId)
+          .deleteAll();
+    });
+    if (count > 0) {
+      _removeViewModel(viewModel);
+    }
+  }
+
+  Future<bool> updateChatSession(String chatId, {
+    String? chatName,
+    String? content,
+    String? pic,
+    int? unreadCount,
+    bool? alwaysTop,
+    String? draft,
+    String? replyMessageId,
+    int? messageKind,
+    bool? isMentioned,
+    int? expiration,
+  }) async {
+    if (chatId.isEmpty) return true;
+
+    final viewModel = sessionCache[chatId];
+    if (viewModel == null) return true;
+
+    final sessionModel = viewModel.sessionModel;
+
+    sessionModel.chatName = chatName ?? sessionModel.chatName;
+    sessionModel.content = content ?? sessionModel.content;
+    sessionModel.avatar = pic ?? sessionModel.avatar;
+    sessionModel.unreadCount = unreadCount ?? sessionModel.unreadCount;
+    sessionModel.alwaysTop = alwaysTop ?? sessionModel.alwaysTop;
+    sessionModel.draft = draft ?? sessionModel.draft;
+    sessionModel.replyMessageId = replyMessageId ?? sessionModel.replyMessageId;
+    sessionModel.isMentioned = isMentioned ?? sessionModel.isMentioned;
+    sessionModel.messageKind = messageKind ?? sessionModel.messageKind;
+    sessionModel.expiration = expiration ?? sessionModel.expiration;
+
+    viewModel.rebuild();
+    ChatSessionModelISAR.saveChatSessionModelToDB(sessionModel);
+
+    return true;
+  }
+}
+
 extension _DataControllerEx on SessionListDataController {
   void _addViewModel(SessionListViewModel viewModel) {
     final chatId = viewModel.sessionModel.chatId;
@@ -274,7 +276,10 @@ extension _DataControllerEx on SessionListDataController {
 }
 
 extension _MessageDBISAREx on MessageDBISAR {
-  String get chatId => otherPubkey;
+  String get chatId {
+    if (groupId.isNotEmpty) return groupId;
+    return otherPubkey;
+  }
 
   String get otherPubkey {
     final pubkey =
