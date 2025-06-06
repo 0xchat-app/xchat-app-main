@@ -367,7 +367,16 @@ extension _AdaptHelperEx on dynamic {
     if (obj is UserDBISAR) {
       return obj.picture ?? '';
     }
-    if (obj is GroupDBISAR || obj is ChannelDBISAR || obj is RelayGroupDBISAR) {
+    if (obj is GroupDBISAR){
+      if(obj.isDirectMessage == true){
+        UserDBISAR? otherUser = Account.sharedInstance.userCache[obj.otherPubkey]?.value;
+        return otherUser?.picture ?? '';
+      }
+      else{
+        return obj.picture ?? '';
+      }
+    }
+    if (obj is ChannelDBISAR || obj is RelayGroupDBISAR) {
       return obj.picture ?? '';
     }
     return '';
@@ -377,6 +386,14 @@ extension _AdaptHelperEx on dynamic {
     final obj = this;
     if (obj is UserDBISAR) {
       return 'user_image.png';
+    }
+    if (obj is GroupDBISAR){
+      if(obj.isDirectMessage == true){
+        return 'user_image.png';
+      }
+      else{
+        return 'icon_group_default.png';
+      }
     }
     if (obj is GroupDBISAR || obj is ChannelDBISAR || obj is RelayGroupDBISAR) {
       return 'icon_group_default.png';
@@ -389,7 +406,16 @@ extension _AdaptHelperEx on dynamic {
     if (obj is UserDBISAR) {
       return obj.getUserShowName();
     }
-    if (obj is GroupDBISAR || obj is ChannelDBISAR || obj is RelayGroupDBISAR) {
+    if (obj is GroupDBISAR){
+      if(obj.isDirectMessage == true){
+        UserDBISAR? otherUser = Account.sharedInstance.userCache[obj.otherPubkey]?.value;
+        return otherUser?.getUserShowName() ?? '';
+      }
+      else{
+        return obj.name;
+      }
+    }
+    if (obj is ChannelDBISAR || obj is RelayGroupDBISAR) {
       return obj.name;
     }
     return '';
