@@ -28,6 +28,8 @@ class CLCircularProgressIndicator extends StatelessWidget {
 
   Widget _buildMaterialIndicator(BuildContext context) {
     final size = this.size ?? defaultSize;
+    // _CircularProgressIndicatorDefaultsM3Year2023.strokeWidth = 4.0
+    final strokeWidth = 4.0 * size / defaultSize;
     return Container(
       height: size,
       width: size,
@@ -37,6 +39,7 @@ class CLCircularProgressIndicator extends StatelessWidget {
         width: size,
         child: CircularProgressIndicator(
           value: progress,
+          strokeWidth: strokeWidth,
         ),
       ),
     );

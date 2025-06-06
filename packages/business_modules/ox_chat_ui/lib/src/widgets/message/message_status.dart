@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-
+import 'package:ox_common/component.dart';
 import '../state/inherited_chat_theme.dart';
 
 /// A class that represents a message status.
@@ -39,16 +39,8 @@ class MessageStatus extends StatelessWidget {
         return InheritedChatTheme.of(context).theme.sendingIcon != null
             ? InheritedChatTheme.of(context).theme.sendingIcon!
             : Center(
-                child: SizedBox(
-                  height: size,
-                  width: size,
-                  child: CircularProgressIndicator(
-                    backgroundColor: Colors.transparent,
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      InheritedChatTheme.of(context).theme.primaryColor,
-                    ),
-                  ),
+                child:CLProgressIndicator.circular(
+                  size: size,
                 ),
               );
       default:
