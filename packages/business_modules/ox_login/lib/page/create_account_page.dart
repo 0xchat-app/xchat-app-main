@@ -1,35 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
+import 'package:ox_common/component.dart';
+
 // ox_common
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
-import 'package:ox_common/utils/theme_color.dart';
-import 'package:ox_common/widgets/base_page_state.dart';
-import 'package:ox_common/widgets/common_appbar.dart';
+import 'package:ox_common/utils/ox_userinfo_manager.dart';
+import 'package:ox_common/utils/took_kit.dart';
 import 'package:ox_common/utils/widget_tool.dart';
-import 'package:ox_common/widgets/common_toast.dart';
-import 'package:ox_common/const/common_constant.dart';
+import 'package:ox_common/widgets/common_loading.dart';
 
-import 'package:ox_login/page/save_account_page.dart';
-import 'package:ox_module_service/ox_module_service.dart';
 // component
-import '../component/common_input.dart';
-import '../component/input_wrap.dart';
 import '../component/lose_focus_wrap.dart';
+
 // plugin
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 export 'package:visibility_detector/visibility_detector.dart';
 import 'package:nostr_core_dart/nostr.dart';
+import 'package:ox_module_service/ox_module_service.dart';
 
-///Title: create_account
-///Description: TODO(Fill in by oneself)
-///Copyright: Copyright (c) 2021
-///@author Michael
-///CreateTime: 2023/4/25 09:40
+/// Create Account Page
+/// 
+/// Displays a form for users to create a new nostr account with public/private key pair.
+/// Allows users to copy keys, generate new keys, and accept terms before creating account.
 class CreateAccountPage extends StatefulWidget {
-  final Keychain keychain;
-
-  CreateAccountPage({required this.keychain});
+  CreateAccountPage({super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -37,171 +33,278 @@ class CreateAccountPage extends StatefulWidget {
   }
 }
 
-class _CreateAccountPageState extends BasePageState<CreateAccountPage> {
-  TextEditingController _userNameTextEditingController =
-      new TextEditingController();
-  TextEditingController _dnsTextEditingController = new TextEditingController();
-  TextEditingController _aboutTextEditingController =
-      new TextEditingController();
+class _CreateAccountPageState extends State<CreateAccountPage> {
+  // Text content for the page
+  final String _publicKeyTips = 'Before we get started, you\'ll need to save your nostr account ID. You can share it with your contacts so they can add you as a friend. Tap to copy';
+  final String _privateKeyTips = 'This is your secret account key. You need this to access your account. otherwise you won\'t be able to login in the future if you ever uninstall 0xchat. Don\'t share this with anyone! Save it in a password manager and keep it safe!';
 
-  String dnsSuffix = '@0xchat.com';
+  // Key generation state
+  late Keychain keychain;
+  
+  // Reactive state management
+  final ValueNotifier<String> _encodedPubkey$ = ValueNotifier<String>('');
+  final ValueNotifier<String> _encodedPrivkey$ = ValueNotifier<String>('');
+  final ValueNotifier<bool> _hasAcceptedTerms$ = ValueNotifier<bool>(true); // 默认勾选协议
+
+  double get separatorHeight => 20.px;
 
   @override
-  String get routeName => 'CreateAccount';
+  void initState() {
+    super.initState();
+    _generateKeys();
+  }
+
+  @override
+  void dispose() {
+    _encodedPubkey$.dispose();
+    _encodedPrivkey$.dispose();
+    _hasAcceptedTerms$.dispose();
+    super.dispose();
+  }
+
+  /// Generate new key pair for the account
+  void _generateKeys() {
+    keychain = Account.generateNewKeychain();
+    _encodedPubkey$.value = Nip19.encodePubkey(keychain.public);
+    _encodedPrivkey$.value = Nip19.encodePubkey(keychain.private);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CommonAppBar(
-        backgroundColor: ThemeColor.color200,
-        useLargeTitle: false,
-        centerTitle: true,
-        title: '',
+    return CLScaffold(
+      appBar: CLAppBar(
+        title: Localized.text('ox_login.create_account'),
       ),
-      backgroundColor: ThemeColor.color200,
-      body: LoseFocusWrap(_body()),
+      body: LoseFocusWrap(_buildBody()),
     );
   }
 
-  Widget _body() {
+  Widget _buildBody() {
     return SingleChildScrollView(
-      physics: BouncingScrollPhysics(),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
+      physics: const BouncingScrollPhysics(),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 30.px),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: separatorHeight),
+            _buildPublicKeySection(),
+            SizedBox(height: separatorHeight),
+            _buildPrivateKeySection(),
+            SizedBox(height: separatorHeight), // 40.px = 20 * 2
+            _buildCreateButton(),
+            SizedBox(height: separatorHeight),
+            _buildGenerateNewKeyButton(),
+            SizedBox(height: separatorHeight),
+            _buildTermsSection(),
+            SizedBox(height: separatorHeight), // 40.px = 20 * 2
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Build public key input section
+  Widget _buildPublicKeySection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CLText.bodyMedium(_publicKeyTips),
+        SizedBox(height: separatorHeight),
+        ValueListenableBuilder<String>(
+          valueListenable: _encodedPubkey$,
+          builder: (context, encodedPubkey, child) {
+            return CLTextField(
+              initialText: encodedPubkey,
+              placeholder: Localized.text('ox_login.public_key'),
+              readOnly: true,
+              maxLines: 2,
+              onTap: () => _copyKey(encodedPubkey),
+              suffixIcon: Icon(
+                Icons.copy_rounded,
+                size: 24.px,
+              ).setPadding(EdgeInsets.all(8.px)),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  /// Build private key input section  
+  Widget _buildPrivateKeySection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CLText.bodyMedium(_privateKeyTips),
+        SizedBox(height: separatorHeight),
+        ValueListenableBuilder<String>(
+          valueListenable: _encodedPrivkey$,
+          builder: (context, encodedPrivkey, child) {
+            return CLTextField(
+              initialText: encodedPrivkey,
+              placeholder: Localized.text('ox_login.private_key'),
+              readOnly: true,
+              maxLines: 2,
+              onTap: () => _copyKey(encodedPrivkey),
+              suffixIcon: Icon(
+                Icons.copy_rounded,
+                size: 24.px,
+              ).setPadding(EdgeInsets.all(8.px)),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  /// Build create account button
+  Widget _buildCreateButton() {
+    return ValueListenableBuilder<bool>(
+      valueListenable: _hasAcceptedTerms$,
+      builder: (context, hasAccepted, child) {
+        return CLButton.filled(
+          text: Localized.text('ox_login.create'),
+          onTap: hasAccepted ? _onCreateAccountTap : null,
+          expanded: true,
+          height: 48.px,
+        );
+      },
+    );
+  }
+
+  /// Build generate new key button
+  Widget _buildGenerateNewKeyButton() {
+    return CLButton.tonal(
+      text: Localized.text('ox_login.generate_new_key'),
+      onTap: _onGenerateNewKeyTap,
+      expanded: true,
+      height: 48.px,
+    );
+  }
+
+  /// Build terms and conditions section
+  Widget _buildTermsSection() {
+    return ValueListenableBuilder<bool>(
+      valueListenable: _hasAcceptedTerms$,
+      builder: (context, hasAccepted, child) {
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            CLCheckbox(
+              value: hasAccepted,
+              onChanged: (value) => _hasAcceptedTerms$.value = value ?? false,
+              size: 40.px,
+            ),
+            SizedBox(width: 12.px),
+            Expanded(
+              child: _buildTermsText(),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Build terms and conditions text with links
+  Widget _buildTermsText() {
+    return RichText(
+      text: TextSpan(
+        style: Theme.of(context).textTheme.bodySmall,
         children: [
-          ShaderMask(
-            shaderCallback: (Rect bounds) {
-              return LinearGradient(
-                colors: [
-                  ThemeColor.gradientMainEnd,
-                  ThemeColor.gradientMainStart,
-                ],
-              ).createShader(Offset.zero & bounds.size);
-            },
-            child: Text(
-              Localized.text('ox_login.create_account'),
-              style: TextStyle(
-                fontSize: Adapt.px(32),
-                color: Colors.white,
-                fontWeight: FontWeight.w700,
-              ),
+          const TextSpan(text: 'By Creating your account you accept the '),
+          TextSpan(
+            text: Localized.text('ox_login.terms_of_service'),
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+              decoration: TextDecoration.underline,
+              decorationColor: Theme.of(context).colorScheme.primary,
             ),
-          ).setPadding(
-            EdgeInsets.symmetric(
-              vertical: Adapt.px(28),
-            ),
+            recognizer: TapGestureRecognizer()..onTap = _onTermsOfUseTap,
           ),
-          InputWrap(
-            title: Localized.text('ox_login.username'),
-            contentWidget: CommonInput(
-              hintText: 'Satoshi',
-              textController: _userNameTextEditingController,
+          const TextSpan(text: ' and '),
+          TextSpan(
+            text: Localized.text('ox_login.privacy_policy'),
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+              decoration: TextDecoration.underline,
+              decorationColor: Theme.of(context).colorScheme.primary,
             ),
-          ),
-          InputWrap(
-            title: Localized.text('ox_login.about'),
-            contentWidget: CommonInput(
-              hintText: 'Bitcoin Core Dev (Optional)',
-              textController: _aboutTextEditingController,
-              maxLines: null,
-            ),
-          ),
-          InputWrap(
-            title: Localized.text('ox_login.account_id'),
-            contentWidget: Text(
-              Nip19.encodePubkey(widget.keychain.public),
-              style: TextStyle(
-                fontSize: Adapt.px(16),
-                color: ThemeColor.color40,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ),
-          SizedBox(
-            height: Adapt.px(18),
-          ),
-          GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: _create,
-            child: Container(
-              width: double.infinity,
-              height: Adapt.px(48),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: ThemeColor.color180,
-                gradient: LinearGradient(
-                  colors: [
-                    ThemeColor.gradientMainEnd,
-                    ThemeColor.gradientMainStart,
-                  ],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                ),
-              ),
-              alignment: Alignment.center,
-              child: Text(
-                Localized.text('ox_login.create'),
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: Adapt.px(16),
-                ),
-              ),
-            ),
+            recognizer: TapGestureRecognizer()..onTap = _onPrivacyPolicyTap,
           ),
         ],
-      ).setPadding(EdgeInsets.symmetric(
-        horizontal: Adapt.px(30),
-      )),
+      ),
     );
   }
 
-  void _create() async {
-    bool checkResult = await _checkForm();
-    if (!checkResult) return;
-    String dnsText = _dnsTextEditingController.text;
-    String userName = _userNameTextEditingController.text;
-    String userAbout = _aboutTextEditingController.text;
-    String userDns = dnsText.length == 0 ? '' : dnsText + dnsSuffix;
-    OXNavigator.pushPage(context, (context) => SaveAccountPage(userName: userName, userAbout: userAbout, userDns: userDns, keychain: widget.keychain));
+  /// Copy key to clipboard
+  void _copyKey(String key) {
+    TookKit.copyKey(context, key);
   }
 
-  Future<bool> _checkForm() async {
-    bool userNameIsEmpty = _userNameTextEditingController.text.length == 0;
-    if (userNameIsEmpty) {
-      CommonToast.instance.show(context, 'The user name cannot be empty');
-      return false;
-    }
+  /// Handle create account button tap
+  void _onCreateAccountTap() async {
+    await _createAccount();
+  }
 
-    String dnsText = _dnsTextEditingController.text;
-    if (dnsText.length > 0) {
-      String pubKey = widget.keychain.public;
-      String nip05Url = dnsText + dnsSuffix;
+  /// Handle generate new key button tap  
+  void _onGenerateNewKeyTap() {
+    _generateKeys();
+  }
 
-      Map<String, dynamic>? dnsParams = {
-        "name": _userNameTextEditingController.text,
-        "publicKey": pubKey,
-        'relays': [CommonConstant.oxChatRelay],
-        "nip05Url": nip05Url,
-        'sig': await signData([
-          pubKey,
-          nip05Url,
-          [CommonConstant.oxChatRelay]
-        ],Account.sharedInstance.currentPubkey, Account.sharedInstance.currentPrivkey)
-      };
+  /// Handle terms of use link tap
+  void _onTermsOfUseTap() {
+    OXModuleService.invoke('ox_common', 'gotoWebView', [
+      context, 
+      'https://www.0xchat.com/protocols/0xchat_terms_of_use.html', 
+      null, 
+      null, 
+      null, 
+      null
+    ]);
+  }
 
-      Map<String, dynamic>? dnsResult = OXModuleService.invoke(
-          'ox_usercenter',
-          'requestVerifyDNS',
-          [dnsParams, context, null, null]);
-      if (dnsResult == null || dnsResult['code'] != '000000') {
-        _dnsTextEditingController.text = '';
-        String toastText =
-            dnsResult == null ? 'DNS unavailable' : dnsResult['message'];
-        CommonToast.instance.show(context, toastText);
-        return false;
+  /// Handle privacy policy link tap
+  void _onPrivacyPolicyTap() {
+    OXModuleService.invoke('ox_common', 'gotoWebView', [
+      context, 
+      'https://www.0xchat.com/protocols/0xchat_privacy_policy.html', 
+      null, 
+      null, 
+      null, 
+      null
+    ]);
+  }
+
+  /// Create account with generated keys
+  Future<void> _createAccount() async {
+    await OXLoading.show();
+    try {
+      await OXUserInfoManager.sharedInstance.initDB(keychain.public);
+      final user = await Account.sharedInstance.loginWithPriKey(keychain.private);
+      if (user != null) {
+        await OXUserInfoManager.sharedInstance.loginSuccess(user);
+        OXNavigator.popToRoot(context);
       }
+    } catch (e) {
+      // TODO: Handle error properly
+      debugPrint('Create account failed: $e');
+    } finally {
+      await OXLoading.dismiss();
     }
-
-    return true;
   }
+
+  // Legacy method - kept for compatibility
+  void createKeys() {
+    _generateKeys();
+  }
+
+  // Legacy method - kept for compatibility  
+  void createOnTap() async {
+    await _createAccount();
+  }
+
+  // Legacy getters - kept for compatibility
+  String get encodedPubkey => _encodedPubkey$.value;
+  String get encodedPrivkey => _encodedPrivkey$.value;
 }

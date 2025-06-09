@@ -244,8 +244,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _createAccount() {
-    Keychain keychain = Account.generateNewKeychain();
-    OXNavigator.pushPage(context, (context) => CreateAccountPage(keychain: keychain));
+    OXNavigator.pushPage(context, (context) => CreateAccountPage());
   }
 
   void _login() {

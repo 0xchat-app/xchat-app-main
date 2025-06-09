@@ -39,5 +39,6 @@
   "str_login_with_account": "Login by entering \"bunker://\" URI",
   "str_login_with_copy_url": "Copy URI",
   "login_with_aegis": "Login with Aegis",
-  "wait_link_service": "Waiting to connect to the service, or please check if the signing app is prompting for authorization!"
+  "wait_link_service": "Waiting to connect to the service, or please check if the signing app is prompting for authorization!",
+  "generate_new_key": "Generate New Key"
 }
