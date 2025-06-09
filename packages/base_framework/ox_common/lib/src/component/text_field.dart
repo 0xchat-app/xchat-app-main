@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'platform_style.dart';
 
 class CLTextField extends StatelessWidget {
-  const CLTextField({
+  CLTextField({
     super.key,
-    this.controller,
+    TextEditingController? controller,
     this.focusNode,
     this.placeholder,
     this.obscureText = false,
@@ -16,12 +16,19 @@ class CLTextField extends StatelessWidget {
     this.suffixIcon,
     this.onChanged,
     this.onSubmitted,
+    this.onTap,
     this.maxLines = 1,
     this.enabled = true,
     this.autofocus = false,
-  });
+    this.initialText,
+    this.readOnly = false,
+  }) : controller = controller ?? TextEditingController() {
+    if (initialText != null) {
+      this.controller.text = initialText!;
+    }
+  }
 
-  final TextEditingController? controller;
+  final TextEditingController controller;
   final FocusNode? focusNode;
   final String? placeholder; // Material -> InputDecoration.hintText
   final bool obscureText;
@@ -31,9 +38,12 @@ class CLTextField extends StatelessWidget {
   final Widget? suffixIcon; // Cupertino: suffix; Material: suffixIcon
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onSubmitted;
+  final VoidCallback? onTap;
   final int? maxLines;
   final bool enabled;
   final bool autofocus;
+  final String? initialText;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +63,7 @@ class CLTextField extends StatelessWidget {
       textInputAction: textInputAction,
       onChanged: onChanged,
       onSubmitted: onSubmitted,
+      onTap: onTap,
       maxLines: maxLines,
       enabled: enabled,
       autofocus: autofocus,
@@ -61,6 +72,7 @@ class CLTextField extends StatelessWidget {
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
       ),
+      readOnly: readOnly,
     );
   }
 
@@ -74,11 +86,13 @@ class CLTextField extends StatelessWidget {
       textInputAction: textInputAction,
       onChanged: onChanged,
       onSubmitted: onSubmitted,
+      onTap: onTap,
       maxLines: maxLines,
       enabled: enabled,
       autofocus: autofocus,
       prefix: prefixIcon,
       suffix: suffixIcon,
+      readOnly: readOnly,
     );
   }
 }
