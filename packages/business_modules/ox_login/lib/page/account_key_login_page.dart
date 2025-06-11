@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:ox_common/log_util.dart';
+import 'package:ox_common/login/login_models.dart';
 
 // common
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/theme_color.dart';
-import 'package:ox_common/utils/user_config_tool.dart';
-import 'package:ox_common/utils/widget_tool.dart';
-import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/widgets/common_appbar.dart';
 import 'package:ox_common/widgets/common_toast.dart';
-import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/utils/nip46_status_notifier.dart';
+import 'package:ox_common/login/login_manager.dart';
 
 // component
 import '../component/common_input.dart';
@@ -22,11 +19,6 @@ import '../component/lose_focus_wrap.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:chatcore/chat-core.dart';
 
-///Title: account_key_login_page
-///Description: TODO(Fill in by oneself)
-///Copyright: Copyright (c) 2021
-///@author Michael
-///CreateTime: 2023/4/25 15:49
 class AccountKeyLoginPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -34,15 +26,24 @@ class AccountKeyLoginPage extends StatefulWidget {
   }
 }
 
-class _AccountKeyLoginPageState extends State<AccountKeyLoginPage> {
+class _AccountKeyLoginPageState extends State<AccountKeyLoginPage> with LoginManagerObserver {
   TextEditingController _accountKeyEditingController = new TextEditingController();
   bool _isShowLoginBtn = false;
   String _accountKeyInput = '';
+  bool _isLoggingIn = false;
 
   @override
   void initState() {
     super.initState();
     _accountKeyEditingController.addListener(_checkAccountKey);
+    LoginManager.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    LoginManager.instance.removeObserver(this);
+    _accountKeyEditingController.dispose();
+    super.dispose();
   }
 
   @override
@@ -74,8 +75,8 @@ class _AccountKeyLoginPageState extends State<AccountKeyLoginPage> {
             inputAction: TextInputAction.done,
             onSubmitted: (value) {
               _checkAccountKey();
-              if (_accountKeyInput.isNotEmpty) {
-                _nescLogin();
+              if (_accountKeyInput.isNotEmpty && !_isLoggingIn) {
+                _loginWithKey();
               }
             },
           ),
@@ -92,67 +93,54 @@ class _AccountKeyLoginPageState extends State<AccountKeyLoginPage> {
         ),
         Visibility(
           visible: _isShowLoginBtn,
-          child: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: _nescLogin,
-            child: Container(
-              width: double.infinity,
-              height: Adapt.px(48),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: ThemeColor.color180,
-                gradient: LinearGradient(
-                  colors: [
-                    ThemeColor.gradientMainEnd,
-                    ThemeColor.gradientMainStart,
-                  ],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
+          child: Container(
+            width: double.infinity,
+            height: 45.py,
+            margin: EdgeInsets.only(top: 30.py),
+            child: ElevatedButton(
+              onPressed: _isLoggingIn ? null : _loginWithKey,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: ThemeColor.gradientMainStart,
+                padding: EdgeInsets.symmetric(vertical: 14.px),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.px),
                 ),
               ),
-              alignment: Alignment.center,
               child: Text(
-                Localized.text('ox_login.login_title'),
+                _isLoggingIn 
+                  ? Localized.text('ox_common.loading')
+                  : Localized.text('ox_login.login_button'),
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: Adapt.px(16),
+                  fontSize: 16.sp,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ),
           ),
         ),
+        SizedBox(height: 30.py),
       ],
-    ).setPadding(EdgeInsets.symmetric(horizontal: Adapt.px(30)));
+    );
   }
 
   Widget _titleView() {
     return Container(
-      width: double.infinity,
-      height: Adapt.px(100),
-      alignment: Alignment.center,
-      child: ShaderMask(
-        shaderCallback: (Rect bounds) {
-          return LinearGradient(
-            colors: [
-              ThemeColor.gradientMainEnd,
-              ThemeColor.gradientMainStart,
-            ],
-          ).createShader(Offset.zero & bounds.size);
-        },
-        child: Text(
-          Localized.text('ox_login.login_title'),
-          style: TextStyle(
-            fontSize: Adapt.px(32),
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
+      margin: EdgeInsets.symmetric(vertical: 40.py),
+      child: Text(
+        Localized.text('ox_login.login_title'),
+        style: TextStyle(
+          color: ThemeColor.color0,
+          fontSize: 28.sp,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );
   }
 
   void _checkAccountKey() {
+    if (_isLoggingIn) return;
+    
     String textContent = _accountKeyEditingController.text.trim();
     if (textContent.startsWith('bunker://')){
       _isShowLoginBtn = true;
@@ -173,36 +161,87 @@ class _AccountKeyLoginPageState extends State<AccountKeyLoginPage> {
     setState(() {});
   }
 
-  void _nescLogin() async {
-    await OXLoading.show();
-    String pubkey = "";
-    UserDBISAR? userDB;
-    String currentUserPubKey = OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? '';
-    if (_accountKeyInput.startsWith('bunker://')){
-      await OXLoading.dismiss();
-      bool result = await NIP46StatusNotifier.remoteSignerTips(Localized.text('ox_login.wait_link_service'));
-      if(!result) return;
-      await OXLoading.show();
-      pubkey = await Account.getPublicKeyWithNIP46URI(_accountKeyInput);
-      await OXUserInfoManager.sharedInstance.initDB(pubkey);
-      userDB = await Account.sharedInstance.loginWithNip46URI(_accountKeyInput);
-    } else {
-      pubkey = Account.getPublicKey(_accountKeyInput);
-      await OXUserInfoManager.sharedInstance.initDB(pubkey);
-      userDB = await Account.sharedInstance.loginWithPriKey(_accountKeyInput);
-    }
-    userDB = await OXUserInfoManager.sharedInstance.handleSwitchFailures(userDB, currentUserPubKey);
-    if (userDB == null) {
-      CommonToast.instance.show(context, Localized.text('ox_login.private_key_regular_failed'));
-      return;
-    }
-    Account.sharedInstance.reloadProfileFromRelay(userDB.pubKey).then((value) {
-      LogUtil.e('Michael:---reloadProfileFromRelay--name = ${value.name}; pic =${value.picture}}');
-      UserConfigTool.saveUser(value);
-      UserConfigTool.updateSettingFromDB(value.settings);
+  void _loginWithKey() async {
+    if (_isLoggingIn || _accountKeyInput.isEmpty) return;
+    
+    setState(() {
+      _isLoggingIn = true;
     });
-    OXUserInfoManager.sharedInstance.loginSuccess(userDB);
-    await OXLoading.dismiss();
-    OXNavigator.popToRoot(context);
+
+    bool success = false;
+    
+    if (_accountKeyInput.startsWith('bunker://')) {
+      // Handle NIP-46 login
+      success = await _loginWithNip46();
+    } else {
+      // Handle private key login with LoginManager
+      success = await LoginManager.instance.loginWithPrivateKey(_accountKeyInput);
+    }
+    
+    if (!success) {
+      setState(() {
+        _isLoggingIn = false;
+      });
+      // Error handling done in LoginManagerObserver callbacks for private key
+      // For NIP-46, errors are handled in _loginWithNip46 method
+    }
+  }
+
+  Future<bool> _loginWithNip46() async {
+    try {
+      bool result = await NIP46StatusNotifier.remoteSignerTips(Localized.text('ox_login.wait_link_service'));
+      if (!result) {
+        return false;
+      }
+
+      // Use LoginManager for NIP-46 login
+      return await LoginManager.instance.loginWithNostrConnect(_accountKeyInput);
+    } catch (e) {
+      debugPrint('NIP-46 login failed: $e');
+      if (mounted) {
+        CommonToast.instance.show(context, 'Login failed: ${e.toString()}');
+      }
+      return false;
+    }
+  }
+
+  @override
+  void onLoginSuccess(LoginState state) {
+    setState(() {
+      _isLoggingIn = false;
+    });
+    
+    // Navigate back to root (home page)
+    if (mounted) {
+      OXNavigator.popToRoot(context);
+    }
+  }
+
+  @override
+  void onLoginFailure(LoginFailure failure) {
+    setState(() {
+      _isLoggingIn = false;
+    });
+    
+    if (!mounted) return;
+    
+    // Show error message based on failure type
+    String errorMessage;
+    switch (failure.type) {
+      case LoginFailureType.invalidKeyFormat:
+        errorMessage = Localized.text('ox_login.private_key_regular_failed');
+        break;
+      case LoginFailureType.errorEnvironment:
+        errorMessage = Localized.text('ox_login.private_key_regular_failed');
+        break;
+      case LoginFailureType.accountDbFailed:
+        errorMessage = 'Failed to initialize account database';
+        break;
+      case LoginFailureType.circleDbFailed:
+        errorMessage = 'Failed to initialize circle database';
+        break;
+    }
+    
+    CommonToast.instance.show(context, errorMessage);
   }
 }

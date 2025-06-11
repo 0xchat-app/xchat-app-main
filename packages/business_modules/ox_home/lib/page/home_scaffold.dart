@@ -1,20 +1,26 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ox_chat/page/session/chat_message_page.dart';
 import 'package:ox_common/business_interface/ox_usercenter/interface.dart';
 import 'package:ox_common/component.dart';
+import 'package:ox_common/login/account_models.dart';
+import 'package:ox_common/login/login_manager.dart';
+import 'package:ox_common/login/login_models.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
+import 'package:ox_common/utils/ox_chat_binding.dart';
+import 'package:ox_localizable/ox_localizable.dart';
 
 import 'home_header_components.dart';
+import '../widgets/session_list_widget.dart';
+import '../widgets/session_view_model.dart';
+import '../widgets/circle_empty_widget.dart';
 
 class HomeScaffold extends StatefulWidget {
   const HomeScaffold({
     super.key,
-    required this.body,
   });
-
-  final Widget body;
 
   @override
   State<HomeScaffold> createState() => _HomeScaffoldState();
@@ -32,13 +38,6 @@ class _HomeScaffoldState extends State<HomeScaffold> {
 
   Duration get extendBodyDuration => const Duration(milliseconds: 200);
 
-
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     final headerComponents = HomeHeaderComponents(
@@ -48,7 +47,7 @@ class _HomeScaffoldState extends State<HomeScaffold> {
       avatarOnTap: _avatarOnTap,
       nameOnTap: _nameOnTap,
       addOnTap: _addOnTap,
-      joinOnTap: _joinOnTap,
+      joinOnTap: _handleJoinCircle,
       paidOnTap: _paidOnTap,
       isShowExtendBody$: isShowExtendBody$,
       extendBodyDuration: extendBodyDuration,
@@ -63,6 +62,7 @@ class _HomeScaffoldState extends State<HomeScaffold> {
           child: OXUserCenterInterface.settingSliderBuilder(context),
         ),
         drawerEdgeDragWidth: 50.px,
+        resizeToAvoidBottomInset: false,
         body: buildBody(headerComponents),
       );
     }
@@ -70,14 +70,18 @@ class _HomeScaffoldState extends State<HomeScaffold> {
     return Scaffold(
       appBar: headerComponents.buildAppBar(context),
       backgroundColor: CupertinoColors.systemBackground.resolveFrom(context),
+      resizeToAvoidBottomInset: false,
       body: buildBody(headerComponents),
     );
   }
 
   Widget buildBody(HomeHeaderComponents components) {
     return Stack(
+      fit: StackFit.expand,
       children: [
-        widget.body,
+        Positioned.fill(
+          child: _buildMainContent(),
+        ),
         Positioned.fill(
           child: components.buildMask(),
         ),
@@ -98,6 +102,106 @@ class _HomeScaffoldState extends State<HomeScaffold> {
         ),
       ],
     );
+  }
+
+  Widget _buildMainContent() {
+    return ValueListenableBuilder<LoginState>(
+      valueListenable: LoginManager.instance.state$,
+      builder: (context, loginState, child) {
+        final loginAccount = loginState.account;
+        final loginCircle = loginState.currentCircle;
+
+        if (loginAccount == null) {
+          // This shouldn't happen since HomePage should handle login check
+          return const Center(child: CircularProgressIndicator());
+        }
+        
+        return AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          switchInCurve: Curves.easeIn,
+          switchOutCurve: Curves.easeOut,
+          transitionBuilder: (Widget child, Animation<double> animation) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+          child: loginCircle != null
+              ? buildSessionList(loginAccount, loginCircle)
+              : CircleEmptyWidget(
+                  onJoinCircle: _handleJoinCircle,
+                  onCreatePaidCircle: _handleCreatePaidCircle,
+                ),
+        );
+      },
+    );
+  }
+
+  Widget buildSessionList(AccountModel loginAccount, Circle circle) {
+    return SessionListWidget(
+      ownerPubkey: loginAccount.pubkey,
+      circle: circle,
+      itemOnTap: sessionItemOnTap,
+    );
+  }
+
+  void sessionItemOnTap(SessionListViewModel item) {
+    final session = item.sessionModel;
+    final unreadMessageCount = session.unreadCount;
+
+    ChatMessagePage.open(
+      context: context,
+      communityItem: session,
+      unreadMessageCount: unreadMessageCount,
+    ).then((_) {
+      item.rebuild();
+    });
+
+    session.unreadCount = 0;
+    OXChatBinding.sharedInstance.updateChatSession(
+      session.chatId,
+      unreadCount: 0,
+    );
+
+    item.rebuild();
+  }
+
+  void _handleJoinCircle() {
+    debugPrint('HomeScaffold: Join Circle button tapped');
+    
+    CLDialog.showInputDialog(
+      context: context,
+      title: Localized.text('ox_home.join_circle_title'),
+      description: Localized.text('ox_home.join_circle_description'),
+      inputLabel: Localized.text('ox_home.join_circle_input_label'),
+      confirmText: Localized.text('ox_home.add'),
+      onConfirm: (relayUrl) async {
+        // Validate URL format
+        if (!_isValidRelayUrl(relayUrl)) {
+          throw Exception(Localized.text('ox_common.invalid_url_format'));
+        }
+        
+        // Try to join circle through LoginManager
+        final success = await LoginManager.instance.joinCircle(relayUrl);
+        return success;
+      },
+    );
+  }
+
+  bool _isValidRelayUrl(String url) {
+    // Basic URL validation
+    if (url.isEmpty) return false;
+    
+    // Check if it's a valid URL or relay address
+    final uri = Uri.tryParse(url);
+    if (uri == null) return false;
+    
+    // Check for common relay URL patterns
+    return url.startsWith('wss://') || 
+           url.startsWith('ws://') || 
+           url.contains('.') && !url.contains(' ');
+  }
+
+  void _handleCreatePaidCircle() {
+    debugPrint('HomeScaffold: Create Paid Circle button tapped');
+    // TODO: Navigate to create paid circle page
   }
 
   void _showSidebar(BuildContext context) {
@@ -121,9 +225,6 @@ class _HomeScaffoldState extends State<HomeScaffold> {
   }
 
   void _addOnTap() {
-  }
-
-  void _joinOnTap() {
   }
 
   void _paidOnTap() {

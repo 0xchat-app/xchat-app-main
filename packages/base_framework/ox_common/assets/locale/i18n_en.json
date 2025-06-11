@@ -123,5 +123,7 @@
   "signer_disconnected": "Signer disconnected. Please make sure the signer app is open.",
   "signer_connecting": "Connecting to signer...",
   "signer_waiting": "Waiting for signature approval...",
-  "signer_signature": "Signature approved."
+  "signer_signature": "Signature approved.",
+  "invalid_url_format": "Invalid URL format",
+  "operation_failed": "Operation failed"
 }

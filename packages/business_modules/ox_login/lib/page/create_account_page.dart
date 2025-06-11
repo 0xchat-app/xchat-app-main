@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:ox_common/component.dart';
+import 'package:ox_common/login/login_models.dart';
 
 // ox_common
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
-import 'package:ox_common/utils/ox_userinfo_manager.dart';
-import 'package:ox_common/utils/took_kit.dart';
 import 'package:ox_common/utils/widget_tool.dart';
-import 'package:ox_common/widgets/common_loading.dart';
+import 'package:ox_common/utils/took_kit.dart';
+import 'package:ox_common/widgets/common_toast.dart';
+import 'package:ox_common/login/login_manager.dart';
 
 // component
 import '../component/lose_focus_wrap.dart';
@@ -33,7 +34,7 @@ class CreateAccountPage extends StatefulWidget {
   }
 }
 
-class _CreateAccountPageState extends State<CreateAccountPage> {
+class _CreateAccountPageState extends State<CreateAccountPage> with LoginManagerObserver {
   // Text content for the page
   final String _publicKeyTips = 'Before we get started, you\'ll need to save your nostr account ID. You can share it with your contacts so they can add you as a friend. Tap to copy';
   final String _privateKeyTips = 'This is your secret account key. You need this to access your account. otherwise you won\'t be able to login in the future if you ever uninstall 0xchat. Don\'t share this with anyone! Save it in a password manager and keep it safe!';
@@ -45,6 +46,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   final ValueNotifier<String> _encodedPubkey$ = ValueNotifier<String>('');
   final ValueNotifier<String> _encodedPrivkey$ = ValueNotifier<String>('');
   final ValueNotifier<bool> _hasAcceptedTerms$ = ValueNotifier<bool>(true); // 默认勾选协议
+  final ValueNotifier<bool> _isCreating$ = ValueNotifier<bool>(false);
 
   double get separatorHeight => 20.px;
 
@@ -52,13 +54,16 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   void initState() {
     super.initState();
     _generateKeys();
+    LoginManager.instance.addObserver(this);
   }
 
   @override
   void dispose() {
+    LoginManager.instance.removeObserver(this);
     _encodedPubkey$.dispose();
     _encodedPrivkey$.dispose();
     _hasAcceptedTerms$.dispose();
+    _isCreating$.dispose();
     super.dispose();
   }
 
@@ -160,12 +165,15 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 
   /// Build create account button
   Widget _buildCreateButton() {
-    return ValueListenableBuilder<bool>(
-      valueListenable: _hasAcceptedTerms$,
-      builder: (context, hasAccepted, child) {
+    return ListenableBuilder(
+      listenable: Listenable.merge([_hasAcceptedTerms$, _isCreating$]),
+      builder: (context, child) {
+        final hasAccepted = _hasAcceptedTerms$.value;
+        final isCreating = _isCreating$.value;
+        
         return CLButton.filled(
-          text: Localized.text('ox_login.create'),
-          onTap: hasAccepted ? _onCreateAccountTap : null,
+          text: isCreating ? Localized.text('ox_common.loading') : Localized.text('ox_login.create'),
+          onTap: (hasAccepted && !isCreating) ? _onCreateAccountTap : null,
           expanded: true,
           height: 48.px,
         );
@@ -175,11 +183,16 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 
   /// Build generate new key button
   Widget _buildGenerateNewKeyButton() {
-    return CLButton.tonal(
-      text: Localized.text('ox_login.generate_new_key'),
-      onTap: _onGenerateNewKeyTap,
-      expanded: true,
-      height: 48.px,
+    return ValueListenableBuilder<bool>(
+      valueListenable: _isCreating$,
+      builder: (context, isCreating, child) {
+        return CLButton.tonal(
+          text: Localized.text('ox_login.generate_new_key'),
+          onTap: isCreating ? null : _onGenerateNewKeyTap,
+          expanded: true,
+          height: 48.px,
+        );
+      },
     );
   }
 
@@ -237,18 +250,32 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     );
   }
 
+  // ========== Event Handlers ==========
+
   /// Copy key to clipboard
   void _copyKey(String key) {
     TookKit.copyKey(context, key);
   }
 
   /// Handle create account button tap
-  void _onCreateAccountTap() async {
-    await _createAccount();
+  Future<void> _onCreateAccountTap() async {
+    if (_isCreating$.value) return;
+    
+    _isCreating$.value = true;
+    
+    // Use LoginManager for account creation
+    final success = await LoginManager.instance.loginWithPrivateKey(keychain.private);
+    
+    if (!success) {
+      _isCreating$.value = false;
+      // Error handling is done in LoginManagerObserver callbacks
+    }
+    // Success handling is done in onLoginSuccess callback
   }
 
   /// Handle generate new key button tap  
   void _onGenerateNewKeyTap() {
+    if (_isCreating$.value) return;
     _generateKeys();
   }
 
@@ -276,23 +303,46 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     ]);
   }
 
-  /// Create account with generated keys
-  Future<void> _createAccount() async {
-    await OXLoading.show();
-    try {
-      await OXUserInfoManager.sharedInstance.initDB(keychain.public);
-      final user = await Account.sharedInstance.loginWithPriKey(keychain.private);
-      if (user != null) {
-        await OXUserInfoManager.sharedInstance.loginSuccess(user);
-        OXNavigator.popToRoot(context);
-      }
-    } catch (e) {
-      // TODO: Handle error properly
-      debugPrint('Create account failed: $e');
-    } finally {
-      await OXLoading.dismiss();
+  // ========== LoginManagerObserver Implementation ==========
+
+  @override
+  void onLoginSuccess(LoginState state) {
+    _isCreating$.value = false;
+    
+    // Navigate back to root (home page)
+    if (mounted) {
+      OXNavigator.popToRoot(context);
     }
   }
+
+  @override
+  void onLoginFailure(LoginFailure failure) {
+    _isCreating$.value = false;
+    
+    if (!mounted) return;
+    
+    // Show error message based on failure type
+    String errorMessage;
+    switch (failure.type) {
+      case LoginFailureType.invalidKeyFormat:
+        errorMessage = Localized.text('ox_login.private_key_regular_failed');
+        break;
+      case LoginFailureType.errorEnvironment:
+        errorMessage = Localized.text('ox_login.private_key_regular_failed');
+        break;
+      case LoginFailureType.accountDbFailed:
+        errorMessage = 'Failed to initialize account database';
+        break;
+      case LoginFailureType.circleDbFailed:
+        errorMessage = 'Failed to initialize circle database';
+        break;
+    }
+    
+    // Show error toast using existing CommonToast
+    CommonToast.instance.show(context, errorMessage);
+  }
+
+  // ========== Legacy Compatibility Methods ==========
 
   // Legacy method - kept for compatibility
   void createKeys() {
@@ -301,7 +351,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 
   // Legacy method - kept for compatibility  
   void createOnTap() async {
-    await _createAccount();
+    await _onCreateAccountTap();
   }
 
   // Legacy getters - kept for compatibility

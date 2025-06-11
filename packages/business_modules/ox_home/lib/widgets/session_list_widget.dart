@@ -5,6 +5,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:ox_chat/utils/chat_session_utils.dart';
 import 'package:ox_common/business_interface/ox_chat/utils.dart';
 import 'package:ox_common/component.dart';
+import 'package:ox_common/login/login_models.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/widget_tool.dart';
@@ -17,20 +18,67 @@ import 'package:ox_localizable/ox_localizable.dart';
 import 'session_list_data_controller.dart';
 import 'session_view_model.dart';
 
-class SessionListWidget extends StatelessWidget {
+class SessionListWidget extends StatefulWidget {
   const SessionListWidget({
     super.key,
-    required this.controller,
+    required this.ownerPubkey,
+    required this.circle,
     required this.itemOnTap,
   });
 
-  final SessionListDataController controller;
+  final String ownerPubkey;
+  final Circle circle;
   final Function(SessionListViewModel item) itemOnTap;
 
   @override
+  State<SessionListWidget> createState() => _SessionListWidgetState();
+}
+
+class _SessionListWidgetState extends State<SessionListWidget> {
+  SessionListDataController? controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeController();
+  }
+
+  @override
+  void didUpdateWidget(SessionListWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Reinitialize controller if ownerPubkey or circle changed
+    if (oldWidget.ownerPubkey != widget.ownerPubkey || 
+        oldWidget.circle.id != widget.circle.id) {
+      _initializeController();
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  void _initializeController() {
+    if (widget.ownerPubkey.isNotEmpty) {
+      controller = SessionListDataController(widget.ownerPubkey, widget.circle);
+      controller?.initialized();
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // Show loading if controller is not initialized or ownerPubkey is empty
+    if (controller == null || widget.ownerPubkey.isEmpty) {
+      return Center(
+        child: CLProgressIndicator.circular(),
+      );
+    }
+
     return ValueListenableBuilder(
-      valueListenable: controller.sessionList$,
+      valueListenable: controller!.sessionList$,
       builder: (context, value, _) {
         return ListView.separated(
           padding: EdgeInsets.only(bottom: Adapt.bottomSafeAreaHeightByKeyboard),
@@ -48,7 +96,7 @@ class SessionListWidget extends StatelessWidget {
       builder: (context, value, _) {
         return GestureDetector(
           behavior: HitTestBehavior.translucent,
-          onTap: () => itemOnTap(item),
+          onTap: () => widget.itemOnTap(item),
           child: buildSlidableWrapper(
             context: context,
             item: item,
@@ -128,7 +176,7 @@ class SessionListWidget extends StatelessWidget {
               text: Localized.text('ox_common.confirm'),
               onTap: () async {
                 OXNavigator.pop(context);
-                controller.deleteSession(item);
+                controller?.deleteSession(item);
               },
             ),
           ],

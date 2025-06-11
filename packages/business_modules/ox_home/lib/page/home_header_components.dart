@@ -1,10 +1,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:ox_common/component.dart';
+import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/avatar.dart';
+import 'package:ox_localizable/ox_localizable.dart';
 
 class CircleItem {
   CircleItem({
@@ -47,7 +49,7 @@ class HomeHeaderComponents {
   GestureTapCallback? joinOnTap;
   GestureTapCallback? paidOnTap;
 
-  MutableUser user = OXUserInfoManager.sharedInstance.userNotifier;
+  LoginUserNotifier user = LoginUserNotifier.instance;
   ValueNotifier<bool> isShowExtendBody$;
   Duration extendBodyDuration;
 
@@ -101,13 +103,16 @@ class HomeHeaderComponents {
       onTap: nameOnTap,
       child: Row(
         children: [
-          ValueListenableBuilder(
-            valueListenable: user.name$,
-            builder: (_, name, __) {
-              return CLText.titleLarge(
-                name,
-              );
-            },
+          Flexible(
+            child: ValueListenableBuilder(
+              valueListenable: user.name$,
+              builder: (_, name, __) {
+                return CLText.titleLarge(
+                  name,
+                  maxLines: 1,
+                );
+              },
+            ),
           ),
           ValueListenableBuilder(
             valueListenable: isShowExtendBody$,
@@ -122,7 +127,6 @@ class HomeHeaderComponents {
               );
             }
           ),
-          const Spacer(),
         ],
       ),
     );
@@ -192,7 +196,7 @@ class HomeHeaderComponents {
           Expanded(
             child: CLButton.filled(
               padding: EdgeInsets.symmetric(vertical: 12.px),
-              text: 'Join Circle',
+              text: Localized.text('ox_home.join_circle'),
               onTap: joinOnTap,
             ),
           ),
@@ -200,7 +204,7 @@ class HomeHeaderComponents {
           Expanded(
             child: CLButton.tonal(
               padding: EdgeInsets.symmetric(vertical: 12.px),
-              text: 'New Paid Circle',
+              text: Localized.text('ox_home.new_paid_circle'),
               onTap: paidOnTap,
             ),
           ),

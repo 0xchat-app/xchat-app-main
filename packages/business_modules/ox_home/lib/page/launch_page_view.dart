@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ox_common/component.dart';
-import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/utils/storage_key_tool.dart';
 import 'package:ox_common/utils/user_config_tool.dart';
+import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_module_service/ox_module_service.dart';
 import 'package:rive/rive.dart';
 import 'package:ox_common/utils/adapt.dart';
@@ -31,16 +31,12 @@ class LaunchPageViewState extends State<LaunchPageView> {
 
   String _localPasscode = '';
 
-  late Future userInfoInitializer;
-
   @override
   void initState() {
     super.initState();
     _loadData();
 
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
-
-    userInfoInitializer = OXUserInfoManager.sharedInstance.initLocalData();
   }
 
   void _loadData() async {
@@ -115,13 +111,28 @@ class LaunchPageViewState extends State<LaunchPageView> {
       if (_localPasscode.isNotEmpty) {
         OXModuleService.pushPage(context, 'ox_usercenter', 'VerifyPasscodePage', {});
       } else {
-        await userInfoInitializer;
-        final pubkey = OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? '';
-        Navigator.of(context).pushReplacement(
-          CustomRouteFadeIn(HomePage(ownerPubkey: pubkey,))
-        );
+        // Try auto login with LoginManager
+        await _tryAutoLogin();
+        
+        // Navigate to HomePage regardless of login status
+        // HomePage will handle the login/not-login state internally
+        if (mounted) {
+          Navigator.of(context).pushReplacement(
+            CustomRouteFadeIn(const HomePage())
+          );
+        }
       }
     });
+  }
+
+  /// Try auto login using LoginManager
+  Future<void> _tryAutoLogin() async {
+    try {
+      await LoginManager.instance.autoLogin();
+    } catch (e) {
+      debugPrint('Auto login failed: $e');
+      // Continue to HomePage, which will show login page if needed
+    }
   }
 }
 

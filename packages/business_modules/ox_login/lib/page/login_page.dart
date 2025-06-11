@@ -1,24 +1,19 @@
-
 // plugin
 import 'dart:io';
 
 import 'package:chatcore/chat-core.dart';
 import 'package:flutter/material.dart';
-import 'package:nostr_core_dart/nostr.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/const/common_constant.dart';
 // ox_common
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/nip46_status_notifier.dart';
-import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/utils/theme_color.dart';
-import 'package:ox_common/utils/user_config_tool.dart';
 import 'package:ox_common/utils/widget_tool.dart';
-import 'package:ox_common/widgets/common_appbar.dart';
 import 'package:ox_common/widgets/common_image.dart';
-import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/widgets/common_toast.dart';
+import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 // ox_login
 import 'package:ox_login/page/account_key_login_page.dart';
@@ -29,7 +24,6 @@ import 'package:rich_text_widget/rich_text_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class LoginPage extends StatefulWidget {
-
   const LoginPage();
 
   @override
@@ -243,6 +237,8 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  // ========== Event Handlers ==========
+
   void _createAccount() {
     OXNavigator.pushPage(context, (context) => CreateAccountPage());
   }
@@ -251,14 +247,24 @@ class _LoginPageState extends State<LoginPage> {
     OXNavigator.pushPage(context, (context) => AccountKeyLoginPage());
   }
 
-  void _loginWithNostrAegis() async{
-    bool result = await NIP46StatusNotifier.remoteSignerTips(Localized.text('ox_login.wait_link_service'));
-    if(!result) return;
-    String loginQRCodeUrl = AccountNIP46.createNostrConnectURI(relays:['ws://127.0.0.1:8081']);
-    loginWithNostrConnect(loginQRCodeUrl);
-    final appScheme = '${CommonConstant.APP_SCHEME}://';
-    final uri = Uri.tryParse('aegis://${Uri.encodeComponent("${loginQRCodeUrl}&scheme=${appScheme}")}');
-    await _launchAppOrSafari(uri!);
+  void _loginWithNostrAegis() async {
+    try {
+      bool result = await NIP46StatusNotifier.remoteSignerTips(Localized.text('ox_login.wait_link_service'));
+      if (!result) return;
+      
+      String loginQRCodeUrl = AccountNIP46.createNostrConnectURI(relays:['ws://127.0.0.1:8081']);
+      final appScheme = '${CommonConstant.APP_SCHEME}://';
+      final uri = Uri.tryParse('aegis://${Uri.encodeComponent("${loginQRCodeUrl}&scheme=${appScheme}")}');
+      await _launchAppOrSafari(uri!);
+      
+      // Use LoginManager for NostrConnect login
+      await LoginManager.instance.loginWithNostrConnect(loginQRCodeUrl);
+    } catch (e) {
+      debugPrint('NostrAegis login failed: $e');
+      if (mounted) {
+        CommonToast.instance.show(context, 'Login failed: ${e.toString()}');
+      }
+    }
   }
 
   Future<void> _launchAppOrSafari(Uri uri) async {
@@ -270,59 +276,16 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void loginWithNostrConnect(String loginQRCodeUrl)async{
-    String pubkey = "";
-    UserDBISAR? userDB;
-    String currentUserPubKey = OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? '';
-    pubkey = await Account.getPublicKeyWithNIP46URI(loginQRCodeUrl);
-    await OXUserInfoManager.sharedInstance.initDB(pubkey);
-    userDB = await Account.sharedInstance.loginWithNip46URI(loginQRCodeUrl);
-    userDB = await OXUserInfoManager.sharedInstance.handleSwitchFailures(userDB, currentUserPubKey);
-    if (userDB == null) {
-      CommonToast.instance.show(context, Localized.text('ox_login.private_key_regular_failed'));
-      return;
-    }
-    Account.sharedInstance.reloadProfileFromRelay(userDB.pubKey).then((value) {
-      UserConfigTool.saveUser(value);
-      UserConfigTool.updateSettingFromDB(value.settings);
-    });
-
-    OXUserInfoManager.sharedInstance.loginSuccess(userDB);
-    OXNavigator.popToRoot(context);
-  }
-
   void _loginWithAmber() async {
-    bool isInstalled = await CoreMethodChannel.isInstalledAmber();
-    if (mounted && !isInstalled) {
-      CommonToast.instance.show(context, Localized.text('ox_login.str_not_installed_amber'));
-      return;
+    try {
+      // Use LoginManager for Amber login
+      await LoginManager.instance.loginWithAmber();
+    } catch (e) {
+      debugPrint('Amber login failed: $e');
+      if (mounted) {
+        CommonToast.instance.show(context, 'Login failed: ${e.toString()}');
+      }
     }
-    String? signature = await ExternalSignerTool.getPubKey();
-    if (signature == null) {
-      CommonToast.instance.show(context, Localized.text('ox_login.sign_request_rejected'));
-      return;
-    }
-    await OXLoading.show();
-    String decodeSignature = signature;
-    if (signature.startsWith('npub')) {
-      decodeSignature = UserDBISAR.decodePubkey(signature) ?? '';
-    }
-    String currentUserPubKey = OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? '';
-    await OXUserInfoManager.sharedInstance.initDB(decodeSignature);
-    UserDBISAR? userDB = await Account.sharedInstance.loginWithPubKey(decodeSignature, SignerApplication.androidSigner);
-    userDB = await OXUserInfoManager.sharedInstance.handleSwitchFailures(userDB, currentUserPubKey);
-    if (userDB == null) {
-      await OXLoading.dismiss();
-      CommonToast.instance.show(context, Localized.text('ox_login.pub_key_regular_failed'));
-      return;
-    }
-    Account.sharedInstance.reloadProfileFromRelay(userDB.pubKey).then((value) {
-      UserConfigTool.saveUser(value);
-      UserConfigTool.updateSettingFromDB(value.settings);
-    });
-    OXUserInfoManager.sharedInstance.loginSuccess(userDB, isAmber: true);
-    await OXLoading.dismiss();
-    OXNavigator.popToRoot(context);
   }
 
   void _serviceWebView() {

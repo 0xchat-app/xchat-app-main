@@ -122,17 +122,17 @@ class LoginState {
 /// Login manager observer interface
 abstract mixin class LoginManagerObserver {
   /// Login success callback
-  void onLoginSuccess(LoginState state);
+  void onLoginSuccess(LoginState state) {}
 
   /// Login failure callback
-  void onLoginFailure(LoginFailure failure);
+  void onLoginFailure(LoginFailure failure) {}
 
   /// Logout callback
-  void onLogout();
+  void onLogout() {}
 
   /// Circle change success callback
-  void onCircleChanged(Circle? circle);
+  void onCircleChanged(Circle? circle) {}
 
   /// Circle change failure callback
-  void onCircleChangeFailed(LoginFailure failure);
+  void onCircleChangeFailed(LoginFailure failure) {}
 } 
