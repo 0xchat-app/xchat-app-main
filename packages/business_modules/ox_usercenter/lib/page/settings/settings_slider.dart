@@ -1,6 +1,7 @@
 
 import 'package:flutter/widgets.dart';
 import 'package:ox_common/component.dart';
+import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/ox_userinfo_manager.dart';
@@ -31,7 +32,7 @@ class SettingSliderState extends State<SettingSlider> {
   late ValueNotifier themeItemNty;
   late ValueNotifier languageItemNty;
 
-  late MutableUser userNotifier;
+  late LoginUserNotifier userNotifier;
   late List<SectionListViewItem> pageData;
 
   @override
@@ -49,7 +50,7 @@ class SettingSliderState extends State<SettingSlider> {
   void prepareData() {
     prepareNotifier();
     prepareLiteData();
-    userNotifier = OXUserInfoManager.sharedInstance.userNotifier;
+    userNotifier = LoginUserNotifier.instance;
   }
 
   void prepareNotifier() {

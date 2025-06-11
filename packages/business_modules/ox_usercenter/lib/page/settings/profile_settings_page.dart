@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_common/component.dart';
+import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/upload/file_type.dart';
 import 'package:ox_common/upload/upload_utils.dart';
@@ -33,12 +34,12 @@ class ProfileSettingsPage extends StatefulWidget {
 
 class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
 
-  late MutableUser userNotifier;
+  late LoginUserNotifier userNotifier;
 
   @override
   void initState() {
     super.initState();
-    userNotifier = OXUserInfoManager.sharedInstance.userNotifier;
+    userNotifier = LoginUserNotifier.instance;
   }
 
   @override
