@@ -138,7 +138,6 @@ class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
   }
 
   void _editProfile() async {
-    LogUtil.e('Michael: --_editProfile ----');
     await OXLoading.show();
     if (mCurrentUserInfo == null) {
       CommonToast.instance
@@ -151,7 +150,6 @@ class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
       String dns = _dnsTextEditingController.text;
       String lnurl = _bltTextEditingController.text;
       bool result;
-      LogUtil.e('Michael: --dns =$dns');
       if (dns.isEmpty || dns == mCurrentUserInfo!.dns) {
         result = true;
       } else if (dns != mCurrentUserInfo!.dns) {
@@ -166,7 +164,6 @@ class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
       } else {
         result = true;
       }
-      LogUtil.e('Michael: --dns set result =$result');
       if (result) {
         mCurrentUserInfo!.dns = dns;
       } else {
@@ -183,7 +180,6 @@ class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
           return;
         }
       }
-      LogUtil.e('Michael: --imageFile =${imageFile?.path}');
       if (imageFile != null) {
         UploadResult result  = await UploadUtils.uploadFile(
           fileType: FileType.image,
@@ -195,7 +191,6 @@ class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
         );
         if (result.isSuccess && result.url.isNotEmpty) {
           mCurrentUserInfo!.picture = result.url;
-          LogUtil.e('Michael: --url =${result.url}');
         } else {
           await OXLoading.dismiss();
           String errorMsg = result.errorMsg != null ? ": ${result.errorMsg}" : "";
@@ -211,7 +206,6 @@ class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
       } catch (e) {
         await OXLoading.dismiss();
       }
-      LogUtil.e('Michael: --updateProfile--tempUserDB.picture =${tempUserDB?.picture ?? ''}');
       if (tempUserDB != null) {
         OXNavigator.pop(context);
       } else {

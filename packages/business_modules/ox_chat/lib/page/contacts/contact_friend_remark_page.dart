@@ -103,7 +103,6 @@ class _ContactFriendRemarkPageState extends State<ContactFriendRemarkPage> {
               needCaptchaButton: true,
               captchaButtonEnable: true,
               captachaOnPressed: () {
-                LogUtil.e('Michael: CommonTextField captachaOnPressed');
               },
               focusNode: _codeFocusNode,
               margin: EdgeInsets.only(top: Adapt.px(24),),

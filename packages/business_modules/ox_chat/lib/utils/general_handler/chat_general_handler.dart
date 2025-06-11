@@ -800,7 +800,6 @@ extension ChatInputMoreHandlerEx on ChatGeneralHandler {
     bool storagePermission = false;
     if (Platform.isAndroid && (await plugin.androidInfo).version.sdkInt >= 34) {
       Map<String, bool> result = await OXCommon.request34MediaPermission(type);
-      LogUtil.e('Michael: albumPressHandler----result =${result.toString()}');
       bool readMediaImagesGranted = result['READ_MEDIA_IMAGES'] ?? false;
       bool readMediaVideoGranted = result['READ_MEDIA_VIDEO'] ?? false;
       bool readMediaVisualUserSelectedGranted = result['READ_MEDIA_VISUAL_USER_SELECTED'] ?? false;
@@ -808,7 +807,6 @@ extension ChatInputMoreHandlerEx on ChatGeneralHandler {
         storagePermission = true;
       } else if (readMediaVisualUserSelectedGranted) {
         final filePaths = await OXCommon.select34MediaFilePaths(type);
-        LogUtil.d('Michael: albumPressHandler------filePaths =${filePaths}');
 
         bool isVideo = type == 2;
         if (isVideo) {

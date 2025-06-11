@@ -179,7 +179,6 @@ class _ContactViewGroupsState extends State<ContactViewGroups> with SingleTicker
 
   @override
   void didGroupsUpdatedCallBack() {
-    LogUtil.e('Michael: ----didGroupsUpdatedCallBack----------');
     _timer?.cancel();
     _timer = Timer(const Duration(milliseconds: 300), () async {
       _loadData();
@@ -188,7 +187,6 @@ class _ContactViewGroupsState extends State<ContactViewGroups> with SingleTicker
 
   @override
   void didRelayGroupsUpdatedCallBack() {
-    LogUtil.e('Michael: ----didRelayGroupsUpdatedCallBack----------');
     _timer?.cancel();
     _timer = Timer(const Duration(milliseconds: 300), () async {
       _loadData();

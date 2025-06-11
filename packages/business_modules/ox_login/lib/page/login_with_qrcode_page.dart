@@ -73,7 +73,6 @@ class _LoginWithQRCodePageState extends BasePageState<LoginWithQRCodePage> {
 
   void _initData() async {
     _loginQRCodeUrl = AccountNIP46.createNostrConnectURI();
-    LogUtil.e('Michael:------nostrUrl = ${_loginQRCodeUrl}');
     setState(() {});
 
   }

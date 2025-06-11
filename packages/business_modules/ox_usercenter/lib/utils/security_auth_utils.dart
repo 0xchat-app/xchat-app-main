@@ -48,7 +48,6 @@ class SecurityAuthUtils{
     } on PlatformException catch (e) {
       print(e);
     }
-    LogUtil.e('Michael: ===authenticated =$authenticated');
 
     return authenticated;
   }

@@ -131,7 +131,6 @@ class _ContractViewFriendsState extends State<ContractViewFriends>
 
   @override
   void didLoginSuccess(UserDBISAR? userInfo) {
-    LogUtil.e('Michael: contact_view_friends didLoginSuccess: $userInfo');
     setState(() {
       userList.clear();
       _onRefresh();
@@ -140,7 +139,6 @@ class _ContractViewFriendsState extends State<ContractViewFriends>
 
   @override
   void didLogout() {
-    LogUtil.e('Michael: contact_view_friends didLoginStateChanged');
     setState(() {
       userList.clear();
       _onRefresh();
@@ -149,7 +147,6 @@ class _ContractViewFriendsState extends State<ContractViewFriends>
 
   @override
   void didSwitchUser(UserDBISAR? userInfo) {
-    LogUtil.e('Michael: contact_view_friends didAccountChanged');
     setState(() {
       userList.clear();
       _onRefresh();
@@ -158,7 +155,6 @@ class _ContractViewFriendsState extends State<ContractViewFriends>
 
   @override
   void didContactUpdatedCallBack() {
-    LogUtil.e('Michael: contact_view_friends didFriendUpdatedCallBack friends.length=${Contacts.sharedInstance.allContacts.length}');
     _loadData();
   }
 }

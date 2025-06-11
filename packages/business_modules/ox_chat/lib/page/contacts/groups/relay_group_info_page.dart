@@ -668,11 +668,9 @@ class _RelayGroupInfoPageState extends State<RelayGroupInfoPage> {
   }
 
   void _loadDataFromRelay() async {
-    LogUtil.e('Michael: ----_loadDataFromRelay------');
     RelayGroup.sharedInstance.getGroupMetadataFromRelay(widget.groupId).then((relayGroupDB) {
       if (!mounted) return ;
       if (relayGroupDB != null) {
-        LogUtil.e('Michael: ----_loadDataFromRelay---admins.length =${relayGroupDB.admins.length ?? 'admins null'}');
         setState(() {
           groupDBInfo = relayGroupDB;
           _isMute = relayGroupDB.mute;
@@ -681,7 +679,6 @@ class _RelayGroupInfoPageState extends State<RelayGroupInfoPage> {
       }
       RelayGroup.sharedInstance.getGroupMembersFromLocal(widget.groupId).then((value){
         groupMember = value;
-        LogUtil.e('Michael: ----getGroupMembersFromLocal---groupMember.length = ${groupMember.length}');
         _getIsGroupMemberValue(value);
         setState(() {});
       });

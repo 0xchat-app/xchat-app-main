@@ -110,7 +110,6 @@ class CommonSelectRelayPageState extends State<CommonSelectRelayPage> {
   }
 
   Widget _appBar() {
-    LogUtil.e('Michael: --- _isShowDelete =${_isShowDelete}');
     return Container(
       height: Adapt.px(56),
       padding: EdgeInsets.symmetric(

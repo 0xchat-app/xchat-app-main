@@ -67,7 +67,6 @@ class _RelayGroupBaseInfoPageState extends State<RelayGroupBaseInfoPage> {
       List<GroupActionKind>? userPermissions;
       try {
         userPermissions = _groupDBInfo!.admins.firstWhere((admin) => admin.pubkey == userDB.pubKey).permissions;
-        LogUtil.e('Michael:--- pubkey: ${userPermissions.toString()}');
       } catch (e) {
         userPermissions = [];
         LogUtil.e('No admin found with pubkey: ${userDB.pubKey}');

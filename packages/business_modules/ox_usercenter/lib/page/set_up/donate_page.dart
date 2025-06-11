@@ -188,7 +188,6 @@ class _DonatePageState extends State<DonatePage> {
   }
 
   void handleError(IAPError error) {
-    LogUtil.e('Michael: error =${error.toString()}');
     setState(() {
       // _purchasePending = false;
     });
@@ -239,7 +238,6 @@ class _DonatePageState extends State<DonatePage> {
   Future<void> _requestData() async {
     if (_mCurrentUserInfo == null) return;
     _productList = await PurchaseUtil.getProductList(pubKey: _mCurrentUserInfo!.pubKey);
-    LogUtil.e("Michael: server myProductListEntity :${_productList?.toString()}");
     initStoreInfo();
     if (_isAppleOrGooglePay) {
       _setThirdPay();

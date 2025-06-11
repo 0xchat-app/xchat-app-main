@@ -68,7 +68,6 @@ class SearchTxtUtil{
       Map<dynamic, dynamic> tempMap = {};
       tempMap = await Messages.searchGroupMessagesFromDB(chatId, orignalSearchTxt);
       List<MessageDBISAR> messages = tempMap['messages'];
-      LogUtil.e('Michael:loadChannelMsgWithSearchTxt  messages.length =${messages.length}');
       if (messages.length != 0) {
         if (chatId == null) {
           Map<String, ChatMessage> messageInduceMap = {};
@@ -90,7 +89,6 @@ class SearchTxtUtil{
               '${messageInduceMap[item.groupId]!.relatedCount} related messages';
             }
           });
-          LogUtil.e('Michael: messageInduceMap.length =${messageInduceMap.length}');
           chatMessageList = messageInduceMap.values.toList();
         } else {
           messages.forEach((element) {

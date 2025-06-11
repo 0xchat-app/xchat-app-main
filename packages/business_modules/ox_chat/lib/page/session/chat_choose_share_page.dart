@@ -260,7 +260,6 @@ class _ChatChooseSharePageState extends State<ChatChooseSharePage> with ShareIte
         if (tempFriendList != null && tempFriendList.length > 0) {
           List<ChatSessionModelISAR> friendSessions = [];
           tempFriendList.forEach((element) {
-            LogUtil.e('Michael: -----element =${element.name}');
             friendSessions.add(ChatSessionModelISAR(
               chatId: element.pubKey,
               chatType: ChatType.chatSingle,

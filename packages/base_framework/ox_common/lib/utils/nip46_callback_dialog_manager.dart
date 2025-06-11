@@ -87,7 +87,6 @@ class Nip46CallbackDialogManager {
                       behavior: HitTestBehavior.translucent,
                       onTap: () {
                         BuildContext? tempObject = _dialogContexts[nip46Result.id];
-                        LogUtil.e('Michael:--nip46commandResultCallback--ok----tempObject = ${tempObject.hashCode}; nip46Result.id = ${nip46Result.id}');
                         if (tempObject !=null) {
                           OXNavigator.pop(tempObject);
                           _dialogContexts.remove(nip46Result.id);

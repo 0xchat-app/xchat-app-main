@@ -197,7 +197,6 @@ class _ChatNewMessagePageState extends State<ChatNewMessagePage>
 
   @override
   void didContactUpdatedCallBack() {
-    LogUtil.e('Michael: chat_new_message didFriendUpdatedCallBack friends.length=${Contacts.sharedInstance.allContacts.length}');
     _loadData();
   }
 }

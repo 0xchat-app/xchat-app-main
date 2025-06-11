@@ -88,7 +88,6 @@ class UserConfigTool{
     }
 
     final Map<String, dynamic> jsonMap = json.decode(jsonString);
-    LogUtil.e('Michael:---getAllUser---userMapJson =${jsonMap}');
     return jsonMap.map((key, value) => MapEntry(key, MultipleUserModel.fromJson(value)));
   }
 

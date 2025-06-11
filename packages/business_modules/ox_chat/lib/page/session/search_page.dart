@@ -772,7 +772,6 @@ class SearchPageState extends State<SearchPage> {
             picture: userDB?.picture ?? null,
           )
       );
-      LogUtil.e('Michael: _updateSearchHistory count =');
     }
   }
 

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cashu_dart/business/wallet/cashu_manager.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:nostr_core_dart/nostr.dart';
 import 'package:ox_cache_manager/ox_cache_manager.dart';
@@ -35,19 +36,6 @@ enum _ContactType {
   relayGroups,
 }
 
-class MutableUser {
-  MutableUser({
-    required this.encodedPubkey$,
-    required this.name$,
-    required this.avatarUrl$,
-    required this.bio$,
-  });
-  ValueNotifier<String> encodedPubkey$;
-  ValueNotifier<String> name$;
-  ValueNotifier<String> avatarUrl$;
-  ValueNotifier<String> bio$;
-}
-
 class OXUserInfoManager {
 
   static final OXUserInfoManager sharedInstance = OXUserInfoManager._internal();
@@ -65,12 +53,6 @@ class OXUserInfoManager {
   bool get isLogin => (currentUserInfo != null);
 
   UserDBISAR? currentUserInfo;
-  MutableUser userNotifier = MutableUser(
-    encodedPubkey$: ValueNotifier<String>(''),
-    name$: ValueNotifier<String>(''),
-    avatarUrl$: ValueNotifier<String>(''),
-    bio$: ValueNotifier<String>(''),
-  );
 
   Map<String, dynamic> settingsMap = {};
 
@@ -284,10 +266,7 @@ class OXUserInfoManager {
   }
 
   void updateUserInfo(UserDBISAR? userDB) {
-    userNotifier.encodedPubkey$.value = userDB?.encodedPubkey ?? '';
-    userNotifier.name$.value = userDB?.name ?? '';
-    userNotifier.bio$.value = userDB?.about ?? '';
-    userNotifier.avatarUrl$.value = userDB?.picture ?? '';
+    assert(false, 'Deprecated method');
   }
 
   void updateSuccess() {

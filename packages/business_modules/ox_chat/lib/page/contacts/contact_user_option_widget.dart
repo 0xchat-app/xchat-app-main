@@ -1036,8 +1036,6 @@ class _ContactUserOptionWidgetState extends State<ContactUserOptionWidget> with 
   Future<BadgeDBISAR?> _getUserSelectedBadgeInfo(UserDBISAR friendDB) async {
     UserDBISAR? friendUserDB =
     await Account.sharedInstance.getUserInfo(friendDB.pubKey);
-    LogUtil.e(
-        'Michael: friend_user_info_page  _getUserSelectedBadgeInfo : ${friendUserDB!.name ?? ''}; badges =${friendUserDB.badges ?? 'badges null'}');
     if (friendUserDB == null) {
       return null;
     }

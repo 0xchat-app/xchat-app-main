@@ -250,7 +250,6 @@ class _GroupSharePageState extends State<GroupSharePage> {
     int status = widget.groupType == GroupType.privateGroup
         ? Groups.sharedInstance.getInGroupStatus(widget.groupId)
         : RelayGroup.sharedInstance.getInGroupStatus(widget.groupId);
-    LogUtil.e('Michael: ---_joinBtnWidget--status =${status}');
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () {
