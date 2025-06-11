@@ -8,6 +8,7 @@ export 'src/component/app_bar.dart';
 export 'src/component/banner_carousel.dart';
 export 'src/component/button.dart';
 export 'src/component/checkbox.dart';
+export 'src/component/dialog.dart';
 export 'src/component/list_view.dart';
 export 'src/component/tab_bar.dart';
 export 'src/component/tab_scaffold.dart';

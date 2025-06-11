@@ -39,7 +39,7 @@ class BannerCarousel extends StatefulWidget {
 
 class _BannerCarouselState extends State<BannerCarousel> {
   late final PageController _pageController;
-  late Timer? _timer;
+  Timer? _timer;
   int _current = 0;
 
   @override
