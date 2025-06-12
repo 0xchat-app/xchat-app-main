@@ -15,6 +15,7 @@ export 'src/component/tab_scaffold.dart';
 export 'src/component/tabs/tab_bar_controller.dart';
 export 'src/component/text.dart';
 export 'src/component/text_field.dart';
+export 'src/component/search.dart';
 export 'src/component/progress_indicators.dart';
 export 'src/component/radio.dart';
 export 'src/component/scaffold.dart';

@@ -1,10 +1,10 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 
 import '../platform_style.dart';
+import '../text.dart';
 import 'list_view.dart';
 import 'section_list_view_model.dart';
 
@@ -28,41 +28,79 @@ class CLSectionListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final headerCount = header == null ? 0 : 1;
-    final footerCount = footer == null ? 0 : 1;
-    final itemCount = items.length + headerCount + footerCount;
+    // Build a flat list of widgets from sections
+    final widgets = <Widget>[];
+    
+    // Add header if provided
+    if (header != null) {
+      widgets.add(header!);
+    }
+    
+    // Add sections
+    for (int i = 0; i < items.length; i++) {
+      final item = items[i];
+      widgets.add(buildItemWidget(item));
+      
+      // Add section separator (except for the last section)
+      if (i < items.length - 1) {
+        widgets.add(buildSectionSeparator(item));
+      }
+    }
+    
+    // Add footer if provided
+    if (footer != null) {
+      widgets.add(footer!);
+    }
+    
     return ListView.separated(
+      controller: controller,
       shrinkWrap: shrinkWrap,
       physics: shrinkWrap ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
       padding: padding,
-      itemCount: itemCount,
-      itemBuilder: (context, index) {
-        if (headerCount > 0 && index < headerCount) return header;
-        if (footerCount > 0 && index > itemCount - footerCount - 1) return footer;
-        return buildItemWidget(items[index - headerCount]);
-      },
-      separatorBuilder: (_, index) {
-        if (headerCount > 0 && index < headerCount) return const SizedBox.shrink();
-        if (footerCount > 0 && index > itemCount - footerCount - 2) return SizedBox(height: 12.px,);
-        return buildSectionSeparator(items[index - headerCount]);
-      },
+      itemCount: widgets.length,
+      itemBuilder: (context, index) => widgets[index],
+      separatorBuilder: (_, index) => const SizedBox.shrink(), // No separators between widgets since we handle them manually
     );
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return CLText.titleSmall(title);
   }
 
   Widget buildSectionSeparator(SectionListViewItem item) {
     if (PlatformStyle.isUseMaterial) {
       return Divider(height: 1,).setPadding(EdgeInsets.symmetric(horizontal: 16.px));
     } else {
-      return SizedBox();
+      return SizedBox(height: 8.px);
     }
   }
 
   Widget buildItemWidget(SectionListViewItem model) {
+    final header = model.header;
+
     if (PlatformStyle.isUseMaterial) {
-      return CLListView(shrinkWrap: true, items: model.data);
+      final widgets = <Widget>[];
+      if (header != null) {
+        widgets.add(Padding(
+          padding: EdgeInsets.only(
+            left: 20.px,
+            top: 16.px,
+          ),
+          child: _buildSectionHeader(header),
+        ));
+      }
+      widgets.add(CLListView(
+        shrinkWrap: true,
+        items: model.data,
+      ));
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: widgets,
+      );
     } else {
       final listView = CLListView(items: model.data);
       return CupertinoListSection.insetGrouped(
+        header: header != null ? _buildSectionHeader(header) : null,
         hasLeading: listView.hasLeading,
         children: listView.asCupertinoSectionChildren(false),
       );
