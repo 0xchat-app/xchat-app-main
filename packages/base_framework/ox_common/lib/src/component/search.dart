@@ -5,7 +5,7 @@ import 'package:ox_common/utils/adapt.dart';
 import 'platform_style.dart';
 import 'color_token.dart';
 
-class CLSearch extends StatefulWidget {
+class CLSearch extends StatefulWidget implements PreferredSizeWidget {
   CLSearch({
     super.key,
     TextEditingController? controller,
@@ -17,10 +17,11 @@ class CLSearch extends StatefulWidget {
     this.enabled = true,
     this.autofocus = false,
     this.readOnly = false,
-    this.showSearchIcon = true,
+
     this.showClearButton = true,
     this.height,
     this.padding,
+    this.preferredHeight,
   }) : controller = controller ?? TextEditingController();
 
   final TextEditingController controller;
@@ -32,10 +33,14 @@ class CLSearch extends StatefulWidget {
   final bool enabled;
   final bool autofocus;
   final bool readOnly;
-  final bool showSearchIcon;
+
   final bool showClearButton;
   final double? height;
   final EdgeInsetsGeometry? padding;
+  final double? preferredHeight;
+
+  @override
+  Size get preferredSize => Size.fromHeight(preferredHeight ?? (PlatformStyle.isUseMaterial ? 56.px : 36.px));
 
   @override
   State<CLSearch> createState() => _CLSearchState();
@@ -43,22 +48,18 @@ class CLSearch extends StatefulWidget {
 
 class _CLSearchState extends State<CLSearch> {
   late FocusNode _focusNode;
-  bool _hasFocus = false;
   bool _hasText = false;
 
   @override
   void initState() {
     super.initState();
     _focusNode = widget.focusNode ?? FocusNode();
-    _hasFocus = _focusNode.hasFocus;
     _hasText = widget.controller.text.isNotEmpty;
-    _focusNode.addListener(_onFocusChange);
     widget.controller.addListener(_onTextChange);
   }
 
   @override
   void dispose() {
-    _focusNode.removeListener(_onFocusChange);
     widget.controller.removeListener(_onTextChange);
     if (widget.focusNode == null) {
       _focusNode.dispose();
@@ -66,14 +67,9 @@ class _CLSearchState extends State<CLSearch> {
     super.dispose();
   }
 
-  void _onFocusChange() {
-    setState(() {
-      _hasFocus = _focusNode.hasFocus;
-    });
-  }
-
-  void _onTextChange() {
-    final hasText = widget.controller.text.isNotEmpty;
+  void _onTextChange([String? newText]) {
+    newText ??= widget.controller.text;
+    final hasText = newText.isNotEmpty;
     if (_hasText != hasText) {
       setState(() {
         _hasText = hasText;
@@ -96,132 +92,64 @@ class _CLSearchState extends State<CLSearch> {
   }
 
   Widget _buildMaterialSearch(BuildContext context) {
-    final padding = widget.padding ?? EdgeInsets.symmetric(vertical: 12.px);
-    return TextField(
-      controller: widget.controller,
-      focusNode: _focusNode,
-      onChanged: widget.onChanged,
-      onSubmitted: widget.onSubmitted,
-      onTap: widget.onTap,
-      enabled: widget.enabled,
-      autofocus: widget.autofocus,
-      readOnly: widget.readOnly,
-      textAlignVertical: TextAlignVertical.center,
-      style: TextStyle(
-        fontSize: 16.px,
-        color: ColorToken.onSurface.of(context),
-      ),
-      decoration: InputDecoration(
-        hintText: widget.placeholder,
-        hintStyle: TextStyle(
-          fontSize: 16.px,
-          color: ColorToken.onSurfaceVariant.of(context),
-        ),
-        prefixIcon: widget.showSearchIcon
-            ? Padding(
-                padding: EdgeInsets.only(left: 16.px, right: 8.px),
-                child: Icon(
-                  Icons.search,
-                  size: 24.px,
-                  color: ColorToken.onSurfaceVariant.of(context),
-                ),
-              )
-            : null,
-        prefixIconConstraints: BoxConstraints(minHeight: 24.px, minWidth: 24.px),
-        suffixIcon: widget.showClearButton && _hasText
-            ? IconButton(
-                icon: Icon(
-                  Icons.close,
-                  size: 20.px,
-                  color: ColorToken.onSurfaceVariant.of(context),
-                ),
-                splashRadius: 20.px,
-                onPressed: _clearText,
-              )
-            : null,
-        filled: true,
-        fillColor: ColorToken.surfaceContainer.of(context),
-        isDense: true,
-        contentPadding: padding,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(1000), // pill shape
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(1000),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(1000),
-          borderSide: BorderSide(
-            color: ColorToken.primary.of(context),
-            width: 1.5.px,
+    return Container(
+      padding: widget.padding,
+      child: SearchBar(
+        controller: widget.controller,
+        focusNode: _focusNode,
+        elevation: const MaterialStatePropertyAll<double>(0.0),
+        leading: Padding(
+          padding: EdgeInsets.only(
+            left: 12.px,
+            right: 8.px,
+          ),
+          child: Icon(
+            Icons.search,
+            size: 24.px,
+            color: ColorToken.onSurfaceVariant.of(context),
           ),
         ),
+        trailing: [
+          if (_hasText)
+            IconButton(
+              icon: Icon(
+                Icons.close,
+                size: 20.px,
+                color: ColorToken.onSurfaceVariant.of(context),
+              ),
+              splashRadius: 20.px,
+              onPressed: _clearText,
+            )
+        ],
+        onChanged: (newText) {
+          _onTextChange(newText);
+          widget.onChanged?.call(newText);
+        },
+        onSubmitted: widget.onSubmitted,
+        onTap: widget.onTap,
+        enabled: widget.enabled,
+        autoFocus: widget.autofocus,
+        hintText: widget.placeholder,
       ),
     );
   }
 
   Widget _buildCupertinoSearch(BuildContext context) {
-    // Cupertino official search field: 36pt height, pill shape (radius 10)
-    final height = widget.height ?? 36.px;
-
-    final backgroundColor = CupertinoColors.systemGrey5.resolveFrom(context);
-
     return Container(
-      height: height,
-      padding: widget.padding ?? EdgeInsets.symmetric(horizontal: 8.px),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(10.px),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          if (widget.showSearchIcon) ...[
-            Icon(
-              CupertinoIcons.search,
-              size: 20.px,
-              color: ColorToken.onSurfaceVariant.of(context),
-            ),
-            SizedBox(width: 6.px),
-          ],
-          Expanded(
-            child: CupertinoTextField(
-              controller: widget.controller,
-              focusNode: _focusNode,
-              placeholder: widget.placeholder,
-              onChanged: widget.onChanged,
-              onSubmitted: widget.onSubmitted,
-              onTap: widget.onTap,
-              enabled: widget.enabled,
-              autofocus: widget.autofocus,
-              readOnly: widget.readOnly,
-              decoration: null,
-              padding: EdgeInsets.zero,
-              style: TextStyle(
-                fontSize: 16.px,
-                color: ColorToken.onSurface.of(context),
-              ),
-              placeholderStyle: TextStyle(
-                fontSize: 16.px,
-                color: ColorToken.onSurfaceVariant.of(context),
-              ),
-            ),
-          ),
-          if (widget.showClearButton && _hasText) ...[
-            SizedBox(width: 6.px),
-            GestureDetector(
-              onTap: _clearText,
-              child: Icon(
-                CupertinoIcons.clear_circled_solid,
-                size: 20.px,
-                color: ColorToken.onSurfaceVariant.of(context),
-              ),
-            ),
-          ],
-        ],
+      padding: widget.padding,
+      child: CupertinoSearchTextField(
+        controller: widget.controller,
+        focusNode: _focusNode,
+        onChanged: (newText) {
+          _onTextChange(newText);
+          widget.onChanged?.call(newText);
+        },
+        onSubmitted: widget.onSubmitted,
+        onTap: widget.onTap,
+        enabled: widget.enabled,
+        autofocus: widget.autofocus,
+        placeholder: widget.placeholder,
       ),
     );
   }
-} 
+}

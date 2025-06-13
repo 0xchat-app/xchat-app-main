@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/navigator/page_router.dart';
 
 enum OXPushPageType {
@@ -42,6 +43,10 @@ class OXNavigator extends Navigator {
     if (canPop(context)) {
       Navigator.pop(context, result);
     } else {
+      if (CupertinoSheetRoute.hasParentSheet(context)) {
+        CupertinoSheetRoute.popSheet(context);
+        return ;
+      }
       SystemNavigator.pop();
     }
   }
@@ -184,7 +189,7 @@ class OXNavigator extends Navigator {
           settings: routeSettings,
         );
       case OXPushPageType.present:
-        if (fullscreenDialog) {
+        if (PlatformStyle.isUseMaterial || fullscreenDialog) {
           route = generalPageRouter<T>(
             builder: builder,
             pageName: pageName,

@@ -20,6 +20,7 @@ class CLAppBar extends StatelessWidget {
     this.backgroundColor,
     this.barType,
     this.autoTrailing = true,
+    this.bottom,
   }) : title = preferTitle(title);
 
   final Widget? title;
@@ -27,6 +28,7 @@ class CLAppBar extends StatelessWidget {
   final List<Widget> actions;
   final Color? backgroundColor;
   final bool autoTrailing;
+  final PreferredSizeWidget? bottom;
 
   final MaterialBarType? barType;
 
@@ -73,6 +75,7 @@ class CLAppBar extends StatelessWidget {
       actions: actions,
       actionsPadding: EdgeInsets.only(right: 16),
       backgroundColor: backgroundColor,
+      bottom: bottom,
     );
   }
 
@@ -82,6 +85,7 @@ class CLAppBar extends StatelessWidget {
       previousPageTitle: previousPageTitle,
       trailing: _buildCupertinoTrailing(context),
       backgroundColor: backgroundColor,
+      bottom: bottom,
     );
   }
 
