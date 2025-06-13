@@ -15,14 +15,12 @@ import 'package:ox_common/utils/font_size_notifier.dart';
 import 'package:ox_common/utils/storage_key_tool.dart';
 import 'package:ox_common/utils/user_config_tool.dart';
 import 'package:ox_cache_manager/ox_cache_manager.dart';
-import 'package:ox_discovery/ox_discovery.dart';
 import 'package:ox_home/ox_home.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_login/ox_login.dart';
 import 'package:ox_push/push_lib.dart';
 import 'package:ox_theme/ox_theme.dart';
 import 'package:ox_usercenter/ox_usercenter.dart';
-import 'package:ox_wallet/ox_wallet.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_socks_proxy/socks_proxy.dart';
 import 'package:dart_ping_ios/dart_ping_ios.dart';
@@ -101,12 +99,10 @@ class AppInitializer {
       OXLogin().setup(),
       OXUserCenter().setup(),
       OXPush().setup(),
-      OXDiscovery().setup(),
       OXChat().setup(),
       OXChatUI().setup(),
       OxCalling().setup(),
       OxChatHome().setup(),
-      OXWallet().setup(),
     ]);
   }
 

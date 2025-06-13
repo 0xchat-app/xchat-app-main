@@ -50,8 +50,6 @@ dependencies:
     path: packages/base_framework/ox_common
   ox_push:
     path: packages/base_framework/ox_push
-  ox_wallet:
-    path: packages/business_modules/ox_wallet
 
 
   # business framework
@@ -63,9 +61,6 @@ dependencies:
 
   ox_usercenter:
     path: packages/business_modules/ox_usercenter
-
-  ox_discovery:
-    path: packages/business_modules/ox_discovery
 
   ox_chat:
     path: packages/business_modules/ox_chat
