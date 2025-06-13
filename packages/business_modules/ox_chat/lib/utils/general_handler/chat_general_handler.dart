@@ -116,7 +116,7 @@ class ChatGeneralHandler {
   bool isPreviewMode = false;
 
   static types.User _defaultAuthor() {
-    UserDBISAR? userDB = OXUserInfoManager.sharedInstance.currentUserInfo;
+    UserDBISAR? userDB = Account.sharedInstance.me;
     return types.User(
       id: userDB!.pubKey,
       sourceObject: userDB,
@@ -396,7 +396,7 @@ extension ChatGestureHandlerEx on ChatGeneralHandler {
     OXLoading.show();
 
     final senderPubkey = message.author.sourceObject?.encodedPubkey ?? '';
-    final myPubkey = OXUserInfoManager.sharedInstance.currentUserInfo?.encodedPubkey ?? '';
+    final myPubkey = Account.sharedInstance.me?.encodedPubkey ?? '';
 
     if (senderPubkey.isEmpty) {
       CommonToast.instance.show(context, 'Error');
@@ -757,7 +757,7 @@ extension ChatMenuHandlerEx on ChatGeneralHandler {
     });
 
     // Pre-update UI
-    final author = OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey;
+    final author = Account.sharedInstance.me?.pubKey;
     if (author != null && author.isNotEmpty) {
       final reactions = [...message.reactions];
       bool isNewContent = true;

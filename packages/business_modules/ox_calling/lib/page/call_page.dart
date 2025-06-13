@@ -54,7 +54,7 @@ class CallPageState extends State<CallPage> {
   @override
   void initState() {
     super.initState();
-    if (widget.userDB.pubKey == OXUserInfoManager.sharedInstance.currentUserInfo!.pubKey) {
+    if (widget.userDB.pubKey == Account.sharedInstance.me!.pubKey) {
       Future.delayed(
         const Duration(milliseconds: 300),
         () {

@@ -123,14 +123,14 @@ class SearchTxtUtil{
           Map<String, ChatMessage> messageInduceMap = {};
           messages.forEach((item) {
             String chatId = '';
-            if (item.sender != OXUserInfoManager.sharedInstance.currentUserInfo!.pubKey
-                || item.receiver == OXUserInfoManager.sharedInstance.currentUserInfo!.pubKey) {
+            if (item.sender != Account.sharedInstance.me!.pubKey
+                || item.receiver == Account.sharedInstance.me!.pubKey) {
               chatId = item.sender;
-            } else if (item.sender == OXUserInfoManager.sharedInstance.currentUserInfo!.pubKey
-                || item.receiver != OXUserInfoManager.sharedInstance.currentUserInfo!.pubKey) {
+            } else if (item.sender == Account.sharedInstance.me!.pubKey
+                || item.receiver != Account.sharedInstance.me!.pubKey) {
               chatId = item.receiver;
-            } else if (item.sender == OXUserInfoManager.sharedInstance.currentUserInfo!.pubKey
-                || item.receiver == OXUserInfoManager.sharedInstance.currentUserInfo!.pubKey) {
+            } else if (item.sender == Account.sharedInstance.me!.pubKey
+                || item.receiver == Account.sharedInstance.me!.pubKey) {
               chatId = item.sender;
             }
             if (messageInduceMap[chatId] == null) {

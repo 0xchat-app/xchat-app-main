@@ -34,7 +34,7 @@ class _AvatarPreviewPageState extends State<AvatarPreviewPage> with WidgetsBindi
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     mUserDB = widget.userDB;
-    if (mUserDB != null && mUserDB!.pubKey == OXUserInfoManager.sharedInstance.currentUserInfo!.pubKey) {
+    if (mUserDB != null && mUserDB!.pubKey == Account.sharedInstance.me!.pubKey) {
       _isShowMenu = true;
     }
     if (widget.imageFile != null) {

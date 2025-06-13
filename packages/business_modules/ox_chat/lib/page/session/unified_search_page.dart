@@ -6,6 +6,7 @@ import 'package:ox_chat/utils/search_txt_util.dart';
 import 'package:ox_chat/utils/widget_tool.dart';
 import 'package:ox_chat/widget/search_bar.dart';
 import 'package:ox_chat/widget/search_tab_grouped_view.dart';
+import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_common/navigator/navigator.dart';
@@ -222,7 +223,7 @@ class _UnifiedSearchPageState extends State<UnifiedSearchPage>
 
   void _prepareData() {
     _searchResult.clear();
-    if (!OXUserInfoManager.sharedInstance.isLogin) return;
+    if (!LoginManager.instance.isLoginCircle) return;
     _loadAllData();
   }
 

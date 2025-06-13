@@ -33,7 +33,7 @@ import 'package:path_provider/path_provider.dart';
 class DatabaseHelper{
 
   static void exportDB(BuildContext context) async {
-    String pubkey = OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? '';
+    String pubkey = Account.sharedInstance.me?.pubKey ?? '';
     String dbpwisar = await OXCacheManager.defaultOXCacheManager.getForeverData('dbpwisar+$pubkey', defaultValue: '');
     if (dbpwisar.isNotEmpty) {
 
@@ -146,7 +146,7 @@ class DatabaseHelper{
   }
 
   static Future<void> importDatabase(BuildContext context, String path, String currentDBPW) async {
-    String pubKey = OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? '';
+    String pubKey = Account.sharedInstance.me?.pubKey ?? '';
     Directory directory = Platform.isAndroid
         ? await getApplicationDocumentsDirectory()
         : await getLibraryDirectory();
@@ -193,7 +193,7 @@ class DatabaseHelper{
   }
 
   static void deleteDB(BuildContext context) {
-    String pubkey = OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? '';
+    String pubkey = Account.sharedInstance.me?.pubKey ?? '';
     OXCommonHintDialog.show(
       context,
       title: 'str_delete_chat_profile'.localized(),

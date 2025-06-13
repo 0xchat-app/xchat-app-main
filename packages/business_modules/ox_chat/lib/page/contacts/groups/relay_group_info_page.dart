@@ -55,7 +55,7 @@ class _RelayGroupInfoPageState extends State<RelayGroupInfoPage> {
   @override
   void initState() {
     super.initState();
-    userDB = OXUserInfoManager.sharedInstance.currentUserInfo;
+    userDB = Account.sharedInstance.me;
     _groupInfoInit();
     _loadDataFromRelay();
   }
@@ -650,7 +650,7 @@ class _RelayGroupInfoPageState extends State<RelayGroupInfoPage> {
   }
 
   void _getIsGroupMemberValue(List<UserDBISAR> memberUserDBs) {
-    UserDBISAR? userInfo = OXUserInfoManager.sharedInstance.currentUserInfo;
+    UserDBISAR? userInfo = Account.sharedInstance.me;
     if (userInfo == null) {
       _isGroupMember = false;
     } else {

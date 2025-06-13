@@ -48,7 +48,7 @@ class _RelayGroupManageAdminsPageState extends State<RelayGroupManageAdminsPage>
   }
 
   void _loadData() {
-    UserDBISAR? myUserDB = OXUserInfoManager.sharedInstance.currentUserInfo;
+    UserDBISAR? myUserDB = Account.sharedInstance.me;
     if (widget.admins.length > 0) {
       try {
         if (myUserDB != null) {

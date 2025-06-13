@@ -152,7 +152,7 @@ class CallManager {
               initiativeHangUp = false;
               callInitiator = userDB.pubKey;
               otherName = userDB.name;
-              callReceiver = OXUserInfoManager.sharedInstance.currentUserInfo!.pubKey;
+              callReceiver = ChatCore.Account.sharedInstance.me!.pubKey;
               CallManager.instance.connectServer();
               _context ??= OXNavigator.navigatorKey.currentContext!;
               OXNavigator.pushPage(_context!,
@@ -167,7 +167,7 @@ class CallManager {
           if (callStateHandler != null && callState !=null) {
             callStateHandler!.call(callState!);
           }
-          resetStatus(callInitiator == OXUserInfoManager.sharedInstance.currentUserInfo!.pubKey ? true: false);
+          resetStatus(callInitiator == ChatCore.Account.sharedInstance.me!.pubKey ? true: false);
           break;
         case CallState.CallStateInvite:
           _waitAccept = true;
@@ -195,7 +195,7 @@ class CallManager {
   Future<void> invitePeer(String peerId, {bool useScreen = false}) async {
     if (_signaling != null && peerId != _selfId) {
       _signaling?.invite(peerId, callType?.text ?? CallMessageType.video.text, useScreen);
-      callInitiator = OXUserInfoManager.sharedInstance.currentUserInfo!.pubKey;
+      callInitiator = ChatCore.Account.sharedInstance.me!.pubKey;
       callReceiver = peerId;
     }
   }
@@ -303,7 +303,7 @@ class CallManager {
       String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
       content = 'str_call_duration'.localized().replaceAll(r'${time}', '$twoDigitMinutes:$twoDigitSeconds');
     } else {
-      if (callInitiator == OXUserInfoManager.sharedInstance.currentUserInfo!.pubKey) {
+      if (callInitiator == ChatCore.Account.sharedInstance.me!.pubKey) {
         if (isTomeOut == null){
           if (isReceiverReject) {
             content = 'str_call_other_rejected'.localized();

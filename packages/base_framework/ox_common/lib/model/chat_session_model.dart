@@ -68,7 +68,7 @@ class ChatSessionModel extends DBObject {
   });
 
   String get getOtherPubkey {
-    return this.sender != OXUserInfoManager.sharedInstance.currentUserInfo!.pubKey ? this.sender : this.receiver;
+    return this.sender != Account.sharedInstance.me!.pubKey ? this.sender : this.receiver;
   }
 
   static List<String?> primaryKey() {

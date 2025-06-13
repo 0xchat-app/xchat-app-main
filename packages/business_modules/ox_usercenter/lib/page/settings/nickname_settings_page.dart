@@ -21,13 +21,13 @@ class NicknameSettingsPage extends StatelessWidget {
     return SingleSettingPage(
       previousPageTitle: previousPageTitle,
       title: 'Nickname',
-      initialValue: OXUserInfoManager.sharedInstance.currentUserInfo?.name ?? '',
+      initialValue: Account.sharedInstance.me?.name ?? '',
       saveAction: buttonHandler,
     );
   }
 
   void buttonHandler(BuildContext context, String value) async {
-    final user = OXUserInfoManager.sharedInstance.currentUserInfo;
+    final user = Account.sharedInstance.me;
 
     if (user == null) {
       CommonToast.instance.show(context, 'Current user info is null.');
@@ -39,7 +39,7 @@ class NicknameSettingsPage extends StatelessWidget {
       CommonToast.instance.show(context, Localized.text('ox_usercenter.enter_username_tips'));
       return;
     }
-    if (OXUserInfoManager.sharedInstance.currentUserInfo?.name == newNickname) return;
+    if (Account.sharedInstance.me?.name == newNickname) return;
 
     user.name = newNickname;
 

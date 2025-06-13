@@ -60,7 +60,7 @@ class _ZapsPageState extends State<ZapsPage> {
   }
 
   Future<void> _initData() async {
-    pubKey = OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? '';
+    pubKey = Account.sharedInstance.me?.pubKey ?? '';
     _selectedWalletName = UserConfigTool.getSetting(
         StorageSettingKey.KEY_DEFAULT_WALLET.name,
         defaultValue: Localized.text('ox_usercenter.not_set_wallet_status'));
@@ -740,7 +740,7 @@ class _ZapsPageState extends State<ZapsPage> {
 
   Future<ZapsRecord> getZapsRecord() async {
     String pubKey =
-        OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? '';
+        Account.sharedInstance.me?.pubKey ?? '';
     await OXLoading.show();
 
     List<ZapRecordsDBISAR?> zapRecordsDBList = await Zaps.searchZapRecordsFromDB(recipient: pubKey, limit: 50);

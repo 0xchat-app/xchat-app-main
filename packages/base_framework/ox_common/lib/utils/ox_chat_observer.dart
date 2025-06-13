@@ -57,7 +57,7 @@ abstract mixin class OXChatObserver {
   void didPromptToneCallBack(MessageDBISAR message, int type) {}
 
   void didZapRecordsCallBack(ZapRecordsDBISAR zapRecordsDB) {
-    final pubKey = OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? '';
+    final pubKey = Account.sharedInstance.me?.pubKey ?? '';
     UserConfigTool.saveSetting(StorageSettingKey.KEY_ZAP_BADGE.name, true);
   }
 

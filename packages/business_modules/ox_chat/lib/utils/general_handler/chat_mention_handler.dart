@@ -36,7 +36,7 @@ extension ChatSessionModelMentionEx on ChatSessionModelISAR {
     if (loadParams == null) return [];
 
     final completer = Completer<List<UserDBISAR>>();
-    final myPubkey = OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey;
+    final myPubkey = Account.sharedInstance.me?.pubKey;
     Messages.loadMessagesFromDB(
       receiver: loadParams.receiver,
       groupId: loadParams.groupId,

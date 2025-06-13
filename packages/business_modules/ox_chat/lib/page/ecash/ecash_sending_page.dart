@@ -713,7 +713,7 @@ class _EcashSendingPageState extends State<EcashSendingPage> with
     final singleReceiver = widget.singleReceiver;
     if (singleReceiver == null) return CashuResponse.fromErrorMsg('ecash_receiver_pubkey_empty_hint'.localized());
 
-    final currentUser = OXUserInfoManager.sharedInstance.currentUserInfo;
+    final currentUser = Account.sharedInstance.me;
     if (currentUser == null) return CashuResponse.fromErrorMsg('ecash_not_login_hint'.localized());
 
     OXLoading.show();

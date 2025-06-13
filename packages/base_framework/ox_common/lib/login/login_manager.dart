@@ -55,7 +55,9 @@ class LoginManager {
   final ValueNotifier<LoginState> _state$ = ValueNotifier(LoginState());
   ValueListenable<LoginState> get state$ => _state$;
   LoginState get currentState => _state$.value;
+
   Circle? get currentCircle => currentState.currentCircle;
+  bool get isLoginCircle => currentCircle != null;
 
   // User info management for UI updates (separate from login state)
   ValueNotifier<UserDBISAR?> _userInfo$ = ValueNotifier<UserDBISAR?>(null);
@@ -249,6 +251,8 @@ extension LoginManagerAccount on LoginManager {
     // Clear login state
     _state$.value = LoginState();
 
+    await Account.sharedInstance.logout();
+
     // Close all opened databases
     final circle = loginState.currentCircle;
     if (circle != null) {
@@ -384,13 +388,6 @@ extension LoginManagerAccount on LoginManager {
     final privateKeyBytes = hex.decode(privateKey);
     final encryptedBytes = encryptPrivateKey(Uint8List.fromList(privateKeyBytes), password);
     return hex.encode(encryptedBytes);
-  }
-
-  /// Decrypt private key using password
-  String _decryptPrivateKey(String encryptedPrivKey, String password) {
-    final encryptedBytes = hex.decode(encryptedPrivKey);
-    final decryptedBytes = decryptPrivateKey(Uint8List.fromList(encryptedBytes), password);
-    return hex.encode(decryptedBytes);
   }
 
   /// Notify login success
@@ -710,17 +707,25 @@ extension LoginManagerDatabase on LoginManager {
 
   /// Persist login information
   Future<void> _persistLoginInfo(String pubkey) async {
-    await OXCacheManager.defaultOXCacheManager.saveForeverData(LoginManager._keyLastPubkey, pubkey);
+    await OXCacheManager.defaultOXCacheManager.saveForeverData(
+      LoginManager._keyLastPubkey,
+      pubkey,
+    );
   }
 
   /// Clear login information
   Future<void> _clearLoginInfo() async {
-    await OXCacheManager.defaultOXCacheManager.saveForeverData(LoginManager._keyLastPubkey, null);
+    await OXCacheManager.defaultOXCacheManager.saveForeverData(
+      LoginManager._keyLastPubkey,
+      null,
+    );
   }
 
   /// Get last logged pubkey
   Future<String?> _getLastPubkey() async {
-    return await OXCacheManager.defaultOXCacheManager.getForeverData(LoginManager._keyLastPubkey);
+    return await OXCacheManager.defaultOXCacheManager.getForeverData(
+      LoginManager._keyLastPubkey,
+    );
   }
 }
 

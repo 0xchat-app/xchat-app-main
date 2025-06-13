@@ -127,7 +127,7 @@ class TranslucentNavigationBarState extends State<TranslucentNavigationBar> with
   @override
   void initState() {
     super.initState();
-    _isLogin = OXUserInfoManager.sharedInstance.isLogin;
+    _isLogin = LoginManager.instance.isLoginCircle;
     OXUserInfoManager.sharedInstance.addObserver(this);
     OXChatBinding.sharedInstance.addObserver(this);
     OXMomentManager.sharedInstance.addObserver(this);
@@ -163,7 +163,7 @@ class TranslucentNavigationBarState extends State<TranslucentNavigationBar> with
   }
 
   Future<void> _loadLocalInfo() async {
-    UserDBISAR? currentUser = OXUserInfoManager.sharedInstance.currentUserInfo;
+    UserDBISAR? currentUser = Account.sharedInstance.me;
     if (currentUser != null) {
       //update user list
       await UserConfigTool.saveUser(currentUser);
@@ -297,14 +297,14 @@ class TranslucentNavigationBarState extends State<TranslucentNavigationBar> with
     if (selectedIndex != index) {
       TookKit.vibrateEffect();
     }
-    if (!OXUserInfoManager.sharedInstance.isLogin && (index == 2)) {
+    if (!LoginManager.instance.isLoginCircle && (index == 2)) {
       _showLoginPage(context);
       return;
     }
     if (draftIndex == index) return;
     setState(() {
       selectedIndex = index;
-      if (OXUserInfoManager.sharedInstance.isLogin) {
+      if (LoginManager.instance.isLoginCircle) {
         fetchUnreadCount();
       }
     });
@@ -539,7 +539,7 @@ class TranslucentNavigationBarState extends State<TranslucentNavigationBar> with
     }
 
     setState(() {
-      if (OXUserInfoManager.sharedInstance.isLogin) {
+      if (LoginManager.instance.isLoginCircle) {
         fetchUnreadCount();
       }
     });

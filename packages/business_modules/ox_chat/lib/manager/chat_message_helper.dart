@@ -592,7 +592,7 @@ extension MessageDBToUIEx on MessageDBISAR {
     final groupId = this.groupId;
     final senderId = this.sender;
     final receiverId = this.receiver;
-    final currentUserPubKey = OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey;
+    final currentUserPubKey = Account.sharedInstance.me?.pubKey;
     if (groupId.isNotEmpty) {
       chatId = groupId;
     } else if (senderId.isNotEmpty && senderId == receiverId) {

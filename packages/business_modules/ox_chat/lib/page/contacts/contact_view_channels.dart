@@ -99,7 +99,7 @@ class _ContactViewChannelsState extends State<ContactViewChannels> with SingleTi
 
   void _onRefresh() async {
     imageV++;
-    bool isLogin = OXUserInfoManager.sharedInstance.isLogin;
+    bool isLogin = LoginManager.instance.isLoginCircle;
     if (isLogin == false) {
       setState(() {
         updateStateView(CommonStateView.CommonStateView_NotLogin);

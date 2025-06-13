@@ -11,6 +11,7 @@ import 'package:ox_chat/page/session/search_discover_ui.dart';
 import 'package:ox_chat/utils/search_txt_util.dart';
 import 'package:ox_chat/utils/widget_tool.dart';
 import 'package:ox_common/business_interface/ox_chat/utils.dart';
+import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_common/log_util.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
@@ -92,7 +93,7 @@ class SearchPageState extends State<SearchPage> {
   void _prepareData(bool isInput) {
     dataGroups.clear();
 
-    if (!OXUserInfoManager.sharedInstance.isLogin) return;
+    if (!LoginManager.instance.isLoginCircle) return;
 
     final searchPageType = widget.searchPageType;
 
@@ -808,7 +809,7 @@ class SearchPageState extends State<SearchPage> {
         chatId: userDB.pubKey,
         chatName: userDB.name,
         sender:
-        OXUserInfoManager.sharedInstance.currentUserInfo!.pubKey,
+        Account.sharedInstance.me!.pubKey,
         receiver: userDB.pubKey,
         chatType: ChatType.chatSingle,
       ),

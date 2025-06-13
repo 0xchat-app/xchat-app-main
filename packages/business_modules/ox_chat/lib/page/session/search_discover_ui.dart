@@ -5,6 +5,7 @@ import 'package:ox_chat/model/search_chat_model.dart';
 import 'package:ox_chat/page/session/search_page.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:ox_common/log_util.dart';
+import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/model/channel_model.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
@@ -126,7 +127,7 @@ extension SearchDiscoverUI on SearchPageState{
             children: items.map((item) {
               return ListTile(
                 onTap: () async {
-                  if(OXUserInfoManager.sharedInstance.isLogin){
+                  if(LoginManager.instance.isLoginCircle){
                     gotoChatChannelSession(item);
                   }else{
                     await OXModuleService.pushPage(context, "ox_login", "LoginPage", {});

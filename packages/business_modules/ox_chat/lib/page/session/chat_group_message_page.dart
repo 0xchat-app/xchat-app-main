@@ -110,7 +110,7 @@ class _ChatGroupMessagePageState extends State<ChatGroupMessagePage> {
       return;
     }
 
-    final userDB = OXUserInfoManager.sharedInstance.currentUserInfo;
+    final userDB = Account.sharedInstance.me;
 
     if (groupId.isEmpty || userDB == null) {
       ChatLogUtils.error(

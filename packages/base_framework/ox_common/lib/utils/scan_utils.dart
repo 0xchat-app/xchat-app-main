@@ -5,10 +5,10 @@ import 'package:chatcore/chat-core.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_common/const/common_constant.dart';
 import 'package:ox_cache_manager/ox_cache_manager.dart';
+import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/custom_uri_helper.dart';
-import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/widgets/common_hint_dialog.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_common/utils//string_utils.dart';
@@ -16,16 +16,9 @@ import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_module_service/ox_module_service.dart';
 
-// typedef ScanHandler = FutureOr<bool> Function(String str, BuildContext context);
-
-///Title: scan_utils
-///Description: TODO()
-///Copyright: Copyright (c) 2021
-///@author George
-///CreateTime: 2021/5/31 3:03 PM
 class ScanUtils {
   static Future<void> analysis(BuildContext context, String url) async {
-    bool isLogin = OXUserInfoManager.sharedInstance.isLogin;
+    bool isLogin = LoginManager.instance.isLoginCircle;
     if (!isLogin) {
       CommonToast.instance.show(context, 'please_sign_in'.commonLocalized());
       return;

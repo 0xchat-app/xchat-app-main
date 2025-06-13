@@ -28,7 +28,6 @@ class OXPush extends OXFlutterModule {
     await super.setup();
     if (Platform.isIOS) {
       pushChannel.setMethodCallHandler(_platformCallHandler);
-      OXUserInfoManager.sharedInstance.initDataActions.add(_setNotification);
     } else if (Platform.isAndroid) {
       LocalNotificationManager.instance;
       await UnifiedPush.initialize(

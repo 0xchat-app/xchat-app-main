@@ -110,7 +110,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
   void editPhotoOnTap() async {
     final result = await OXNavigator.pushPage(context, (context) =>
       AvatarPreviewPage(
-        userDB: OXUserInfoManager.sharedInstance.currentUserInfo,
+        userDB: Account.sharedInstance.me,
       ),
     );
 
@@ -136,7 +136,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
 
   void updateUserAvatar(File? avatarFile) async {
     String avatarUrl = '';
-    final user = OXUserInfoManager.sharedInstance.currentUserInfo;
+    final user = Account.sharedInstance.me;
 
     if (user == null) {
       CommonToast.instance.show(context, 'Current user info is null.');

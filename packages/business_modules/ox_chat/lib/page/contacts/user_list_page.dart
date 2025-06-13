@@ -42,7 +42,7 @@ class UserSelectionPage extends StatefulWidget {
   }) async {
     List<UserDBISAR> groupMembers = await Groups.sharedInstance.getAllGroupMembers(groupId);
     if (excludeSelf) {
-      groupMembers = groupMembers.where((user) => user != OXUserInfoManager.sharedInstance.currentUserInfo).toList();
+      groupMembers = groupMembers.where((user) => user != Account.sharedInstance.me).toList();
     }
 
     return OXNavigator.pushPage(

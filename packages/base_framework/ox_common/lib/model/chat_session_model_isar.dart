@@ -76,7 +76,7 @@ class ChatSessionModelISAR {
 
   @ignore
   String get getOtherPubkey {
-    return this.sender != OXUserInfoManager.sharedInstance.currentUserInfo!.pubKey ? this.sender : this.receiver;
+    return this.sender != Account.sharedInstance.me!.pubKey ? this.sender : this.receiver;
   }
 
   static ChatSessionModelISAR fromMap(Map<String, Object?> map) {

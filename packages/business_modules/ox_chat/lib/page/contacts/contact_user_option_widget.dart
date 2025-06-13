@@ -221,7 +221,7 @@ class _ContactUserOptionWidgetState extends State<ContactUserOptionWidget> with 
         .toList();
     List<String> relayList = relayAddressList.take(5).toList();
     final nostrValue = Account.encodeProfile(
-      OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? '',
+      Account.sharedInstance.me?.pubKey ?? '',
       relayList,
     );
     String link = CustomURIHelper.createNostrURI(nostrValue);
@@ -236,7 +236,7 @@ class _ContactUserOptionWidgetState extends State<ContactUserOptionWidget> with 
   }
 
   void _initModelList() async {
-    myPubkey = OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? '';
+    myPubkey = Account.sharedInstance.me?.pubKey ?? '';
     if (myPubkey != widget.pubkey)
       modelList = [
         TabModel(
@@ -549,7 +549,7 @@ class _ContactUserOptionWidgetState extends State<ContactUserOptionWidget> with 
     bool friendsStatus = false;
     bool isMe = myPubkey == widget.pubkey;
     friendsStatus = isFriend(userDB.pubKey ?? '');
-    myPubkey = OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? '';
+    myPubkey = Account.sharedInstance.me?.pubKey ?? '';
     if (friendsStatus && !isMe) return const SizedBox();
 
     return GestureDetector(
@@ -850,7 +850,7 @@ class _ContactUserOptionWidgetState extends State<ContactUserOptionWidget> with 
       communityItem: ChatSessionModelISAR(
         chatId: userDB.pubKey,
         chatName: userDB.name,
-        sender: OXUserInfoManager.sharedInstance.currentUserInfo!.pubKey,
+        sender: Account.sharedInstance.me!.pubKey,
         receiver: userDB.pubKey,
         chatType: ChatType.chatSingle,
       ),
@@ -870,7 +870,7 @@ class _ContactUserOptionWidgetState extends State<ContactUserOptionWidget> with 
               text: Localized.text('ox_common.confirm'),
               onTap: () async {
                 String myPubkey =
-                    OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ??
+                    Account.sharedInstance.me?.pubKey ??
                         '';
                 Messages.deleteSingleChatMessagesFromDB(
                     myPubkey, userDB.pubKey);
@@ -1165,7 +1165,7 @@ class _ContactUserOptionWidgetState extends State<ContactUserOptionWidget> with 
 
   void _clickCall() async {
     if (userDB.pubKey ==
-        OXUserInfoManager.sharedInstance.currentUserInfo!.pubKey) {
+        Account.sharedInstance.me!.pubKey) {
       CommonToast.instance.show(context, "Don't call yourself");
     } else {
       OXActionModel? oxActionModel = await OXActionDialog.show(

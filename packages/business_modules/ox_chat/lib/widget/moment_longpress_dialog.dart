@@ -149,7 +149,7 @@ class MomentLongPressDialog {
         OXMomentManager.sharedInstance.moveToTabBarCallBack();
         break;
       case MomentLpMenuType.createNewMoment:
-        if (OXUserInfoManager.sharedInstance.isLogin) {
+        if (LoginManager.instance.isLoginCircle) {
           OXModuleService.pushPage(
             context,
             'ox_discovery',

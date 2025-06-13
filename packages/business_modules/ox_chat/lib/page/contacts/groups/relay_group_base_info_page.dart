@@ -62,7 +62,7 @@ class _RelayGroupBaseInfoPageState extends State<RelayGroupBaseInfoPage> {
 
   void _loadData(){
     _groupDBInfo = RelayGroup.sharedInstance.groups[widget.groupId]?.value;
-    UserDBISAR? userDB = OXUserInfoManager.sharedInstance.currentUserInfo;
+    UserDBISAR? userDB = Account.sharedInstance.me;
     if (userDB != null && _groupDBInfo != null && _groupDBInfo!.admins.length > 0) {
       List<GroupActionKind>? userPermissions;
       try {

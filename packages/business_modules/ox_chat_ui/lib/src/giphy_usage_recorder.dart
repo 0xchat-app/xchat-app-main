@@ -4,10 +4,11 @@ import 'package:ox_cache_manager/ox_cache_manager.dart';
 import 'package:ox_common/utils/ox_userinfo_manager.dart';
 
 import '../ox_chat_ui.dart';
+import 'package:chatcore/chat-core.dart';
 
 class GiphyUsageRecorder {
 
-  static final pubKey = OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? '';
+  static final pubKey = Account.sharedInstance.me?.pubKey ?? '';
 
   static const String giphyCollectKey = 'giphy_collect';
 

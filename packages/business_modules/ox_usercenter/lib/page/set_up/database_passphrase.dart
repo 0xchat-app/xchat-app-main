@@ -53,7 +53,7 @@ class DatabasePassphraseState extends State<DatabasePassphrase> {
   }
 
   void loadData() async {
-    pubkey = OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? '';
+    pubkey = Account.sharedInstance.me?.pubKey ?? '';
     currentDBPW = await OXCacheManager.defaultOXCacheManager.getForeverData('dbpwisar+$pubkey', defaultValue: '');
     _currentTeController.text = currentDBPW;
     setState(() {});

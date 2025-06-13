@@ -298,7 +298,7 @@ class _ContactGroupChatCreatePageState extends State<ContactGroupChatCreatePage>
   }
 
   void _initUserList(){
-    UserDBISAR? userDB = OXUserInfoManager.sharedInstance.currentUserInfo;
+    UserDBISAR? userDB = Account.sharedInstance.me;
     userList = widget.userList;
     if(userDB != null && !userList.contains(userDB)) userList.add(userDB);
     setState(() {});
@@ -314,7 +314,7 @@ class _ContactGroupChatCreatePageState extends State<ContactGroupChatCreatePage>
     await OXLoading.show();
     List<String> members = userList.map((user) => user.pubKey).toList();
     GroupDBISAR? groupDB = await Groups.sharedInstance
-        .createPrivateGroup(OXUserInfoManager.sharedInstance.currentUserInfo!.pubKey, '', name, members);
+        .createPrivateGroup(Account.sharedInstance.me!.pubKey, '', name, members);
     await OXLoading.dismiss();
     if (groupDB != null) {
       OXNavigator.pop(context);

@@ -56,7 +56,7 @@ class PrivateChatKey implements ChatTypeKey {
   );
 
   @override
-  String get sessionId => userId1 != OXUserInfoManager.sharedInstance.currentUserInfo!.pubKey
+  String get sessionId => userId1 != Account.sharedInstance.me!.pubKey
       ? userId1 : userId2;
 
   @override

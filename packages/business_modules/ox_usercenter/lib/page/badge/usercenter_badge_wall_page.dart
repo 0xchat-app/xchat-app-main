@@ -244,7 +244,7 @@ class _UsercenterBadgeWallPageState extends State<UsercenterBadgeWallPage> {
       behavior: HitTestBehavior.translucent,
       onTap: () {
         // if(_mUserInfo == null) return;
-        // if(_mUserInfo?.pubKey == OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey){
+        // if(_mUserInfo?.pubKey == Account.sharedInstance.me?.pubKey){
         //
         // }
         _onTapForBadge(index,isHad);

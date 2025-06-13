@@ -7,8 +7,8 @@ import 'package:ox_common/utils/ox_userinfo_manager.dart';
 
 class ChatSendInvitedTemplateHelper {
   static sendGroupInvitedTemplate(List<UserDBISAR> selectedUserList,String groupId, GroupType groupType){
-    final inviterName = OXUserInfoManager.sharedInstance.currentUserInfo?.name ?? OXUserInfoManager.sharedInstance.currentUserInfo?.nickName ?? '';
-    final inviterPubKey = OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey;
+    final inviterName = Account.sharedInstance.me?.name ?? Account.sharedInstance.me?.nickName ?? '';
+    final inviterPubKey = Account.sharedInstance.me?.pubKey;
     String groupName = '';
     String groupOwner = '';
     String groupPic = '';

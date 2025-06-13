@@ -117,7 +117,7 @@ class _ChatRelayGroupMsgPageState extends State<ChatRelayGroupMsgPage> with OXCh
       return;
     }
 
-    final userDB = OXUserInfoManager.sharedInstance.currentUserInfo;
+    final userDB = Account.sharedInstance.me;
 
     if (groupId.isEmpty || userDB == null) {
       ChatLogUtils.error(className: 'ChatGroupMessagePage',

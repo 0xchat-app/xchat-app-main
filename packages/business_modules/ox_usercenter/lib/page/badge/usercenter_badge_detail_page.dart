@@ -3,18 +3,14 @@ import 'dart:async';
 import 'package:extended_sliver/extended_sliver.dart';
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
-import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/widgets/common_image.dart';
 import 'package:ox_common/widgets/common_network_image.dart';
 import 'package:pull_to_refresh_notification/pull_to_refresh_notification.dart';
 import 'package:ox_common/model/badge_model.dart';
-import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/date_utils.dart';
 import 'package:ox_common/utils/theme_color.dart';
-import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
-import 'package:ox_usercenter/page/set_up/donate_page.dart';
 import 'package:chatcore/chat-core.dart';
 
 class UserCenterBadgeDetailPage extends StatefulWidget {
@@ -70,7 +66,7 @@ class _UserCenterBadgeDetailPageState extends State<UserCenterBadgeDetailPage> {
       useTheme: true,
     );
 
-    final currentUser = OXUserInfoManager.sharedInstance.currentUserInfo;
+    final currentUser = Account.sharedInstance.me;
 
     return Scaffold(
       body: SafeArea(
@@ -392,66 +388,6 @@ class _UserCenterBadgeDetailPageState extends State<UserCenterBadgeDetailPage> {
           ),
         ),
       ),
-      bottomNavigationBar: currentUser == widget.userDB ? Container(
-        width: double.infinity,
-        height: Adapt.px(80),
-        decoration: BoxDecoration(
-          color: ThemeColor.color190,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Container(
-              height: Adapt.px(0.5),
-              color: ThemeColor.color160,
-            ),
-            GestureDetector(
-              child: Container(
-                height: Adapt.px(79.5),
-                alignment: Alignment.center,
-                child: Container(
-                  margin: EdgeInsets.symmetric(
-                      horizontal: Adapt.px(24), vertical: Adapt.px(16)),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(Adapt.px(12)),
-                    gradient: LinearGradient(
-                      colors: !widget.isSelected! ? [
-                        ThemeColor.gradientMainEnd,
-                        ThemeColor.gradientMainStart,
-                      ]
-                      :[
-                        ThemeColor.color180,
-                        ThemeColor.color180,
-                      ],
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                    ),
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    widget.isHad ? widget.isSelected! ? Localized.text('ox_usercenter.selected') : Localized.text('ox_usercenter.select') : Localized.text('ox_usercenter.obtain'),
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: Adapt.px(16),
-                    ),
-                  ),
-                ),
-              ),
-              onTap: () {
-                if (!widget.isHad) {
-                  OXNavigator.pushPage(context, (context) => const DonatePage());
-                }else{
-                  if(widget.isSelected!){
-                    CommonToast.instance.show(context, "Selected item");
-                  }else{
-                    OXNavigator.pop(context,widget.badgeModel);
-                  }
-                }
-              },
-            ),
-          ],
-        ),
-      ) : null,
       // floatingActionButton: FloatingActionButton(
       //   child: const Icon(Icons.refresh),
       //   onPressed: () {

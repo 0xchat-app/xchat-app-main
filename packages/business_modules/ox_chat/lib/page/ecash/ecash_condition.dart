@@ -35,7 +35,7 @@ class EcashCondition {
       receiver.map((user) => pubkeyWithUser(user)).toList();
 
   String? get refundPubkey {
-    final user = OXUserInfoManager.sharedInstance.currentUserInfo;
+    final user = Account.sharedInstance.me;
     if (user == null) return null;
     return pubkeyWithUser(user);
   }

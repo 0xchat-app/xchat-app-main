@@ -488,14 +488,14 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
   }
 
   bool get _isGroupOwner {
-    UserDBISAR? userInfo = OXUserInfoManager.sharedInstance.currentUserInfo;
+    UserDBISAR? userInfo = Account.sharedInstance.me;
     if (userInfo == null || groupDBInfo == null) return false;
 
     return userInfo.pubKey == groupDBInfo?.owner;
   }
 
   bool get _isGroupMember {
-    UserDBISAR? userInfo = OXUserInfoManager.sharedInstance.currentUserInfo;
+    UserDBISAR? userInfo = Account.sharedInstance.me;
     if (userInfo == null || groupMember.length == 0) return false;
     bool hasMember =
         groupMember.any((userDB) => userDB.pubKey == userInfo.pubKey);

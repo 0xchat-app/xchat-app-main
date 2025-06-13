@@ -70,11 +70,11 @@ class _MyIdCardDialogState extends BasePageState<MyIdCardDialog> {
     List<String> relayList = relayAddressList.take(5).toList();
     if (widget.type == CommonConstant.qrCodeUser) {
 
-      _showName = widget.otherUser?.name ??  OXUserInfoManager.sharedInstance.currentUserInfo?.name ?? '';
-      _imgUrl = widget.otherUser?.picture ?? OXUserInfoManager.sharedInstance.currentUserInfo?.picture ?? '';
+      _showName = widget.otherUser?.name ??  Account.sharedInstance.me?.name ?? '';
+      _imgUrl = widget.otherUser?.picture ?? Account.sharedInstance.me?.picture ?? '';
       _showScanHint = 'str_scan_user_qrcode_hint'.localized();
       final nostrValue = Account.encodeProfile(
-        widget.otherUser?.pubKey ?? OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? '',
+        widget.otherUser?.pubKey ?? Account.sharedInstance.me?.pubKey ?? '',
         relayList,
       );
       _userQrCodeUrl = CustomURIHelper.createNostrURI(nostrValue);

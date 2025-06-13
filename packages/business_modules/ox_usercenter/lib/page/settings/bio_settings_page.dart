@@ -23,7 +23,7 @@ class BioSettingsPage extends StatelessWidget {
     return SingleSettingPage(
       previousPageTitle: previousPageTitle,
       title: 'Bio',
-      initialValue: OXUserInfoManager.sharedInstance.currentUserInfo?.about ?? '',
+      initialValue: Account.sharedInstance.me?.about ?? '',
       saveAction: buttonHandler,
       maxLines: null,
       textInputAction: TextInputAction.newline,
@@ -31,7 +31,7 @@ class BioSettingsPage extends StatelessWidget {
   }
 
   void buttonHandler(BuildContext context, String value) async {
-    final user = OXUserInfoManager.sharedInstance.currentUserInfo;
+    final user = Account.sharedInstance.me;
 
     if (user == null) {
       CommonToast.instance.show(context, 'Current user info is null.');
@@ -39,7 +39,7 @@ class BioSettingsPage extends StatelessWidget {
     }
 
     final newBio = value;
-    if (OXUserInfoManager.sharedInstance.currentUserInfo?.about == newBio) return;
+    if (Account.sharedInstance.me?.about == newBio) return;
 
     user.about = newBio;
 

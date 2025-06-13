@@ -1,23 +1,14 @@
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:cashu_dart/business/wallet/cashu_manager.dart';
 import 'package:chatcore/chat-core.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:nostr_core_dart/nostr.dart';
 import 'package:ox_cache_manager/ox_cache_manager.dart';
 import 'package:ox_common/const/common_constant.dart';
 import 'package:ox_common/log_util.dart';
-import 'package:ox_common/ox_common.dart';
-import 'package:ox_common/utils/cashu_helper.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
 import 'package:ox_common/utils/ox_moment_manager.dart';
-import 'package:ox_common/utils/ox_server_manager.dart';
 import 'package:ox_common/utils/storage_key_tool.dart';
 import 'package:ox_common/utils/user_config_tool.dart';
-import 'package:ox_module_service/ox_module_service.dart';
 
 abstract mixin class OXUserInfoObserver {
   void didLoginSuccess(UserDBISAR? userInfo);
@@ -50,12 +41,6 @@ class OXUserInfoManager {
 
   final List<OXUserInfoObserver> _observers = <OXUserInfoObserver>[];
 
-  final List<VoidCallback> initDataActions = [];
-
-  bool get isLogin => (currentUserInfo != null);
-
-  UserDBISAR? currentUserInfo;
-
   Map<String, dynamic> settingsMap = {};
 
   var _contactFinishFlags = {
@@ -72,95 +57,9 @@ class OXUserInfoManager {
   //0: top; 1: tabbar; 2: delete.
   int momentPosition= 0;
 
-  Future initDB(String pubkey) async {
-    if(pubkey.isEmpty) return;
-    await logout(needObserver: false);
-    String dbpath = pubkey + ".db2";
-    bool exists = await DB.sharedInstance.databaseExists(dbpath);
-    if (exists) {
-      String? dbpw = await OXCacheManager.defaultOXCacheManager.getForeverData('dbpw+$pubkey');
-      await DB.sharedInstance.open(dbpath, version: CommonConstant.dbVersion, password: dbpw);
-      await DBISAR.sharedInstance.open(pubkey);
-      await DB.sharedInstance.migrateToISAR();
-      debugPrint("delete Table");
-      await DB.sharedInstance.deleteDatabaseFile(dbpath);
-    }
-    else{
-      await DBISAR.sharedInstance.open(pubkey);
-    }
-    Account.sharedInstance.init();
-    {
-      final cashuDBPwd = await CashuHelper.getDBPassword(pubkey);
-      CashuManager.shared.setup(pubkey, dbPassword: cashuDBPwd, defaultMint: []);
-      CashuManager.shared.signFn = (key, message) async {
-        return Account.getSignatureWithSecret(message);
-      };
-      CashuManager.shared.defaultSignPubkey = () => Account.sharedInstance.currentPubkey;
-    }
-  }
-
-  Future initLocalData() async {
-    momentPosition = await OXCacheManager.defaultOXCacheManager.getForeverData(StorageKeyTool.APP_MOMENT_POSITION, defaultValue: 0);
-    ///account auto-login
-    final String? localPubKey = await OXCacheManager.defaultOXCacheManager.getForeverData(StorageKeyTool.KEY_PUBKEY);
-    if (localPubKey != null) {
-      await UserConfigTool.compatibleOldAmberStatus(localPubKey);
-      final bool? localIsLoginAmber = await OXCacheManager.defaultOXCacheManager.getForeverData('${localPubKey}${StorageKeyTool.KEY_IS_LOGIN_AMBER}');
-      if (localPubKey.isNotEmpty && localIsLoginAmber != null && localIsLoginAmber) {
-        bool isInstalled = await CoreMethodChannel.isInstalledAmber();
-        if (isInstalled) {
-          String? signature = await ExternalSignerTool.getPubKey();
-          if (signature == null) {
-            signatureVerifyFailed = true;
-            return;
-          }
-          String decodeSignature = UserDB.decodePubkey(signature) ?? '';
-          if (decodeSignature.isNotEmpty) {
-            await initDB(localPubKey);
-            UserDBISAR? tempUserDB = await Account.sharedInstance.loginWithPubKey(localPubKey, SignerApplication.androidSigner);
-            if (tempUserDB != null) {
-              UserConfigTool.compatibleOld(tempUserDB);
-              currentUserInfo = tempUserDB;
-              updateUserInfo(currentUserInfo);
-              _initDatas();
-              return;
-            }
-          } else {
-            signatureVerifyFailed = true;
-            return;
-          }
-        }
-      } else if (localPubKey.isNotEmpty) {
-        await initDB(localPubKey);
-        final UserDBISAR? tempUserDB = await Account.sharedInstance.loginWithPubKeyAndPassword(localPubKey);
-        LogUtil.e('initLocalData: userDB =${tempUserDB?.pubKey ?? 'userDB is null'}');
-        if (tempUserDB != null) {
-          UserConfigTool.compatibleOld(tempUserDB);
-          currentUserInfo = tempUserDB;
-          updateUserInfo(currentUserInfo);
-          _initDatas();
-          return;
-        }
-      }
-    }
-  }
-
   void addObserver(OXUserInfoObserver observer) => _observers.add(observer);
 
   bool removeObserver(OXUserInfoObserver observer) => _observers.remove(observer);
-
-  Future<void> loginSuccess(UserDBISAR userDB, {bool isAmber = false}) async {
-    currentUserInfo = Account.sharedInstance.me;
-    updateUserInfo(currentUserInfo);
-    OXCacheManager.defaultOXCacheManager.saveForeverData(StorageKeyTool.KEY_PUBKEY, userDB.pubKey);
-    OXCacheManager.defaultOXCacheManager.saveForeverData('${userDB.pubKey}${StorageKeyTool.KEY_IS_LOGIN_AMBER}', isAmber);
-    UserConfigTool.saveUser(userDB);
-    await _initDatas();
-    UserConfigTool.defaultNotificationValue();
-    for (OXUserInfoObserver observer in _observers) {
-      observer.didLoginSuccess(currentUserInfo);
-    }
-  }
 
   void addChatCallBack() {
     Contacts.sharedInstance.secretChatRequestCallBack = (SecretSessionDBISAR ssDB) {};
@@ -277,67 +176,18 @@ class OXUserInfoManager {
     }
   }
 
-  Future<void> switchAccount(String selectedPubKey) async {
-    String currentUserPubKey = OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? '';
-    await logout(needObserver: false);
-    await OXCacheManager.defaultOXCacheManager.saveForeverData(StorageKeyTool.KEY_PUBKEY, selectedPubKey);
-    await OXUserInfoManager.sharedInstance.initLocalData();
-    if (currentUserInfo == null) {
-      Map<String, MultipleUserModel> currentUserMap = await UserConfigTool.getAllUser();
-      if (currentUserMap.isNotEmpty) {
-        await UserConfigTool.deleteUser(currentUserMap, selectedPubKey);
-      }
-      await OXCacheManager.defaultOXCacheManager.saveForeverData(StorageKeyTool.KEY_PUBKEY, currentUserPubKey);
-      await OXUserInfoManager.sharedInstance.initLocalData();
-    }
-    for (OXUserInfoObserver observer in _observers) {
-      observer.didSwitchUser(currentUserInfo);
-    }
-  }
-
-  Future<UserDBISAR?> handleSwitchFailures(UserDBISAR? userDB, String currentUserPubKey) async {
-    if (userDB == null && currentUserPubKey.isNotEmpty) {
-      //In the case of failing to add a new account while already logged in, implement the logic to re-login to the current account.
-      await OXUserInfoManager.sharedInstance.initDB(currentUserPubKey);
-      userDB = await Account.sharedInstance.loginWithPubKeyAndPassword(currentUserPubKey);
-    }
-    return userDB;
-  }
-
   Future logout({bool needObserver = true}) async {
-    if (OXUserInfoManager.sharedInstance.currentUserInfo == null) {
-      return;
-    }
-    await Account.sharedInstance.logout();
-    resetData(needObserver: needObserver);
-  }
-
-  void resetData({bool needObserver = true}) {
-    signatureVerifyFailed = false;
-    OXCacheManager.defaultOXCacheManager.saveForeverData(StorageKeyTool.KEY_PUBKEY, null);
-    currentUserInfo = null;
-    updateUserInfo(currentUserInfo);
-    _contactFinishFlags = {
-      _ContactType.contacts: false,
-      _ContactType.channels: false,
-      // _ContactType.groups: false,
-      _ContactType.relayGroups: false,
-    };
-    // OXChatBinding.sharedInstance.clearSession();
-    if (needObserver) {
-      for (OXUserInfoObserver observer in _observers) {
-        observer.didLogout();
-      }
-    }
+    assert(false, 'Use LoginManager');
   }
 
   bool isCurrentUser(String userID) {
-    return userID == currentUserInfo?.pubKey;
+    return Account.sharedInstance.currentPubkey == userID;
   }
 
   Future<bool> setNotification() async {
+    assert(false, 'Deprecated Class');
+
     bool updateNotificatin = false;
-    if (!isLogin) return updateNotificatin;
     String deviceId = await OXCacheManager.defaultOXCacheManager.getForeverData(StorageSettingKey.KEY_PUSH_TOKEN.name, defaultValue: '');
     String jsonString = UserConfigTool.getSetting(StorageSettingKey.KEY_NOTIFICATION_LIST.name, defaultValue: '{}');
     final Map<String, dynamic> jsonMap = json.decode(jsonString);
@@ -400,77 +250,9 @@ class OXUserInfoManager {
     }
   }
 
-  Future<void> _initDatas() async {
-    await UserConfigTool.updateSettingFromDB(currentUserInfo?.settings);
-    _initFeedback();
-    await OXCacheManager.defaultOXCacheManager.saveForeverData(StorageSettingKey.KEY_CHAT_RUN_STATUS.name, true);
-    OXServerManager.sharedInstance.loadConnectICEServer();
-    initDataActions.forEach((fn) {
-      fn();
-    });
-    await UserConfigTool.migrateSharedPreferencesData();
-    await ChatCoreManager().initChatCore(
-        isLite: true,
-        circleRelay: 'wss://relay.0xchat.com',
-        contactUpdatedCallBack: Contacts.sharedInstance.contactUpdatedCallBack,
-        channelsUpdatedCallBack: Channels.sharedInstance.myChannelsUpdatedCallBack,
-        groupsUpdatedCallBack: Groups.sharedInstance.myGroupsUpdatedCallBack,
-        relayGroupsUpdatedCallBack: RelayGroup.sharedInstance.myGroupsUpdatedCallBack);
-    _initMessage();
-  }
-
-  void _initMessage() {
-    if (Platform.isAndroid) {
-      OXCommon.channelPreferences.invokeMethod(
-        'isAppInBackground',
-      ).then((value) {
-        if (!value)
-          NotificationHelper.sharedInstance.init(CommonConstant.serverPubkey);
-      });
-    } else {
-      NotificationHelper.sharedInstance.init(CommonConstant.serverPubkey);
-    }
-
-    OXModuleService.invoke(
-      'ox_calling',
-      'initRTC',
-      [],
-    );
-  }
-
   void _fetchFinishHandler(_ContactType type) {
     if (_contactFinishFlags[type] ?? false) return;
     _contactFinishFlags[type] = true;
     if (isFetchContactFinish) setNotification();
-  }
-
-  Future<void> _initFeedback() async {
-    canVibrate = await _fetchFeedback(CommonConstant.NOTIFICATION_VIBRATE);
-    canSound = await _fetchFeedback(CommonConstant.NOTIFICATION_SOUND);
-  }
-
-  Future<bool> _fetchFeedback(int feedback) async {
-    String jsonString = UserConfigTool.getSetting(StorageSettingKey.KEY_NOTIFICATION_LIST.name, defaultValue: '');
-
-    if (jsonString.isEmpty) return true;
-    final Map<String, dynamic> jsonMap = json.decode(jsonString);
-    for (var entry in jsonMap.entries) {
-      var value = entry.value;
-      if (value is Map<String, dynamic>) {
-        if(value['id'] == feedback){
-          return value['isSelected'];
-        }
-      }
-    }
-    return true;
-  }
-
-  Future<void> resetHeartBeat() async {//eg: backForeground
-    if (isLogin) {
-      await ThreadPoolManager.sharedInstance.initialize();
-      Connect.sharedInstance.startHeartBeat();
-      Account.sharedInstance.startHeartBeat();
-      NotificationHelper.sharedInstance.startHeartBeat();
-    }
   }
 }

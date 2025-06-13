@@ -340,7 +340,7 @@ class ChatSessionUtils {
 
   // private group
   static void leaveGroupFn(BuildContext context, String groupId, bool isGroupOwner) async {
-    UserDBISAR? userInfo = OXUserInfoManager.sharedInstance.currentUserInfo;
+    UserDBISAR? userInfo = Account.sharedInstance.me;
 
     OXLoading.show();
     late OKEvent event;

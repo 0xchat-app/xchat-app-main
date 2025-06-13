@@ -230,7 +230,7 @@ class ChatMessageBuilder {
     String? receiverPubkey,
     Function(types.Message newMessage)? messageUpdateCallback,
   }) {
-    final isMe = OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey == message.author.id;
+    final isMe = Account.sharedInstance.me?.pubKey == message.author.id;
     final type = message.customType;
 
     switch (type) {

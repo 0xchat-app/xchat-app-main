@@ -71,7 +71,7 @@ class SearchItemClickHandler {
       communityItem: ChatSessionModelISAR(
         chatId: userDB.pubKey,
         chatName: userDB.name,
-        sender: OXUserInfoManager.sharedInstance.currentUserInfo!.pubKey,
+        sender: Account.sharedInstance.me!.pubKey,
         receiver: userDB.pubKey,
         chatType: ChatType.chatSingle,
       ),

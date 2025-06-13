@@ -126,7 +126,7 @@ class _KeysPageState extends State<KeysPage>{
       color: ColorToken.error.of(context),
       text: 'Logout',
       onTap: () {
-        OXUserInfoManager.sharedInstance.logout();
+        LoginManager.instance.logout();
         if (PlatformStyle.isUseMaterial) {
           OXNavigator.popToRoot(context);
         } else {

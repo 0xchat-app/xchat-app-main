@@ -37,6 +37,7 @@ import 'package:ox_common/business_interface/ox_chat/contact_base_page_state.dar
 import 'package:ox_common/business_interface/ox_chat/interface.dart';
 import 'package:ox_common/business_interface/ox_usercenter/interface.dart';
 import 'package:ox_common/business_interface/ox_usercenter/zaps_detail_model.dart';
+import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_common/navigator/navigator.dart';
@@ -59,9 +60,7 @@ class OXChat extends OXFlutterModule {
   @override
   Future<void> setup() async {
     super.setup();
-    OXUserInfoManager.sharedInstance.initDataActions.add(() async {
-      await ChatDataCache.shared.setup();
-    });
+    LoginManager.instance.addObserver(ChatDataCache.shared);
     OXChatBinding.sharedInstance.sessionMessageTextBuilder = ChatMessageHelper.sessionMessageTextBuilder;
     SchemeHelper.register('shareLinkWithScheme', shareLinkWithScheme);
   }
@@ -241,7 +240,7 @@ class OXChat extends OXFlutterModule {
   }
 
   void _sendSystemMsg(BuildContext context,{required String chatId,required String content, required String localTextKey}){
-    UserDBISAR? userDB = OXUserInfoManager.sharedInstance.currentUserInfo;
+    UserDBISAR? userDB = Account.sharedInstance.me;
 
     ChatSessionModelISAR? sessionModel = OXChatBinding.sharedInstance.sessionModelFetcher?.call(chatId);
     if(sessionModel == null) return;

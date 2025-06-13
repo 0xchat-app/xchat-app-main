@@ -265,7 +265,7 @@ extension CLongPressOptionTypeEx on CLongPressOptionType {
         OXNavigator.pushPage(context, (context) => ContactCreateSecret(userDB: userDB));
       case CLongPressOptionType.voiceCall:
         UserDBISAR? userDB = Contacts.sharedInstance.allContacts[sessionModelISAR.getOtherPubkey] as UserDBISAR;
-        if (userDB.pubKey == OXUserInfoManager.sharedInstance.currentUserInfo!.pubKey) {
+        if (userDB.pubKey == Account.sharedInstance.me!.pubKey) {
           return CommonToast.instance.show(context, "Don't call yourself");
         }
         OXModuleService.pushPage(
@@ -280,7 +280,7 @@ extension CLongPressOptionTypeEx on CLongPressOptionType {
         break;
       case CLongPressOptionType.videoCall:
         UserDBISAR? userDB = Contacts.sharedInstance.allContacts[sessionModelISAR.getOtherPubkey] as UserDBISAR;
-        if (userDB.pubKey == OXUserInfoManager.sharedInstance.currentUserInfo!.pubKey) {
+        if (userDB.pubKey == Account.sharedInstance.me!.pubKey) {
           return  CommonToast.instance.show(context, "Don't call yourself");
         }
         OXModuleService.pushPage(
@@ -349,19 +349,19 @@ extension CLongPressOptionTypeEx on CLongPressOptionType {
                 ],
                 isRowAction: true);
           } else if (sessionModelISAR.chatType == ChatType.chatGroup){
-            UserDBISAR? userInfo = OXUserInfoManager.sharedInstance.currentUserInfo;
+            UserDBISAR? userInfo = Account.sharedInstance.me;
             GroupDBISAR? groupDBInfo = await Groups.sharedInstance.myGroups[sessionModelISAR.chatId]?.value;
             bool isGroupOwner = (userInfo == null || groupDBInfo == null) ? false : userInfo.pubKey == groupDBInfo.owner;
             ChatSessionUtils.leaveConfirmWidget(context, sessionModelISAR.chatType, sessionModelISAR.chatId, isGroupOwner: isGroupOwner);
           } else if (sessionModelISAR.chatType == ChatType.chatRelayGroup){
             String groupId = sessionModelISAR.chatId;
-            UserDBISAR? userDB = OXUserInfoManager.sharedInstance.currentUserInfo;
+            UserDBISAR? userDB = Account.sharedInstance.me;
             RelayGroupDBISAR? groupDB = RelayGroup.sharedInstance.groups[groupId]?.value;
             List<UserDBISAR> memberUserDBs = await RelayGroup.sharedInstance.getGroupMembersFromLocal(groupId);
             bool isGroupMember = false;
             bool hasDeleteGroupPermission = RelayGroup.sharedInstance.hasPermissions(groupDB?.admins ?? [], userDB?.pubKey??'', [GroupActionKind.deleteGroup]);
             if (memberUserDBs.isNotEmpty) {
-              UserDBISAR? userInfo = OXUserInfoManager.sharedInstance.currentUserInfo;
+              UserDBISAR? userInfo = Account.sharedInstance.me;
               if (userInfo == null) {
                 isGroupMember = false;
               } else {

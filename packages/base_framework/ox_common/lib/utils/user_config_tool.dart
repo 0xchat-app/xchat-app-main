@@ -141,7 +141,7 @@ class UserConfigTool{
     final currentVersion = packageInfo.version;
     // if(currentVersion != migrationTargetVersion) return;
 
-    String? pubKey = OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey;
+    String? pubKey = Account.sharedInstance.me?.pubKey;
     if (pubKey == null) return;
 
     //check for old values

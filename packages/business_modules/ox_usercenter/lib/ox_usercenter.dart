@@ -22,7 +22,6 @@ import 'package:ox_usercenter/page/set_up/zaps_invoice_dialog.dart';
 import 'package:ox_usercenter/page/set_up/zaps_page.dart';
 import 'package:ox_usercenter/page/set_up/zaps_record_page.dart';
 import 'package:ox_usercenter/page/settings/settings_slider.dart';
-import 'package:ox_usercenter/page/usercenter_page.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_usercenter/utils/zaps_helper.dart';
 import 'package:ox_common/launch/launch_third_party_app.dart';
@@ -46,7 +45,6 @@ class OXUserCenter extends OXFlutterModule {
         'showRelayPage': showRelayPage,
         'showRelaySelectorDialog': showRelaySelectorDialog,
         'requestVerifyDNS': requestVerifyDNS,
-        'userCenterPageWidget': userCenterPageWidget,
         'showZapsInvoiceDialog': _showZapsInvoiceDialog,
         'getInvoice': _getInvoice,
         'showUserCenterBadgeWallPage':showUserCenterBadgeWallPage,
@@ -56,11 +54,6 @@ class OXUserCenter extends OXFlutterModule {
   @override
   Future<T?>? navigateToPage<T>(BuildContext context, String pageName, Map<String, dynamic>? params) {
     switch (pageName) {
-      case 'UserCenterPage':
-        return OXNavigator.pushPage(
-          context,
-          (context) => const UserCenterPage(),
-        );
       case 'UsercenterBadgeWallPage':
         UserDBISAR? userDB = params?['userDB'];
         return OXNavigator.pushPage(context, (context) => UsercenterBadgeWallPage(userDB: userDB,));
@@ -150,11 +143,6 @@ class OXUserCenter extends OXFlutterModule {
     return await registerNip05(context: context, params: params, showLoading: showLoading, showErrorToast: showErrorToast);
   }
 
-  Widget userCenterPageWidget(BuildContext context) {
-    return const UserCenterPage();
-  }
-
-
   void _showZapsInvoiceDialog(BuildContext context, String invoice) {
     showDialog(
         context: context,
@@ -189,7 +177,7 @@ class OXUserCenter extends OXFlutterModule {
   }
 
   Widget showUserCenterBadgeWallPage(BuildContext? context, {required UserDBISAR userDB,bool isShowTabBar = true,bool isShowBadgeAwards = true,}) {
-    return  UsercenterBadgeWallPage(userDB: userDB, isShowTabBar:isShowTabBar,isShowBadgeAwards:isShowBadgeAwards);
+    return UsercenterBadgeWallPage(userDB: userDB, isShowTabBar:isShowTabBar,isShowBadgeAwards:isShowBadgeAwards);
   }
 
   Widget settingSliderBuilder(BuildContext context) {

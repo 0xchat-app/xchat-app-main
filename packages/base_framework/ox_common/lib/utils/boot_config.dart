@@ -1,4 +1,5 @@
 import 'package:ox_cache_manager/ox_cache_manager.dart';
+import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/network/network_general.dart';
 import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_network/network_manager.dart';
@@ -14,7 +15,7 @@ class BootConfig {
   static BootConfig get instance => _instance;
 
   void batchUpdateUserBadges(){
-    if (OXUserInfoManager.sharedInstance.isLogin) {
+    if (LoginManager.instance.isLoginCircle) {
       // _getUserGrantBadges().then((value){
       //   _syncBadgesToUserDB(value);
       // }).catchError((onError) {

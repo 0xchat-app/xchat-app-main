@@ -103,7 +103,7 @@ class _ContractViewFriendsState extends State<ContractViewFriends>
   }
 
   void _onRefresh() async {
-    bool isLogin = OXUserInfoManager.sharedInstance.isLogin;
+    bool isLogin = LoginManager.instance.isLoginCircle;
     if (isLogin == false) {
       setState(() {
         updateStateView(CommonStateView.CommonStateView_NotLogin);

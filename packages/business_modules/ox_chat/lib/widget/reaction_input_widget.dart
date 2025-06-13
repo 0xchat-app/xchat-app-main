@@ -2,6 +2,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:chatcore/chat-core.dart' as ChatCore;
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:ox_cache_manager/ox_cache_manager.dart';
 import 'package:ox_common/utils/adapt.dart';
@@ -193,7 +194,7 @@ class ReactionInputWidgetState extends State<ReactionInputWidget> {
 class _EmojiLocalStorage {
   static const _localKey = 'chat_emoji_recent';
 
-  static String get localKey => _localKey + '_' + (OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? '');
+  static String get localKey => _localKey + '_' + (ChatCore.Account.sharedInstance.me?.pubKey ?? '');
   /// Returns list of recently used emoji from cache
   static Future<List<Emoji>> getRecentEmojis() async {
     final json = await OXCacheManager.defaultOXCacheManager.getForeverData(localKey, defaultValue: []);

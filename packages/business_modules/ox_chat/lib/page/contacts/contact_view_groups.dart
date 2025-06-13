@@ -132,7 +132,7 @@ class _ContactViewGroupsState extends State<ContactViewGroups> with SingleTicker
 
   void _onRefresh() async {
     imageV++;
-    bool isLogin = OXUserInfoManager.sharedInstance.isLogin;
+    bool isLogin = LoginManager.instance.isLoginCircle;
     if (isLogin == false) {
       setState(() {
         updateStateView(CommonStateView.CommonStateView_NotLogin);

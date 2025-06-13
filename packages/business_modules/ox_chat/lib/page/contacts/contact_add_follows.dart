@@ -67,7 +67,7 @@ class _ContactAddFollowsState extends State<ContactAddFollows> {
   }
 
   void _getFollowList() async {
-    UserDBISAR? userInfo = OXUserInfoManager.sharedInstance.currentUserInfo;
+    UserDBISAR? userInfo = Account.sharedInstance.me;
     if(userInfo == null) return;
     await OXLoading.show();
     String pubKey = userInfo.pubKey;

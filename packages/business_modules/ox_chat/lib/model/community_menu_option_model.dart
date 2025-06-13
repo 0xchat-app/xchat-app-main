@@ -7,8 +7,8 @@ import 'package:ox_chat/page/contacts/contact_qrcode_add_friend.dart';
 import 'package:ox_chat/page/contacts/groups/relay_group_create_page.dart';
 import 'package:ox_chat/utils/widget_tool.dart';
 import 'package:ox_chat/widget/group_create_selector_dialog.dart';
+import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/navigator/navigator.dart';
-import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/utils/scan_utils.dart';
 import 'package:ox_common/widgets/common_hint_dialog.dart';
 import 'package:ox_common/widgets/common_scan_page.dart';
@@ -63,7 +63,7 @@ class CommunityMenuOptionModel {
   }
 
   static void optionsOnTap(BuildContext context, OptionModel optionModel) async {
-    bool isLogin = OXUserInfoManager.sharedInstance.isLogin;
+    bool isLogin = LoginManager.instance.isLoginCircle;
     if (isLogin == false) {
       await _navigateToLoginPage(context);
       return;
@@ -91,7 +91,7 @@ class CommunityMenuOptionModel {
   }
 
   static void gotoAddFriend(BuildContext context) {
-    bool isLogin = OXUserInfoManager.sharedInstance.isLogin;
+    bool isLogin = LoginManager.instance.isLoginCircle;
     if (!isLogin) {
       _navigateToLoginPage(context);
       return;

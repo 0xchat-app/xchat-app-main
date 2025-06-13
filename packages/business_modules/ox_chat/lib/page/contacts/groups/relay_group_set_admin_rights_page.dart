@@ -46,7 +46,7 @@ class _RelayGroupSetAdminRightsPageState extends State<RelayGroupSetAdminRightsP
 
   void _loadData() {
     _showPermissions = GroupActionKind.values;
-    UserDBISAR? myUserDB = OXUserInfoManager.sharedInstance.currentUserInfo;
+    UserDBISAR? myUserDB = Account.sharedInstance.me;
     if (widget.relayGroupDB.admins.length > 0) {
       try {
         if (myUserDB != null) {

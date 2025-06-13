@@ -2,7 +2,7 @@
 import 'dart:async';
 
 import 'package:ox_chat/manager/chat_draft_manager.dart';
-import 'package:ox_chat/utils/general_handler/chat_general_handler.dart';
+import 'package:ox_common/login/login_models.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'package:ox_common/utils/ox_chat_observer.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
@@ -10,12 +10,11 @@ import 'package:chatcore/chat-core.dart';
 import 'package:ox_chat/manager/chat_data_manager_models.dart';
 import 'package:ox_chat/manager/chat_message_helper.dart';
 import 'package:ox_chat/utils/chat_log_utils.dart';
-import 'package:ox_common/business_interface/ox_chat/utils.dart';
 import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
 import 'package:ox_common/utils/ox_userinfo_manager.dart';
 
-class ChatDataCache with OXChatObserver {
+class ChatDataCache with OXChatObserver, LoginManagerObserver {
 
   static final ChatDataCache shared = ChatDataCache._internal();
 
@@ -157,6 +156,11 @@ class ChatDataCache with OXChatObserver {
         OXChatBinding.sharedInstance.addMentionMessage(sessionId, messageId);
       },
     );
+  }
+
+  @override
+  void onLoginSuccess(LoginState state) {
+    setup();
   }
 }
 

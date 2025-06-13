@@ -236,7 +236,7 @@ class TabBarLongPressDialog {
           CommonToast.instance.show(context, 'PubKey is empty, try other.');
           return;
         }
-        if (pubKey == OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey) {
+        if (pubKey == Account.sharedInstance.me?.pubKey) {
           return;
         }
         await OXLoading.show();
@@ -262,7 +262,7 @@ class TabBarLongPressDialog {
         OXMomentManager.sharedInstance.moveToTopCallBack();
         break;
       case MenuItemType.createNewMoment:
-        if (OXUserInfoManager.sharedInstance.isLogin) {
+        if (LoginManager.instance.isLoginCircle) {
           OXModuleService.pushPage(
             context,
             'ox_discovery',

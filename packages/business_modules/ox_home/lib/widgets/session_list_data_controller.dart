@@ -285,7 +285,7 @@ extension _MessageDBISAREx on MessageDBISAR {
 
   String get otherPubkey {
     final pubkey =
-        OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? '';
+        Account.sharedInstance.me?.pubKey ?? '';
     if (pubkey.isEmpty) return '';
 
     return sender != pubkey ? sender : receiver;

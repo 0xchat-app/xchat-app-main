@@ -283,7 +283,7 @@ class _GroupEditPageState extends State<GroupEditPage> {
       CommonToast.instance.show(context, Localized.text('ox_chat.edit_group_name_not_empty_toast'));
     }
     OKEvent event = await Groups.sharedInstance
-        .updatePrivateGroupName(OXUserInfoManager.sharedInstance.currentUserInfo!.pubKey, widget.groupId, groupNameContent);
+        .updatePrivateGroupName(Account.sharedInstance.me!.pubKey, widget.groupId, groupNameContent);
     if (!event.status) {
       CommonToast.instance.show(context, event.message);
       return;

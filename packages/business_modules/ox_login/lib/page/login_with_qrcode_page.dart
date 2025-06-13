@@ -1,6 +1,7 @@
 import 'package:chatcore/chat-core.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_common/log_util.dart';
+import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/ox_userinfo_manager.dart';
@@ -220,27 +221,10 @@ class _LoginWithQRCodePageState extends BasePageState<LoginWithQRCodePage> {
   }
 
   Future<void> _loginWithNip46() async {
-    String pubkey = "";
-    UserDBISAR? userDB;
-    String currentUserPubKey =
-        OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? '';
-    pubkey = await Account.getPublicKeyWithNIP46URI(_loginQRCodeUrl);
-    await OXUserInfoManager.sharedInstance.initDB(pubkey);
-    userDB = await Account.sharedInstance.loginWithNip46URI(_loginQRCodeUrl);
-    userDB = await OXUserInfoManager.sharedInstance
-        .handleSwitchFailures(userDB, currentUserPubKey);
-    if (userDB == null) {
-      CommonToast.instance
-          .show(context, Localized.text('ox_login.private_key_regular_failed'));
-      return;
+    final isSuccess = await LoginManager.instance.loginWithNostrConnect(_loginQRCodeUrl);
+    if (isSuccess) {
+      OXNavigator.popToRoot(context);
     }
-    Account.sharedInstance.reloadProfileFromRelay(userDB.pubKey).then((value) {
-      UserConfigTool.saveUser(value);
-      UserConfigTool.updateSettingFromDB(value.settings);
-    });
-
-    OXUserInfoManager.sharedInstance.loginSuccess(userDB);
-    OXNavigator.popToRoot(context);
   }
 
   Future<void> _showRelayPage() async {

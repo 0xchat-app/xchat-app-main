@@ -9,7 +9,7 @@ extension ChatMessageSendEx on ChatGeneralHandler {
     ChatSessionModelISAR? session,
     String secretSessionId = '',
   }) async {
-    final sender = OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? '';
+    final sender = Account.sharedInstance.me?.pubKey ?? '';
     if (sender.isEmpty) return;
 
     session ??= _getSessionModel(
@@ -32,7 +32,7 @@ extension ChatMessageSendEx on ChatGeneralHandler {
     String secretSessionId = '',
     ChatSessionModelISAR? session,
   }) {
-    final sender = OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? '';
+    final sender = Account.sharedInstance.me?.pubKey ?? '';
     if (sender.isEmpty) return;
 
     session ??= _getSessionModel(
@@ -57,7 +57,7 @@ extension ChatMessageSendEx on ChatGeneralHandler {
     String secretSessionId = '',
     ChatSessionModelISAR? session,
   }) {
-    final sender = OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? '';
+    final sender = Account.sharedInstance.me?.pubKey ?? '';
     if (sender.isEmpty) return;
 
     session ??= _getSessionModel(
@@ -80,7 +80,7 @@ extension ChatMessageSendEx on ChatGeneralHandler {
     String secretSessionId = '',
     ChatSessionModelISAR? session,
   }) {
-    final sender = OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? '';
+    final sender = Account.sharedInstance.me?.pubKey ?? '';
     if (sender.isEmpty) return;
 
     session ??= _getSessionModel(
@@ -104,7 +104,7 @@ extension ChatMessageSendEx on ChatGeneralHandler {
     ChatSessionModelISAR? session,
     String secretSessionId = '',
   }) async {
-    final sender = OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? '';
+    final sender = Account.sharedInstance.me?.pubKey ?? '';
     if (sender.isEmpty) return;
 
     session ??= _getSessionModel(
@@ -119,7 +119,7 @@ extension ChatMessageSendEx on ChatGeneralHandler {
 
   static ChatSessionModelISAR? _getSessionModel(String receiverPubkey, int type,
       [String secretSessionId = '']) {
-    final sender = OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? '';
+    final sender = Account.sharedInstance.me?.pubKey ?? '';
     if (sender.isEmpty) return null;
 
     final session = OXChatBinding.sharedInstance.getSessionModel(receiverPubkey);

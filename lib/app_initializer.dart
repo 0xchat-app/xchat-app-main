@@ -122,7 +122,7 @@ class AppInitializer {
     FlutterError.onError = (FlutterErrorDetails details) async {
       bool openDevLog = UserConfigTool.getSetting(StorageSettingKey.KEY_OPEN_DEV_LOG.name,
           defaultValue: false);
-      if (openDevLog) {
+      if (openDevLog || kDebugMode) {
         FlutterError.presentError(details);
         ErrorUtils.logErrorToFile(details.toString() + '\n' + details.stack.toString());
       }

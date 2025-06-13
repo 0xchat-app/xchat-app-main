@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:chatcore/chat-core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert' as convert;
@@ -67,11 +68,11 @@ extension General on OXNetwork {
     if (needCommonParams) {
       // Request parameter, preprocessing
       if ((params['token'] ?? '').length == 0) {
-        params['token'] = OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? '';
+        params['token'] = Account.sharedInstance.me?.pubKey ?? '';
       }
       if ((params['userId'] ?? '').length == 0) {
         params['userId'] =
-            OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? '';
+            Account.sharedInstance.me?.pubKey ?? '';
       }
     }
     if (_showLoading) {
@@ -178,11 +179,11 @@ extension General on OXNetwork {
 
     // Request parameter , preprocessing
     if ((params['token'] ?? '').length == 0) {
-      params['token'] = OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? '';
+      params['token'] = Account.sharedInstance.me?.pubKey ?? '';
     }
     if ((params['userId'] ?? '').length == 0) {
       params['userId'] =
-          OXUserInfoManager.sharedInstance.currentUserInfo?.pubKey ?? '';
+          Account.sharedInstance.me?.pubKey ?? '';
     }
     if (_showLoading) {
       OXLoading.show();

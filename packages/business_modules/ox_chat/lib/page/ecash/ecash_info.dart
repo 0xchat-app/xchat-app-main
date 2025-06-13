@@ -32,7 +32,7 @@ class EcashPackage {
       .every((info) => info.redeemHistory != null);
 
   bool get isForOtherUser => receiver.isNotEmpty
-      && !receiver.contains(OXUserInfoManager.sharedInstance.currentUserInfo);
+      && !receiver.contains(Account.sharedInstance.me);
 
   bool get isFinishSignature =>
       signees.every((signee) => signee.$2.isNotEmpty);
@@ -40,7 +40,7 @@ class EcashPackage {
   bool get nextSignatureIsMe {
     for (var (signee, signature) in signees) {
       if (signature.isNotEmpty) continue;
-      return signee == OXUserInfoManager.sharedInstance.currentUserInfo;
+      return signee == Account.sharedInstance.me;
     }
     return false;
   }
