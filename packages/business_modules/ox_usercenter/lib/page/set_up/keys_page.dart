@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_common/component.dart';
+import 'package:ox_common/login/account_models.dart';
+import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/took_kit.dart';
@@ -34,8 +36,9 @@ class _KeysPageState extends State<KeysPage>{
   void initState() {
     super.initState();
 
-    encodedPubkey = OXUserInfoManager.sharedInstance.currentUserInfo?.encodedPubkey ?? '';
-    encodedPrivkey = OXUserInfoManager.sharedInstance.currentUserInfo?.encodedPrivkey ?? '';
+    final account = LoginManager.instance.currentState.account;
+    encodedPubkey = account?.getEncodedPubkey() ?? '';
+    encodedPrivkey = account?.getEncodedPrivkey() ?? '';
   }
 
   @override

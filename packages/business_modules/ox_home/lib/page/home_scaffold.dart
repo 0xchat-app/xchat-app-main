@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_chat/page/session/chat_message_page.dart';
+import 'package:ox_chat/page/session/lite_new_message_page.dart';
 import 'package:ox_common/business_interface/ox_usercenter/interface.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/login/account_models.dart';
@@ -29,10 +30,6 @@ class HomeScaffold extends StatefulWidget {
 class _HomeScaffoldState extends State<HomeScaffold> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
-  List<CircleItem> circleList = [
-    CircleItem(name: 'Damus', level: 0,  relayUrl: 'wss://relay.damus.io/'),
-    CircleItem(name: '0xChat', level: 1,  relayUrl: 'wss://relay.0xchat.com/'),
-  ];
   final ValueNotifier<CircleItem?> selectedCircle$ = ValueNotifier(null);
   final ValueNotifier<bool> isShowExtendBody$ = ValueNotifier(false);
 
@@ -40,38 +37,46 @@ class _HomeScaffoldState extends State<HomeScaffold> {
 
   @override
   Widget build(BuildContext context) {
-    final headerComponents = HomeHeaderComponents(
-      circles: circleList,
-      selectedCircle$: selectedCircle$,
-      onCircleSelected: _onCircleSelected,
-      avatarOnTap: _avatarOnTap,
-      nameOnTap: _nameOnTap,
-      addOnTap: _addOnTap,
-      joinOnTap: _handleJoinCircle,
-      paidOnTap: _paidOnTap,
-      isShowExtendBody$: isShowExtendBody$,
-      extendBodyDuration: extendBodyDuration,
-    );
+    return ValueListenableBuilder(
+      valueListenable: LoginManager.instance.state$,
+      builder: (_, state, __) {
+        final account = state.account;
+        final circles = (account?.circles ?? []).map((e) => e.asViewModel()).toList();
+        selectedCircle$.value = state.currentCircle?.asViewModel();
+        final headerComponents = HomeHeaderComponents(
+          circles: circles,
+          selectedCircle$: selectedCircle$,
+          onCircleSelected: _onCircleSelected,
+          avatarOnTap: _avatarOnTap,
+          nameOnTap: _nameOnTap,
+          addOnTap: _addOnTap,
+          joinOnTap: _handleJoinCircle,
+          paidOnTap: _paidOnTap,
+          isShowExtendBody$: isShowExtendBody$,
+          extendBodyDuration: extendBodyDuration,
+        );
 
-    if (PlatformStyle.isUseMaterial) {
-      return Scaffold(
-        key: _scaffoldKey,
-        appBar: headerComponents.buildAppBar(context),
-        drawer: Drawer(
-          width: 332.px,
-          child: OXUserCenterInterface.settingSliderBuilder(context),
-        ),
-        drawerEdgeDragWidth: 50.px,
-        resizeToAvoidBottomInset: false,
-        body: buildBody(headerComponents),
-      );
-    }
-    // Cupertino style: simplified, modal sidebar
-    return Scaffold(
-      appBar: headerComponents.buildAppBar(context),
-      backgroundColor: CupertinoColors.systemBackground.resolveFrom(context),
-      resizeToAvoidBottomInset: false,
-      body: buildBody(headerComponents),
+        if (PlatformStyle.isUseMaterial) {
+          return Scaffold(
+            key: _scaffoldKey,
+            appBar: headerComponents.buildAppBar(context),
+            drawer: Drawer(
+              width: 332.px,
+              child: OXUserCenterInterface.settingSliderBuilder(context),
+            ),
+            drawerEdgeDragWidth: 50.px,
+            resizeToAvoidBottomInset: false,
+            body: buildBody(headerComponents),
+          );
+        }
+        // Cupertino style: simplified, modal sidebar
+        return Scaffold(
+          appBar: headerComponents.buildAppBar(context),
+          backgroundColor: CupertinoColors.systemBackground.resolveFrom(context),
+          resizeToAvoidBottomInset: false,
+          body: buildBody(headerComponents),
+        );
+      },
     );
   }
 
@@ -124,21 +129,17 @@ class _HomeScaffoldState extends State<HomeScaffold> {
             return FadeTransition(opacity: animation, child: child);
           },
           child: loginCircle != null
-              ? buildSessionList(loginAccount, loginCircle)
+              ? SessionListWidget(
+                  ownerPubkey: loginAccount.pubkey,
+                  circle: loginCircle,
+                  itemOnTap: sessionItemOnTap,
+                )
               : CircleEmptyWidget(
                   onJoinCircle: _handleJoinCircle,
                   onCreatePaidCircle: _handleCreatePaidCircle,
                 ),
         );
       },
-    );
-  }
-
-  Widget buildSessionList(AccountModel loginAccount, Circle circle) {
-    return SessionListWidget(
-      ownerPubkey: loginAccount.pubkey,
-      circle: circle,
-      itemOnTap: sessionItemOnTap,
     );
   }
 
@@ -225,6 +226,11 @@ class _HomeScaffoldState extends State<HomeScaffold> {
   }
 
   void _addOnTap() {
+    OXNavigator.pushPage(
+      context,
+      (context) => const CLNewMessagePage(),
+      type: OXPushPageType.present,
+    );
   }
 
   void _paidOnTap() {
@@ -232,5 +238,15 @@ class _HomeScaffoldState extends State<HomeScaffold> {
 
   void _onCircleSelected(CircleItem newSelected) {
     selectedCircle$.value = newSelected;
+  }
+}
+
+extension _CircleEx on Circle {
+  CircleItem asViewModel() {
+    return CircleItem(
+      id: id,
+      name: name,
+      relayUrl: relayUrl,
+    );
   }
 }

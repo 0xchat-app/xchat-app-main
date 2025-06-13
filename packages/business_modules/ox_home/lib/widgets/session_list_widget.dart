@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -80,6 +79,11 @@ class _SessionListWidgetState extends State<SessionListWidget> {
     return ValueListenableBuilder(
       valueListenable: controller!.sessionList$,
       builder: (context, value, _) {
+        // Show empty state when no sessions
+        if (value.isEmpty) {
+          return _buildEmptyState(context);
+        }
+        
         return ListView.separated(
           padding: EdgeInsets.only(bottom: Adapt.bottomSafeAreaHeightByKeyboard),
           itemBuilder: (context, index) => itemBuilder(context, value[index]),
@@ -335,6 +339,38 @@ class _SessionListWidgetState extends State<SessionListWidget> {
         height: 0.5,
         color: CupertinoColors.separator,
       ),
+    );
+  }
+
+  Widget _buildEmptyState(BuildContext context) {
+    return ListView(
+      padding: EdgeInsets.symmetric(
+        horizontal: 32.px,
+        vertical: 100.px,
+      ),
+      children: [
+        // Empty state icon using Material Icons
+        CommonImage(
+          iconName: 'image_home_emtyp_circle.png',
+          size: 280.px,
+          package: 'ox_home',
+        ),
+
+        // Title
+        CLText.titleMedium(
+          Localized.text('ox_chat.no_sessions_title'),
+          colorToken: ColorToken.onSurface,
+          textAlign: TextAlign.center,
+        ).setPaddingOnly(bottom: 8.px),
+
+        // Description
+        CLText.bodyMedium(
+          Localized.text('ox_chat.no_sessions_description'),
+          colorToken: ColorToken.onSurfaceVariant,
+          textAlign: TextAlign.center,
+          maxLines: 3,
+        ),
+      ],
     );
   }
 }

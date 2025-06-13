@@ -3,23 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/utils/adapt.dart';
-import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 
 class CircleItem {
   CircleItem({
+    required this.id,
     required this.name,
-    required this.level,
+    this.iconUrl = '',
     required this.relayUrl,
-    this.owner = '',
   });
 
+  final String id;
   final String name;
-  final int level;
+  final String iconUrl;
   final String relayUrl;
-  final String owner;
 }
 
 class HomeHeaderComponents {
@@ -70,7 +69,9 @@ class HomeHeaderComponents {
           onTap: onSearchTap,
         ),
       CLButton.icon(
-        iconName: 'icon_common_add.png',
+        iconName: PlatformStyle.isUseMaterial
+            ? 'icon_common_add.png'
+            : 'icon_common_add_cupertino.png',
         package: 'ox_common',
         size: 48.px,
         onTap: addOnTap,
@@ -100,7 +101,7 @@ class HomeHeaderComponents {
 
   Widget _buildUserName() {
     return GestureDetector(
-      onTap: nameOnTap,
+      onTap: circles.isNotEmpty ? nameOnTap : null,
       child: Row(
         children: [
           Flexible(
@@ -114,19 +115,20 @@ class HomeHeaderComponents {
               },
             ),
           ),
-          ValueListenableBuilder(
-            valueListenable: isShowExtendBody$,
-            builder: (context, isShowExtendBody, _) {
-              return AnimatedRotation(
-                turns: isShowExtendBody ? 0.5 : 0,
-                duration: const Duration(milliseconds: 300),
-                child: Icon(
-                  Icons.arrow_drop_down,
-                  color: ColorToken.onSurface.of(context),
-                ),
-              );
-            }
-          ),
+          if (circles.isNotEmpty)
+            ValueListenableBuilder(
+              valueListenable: isShowExtendBody$,
+              builder: (context, isShowExtendBody, _) {
+                return AnimatedRotation(
+                  turns: isShowExtendBody ? 0.5 : 0,
+                  duration: const Duration(milliseconds: 300),
+                  child: Icon(
+                    Icons.arrow_drop_down,
+                    color: ColorToken.onSurface.of(context),
+                  ),
+                );
+              }
+            ),
         ],
       ),
     );
@@ -162,24 +164,24 @@ class HomeHeaderComponents {
   );
 
   ListViewItem _circleItemListTileMapper(CircleItem item, CircleItem? selectedCircle) {
-    final selected = item == selectedCircle;
+    final selected = item.id == selectedCircle?.id;
     return CustomItemModel(
       leading: CircleAvatar(
         child: Text(item.name[0]),
       ),
       titleWidget: CLText(item.name),
       subtitleWidget: Text.rich(
-          TextSpan(
-              children: [
-                if (selected)
-                  const TextSpan(text: '--ms · '),
-                TextSpan(text: item.relayUrl),
-              ]
-          )
+        TextSpan(
+          children: [
+            if (selected)
+              const TextSpan(text: '--ms · '),
+            TextSpan(text: item.relayUrl),
+          ],
+        ),
       ),
       trailing: CLRadio(
-        value: item,
-        groupValue: selectedCircle,
+        value: item.id,
+        groupValue: selectedCircle?.id,
       ),
       onTap: () => onCircleSelected?.call(item),
     );
