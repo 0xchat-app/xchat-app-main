@@ -40,7 +40,9 @@ class OXUserInfoManager {
 
   static final OXUserInfoManager sharedInstance = OXUserInfoManager._internal();
 
-  OXUserInfoManager._internal();
+  OXUserInfoManager._internal() {
+    addChatCallBack();
+  }
 
   factory OXUserInfoManager() {
     return sharedInstance;
@@ -407,9 +409,8 @@ class OXUserInfoManager {
       fn();
     });
     await UserConfigTool.migrateSharedPreferencesData();
-    addChatCallBack();
     await ChatCoreManager().initChatCore(
-        isLite: false,
+        isLite: true,
         circleRelay: 'wss://relay.0xchat.com',
         contactUpdatedCallBack: Contacts.sharedInstance.contactUpdatedCallBack,
         channelsUpdatedCallBack: Channels.sharedInstance.myChannelsUpdatedCallBack,

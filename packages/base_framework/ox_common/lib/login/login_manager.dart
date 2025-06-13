@@ -55,6 +55,7 @@ class LoginManager {
   final ValueNotifier<LoginState> _state$ = ValueNotifier(LoginState());
   ValueListenable<LoginState> get state$ => _state$;
   LoginState get currentState => _state$.value;
+  Circle? get currentCircle => currentState.currentCircle;
 
   // User info management for UI updates (separate from login state)
   ValueNotifier<UserDBISAR?> _userInfo$ = ValueNotifier<UserDBISAR?>(null);
@@ -67,9 +68,8 @@ class LoginManager {
   // _keyLastCircleId 已移除，现在使用 AccountModel.lastLoginCircleId 存储
 }
 
-// ============ Authentication Extension ============
-/// Authentication related methods
-extension LoginManagerAuth on LoginManager {
+/// Account management related methods
+extension LoginManagerAccount on LoginManager {
   /// Login with private key
   ///
   /// [privateKey] User's private key (unencrypted)
@@ -473,7 +473,7 @@ extension LoginManagerCircle on LoginManager {
       final existingCircle = account.circles.where((c) => c.id == circleId).firstOrNull;
       if (existingCircle != null) {
         // Circle already exists, just switch to it
-        return await switchToCircle(existingCircle);
+        return switchToCircle(existingCircle);
       }
 
       // Create new circle
@@ -594,6 +594,15 @@ extension LoginManagerCircle on LoginManager {
         return false;
       }
 
+      await ChatCoreManager().initChatCore(
+        isLite: true,
+        circleRelay: circle.relayUrl,
+        contactUpdatedCallBack: Contacts.sharedInstance.contactUpdatedCallBack,
+        channelsUpdatedCallBack: Channels.sharedInstance.myChannelsUpdatedCallBack,
+        groupsUpdatedCallBack: Groups.sharedInstance.myGroupsUpdatedCallBack,
+        relayGroupsUpdatedCallBack: RelayGroup.sharedInstance.myGroupsUpdatedCallBack,
+      );
+
       // Login success
       account.updateLastLoginCircle(circle.id);
       _state$.value = loginState.copyWith(
@@ -629,16 +638,8 @@ extension LoginManagerCircle on LoginManager {
       switch (loginType) {
         case LoginType.nesc:
         // Use private key login
-          final encryptedPrivKey = account.encryptedPrivKey;
-          final defaultPassword = account.defaultPassword;
-          if (encryptedPrivKey.isNotEmpty && defaultPassword.isNotEmpty) {
-            final privateKey = _decryptPrivateKey(
-              encryptedPrivKey,
-              defaultPassword,
-            );
-            return Account.sharedInstance.loginWithPriKey(privateKey);
-          }
-          break;
+          final privateKey = account.getPrivateKey();
+          return Account.sharedInstance.loginWithPriKey(privateKey);
 
         case LoginType.androidSigner:
         // Use Amber signer login

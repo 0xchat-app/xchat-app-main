@@ -90,9 +90,7 @@ class ContactWidgetState<T extends ContactWidget> extends State<T> {
       addAutomaticKeepAlives = false;
       addRepaintBoundaries = false;
     }
-    userList = widget.data;
-    _initIndexBarData();
-    initFromCache();
+    prepareData();
     scrollController.addListener(() {
       double position = scrollController.offset.toDouble();
       int index = _computerIndex(position);
@@ -100,11 +98,18 @@ class ContactWidgetState<T extends ContactWidget> extends State<T> {
     });
   }
 
-  void initFromCache() async {}
+  void prepareData() {
+    userList = widget.data;
+    _initIndexBarData();
+  }
 
   @override
   void didUpdateWidget(covariant T oldWidget) {
     super.didUpdateWidget(oldWidget);
+
+    if (widget.data != oldWidget.data) {
+      prepareData();
+    }
   }
 
   void updateContactData(List<UserDBISAR> data) {

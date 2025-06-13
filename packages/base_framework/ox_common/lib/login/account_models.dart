@@ -1,6 +1,7 @@
 import 'package:isar/isar.dart';
 import 'dart:collection';
 import 'dart:convert';
+import 'package:convert/convert.dart';
 import 'package:flutter/foundation.dart';
 import 'package:nostr_core_dart/nostr.dart';
 import 'login_models.dart';
@@ -307,6 +308,22 @@ class AccountHelper {
 }
 
 extension AccountHelperEx on AccountModel {
+
+  String getPrivateKey() {
+    final encryptedBytes = hex.decode(encryptedPrivKey);
+    final decryptedBytes = decryptPrivateKey(Uint8List.fromList(encryptedBytes), defaultPassword);
+    return hex.encode(decryptedBytes);
+  }
+
+  String getEncodedPubkey() {
+    return Nip19.encodePubkey(pubkey);
+  }
+
+  String getEncodedPrivkey() {
+    final privkey = getPrivateKey();
+    return Nip19.encodePrivkey(privkey);
+  }
+
   void updateLastLoginCircle(String? circleId) {
     if (lastLoginCircleId == circleId) return;
 

@@ -32,7 +32,7 @@ class ChatMessagePage extends StatefulWidget {
   State<ChatMessagePage> createState() => _ChatMessagePageState();
 
   static Future<T?> open<T>({
-    required BuildContext context,
+    required BuildContext? context,
     required ChatSessionModelISAR communityItem,
     String? anchorMsgId,
     int? unreadMessageCount,
@@ -80,7 +80,8 @@ class ChatMessagePage extends StatefulWidget {
     }
 
     if (pageWidget == null) return null;
-    if (isLongPressShow){
+    context ??= OXNavigator.navigatorKey.currentContext!;
+    if (isLongPressShow) {
       handler.isPreviewMode = true;
       if (fromWhere == 1){
         return ContactLongPressMenuDialog.showDialog(context: context, communityItem: communityItem, pageWidget: pageWidget);

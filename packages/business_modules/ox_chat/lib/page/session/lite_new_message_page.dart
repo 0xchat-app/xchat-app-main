@@ -1,0 +1,407 @@
+import 'package:flutter/material.dart';
+import 'package:ox_common/component.dart';
+import 'package:ox_common/login/login_manager.dart';
+import 'package:ox_common/mixin/common_state_view_mixin.dart';
+import 'package:ox_common/model/chat_session_model_isar.dart';
+import 'package:ox_common/model/chat_type.dart';
+import 'package:ox_common/navigator/navigator.dart';
+import 'package:ox_common/utils/adapt.dart';
+import 'package:ox_common/widgets/avatar.dart';
+import 'package:ox_common/widgets/common_image.dart';
+import 'package:ox_common/widgets/common_loading.dart';
+import 'package:ox_common/widgets/common_toast.dart';
+import 'package:ox_localizable/ox_localizable.dart';
+import 'package:chatcore/chat-core.dart';
+import 'package:lpinyin/lpinyin.dart';
+
+import 'chat_message_page.dart';
+
+class CLNewMessagePage extends StatefulWidget {
+  const CLNewMessagePage({super.key});
+
+  @override
+  State<StatefulWidget> createState() {
+    return _CLNewMessagePageState();
+  }
+}
+
+class _CLNewMessagePageState extends State<CLNewMessagePage>
+    with CommonStateViewMixin {
+  
+  final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
+  bool get isSearchOnFocus => _searchFocusNode.hasFocus;
+  
+  List<UserDBISAR> _allUsers = [];
+  Map<String, List<UserDBISAR>> _groupedUsers = {};
+  List<UserDBISAR> _searchResults = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+    _searchController.addListener(_onSearchChanged);
+    _searchFocusNode.addListener(_onFocusChanged);
+  }
+
+  @override
+  void dispose() {
+    _searchController.removeListener(_onSearchChanged);
+    _searchFocusNode.removeListener(_onFocusChanged);
+    _searchController.dispose();
+    _searchFocusNode.dispose();
+    super.dispose();
+  }
+
+  void _loadData() {
+    _allUsers = Account.sharedInstance.userCache.values
+        .map((e) => e.value)
+        .toList();
+    _groupUsers();
+  }
+
+  void _groupUsers() {
+    _groupedUsers.clear();
+    
+    for (final user in _allUsers) {
+      final showName = _getUserShowName(user);
+      String firstChar = '#';
+      
+      if (showName.isNotEmpty) {
+        final firstCharacter = showName[0];
+        if (RegExp(r'[a-zA-Z]').hasMatch(firstCharacter)) {
+          firstChar = firstCharacter.toUpperCase();
+        } else if (RegExp(r'[\u4e00-\u9fa5]').hasMatch(firstCharacter)) {
+          // Chinese character, get pinyin first letter
+          final pinyin = PinyinHelper.getFirstWordPinyin(firstCharacter);
+          if (pinyin.isNotEmpty && RegExp(r'[a-zA-Z]').hasMatch(pinyin[0])) {
+            firstChar = pinyin[0].toUpperCase();
+          }
+        }
+      }
+      
+      _groupedUsers.putIfAbsent(firstChar, () => []).add(user);
+    }
+    
+    // Sort users within each group
+    _groupedUsers.forEach((key, users) {
+      users.sort((a, b) => _getUserShowName(a).compareTo(_getUserShowName(b)));
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CLScaffold(
+      appBar: CLAppBar(
+        title: Localized.text('ox_chat.str_title_new_message'),
+        actions: [
+          if (PlatformStyle.isUseMaterial)
+            CLButton.icon(
+              iconName: 'icon_scan_qr.png',
+              package: 'ox_common',
+              onTap: _onScanQRCode,
+            ),
+        ],
+        bottom: PreferredSize(
+          preferredSize: Size(double.infinity, 80.px),
+          child: _buildSearchBar(),
+        ),
+      ),
+      isSectionListPage: true,
+      body: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () {
+          _searchFocusNode.unfocus();
+        },
+        child: isSearchOnFocus || _searchController.text.isNotEmpty
+            ? _buildSearchResults()
+            : _buildUserList()
+      ),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return CLSearch(
+      padding: EdgeInsets.all(16.px),
+      controller: _searchController,
+      focusNode: _searchFocusNode,
+      placeholder: Localized.text('ox_chat.search'),
+      showClearButton: true,
+      onSubmitted: _onSubmittedHandler,
+    );
+  }
+
+  Widget _buildUserList() {
+    return CLSectionListView(
+      items: [
+        menuSection(),
+        ...userListSectionItems(),
+      ],
+    );
+  }
+
+  SectionListViewItem menuSection() {
+    return SectionListViewItem(
+      data: [
+        if (!PlatformStyle.isUseMaterial)
+          CustomItemModel(
+            leading: Container(
+              width: 32.px,
+              height: 32.px,
+              alignment: Alignment.center,
+              child: CommonImage(
+                iconName: 'icon_scan_qr.png',
+                size: 24.px,
+                color: ColorToken.onSurface.of(context),
+                package: 'ox_common',
+              ),
+            ),
+            titleWidget: CLText.bodyLarge(
+              Localized.text('ox_common.str_scan'),
+              colorToken: ColorToken.onSurface,
+            ),
+            onTap: _onScanQRCode,
+          ),
+        CustomItemModel(
+          leading: Container(
+            width: 32.px,
+            height: 32.px,
+            alignment: Alignment.center,
+            child: CommonImage(
+              iconName: 'icon_new_group.png',
+              size: 24.px,
+              color: ColorToken.onSurface.of(context),
+              package: 'ox_common',
+            ),
+          ),
+          titleWidget: CLText.bodyLarge(
+            Localized.text('ox_chat.str_new_group'),
+            colorToken: ColorToken.onSurface,
+          ),
+          onTap: _onNewGroup,
+        ),
+      ],
+    );
+  }
+
+  List<SectionListViewItem> userListSectionItems() {
+    final list = <SectionListViewItem>[];
+
+    final sortedKeys = _groupedUsers.keys.toList()..sort((a, b) {
+      if (a == '#') return 1;
+      if (b == '#') return -1;
+      return a.compareTo(b);
+    });
+
+    for (final key in sortedKeys) {
+      final users = _groupedUsers[key]!;
+      list.add(SectionListViewItem(
+        header: key,
+        data: users.map((user) => userListItem(user)).toList(),
+      ));
+    }
+
+    return list;
+  }
+
+  ListViewItem userListItem(UserDBISAR user) {
+    return CustomItemModel(
+      leading: OXUserAvatar(
+        user: user,
+        size: 40.px,
+        isClickable: false,
+      ),
+      titleWidget: CLText.bodyMedium(
+        _getUserShowName(user),
+        colorToken: ColorToken.onSurface,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+      subtitleWidget: CLText.bodySmall(
+        user.encodedPubkey,
+        colorToken: ColorToken.onSurfaceVariant,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+      onTap: () => _onUserTap(user),
+    );
+  }
+
+  Widget _buildSearchResults() {
+    if (isSearchOnFocus && _searchController.text.isEmpty) {
+      return SizedBox.expand();
+    }
+
+    if (_searchResults.isEmpty) {
+      return _buildEmptySearchResults();
+    }
+    
+    final sections = <SectionListViewItem>[
+      SectionListViewItem(
+        data: _searchResults.map((user) => CustomItemModel(
+          leading: OXUserAvatar(
+            user: user,
+            size: 40.px,
+            isClickable: false,
+          ),
+          titleWidget: CLText.bodyMedium(
+            _getUserShowName(user),
+            colorToken: ColorToken.onSurface,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          subtitleWidget: CLText.bodySmall(
+            user.encodedPubkey,
+            colorToken: ColorToken.onSurfaceVariant,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          onTap: () => _onUserTap(user),
+        )).toList(),
+      ),
+    ];
+    
+    return CLSectionListView(
+      items: sections,
+    );
+  }
+
+  Widget _buildEmptySearchResults() {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(32.px),
+        child: CLText.bodyLarge(
+          'No "${_searchController.text}" results found',
+          colorToken: ColorToken.onSurfaceVariant,
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+
+  String _getUserShowName(UserDBISAR user) {
+    final name = user.name ?? '';
+    final nickName = user.nickName ?? '';
+
+    if (name.isNotEmpty && nickName.isNotEmpty) {
+      return '$name($nickName)';
+    } else if (name.isNotEmpty) {
+      return name;
+    } else if (nickName.isNotEmpty) {
+      return nickName;
+    }
+    return 'Unknown';
+  }
+
+  void _onSearchChanged() {
+    final query = _searchController.text.trim();
+    setState(() {
+      if (query.isNotEmpty) {
+        _performSearch(query);
+      } else {
+        _searchResults.clear();
+      }
+    });
+  }
+
+  void _onFocusChanged() {
+    setState(() {});
+  }
+
+  void _performSearch(String query) {
+    final lowerQuery = query.toLowerCase();
+    _searchResults = _allUsers.where((user) {
+      final name = (user.name ?? '').toLowerCase();
+      final nickName = (user.nickName ?? '').toLowerCase();
+      final encodedPubkey = user.encodedPubkey.toLowerCase();
+
+      return name.contains(lowerQuery) ||
+          nickName.contains(lowerQuery) ||
+          encodedPubkey.contains(lowerQuery);
+    }).toList();
+  }
+
+  void _onScanQRCode() {
+
+  }
+
+  void _onNewGroup() {
+
+  }
+
+  void _onUserTap(UserDBISAR user) async {
+    final myPubkey = Account.sharedInstance.me?.pubKey;
+    if (myPubkey == null || myPubkey.isEmpty) {
+      CommonToast.instance.show(context, 'Current account is null');
+      return;
+    }
+
+    final circle = LoginManager.instance.currentCircle;
+    if (circle == null) {
+      CommonToast.instance.show(context, 'Current circle is null');
+      return;
+    }
+
+    await OXLoading.show();
+
+    String groupName = '${user.name} & ${Account.sharedInstance.me!.name}';
+    GroupDBISAR? groupDB = await Groups.sharedInstance.createMLSGroup(
+      groupName,
+      '',
+      [user.pubKey, myPubkey],
+      [myPubkey],
+      [circle.relayUrl],
+    );
+
+    if (groupDB == null) {
+      CommonToast.instance.show(context, Localized.text('ox_chat.create_group_fail_tips'));
+      return;
+    }
+
+    await OXLoading.dismiss();
+    OXNavigator.pop(context);
+
+    ChatMessagePage.open(
+      context: null,
+      communityItem: ChatSessionModelISAR(
+        chatId: groupDB.groupId,
+        groupId: groupDB.groupId,
+        chatType: ChatType.chatGroup,
+        chatName: groupDB.name,
+        createTime: groupDB.updateTime,
+        avatar: groupDB.picture,
+      ),
+    );
+  }
+
+  void _onSubmittedHandler(String text) async {
+    text = text.trim();
+    if (text.isEmpty) return;
+
+    await OXLoading.show();
+    String pubkey = '';
+    if (text.startsWith('npub')) {
+      pubkey = UserDBISAR.decodePubkey(text) ?? '';
+    } else if (text.contains('@')) {
+      pubkey = await Account.getDNSPubkey(
+        text.substring(0, text.indexOf('@')),
+        text.substring(text.indexOf('@') + 1)
+      ) ?? '';
+    }
+
+    UserDBISAR? user;
+    if (pubkey.isNotEmpty) {
+      user = await Account.sharedInstance.getUserInfo(pubkey);
+    }
+
+    if (user == null) {
+      await OXLoading.dismiss();
+      CommonToast.instance.show(context, 'User not found, please re-enter.');
+      return;
+    }
+
+    await OXLoading.dismiss();
+    _searchResults.insert(0, user);
+    setState(() {});
+  }
+}
