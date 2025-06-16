@@ -10,6 +10,9 @@ enum LoginFailureType {
   circleDbFailed,
 }
 
+class _NoSet { const _NoSet(); }
+const _noSet = _NoSet();
+
 /// Login failure information
 class LoginFailure {
   const LoginFailure({
@@ -108,11 +111,11 @@ class LoginState {
   bool get hasCircle => currentCircle != null;
 
   LoginState copyWith({
-    AccountModel? account,
-    Circle? currentCircle,
+    dynamic account = _noSet,
+    dynamic currentCircle = _noSet,
   }) => LoginState(
-    account: account ?? this.account,
-    currentCircle: currentCircle ?? this.currentCircle,
+    account: account != _noSet ? account : this.account,
+    currentCircle: currentCircle != _noSet ? currentCircle : this.currentCircle,
   );
 
   @override

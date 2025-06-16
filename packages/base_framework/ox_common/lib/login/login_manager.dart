@@ -250,6 +250,7 @@ extension LoginManagerAccount on LoginManager {
 
     // Clear login state
     _state$.value = LoginState();
+    _userInfo$ = ValueNotifier<UserDBISAR?>(null);
 
     await Account.sharedInstance.logout();
 
@@ -521,14 +522,75 @@ extension LoginManagerCircle on LoginManager {
   /// Leave circle
   ///
   /// [circleId] Circle ID to leave
-  /// TODO: Implement specific leave logic
   Future<bool> leaveCircle(String circleId) async {
-    // TODO: Implement circle leave logic
-    // 1. Clean up circle database
-    // 2. Remove from account circle list
-    // 3. If current circle, switch to other circle or clear
-    // 4. Persist data
-    throw UnimplementedError('leaveCircle not implemented yet');
+    try {
+      final currentState = this.currentState;
+      final account = currentState.account;
+      if (account == null) {
+        _notifyCircleChangeFailed(const LoginFailure(
+          type: LoginFailureType.errorEnvironment,
+          message: 'No account logged in',
+        ));
+        return false;
+      }
+
+      // Find circle
+      final leavingCircle = account.circles.where((c) => c.id == circleId).firstOrNull;
+      if (leavingCircle == null) {
+        _notifyCircleChangeFailed(LoginFailure(
+          type: LoginFailureType.errorEnvironment,
+          message: 'Circle not found',
+          circleId: circleId,
+        ));
+        return false;
+      }
+
+      // Close DB if current
+      if (currentState.currentCircle?.id == circleId) {
+        await DatabaseUtils.closeCircleDatabase();
+      }
+
+      // Remove circle from list
+      final updatedCircles = [...account.circles]..removeWhere((c) => c.id == circleId);
+
+      // Determine next circle (if current removed)
+      Circle? nextCircle = currentState.currentCircle;
+      if (nextCircle?.id == circleId) {
+        nextCircle = updatedCircles.isNotEmpty ? updatedCircles.first : null;
+      }
+
+      // Logout & Delete circle database files
+      await Account.sharedInstance.deletecircle(circleId, nextCircle?.id);
+
+      // Persist account update
+      final updatedAccount = account.copyWith(
+        circles: updatedCircles,
+        lastLoginCircleId: nextCircle?.id,
+      );
+
+      await updatedAccount.saveToDB();
+
+      // Update state
+      _state$.value = currentState.copyWith(
+        account: updatedAccount,
+        currentCircle: nextCircle,
+      );
+      _userInfo$ = ValueNotifier<UserDBISAR?>(null);
+
+      // Notify observers that there is no circle currently
+      for (final observer in _observers) {
+        observer.onCircleChanged(nextCircle);
+      }
+
+      return true;
+    } catch (e) {
+      _notifyCircleChangeFailed(LoginFailure(
+        type: LoginFailureType.circleDbFailed,
+        message: 'Failed to leave circle: $e',
+        circleId: circleId,
+      ));
+      return false;
+    }
   }
 
   Future<bool> _tryLoginLastCircle(LoginState loginState) async {
