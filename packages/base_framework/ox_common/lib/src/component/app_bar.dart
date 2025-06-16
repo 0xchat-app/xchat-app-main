@@ -84,7 +84,6 @@ class CLAppBar extends StatelessWidget {
       middle: title,
       previousPageTitle: previousPageTitle,
       trailing: _buildCupertinoTrailing(context),
-      backgroundColor: backgroundColor,
       bottom: bottom,
     );
   }

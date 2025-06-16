@@ -2,8 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/navigator/navigator.dart';
-import 'package:ox_common/utils/adapt.dart';
-import 'package:ox_common/widgets/common_image.dart';
 
 import 'button/elevated_button.dart';
 import 'button/filled_button.dart';
@@ -217,20 +215,18 @@ class CLButton {
   }
 
   static Widget icon({
-    required String iconName,
-    required String package,
+    String iconName = '',
+    String package = '',
     Widget? child,
     VoidCallback? onTap,
     double? size,
     Color? color,
     EdgeInsets? padding,
   }) {
-    // Default: 44 size & 10 padding
-    size ??= 44.px;
-    padding ??= EdgeInsets.all(10.px);
+    padding ??= EdgeInsets.all(size ?? CLIcon.generalIconSize / 2);
     color ??= IconTheme.of(OXNavigator.navigatorKey.currentContext!).color;
 
-    child ??= CommonImage(
+    child ??= CLIcon(
       iconName: iconName,
       size: size,
       color: color,
@@ -239,7 +235,7 @@ class CLButton {
 
     return CLIconButton(
       onTap: onTap,
-      size: size,
+      size: size ?? CLIcon.generalIconSize * 2,
       padding: padding,
       child: child,
     );
