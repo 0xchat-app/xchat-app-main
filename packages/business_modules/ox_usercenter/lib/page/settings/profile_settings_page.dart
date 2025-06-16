@@ -96,7 +96,6 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
         CLButton.tonal(
           child: CLText.labelLarge('Edit Photo'),
           height: 30.px,
-          width: 90.px,
           padding: EdgeInsets.symmetric(
             horizontal: 12.px,
             vertical: 5.px,
