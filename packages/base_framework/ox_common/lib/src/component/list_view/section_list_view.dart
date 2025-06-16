@@ -63,10 +63,6 @@ class CLSectionListView extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionHeader(String title) {
-    return CLText.titleSmall(title);
-  }
-
   Widget buildSectionSeparator(SectionListViewItem item) {
     if (PlatformStyle.isUseMaterial) {
       return Divider(height: 1,).setPadding(EdgeInsets.symmetric(horizontal: 16.px));
@@ -76,18 +72,12 @@ class CLSectionListView extends StatelessWidget {
   }
 
   Widget buildItemWidget(SectionListViewItem model) {
-    final header = model.header;
+    final headerWidget = model.headerWidget;
 
     if (PlatformStyle.isUseMaterial) {
       final widgets = <Widget>[];
-      if (header != null) {
-        widgets.add(Padding(
-          padding: EdgeInsets.only(
-            left: 20.px,
-            top: 16.px,
-          ),
-          child: _buildSectionHeader(header),
-        ));
+      if (headerWidget != null) {
+        widgets.add(headerWidget);
       }
       widgets.add(CLListView(
         shrinkWrap: true,
@@ -100,7 +90,7 @@ class CLSectionListView extends StatelessWidget {
     } else {
       final listView = CLListView(items: model.data);
       return CupertinoListSection.insetGrouped(
-        header: header != null ? _buildSectionHeader(header) : null,
+        header: headerWidget,
         hasLeading: listView.hasLeading,
         children: listView.asCupertinoSectionChildren(false),
       );
