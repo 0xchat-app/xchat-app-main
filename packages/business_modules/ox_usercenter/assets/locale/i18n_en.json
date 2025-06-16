@@ -233,5 +233,14 @@
   "str_set_new_photo": "Set New Photo",
   "str_font_size": "Text Size",
   "str_settings_chat": "Text Size",
-  "str_settings_chat_set": "Set"
+  "str_settings_chat_set": "Set",
+  "circle_detail": "Circle Detail",
+  "edit_profile": "Edit Profile",
+  "delete_circle": "Delete Circle",
+  "my_avatar_in_circle": "My Avatar in Circle",
+  "relay_server": "Relay Server",
+  "file_server_setting": "File Server Setting",
+  "circle_description_placeholder": "No description provided.",
+  "delete_circle_confirm_title": "Delete Circle",
+  "delete_circle_confirm_content": "Are you sure you want to delete this circle?"
 }

@@ -5,7 +5,6 @@ import 'package:ox_chat/page/session/chat_message_page.dart';
 import 'package:ox_chat/page/session/lite_new_message_page.dart';
 import 'package:ox_common/business_interface/ox_usercenter/interface.dart';
 import 'package:ox_common/component.dart';
-import 'package:ox_common/login/account_models.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/login/login_models.dart';
 import 'package:ox_common/navigator/navigator.dart';
@@ -120,7 +119,7 @@ class _HomeScaffoldState extends State<HomeScaffold> {
           // This shouldn't happen since HomePage should handle login check
           return const Center(child: CircularProgressIndicator());
         }
-        
+
         return AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
           switchInCurve: Curves.easeIn,

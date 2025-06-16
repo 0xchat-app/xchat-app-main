@@ -54,11 +54,16 @@ class HomeHeaderComponents {
 
   AppBar buildAppBar(BuildContext ctx) => AppBar(
     leadingWidth: 280.px,
-    leading: Row(
-      children: [
-        _buildAvatar(),
-        Expanded(child: _buildUserName()),
-      ],
+    leading: ValueListenableBuilder(
+      valueListenable: LoginManager.instance.state$,
+      builder: (_, __, ___) {
+        return Row(
+          children: [
+            _buildAvatar(),
+            Expanded(child: _buildUserName()),
+          ],
+        );
+      }
     ),
     actions: [
       if (PlatformStyle.isUseMaterial)

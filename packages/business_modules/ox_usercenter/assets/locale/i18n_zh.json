@@ -233,5 +233,14 @@
   "str_set_new_photo": "设置新头像",
   "str_font_size": "字体大小",
   "str_settings_chat": "字体大小",
-  "str_settings_chat_set": "设置"
+  "str_settings_chat_set": "设置",
+  "circle_detail": "圈子详情",
+  "edit_profile": "编辑资料",
+  "delete_circle": "删除圈子",
+  "my_avatar_in_circle": "我的圈子头像",
+  "relay_server": "Relay 服务器",
+  "file_server_setting": "文件服务器设置",
+  "circle_description_placeholder": "暂无描述",
+  "delete_circle_confirm_title": "删除圈子",
+  "delete_circle_confirm_content": "确定要删除该圈子吗？"
 }

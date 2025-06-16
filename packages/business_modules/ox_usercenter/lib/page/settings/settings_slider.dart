@@ -15,6 +15,7 @@ import 'package:ox_usercenter/page/settings/language_settings_page.dart';
 import 'package:ox_usercenter/page/settings/theme_settings_page.dart';
 
 import '../set_up/keys_page.dart';
+import 'circle_detail_page.dart';
 import 'font_size_settings_page.dart';
 import 'profile_settings_page.dart';
 
@@ -78,7 +79,7 @@ class SettingSliderState extends State<SettingSlider> {
         LabelItemModel(
           icon: ListViewIcon(iconName: 'icon_setting_circles.png', package: 'ox_usercenter'),
           title: 'Circles',
-          value$: ValueNotifier('6'),
+          onTap: circleItemOnTap,
         ),
       ]),
       // SectionListViewItem(data: [
@@ -195,6 +196,16 @@ class SettingSliderState extends State<SettingSlider> {
 
   void keysItemOnTap() {
     OXNavigator.pushPage(context, (_) => KeysPage(previousPageTitle: title,));
+  }
+
+  void circleItemOnTap() {
+    final circle = LoginManager.instance.currentCircle;
+    if (circle == null) return;
+
+    OXNavigator.pushPage(context, (_) => CircleDetailPage(
+      previousPageTitle: title,
+      circle: circle,
+    ));
   }
 
   void profileItemOnTap() {
