@@ -173,10 +173,6 @@ extension StringUtil on String {
     return '${this.substring(0, frontChars)}${'.' * dots}${this.substring(this.length - backChars)}';
   }
 
-  String orDefault(String defaultValue) {
-    return this.isEmpty ? defaultValue : this;
-  }
-
   String capitalize() {
     if (this.isEmpty) {
       return this;
@@ -219,3 +215,10 @@ extension StringUtil on String {
   }
 }
 
+extension NullOrBlankX on String? {
+  String orDefault(String defaultValue) {
+    final text = this;
+    if (text != null && text.isNotEmpty) return text;
+    return defaultValue;
+  }
+}
