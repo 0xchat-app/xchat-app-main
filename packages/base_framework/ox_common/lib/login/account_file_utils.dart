@@ -54,7 +54,7 @@ class AccountPathUtils {
   /// Generate circle folder path for given pubkey and circle ID
   static Future<String> getCircleFolderPath(String pubkey, String circleId) async {
     final accountPath = await _getAccountFolderPath(pubkey);
-    return path.join(accountPath, circleId);
+    return path.join(accountPath, 'circles', circleId);
   }
 
   // ========== Public Path Interfaces ==========

@@ -93,7 +93,6 @@ class DatabaseUtils {
   /// Close circle database  
   static Future<void> closeCircleDatabase() async {
     try {
-      // TODO: Close the specific circle database
       // For now, this relates to DBISAR.sharedInstance
       await DBISAR.sharedInstance.closeDatabase();
       debugPrint('Circle database closed');
