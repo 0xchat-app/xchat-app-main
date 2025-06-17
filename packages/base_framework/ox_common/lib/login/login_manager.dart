@@ -23,11 +23,9 @@ class LoginUserNotifier {
         if (userInfo == null) return '';
 
         final name = userInfo.name;
-        final encodedPubkey = userInfo.encodedPubkey;
-
         if (name != null && name.isNotEmpty) return name;
 
-        return encodedPubkey;
+        return userInfo.shortEncodedPubkey;
       });
 
   ValueNotifier<String> get bio$ => LoginManager.instance._userInfo$
