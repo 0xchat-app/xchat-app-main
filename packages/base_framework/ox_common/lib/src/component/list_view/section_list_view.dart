@@ -4,7 +4,6 @@ import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 
 import '../platform_style.dart';
-import '../text.dart';
 import 'list_view.dart';
 import 'section_list_view_model.dart';
 
