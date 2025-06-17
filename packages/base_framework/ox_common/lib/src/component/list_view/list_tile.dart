@@ -44,14 +44,10 @@ class CLListTile extends StatelessWidget {
 
   static Widget buildDefaultTrailing(GestureTapCallback? onTap) {
     if (PlatformStyle.isUseMaterial) return const SizedBox.shrink();;
-    if (onTap == null) return const SizedBox.shrink();;
+    if (onTap == null) return const SizedBox.shrink();
     return Padding(
       padding: EdgeInsets.only(left: 10),
-      child: Icon(
-        CupertinoIcons.chevron_forward,
-        size: 20,
-        color: CupertinoColors.systemGrey,
-      ),
+      child: CupertinoListTileChevron(),
     );
   }
 }
