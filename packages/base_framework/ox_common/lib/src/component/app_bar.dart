@@ -80,9 +80,18 @@ class CLAppBar extends StatelessWidget {
   }
 
   CupertinoNavigationBar buildCupertinoAppBar(BuildContext context) {
+    EdgeInsetsDirectional? padding;
+    if (CupertinoSheetRoute.hasParentSheet(context)) {
+      padding = const EdgeInsetsDirectional.only(
+        start: 16,    // _kNavBarEdgePadding
+        top: 0,
+        bottom: 12,   // Adapt for CupertinoSheetRoute
+        end: 16,      // _kNavBarEdgePadding
+      );
+    }
     return CupertinoNavigationBar(
       middle: title,
-      previousPageTitle: previousPageTitle,
+      padding: padding,
       trailing: _buildCupertinoTrailing(context),
       bottom: bottom,
     );

@@ -56,12 +56,8 @@ class OXNavigator extends Navigator {
     // Remove the current focus
     FocusScope.of(context).requestFocus(FocusNode());
 
-    if (CupertinoSheetRoute.hasParentSheet(context)) {
-      CupertinoSheetRoute.popSheet(context);
-    }
-
     if (canPop(context)) {
-      Navigator.popUntil(context, (Route<dynamic> route) {
+      Navigator.of(context, rootNavigator: true).popUntil((Route<dynamic> route) {
         return route.isFirst;
       });
     }

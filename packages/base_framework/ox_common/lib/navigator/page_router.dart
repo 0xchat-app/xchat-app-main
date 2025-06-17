@@ -95,9 +95,10 @@ class OXCupertinoSheetRoute<T> extends CupertinoSheetRoute<T> {
       alignment: Alignment.topCenter,
       // Fix issue in CupertinoSheetRoute where only offset was applied without reducing content height, causing bottom overflow
       heightFactor: 1 - 0.08,
-      child: MediaQuery.removePadding(
-        context: ctx,
-        removeTop: true,
+      child: MediaQuery(
+        data: MediaQuery.of(ctx).copyWith(
+          padding: MediaQuery.of(ctx).padding.copyWith(top: 12),
+        ),
         child: Navigator(
           observers: [
             HeroController(),
