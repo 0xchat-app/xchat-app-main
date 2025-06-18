@@ -31,13 +31,13 @@ class CircleEmptyWidget extends StatelessWidget {
             Localized.text('ox_home.join_or_create_circle_now'),
           ),
 
-          // SizedBox(height: 8.px),
-          //
-          // // Subtitle
-          // CLText.titleSmall(
-          //   Localized.text('ox_home.unlock_advanced_model'),
-          // ),
-          //
+          SizedBox(height: 8.px),
+
+          // Subtitle
+          CLText.titleSmall(
+            Localized.text('ox_home.unlock_advanced_model'),
+          ),
+
           SizedBox(height: 40.px),
 
           // Join Circle Button
