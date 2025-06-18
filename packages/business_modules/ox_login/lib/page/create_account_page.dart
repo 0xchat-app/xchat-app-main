@@ -36,7 +36,7 @@ class CreateAccountPage extends StatefulWidget {
 
 class _CreateAccountPageState extends State<CreateAccountPage> with LoginManagerObserver {
   // Text content for the page
-  final String _publicKeyTips = 'Before we get started, you\'ll need to save your nostr account ID. You can share it with your contacts so they can add you as a friend. Tap to copy';
+  final String _publicKeyTips = 'Before we get started, you\'ll need to save your nostr account ID. You can share it with your family or friends. Tap to copy!';
   final String _privateKeyTips = 'This is your secret account key. You need this to access your account. otherwise you won\'t be able to login in the future if you ever uninstall 0xchat. Don\'t share this with anyone! Save it in a password manager and keep it safe!';
 
   // Key generation state
@@ -71,7 +71,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> with LoginManager
   void _generateKeys() {
     keychain = Account.generateNewKeychain();
     _encodedPubkey$.value = Nip19.encodePubkey(keychain.public);
-    _encodedPrivkey$.value = Nip19.encodePubkey(keychain.private);
+    _encodedPrivkey$.value = Nip19.encodePrivkey(keychain.private);
   }
 
   @override

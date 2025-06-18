@@ -51,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
                 package: 'ox_login',
               ),
               title: 'End-to-End Encryption',
-              text: 'Only you and your contact can read the messages. No one else.',
+              text: 'Only you and the recipient can read the messages. No one else.',
             ),
             BannerItem(
               image: CommonImage(
@@ -69,7 +69,7 @@ class _LoginPageState extends State<LoginPage> {
                 package: 'ox_login',
               ),
               title: 'Encrypted Local Storage',
-              text: 'Chats are stored only on your device — encrypted and secure.',
+              text: 'Chats are encrypted and stored on your device.',
             ),
             BannerItem(
               image: CommonImage(
@@ -91,7 +91,7 @@ class _LoginPageState extends State<LoginPage> {
             buildLoginButton().setPaddingOnly(bottom: 18.px),
             // buildQrCodeLoginWidget().setPaddingOnly(bottom: 18.px),
             // buildPrivacyWidget().setPaddingOnly(bottom: 18.px),
-            buildAmberLoginWidget(),
+            if(Platform.isAndroid) buildAmberLoginWidget(),
           ],
         ).setPadding(EdgeInsets.symmetric(horizontal: 32.px)),
         SizedBox(height: 12.py,),
