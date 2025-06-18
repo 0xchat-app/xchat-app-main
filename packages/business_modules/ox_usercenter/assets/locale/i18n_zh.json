@@ -242,5 +242,17 @@
   "file_server_setting": "文件服务器设置",
   "circle_description_placeholder": "暂无描述",
   "delete_circle_confirm_title": "删除圈子",
-  "delete_circle_confirm_content": "确定要删除该圈子吗？"
+  "delete_circle_confirm_content": "确定要删除该圈子吗？",
+  "no_file_server": "暂无服务器",
+  "add_server": "添加服务器",
+  "edit": "编辑",
+  "add_nip96_server": "添加 NIP-96 服务器",
+  "add_blossom_server": "添加 Blossom 服务器",
+  "add_minio_server": "添加 MinIO 服务器",
+  "url": "URL",
+  "pubkey": "公钥",
+  "access_key": "Access Key",
+  "secret_key": "Secret Key",
+  "bucket_name": "Bucket 名称",
+  "custom_name": "自定义名称"
 }

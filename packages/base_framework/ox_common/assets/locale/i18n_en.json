@@ -125,5 +125,6 @@
   "signer_waiting": "Waiting for signature approval...",
   "signer_signature": "Signature approved.",
   "invalid_url_format": "Invalid URL format",
-  "operation_failed": "Operation failed"
+  "operation_failed": "Operation failed",
+  "required": "Required"
 }

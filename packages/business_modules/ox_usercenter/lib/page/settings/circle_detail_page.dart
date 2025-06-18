@@ -10,7 +10,10 @@ import 'package:ox_common/utils/string_utils.dart';
 import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 
+import 'file_server_page.dart';
 import 'profile_settings_page.dart';
+
+enum _MenuAction { edit, delete }
 
 class CircleDetailPage extends StatelessWidget {
   const CircleDetailPage({
@@ -211,15 +214,14 @@ class CircleDetailPage extends StatelessWidget {
       ),
       // File Server Setting (Server Settings)
       CustomItemModel(
-        leading: Icon(CupertinoIcons.settings),
+        leading: const Icon(CupertinoIcons.settings),
         titleWidget: CLText(Localized.text('ox_usercenter.file_server_setting')),
         onTap: () {
-          // TODO: 打开服务器设置页面
+          OXNavigator.pushPage(context, (_) => FileServerPage(
+            previousPageTitle: title,
+          ));
         },
       ),
     ];
   }
 }
-
-/// 右上角菜单动作
-enum _MenuAction { edit, delete } 

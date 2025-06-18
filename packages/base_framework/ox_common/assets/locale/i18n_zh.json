@@ -125,5 +125,6 @@
   "signer_waiting": "等待签名确认...",
   "signer_signature": "签名已确认",
   "invalid_url_format": "无效的URL格式",
-  "operation_failed": "操作失败"
+  "operation_failed": "操作失败",
+  "required": "必填"
 }
