@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_common/component.dart';
@@ -9,6 +8,12 @@ class CLListView extends StatelessWidget {
   final bool shrinkWrap;
   final EdgeInsets? padding;
 
+  /// When true, the list will render in editing mode (showing delete or reorder handles if supported).
+  final bool isEditing;
+
+  /// Callback when user deletes an item in editing mode.
+  final Function(ListViewItem item)? onDelete;
+
   final bool hasLeading;
 
   CLListView({
@@ -17,6 +22,8 @@ class CLListView extends StatelessWidget {
     required this.items,
     this.shrinkWrap = false,
     this.padding,
+    this.isEditing = false,
+    this.onDelete,
   }) : hasLeading = itemsHasIcon(items);
 
   static bool itemsHasIcon(List<ListViewItem> items) {
@@ -30,38 +37,20 @@ class CLListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final items = this.items.map((e) => e..isUseMaterial = true).toList();
-    // if (PlatformStyle.isUseMaterial) {
     return ListView.separated(
       shrinkWrap: shrinkWrap,
       physics: shrinkWrap ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
       padding: padding,
       itemCount: items.length,
-      itemBuilder: (context, index) => CLListTile(model: items[index]),
+      itemBuilder: (context, index) {
+        return CLListTile(
+          model: items[index],
+          isEditing: isEditing,
+          onDelete: onDelete,
+        );
+      },
       separatorBuilder: (_, index) => buildSeparator(items[index]),
     );
-    // } else {
-    //   return ListView(
-    //     shrinkWrap: shrinkWrap,
-    //     physics: shrinkWrap ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
-    //     padding: padding,
-    //     children: [
-    //       if (padding == EdgeInsets.zero)
-    //         CupertinoListSection.insetGrouped(
-    //           hasLeading: hasLeading,
-    //           topMargin: 0,
-    //           margin: EdgeInsets.zero,
-    //           backgroundColor: ColorToken.surface.of(context),
-    //           children: asCupertinoSectionChildren(false),
-    //         )
-    //       else
-    //         CupertinoListSection.insetGrouped(
-    //           hasLeading: hasLeading,
-    //           backgroundColor: ColorToken.surface.of(context),
-    //           children: asCupertinoSectionChildren(false),
-    //         )
-    //     ],
-    //   );
-    // }
   }
 
   Widget buildSeparator(ListViewItem item) {
@@ -75,7 +64,11 @@ class CLListView extends StatelessWidget {
   List<Widget> asCupertinoSectionChildren(bool isCupertinoListTileBaseStyle) {
     return items.map((item) {
       item.isCupertinoListTileBaseStyle = isCupertinoListTileBaseStyle;
-      return CLListTile(model: item);
+      return CLListTile(
+        model: item,
+        isEditing: isEditing,
+        onDelete: onDelete,
+      );
     }).toList();
   }
 }

@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_common/utils/adapt.dart';
@@ -10,6 +9,8 @@ class CLListTile extends StatelessWidget {
   CLListTile({
     super.key,
     required this.model,
+    this.isEditing = false,
+    this.onDelete,
   });
 
   factory CLListTile.custom({
@@ -18,6 +19,7 @@ class CLListTile extends StatelessWidget {
     Widget? subtitle,
     Widget? trailing,
     VoidCallback? onTap,
+    bool isEditing = false,
   }) {
     return CLListTile(
       model: CustomItemModel(
@@ -27,18 +29,41 @@ class CLListTile extends StatelessWidget {
         trailing: trailing,
         onTap: onTap,
       ),
+      isEditing: isEditing,
     );
   }
 
   final ListViewItem model;
+  final bool isEditing;
+  final Function(ListViewItem item)? onDelete;
 
   @override
   Widget build(BuildContext context) {
     final model = this.model;
-    if (model is LabelItemModel) return _ListViewLabelItemWidget(model);
-    if (model is SwitcherItemModel) return _ListViewSwitcherItemWidget(model);
-    if (model is SelectedItemModel) return _ListViewSelectedItemWidget(model);
-    if (model is CustomItemModel) return _ListViewCustomItemWidget(model);
+    if (model is LabelItemModel)
+      return _ListViewLabelItemWidget(
+        model: model,
+        isEditing: isEditing,
+        onDelete: onDelete,
+      );
+    if (model is SwitcherItemModel)
+      return _ListViewSwitcherItemWidget(
+        model: model,
+        isEditing: isEditing,
+        onDelete: onDelete,
+      );
+    if (model is SelectedItemModel)
+      return _ListViewSelectedItemWidget(
+        model: model,
+        isEditing: isEditing,
+        onDelete: onDelete,
+      );
+    if (model is CustomItemModel)
+      return _ListViewCustomItemWidget(
+        model: model,
+        isEditing: isEditing,
+        onDelete: onDelete,
+      );
     throw Exception('Unknown item model type');
   }
 
@@ -52,7 +77,7 @@ class CLListTile extends StatelessWidget {
   }
 }
 
-class _ListViewItemBaseWidget extends StatelessWidget {
+class _ListViewItemBaseWidget extends StatefulWidget {
   const _ListViewItemBaseWidget({
     required this.model,
     this.leading,
@@ -60,6 +85,8 @@ class _ListViewItemBaseWidget extends StatelessWidget {
     this.subtitle,
     this.trailing,
     this.onTap,
+    this.isEditing = false,
+    this.onDelete,
   });
 
   final ListViewItem model;
@@ -71,10 +98,64 @@ class _ListViewItemBaseWidget extends StatelessWidget {
 
   bool get isThemeStyle => model.style == ListViewItemStyle.theme;
 
+  final bool isEditing;
+  final Function(ListViewItem item)? onDelete;
+
+  @override
+  State<StatefulWidget> createState() => _ListViewItemBaseWidgetState();
+}
+
+class _ListViewItemBaseWidgetState extends State<_ListViewItemBaseWidget>
+    with SingleTickerProviderStateMixin {
+
+  ListViewItem get model => widget.model;
+  Widget? get leading => widget.leading;
+  Widget? get title => widget.title;
+  Widget? get subtitle => widget.subtitle;
+  Widget? get trailing => widget.trailing;
+  GestureTapCallback? get onTap => widget.isEditing ? null : widget.onTap;
+
+  bool get isThemeStyle => widget.isThemeStyle;
+
+  bool get isEditing => widget.isEditing;
+  Function(ListViewItem item)? get onDelete => widget.onDelete;
+
+  bool get isSupportDelete => onDelete != null;
+
+  late AnimationController animationController;
+  Duration get animationDuration => Duration(milliseconds: 200);
+
+  @override
+  void initState() {
+    super.initState();
+
+    animationController = AnimationController(
+      duration: animationDuration,
+      vsync: this,
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant _ListViewItemBaseWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.isEditing != oldWidget.isEditing) {
+      if (widget.isEditing) {
+        animationController.forward();
+      } else {
+        animationController.reverse();
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    return _buildListTile(context);
+  }
+
+  Widget _buildListTile(BuildContext context) {
     if (PlatformStyle.isUseMaterial || model.isUseMaterial == true) {
-      return _buildMaterialListTile(context);
+      return (_buildMaterialListTile(context));
     } else {
       return _buildCupertinoListTile();
     }
@@ -86,11 +167,16 @@ class _ListViewItemBaseWidget extends StatelessWidget {
         .textTheme
         .labelLarge
         ?.copyWith(color: null);
+    Widget? effectiveTrailing = trailing;
+    if (isEditing && onDelete != null) {
+      effectiveTrailing = _buildDeleteIcon();
+    }
+
     return ListTile(
       title: title ?? _buildTitle(),
       subtitle: subtitle ?? _buildSubtitle(),
       leading: leading ?? _buildLeading(),
-      trailing: trailing,
+      trailing: effectiveTrailing,
       onTap: onTap,
       tileColor: isThemeStyle ? ColorToken.primary.of(context) : null,
       textColor: isThemeStyle ? ColorToken.onPrimary.of(context) : null,
@@ -101,33 +187,108 @@ class _ListViewItemBaseWidget extends StatelessWidget {
   }
 
   Widget _buildCupertinoListTile() {
-    if (model.isCupertinoListTileBaseStyle) {
-      return CupertinoListTile(
-        title: title ?? _buildTitle(),
-        subtitle: subtitle ?? _buildSubtitle(),
-        leading: leading ?? _buildLeading(),
-        trailing: Row(
+    // animationController.value = 0.2;
+    return AnimatedBuilder(
+      animation: animationController,
+      builder: (_, __) {
+        final originLeading = leading ?? _buildLeading();
+        final originTrailing = Row(
           children: [
             trailing ?? const SizedBox.shrink(),
             if (model.isCupertinoAutoTrailing)
               CLListTile.buildDefaultTrailing(onTap),
           ],
-        ).setPaddingOnly(left: 16.px),
-        onTap: onTap,
+        ).setPaddingOnly(left: 16.px);
+
+        Widget? effectiveLeading = originLeading;
+        Widget effectiveTrailing = originTrailing;
+        if (isSupportDelete) {
+          effectiveLeading = _cupertinoDeleteWrap(originLeading ?? SizedBox.shrink());
+          effectiveTrailing = _cupertinoTrailingDismiss(originTrailing);
+        }
+
+        if (model.isCupertinoListTileBaseStyle) {
+          final defaultLeadingSize = 28.0; // _kLeadingSize
+          return CupertinoListTile(
+            title: title ?? _buildTitle(),
+            subtitle: subtitle ?? _buildSubtitle(),
+            leading: effectiveLeading,
+            leadingSize: isSupportDelete
+                ? animationController.value * defaultLeadingSize
+                : defaultLeadingSize,
+            trailing: effectiveTrailing,
+            onTap: onTap,
+          );
+        } else {
+          final defaultLeadingSize = 30.0; // _kNotchedLeadingSize;
+          return CupertinoListTile.notched(
+            title: title ?? _buildTitle(),
+            subtitle: subtitle ?? _buildSubtitle(),
+            leading: effectiveLeading,
+            leadingSize: isSupportDelete
+                ? animationController.value * defaultLeadingSize
+                : defaultLeadingSize,
+            trailing: effectiveTrailing,
+            onTap: onTap,
+          );
+        }
+      },
+    );
+  }
+
+  Widget _cupertinoDeleteWrap(Widget widget) {
+    final dx = 20;
+    final deleteWidget = Transform.translate(
+      offset: Offset(-dx + dx * animationController.value, 0),
+      child: Opacity(
+        opacity: animationController.value,
+        child: _buildDeleteIcon(),
+      ),
+    );
+    return Stack(
+      children: [
+        OverflowBox(
+          minWidth: 0,
+          minHeight: 0,
+          maxWidth: double.infinity,
+          maxHeight: double.infinity,
+          child: deleteWidget,
+        ),
+        widget,
+      ],
+    );
+  }
+
+  Widget _cupertinoTrailingDismiss(Widget widget) {
+    return Opacity(
+      opacity: 1- animationController.value,
+      child: widget,
+    );
+  }
+
+  Widget _buildDeleteIcon() {
+    if (PlatformStyle.isUseMaterial) {
+      return GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () => onDelete?.call(model),
+        child: Padding(
+          padding: EdgeInsets.all(11.px),
+          child: Icon(
+            Icons.indeterminate_check_box,
+            color: ColorToken.error.of(context),
+            size: 24.px,
+          ),
+        ),
       );
     } else {
-      return CupertinoListTile.notched(
-        title: title ?? _buildTitle(),
-        subtitle: subtitle ?? _buildSubtitle(),
-        leading: leading ?? _buildLeading(),
-        trailing: Row(
-          children: [
-            trailing ?? const SizedBox.shrink(),
-            if (model.isCupertinoAutoTrailing)
-              CLListTile.buildDefaultTrailing(onTap),
-          ],
-        ).setPaddingOnly(left: 16.px),
-        onTap: onTap,
+      return GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () => onDelete?.call(model),
+        child: Icon(
+          CupertinoIcons.minus_circle_fill,
+          color: ColorToken.error.of(context),
+          size: 22,
+        ),
       );
     }
   }
@@ -159,15 +320,24 @@ class _ListViewItemBaseWidget extends StatelessWidget {
 }
 
 class _ListViewLabelItemWidget extends StatelessWidget {
-  const _ListViewLabelItemWidget(this.model);
+  const _ListViewLabelItemWidget({
+    required this.model,
+    this.isEditing = false,
+    this.onDelete,
+  });
 
   final LabelItemModel model;
+
+  final bool isEditing;
+  final Function(ListViewItem item)? onDelete;
 
   @override
   Widget build(BuildContext context) => _ListViewItemBaseWidget(
     model: model,
     trailing: buildValueListenable(),
     onTap: model.onTap,
+    isEditing: isEditing,
+    onDelete: onDelete,
   );
 
   Widget? buildValueListenable() {
@@ -190,14 +360,23 @@ class _ListViewLabelItemWidget extends StatelessWidget {
 }
 
 class _ListViewSwitcherItemWidget extends StatelessWidget {
-  const _ListViewSwitcherItemWidget(this.model);
+  const _ListViewSwitcherItemWidget({
+    required this.model,
+    this.isEditing = false,
+    this.onDelete,
+  });
 
   final SwitcherItemModel model;
+
+  final bool isEditing;
+  final Function(ListViewItem item)? onDelete;
 
   @override
   Widget build(BuildContext context) => _ListViewItemBaseWidget(
     model: model,
     trailing: buildValueListenable(),
+    isEditing: isEditing,
+    onDelete: onDelete,
   );
 
   Widget? buildValueListenable() {
@@ -217,18 +396,28 @@ class _ListViewSwitcherItemWidget extends StatelessWidget {
 }
 
 class _ListViewSelectedItemWidget extends StatelessWidget {
-  const _ListViewSelectedItemWidget(this.model);
+  const _ListViewSelectedItemWidget({
+    required this.model,
+    this.isEditing = false,
+    this.onDelete,
+  });
 
   final SelectedItemModel model;
 
+  final bool isEditing;
+  final Function(ListViewItem item)? onDelete;
+
   @override
   Widget build(BuildContext context) {
-    if (PlatformStyle.isUseMaterial) return buildWithMaterial();
+    if (PlatformStyle.isUseMaterial && model.subtitle == null)
+      return buildWithMaterial();
 
     return _ListViewItemBaseWidget(
       model: model,
       onTap: itemOnTap,
       trailing: buildValueListenable(),
+      isEditing: isEditing,
+      onDelete: onDelete,
     );
   }
 
@@ -268,9 +457,16 @@ class _ListViewSelectedItemWidget extends StatelessWidget {
 }
 
 class _ListViewCustomItemWidget extends StatelessWidget {
-  const _ListViewCustomItemWidget(this.model);
+  const _ListViewCustomItemWidget({
+    required this.model,
+    this.isEditing = false,
+    this.onDelete,
+  });
 
   final CustomItemModel model;
+
+  final bool isEditing;
+  final Function(ListViewItem item)? onDelete;
 
   @override
   Widget build(BuildContext context) => model.customWidgetBuilder?.call(context) ??
@@ -281,5 +477,7 @@ class _ListViewCustomItemWidget extends StatelessWidget {
         subtitle: model.subtitleWidget,
         trailing: model.trailing,
         onTap: model.onTap,
+        isEditing: isEditing,
+        onDelete: onDelete,
       );
 }

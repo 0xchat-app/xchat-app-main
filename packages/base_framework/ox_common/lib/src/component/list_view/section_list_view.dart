@@ -81,13 +81,19 @@ class CLSectionListView extends StatelessWidget {
       widgets.add(CLListView(
         shrinkWrap: true,
         items: model.data,
+        isEditing: model.isEditing,
+        onDelete: model.onDelete,
       ));
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: widgets,
       );
     } else {
-      final listView = CLListView(items: model.data);
+      final listView = CLListView(
+        items: model.data,
+        isEditing: model.isEditing,
+        onDelete: model.onDelete,
+      );
       return CupertinoListSection.insetGrouped(
         header: headerWidget,
         hasLeading: listView.hasLeading,
