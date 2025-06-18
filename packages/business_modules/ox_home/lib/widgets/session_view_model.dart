@@ -4,6 +4,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:ox_chat/utils/chat_session_utils.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'package:ox_common/utils/date_utils.dart';
+import 'package:ox_common/utils/extension.dart';
 
 class SessionListViewModel {
   SessionListViewModel(this._raw) {
@@ -49,12 +50,6 @@ class SessionListViewModel {
   }
 
   void rebuild() {
-    if (SchedulerBinding.instance.schedulerPhase != SchedulerPhase.persistentCallbacks) {
-      build$.value = !build$.value;
-    } else {
-      SchedulerBinding.instance.addPostFrameCallback((_) {
-        build$.value = !build$.value;
-      });
-    }
+    build$.safeUpdate(!build$.value);
   }
 }

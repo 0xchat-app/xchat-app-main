@@ -1,5 +1,6 @@
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/scheduler.dart';
 
 extension TextEditingControllerEx on TextEditingController {
   /// The input box is assigned a value and the cursor remains on the far right
@@ -74,9 +75,19 @@ extension BoolEx on bool {
   }
 }
 
-extension ValueNotifierMap<T> on ValueNotifier<T> {
+extension ValueNotifierEx<T> on ValueNotifier<T> {
   ValueNotifier<R> map<R>(R Function(T value) mapper) {
     return _MappedValueNotifier(mapper: mapper, parentNotifier: this);
+  }
+
+  void safeUpdate(T newValue) {
+    if (SchedulerBinding.instance.schedulerPhase != SchedulerPhase.persistentCallbacks) {
+      value = newValue;
+    } else {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        value = newValue;
+      });
+    }
   }
 }
 
