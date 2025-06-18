@@ -203,18 +203,18 @@ class HomeHeaderComponents {
           Expanded(
             child: CLButton.filled(
               padding: EdgeInsets.symmetric(vertical: 12.px),
-              text: Localized.text('ox_home.join_circle'),
+              text: Localized.text('ox_home.add_circle'),
               onTap: joinOnTap,
             ),
           ),
-          SizedBox(width: 10.px,),
-          Expanded(
-            child: CLButton.tonal(
-              padding: EdgeInsets.symmetric(vertical: 12.px),
-              text: Localized.text('ox_home.new_paid_circle'),
-              onTap: paidOnTap,
-            ),
-          ),
+          // SizedBox(width: 10.px,),
+          // Expanded(
+          //   child: CLButton.tonal(
+          //     padding: EdgeInsets.symmetric(vertical: 12.px),
+          //     text: Localized.text('ox_home.new_paid_circle'),
+          //     onTap: paidOnTap,
+          //   ),
+          // ),
         ],
       ),
     );

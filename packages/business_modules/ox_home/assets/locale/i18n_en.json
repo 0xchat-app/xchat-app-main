@@ -3,12 +3,13 @@
   "Contact": "Contacts",
   "Discover": "Discovery",
   "Me": "Me",
-  "join_or_create_circle_now": "Join or Create Circle Now",
+  "join_or_create_circle_now": "Add or Create Circle Now",
   "unlock_advanced_model": "and unlock Advanced model",
-  "join_circle": "Join Circle",
+  "join_circle": "Add Circle",
+  "add_circle": "Add Circle",
   "new_paid_circle": "New Paid Circle \uD83D\uDC8E",
-  "join_circle_title": "Join Circle",
-  "join_circle_description": "To join a Circle, enter a valid invitation link or relay address.\nFor example: groups.nostr.com/abcdef",
+  "join_circle_title": "Add Circle",
+  "join_circle_description": "To add a Circle, enter a relay address or valid invitation link.\nFor example: wss://groups.nostr.com",
   "join_circle_input_label": "Link",
   "add": "Add"
 }

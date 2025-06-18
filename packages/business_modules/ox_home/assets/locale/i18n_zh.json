@@ -6,9 +6,10 @@
   "join_or_create_circle_now": "现在加入或创建圈子",
   "unlock_advanced_model": "并解锁高级模型",
   "join_circle": "加入圈子",
+  "add_circle": "增加圈子",
   "new_paid_circle": "新建付费圈子 \uD83D\uDC8E",
   "join_circle_title": "加入圈子",
-  "join_circle_description": "要加入圈子，请输入有效的邀请链接或中继地址。\n例如：groups.nostr.com/abcdef",
+  "join_circle_description": "要加入圈子，请输入中继地址或有效的邀请链接。\n例如：wss://groups.nostr.com",
   "join_circle_input_label": "链接",
   "add": "添加"
 }

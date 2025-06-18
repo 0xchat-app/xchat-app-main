@@ -31,13 +31,13 @@ class CircleEmptyWidget extends StatelessWidget {
             Localized.text('ox_home.join_or_create_circle_now'),
           ),
 
-          SizedBox(height: 8.px),
-
-          // Subtitle
-          CLText.titleSmall(
-            Localized.text('ox_home.unlock_advanced_model'),
-          ),
-
+          // SizedBox(height: 8.px),
+          //
+          // // Subtitle
+          // CLText.titleSmall(
+          //   Localized.text('ox_home.unlock_advanced_model'),
+          // ),
+          //
           SizedBox(height: 40.px),
 
           // Join Circle Button
@@ -51,12 +51,12 @@ class CircleEmptyWidget extends StatelessWidget {
           SizedBox(height: 16.px),
 
           // New Paid Circle Button
-          CLButton.tonal(
-            text: Localized.text('ox_home.new_paid_circle'),
-            onTap: onCreatePaidCircle,
-            expanded: true,
-            height: 52.px,
-          ),
+          // CLButton.tonal(
+          //   text: Localized.text('ox_home.new_paid_circle'),
+          //   onTap: onCreatePaidCircle,
+          //   expanded: true,
+          //   height: 52.px,
+          // ),
 
           const Spacer(),
         ],
