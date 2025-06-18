@@ -15,6 +15,8 @@ import 'package:flutter/material.dart';
 
 import 'package:ox_common/model/chat_session_model_isar.dart';
 
+import 'login/circle_config_models.dart';
+
 const CommonModule = 'ox_common';
 
 class OXCommon extends OXFlutterModule {
@@ -37,7 +39,10 @@ class OXCommon extends OXFlutterModule {
   ];
 
   @override
-  List<CollectionSchema<dynamic>> get isarDBSchemes => [ChatSessionModelISARSchema];
+  List<CollectionSchema<dynamic>> get isarDBSchemes => [
+    ChatSessionModelISARSchema,
+    CircleConfigISARSchema,
+  ];
 
   @override
   List<Function> get migrateFunctions => [ChatSessionModel.migrateToISAR];

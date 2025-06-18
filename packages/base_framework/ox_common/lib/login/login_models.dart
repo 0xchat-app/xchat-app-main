@@ -1,6 +1,7 @@
 import 'package:isar/isar.dart';
 
 import 'account_models.dart';
+import 'circle_config_models.dart';
 
 /// Login failure type enumeration
 enum LoginFailureType {
@@ -41,6 +42,9 @@ class Circle {
   final String name;
   final String relayUrl;
 
+  /// Circle level configuration, loaded lazily after circle DB initialized.
+  CircleConfigModel _config = CircleConfigModel();
+
   late Isar db;
 
   Map<String, dynamic> toJson() => {
@@ -65,6 +69,23 @@ class Circle {
 
   @override
   String toString() => 'Circle(id: $id, name: $name, relayUrl: $relayUrl)';
+
+  //================ Circle Config Accessors ==================
+
+  /// Internal use only. Called by LoginManager to initialize configuration.
+  void initConfig(CircleConfigModel cfg) {
+    _config = cfg;
+  }
+
+  /// Currently selected file-server URL for this circle. Empty if not set.
+  String get selectedFileServerUrl => _config.selectedFileServerUrl;
+
+  /// Update the selected file-server URL and persist the change to database.
+  Future<void> updateSelectedFileServerUrl(String url) async {
+    if (_config.selectedFileServerUrl == url) return;
+    _config = _config.copyWith(selectedFileServerUrl: url);
+    await CircleConfigHelper.saveConfig(db, id, _config);
+  }
 }
 
 /// User information model for UI display

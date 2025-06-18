@@ -8,6 +8,7 @@ import 'package:ox_common/utils/extension.dart';
 import 'database_manager.dart';
 import 'login_models.dart';
 import 'account_models.dart';
+import 'circle_config_models.dart';
 
 class LoginUserNotifier {
   LoginUserNotifier._();
@@ -636,6 +637,14 @@ extension LoginManagerCircle on LoginManager {
       }
 
       circle.db = circleDb;
+
+      // Load circle level configuration and attach to circle instance.
+      try {
+        final cfg = await CircleConfigHelper.loadConfig(circleDb, circle.id);
+        circle.initConfig(cfg);
+      } catch (e) {
+        debugPrint('Failed to load circle config: $e');
+      }
 
       // Initialize Account system
       Account.sharedInstance.init();
