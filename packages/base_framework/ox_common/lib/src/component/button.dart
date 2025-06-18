@@ -219,23 +219,25 @@ class CLButton {
     String package = '',
     Widget? child,
     VoidCallback? onTap,
-    double? size,
+    double? iconSize,
     Color? color,
-    EdgeInsets? padding,
+    double? paddingWidth,
   }) {
-    padding ??= EdgeInsets.all(size ?? CLIcon.generalIconSize / 2);
+    iconSize ??= CLIcon.generalIconSize;
+    paddingWidth ??= iconSize / 2;
     color ??= IconTheme.of(OXNavigator.navigatorKey.currentContext!).color;
-
     child ??= CLIcon(
       iconName: iconName,
-      size: size,
+      size: iconSize,
       color: color,
       package: package,
     );
 
+    final size = iconSize + paddingWidth * 2;
+    final padding = EdgeInsets.all(paddingWidth);
     return CLIconButton(
       onTap: onTap,
-      size: size ?? CLIcon.generalIconSize * 2,
+      size: size,
       padding: padding,
       child: child,
     );

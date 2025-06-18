@@ -70,7 +70,7 @@ class HomeHeaderComponents {
         CLButton.icon(
           iconName: 'icon_common_search.png',
           package: 'ox_common',
-          size: 48.px,
+          iconSize: 24.px,
           onTap: onSearchTap,
         ),
       CLButton.icon(
@@ -78,7 +78,7 @@ class HomeHeaderComponents {
             ? 'icon_common_add.png'
             : 'icon_common_add_cupertino.png',
         package: 'ox_common',
-        size: 48.px,
+        iconSize: 24.px,
         onTap: addOnTap,
       ).setPaddingOnly(right: 4.px),
     ],

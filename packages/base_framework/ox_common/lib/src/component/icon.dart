@@ -1,4 +1,3 @@
-
 import 'package:flutter/widgets.dart';
 import 'package:ox_common/utils/adapt.dart';
 
@@ -13,7 +12,7 @@ class CLIcon extends StatelessWidget {
     this.fit,
   });
 
-  static get generalIconSize => 24.px;
+  static double get generalIconSize => 24.px;
 
   final IconData? icon;
 

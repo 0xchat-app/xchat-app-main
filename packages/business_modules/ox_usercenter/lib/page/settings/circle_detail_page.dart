@@ -75,8 +75,8 @@ class CircleDetailPage extends StatelessWidget {
     }
 
     return CLButton.icon(
-      size: PlatformStyle.isUseMaterial ? null : 44,
-      padding: PlatformStyle.isUseMaterial ? null : EdgeInsets.zero,
+      iconSize: PlatformStyle.isUseMaterial ? null : 44,
+      paddingWidth: PlatformStyle.isUseMaterial ? null : 0,
       child: const CLIcon(
         icon: CupertinoIcons.ellipsis,
       ),
