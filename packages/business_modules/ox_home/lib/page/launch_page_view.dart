@@ -41,7 +41,7 @@ class LaunchPageViewState extends State<LaunchPageView> {
 
   void _loadData() async {
     _localPasscode = UserConfigTool.getSetting(StorageSettingKey.KEY_PASSCODE.name, defaultValue: '');
-    _loadRiveFile();
+    // _loadRiveFile();
     _onLoaded();
   }
 
@@ -58,23 +58,23 @@ class LaunchPageViewState extends State<LaunchPageView> {
   }
 
   Widget buildBody(BuildContext context) {
-    if (riveArtboards != null && riveControllers != null) {
-      return Container(
-        color: Colors.black,
-        width: double.infinity,
-        height: double.infinity,
-        child: Center(
-          child: Container(
-            width: Adapt.px(360),
-            height: Adapt.px(360),
-            margin: EdgeInsets.only(
-              bottom: Adapt.px(100),
-            ),
-            child: Rive(artboard: riveArtboards!),
-          ),
-        ),
-      );
-    }
+    // if (riveArtboards != null && riveControllers != null) {
+    //   return Container(
+    //     color: Colors.black,
+    //     width: double.infinity,
+    //     height: double.infinity,
+    //     child: Center(
+    //       child: Container(
+    //         width: Adapt.px(360),
+    //         height: Adapt.px(360),
+    //         margin: EdgeInsets.only(
+    //           bottom: Adapt.px(100),
+    //         ),
+    //         child: Rive(artboard: riveArtboards!),
+    //       ),
+    //     ),
+    //   );
+    // }
     return Container();
   }
 
@@ -107,22 +107,20 @@ class LaunchPageViewState extends State<LaunchPageView> {
   }
 
   void _onLoaded() async {
-    Future.delayed(const Duration(milliseconds: 2500), () async {
-      if (_localPasscode.isNotEmpty) {
-        OXModuleService.pushPage(context, 'ox_usercenter', 'VerifyPasscodePage', {});
-      } else {
-        // Try auto login with LoginManager
-        await _tryAutoLogin();
-        
-        // Navigate to HomePage regardless of login status
-        // HomePage will handle the login/not-login state internally
-        if (mounted) {
-          Navigator.of(context).pushReplacement(
+    if (_localPasscode.isNotEmpty) {
+      OXModuleService.pushPage(context, 'ox_usercenter', 'VerifyPasscodePage', {});
+    } else {
+      // Try auto login with LoginManager
+      await _tryAutoLogin();
+
+      // Navigate to HomePage regardless of login status
+      // HomePage will handle the login/not-login state internally
+      if (mounted) {
+        Navigator.of(context).pushReplacement(
             CustomRouteFadeIn(const HomePage())
-          );
-        }
+        );
       }
-    });
+    }
   }
 
   /// Try auto login using LoginManager
