@@ -303,7 +303,11 @@ class _ListViewItemBaseWidgetState extends State<_ListViewItemBaseWidget>
     }
 
     return ImageIcon(
-      AssetImage('assets/images/${icon.iconName}', package: icon.package),
+      AssetImage(
+        'assets/images/${icon.iconName}',
+        package: icon.package,
+      ),
+      size: icon.size,
     );
   }
 

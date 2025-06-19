@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:chatcore/chat-core.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:ox_chat/utils/chat_session_utils.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'package:ox_common/utils/date_utils.dart';

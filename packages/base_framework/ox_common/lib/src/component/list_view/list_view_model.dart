@@ -6,6 +6,7 @@ class ListViewIcon {
     required this.iconName,
     this.package,
     this.data,
+    this.size,
   });
 
   factory ListViewIcon.data(IconData icon) =>
@@ -14,6 +15,7 @@ class ListViewIcon {
   final String iconName;
   final String? package;
   final IconData? data;
+  final double? size;
 }
 
 enum ListViewItemStyle {

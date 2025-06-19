@@ -7,7 +7,6 @@ import 'package:ox_common/login/login_models.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
 import 'package:ox_common/utils/ox_chat_observer.dart';
-import 'package:ox_common/utils/ox_userinfo_manager.dart';
 
 import 'session_view_model.dart';
 
