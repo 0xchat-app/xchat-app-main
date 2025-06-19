@@ -51,10 +51,7 @@ class _AddFileServerPageState extends State<AddFileServerPage> {
         autoTrailing: false,
       ),
       isSectionListPage: true,
-      body: GestureDetector(
-        onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-        child: _buildBody(),
-      ),
+      body: LoseFocusWrap(_buildBody()),
     );
   }
 

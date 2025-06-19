@@ -55,9 +55,8 @@ class SingleSettingPageState extends State<SingleSettingPage> {
             ),
         ],
       ),
-      body: GestureDetector(
-        onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-        child: ListView(
+      body: LoseFocusWrap(
+        ListView(
           padding: EdgeInsets.symmetric(
             horizontal: 16.px,
             vertical: 12.px,

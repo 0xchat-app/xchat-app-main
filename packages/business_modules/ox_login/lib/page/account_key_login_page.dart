@@ -10,7 +10,7 @@ import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_common/utils/nip46_status_notifier.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/component.dart';
-import 'package:ox_login/component/lose_focus_wrap.dart';
+import 'package:ox_common/src/component/tools/lose_focus_wrap.dart';
 
 // plugin
 import 'package:ox_localizable/ox_localizable.dart';

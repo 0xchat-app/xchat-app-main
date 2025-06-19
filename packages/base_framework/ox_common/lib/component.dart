@@ -22,3 +22,5 @@ export 'src/component/search.dart';
 export 'src/component/scaffold.dart';
 export 'src/component/switch.dart';
 export 'src/component/picker.dart';
+
+export 'src/component/tools/lose_focus_wrap.dart';
