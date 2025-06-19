@@ -42,6 +42,7 @@
   "download_fail": "下载失败",
   "network_connect_fail": "网络连接失败，请重试！",
   "notice": "通知",
+  "alert": "提示",
   "save": "保存",
   "link": "链接",
   "more": "更多",

@@ -42,6 +42,7 @@
   "download_fail": "Download fail",
   "network_connect_fail": "Network connect failed,please try again!",
   "notice": "Notice",
+  "alert": "Alert",
   "save": "Save",
   "link": "Link",
   "more": "More",

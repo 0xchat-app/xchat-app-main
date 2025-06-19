@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ox_common/component.dart';
 import 'package:ox_localizable/ox_localizable.dart';
+import 'package:ox_common/component.dart';
 
 /// Action model for alert dialog buttons.
 class CLAlertAction<T> {
@@ -47,17 +47,19 @@ class CLAlertDialog {
   /// If dismissed by other ways, returns null.
   static Future<T?> show<T>({
     required BuildContext context,
-    required String title,
+    String? title,
     required String content,
     required List<CLAlertAction<T>> actions,
     bool barrierDismissible = true,
   }) {
+    final displayTitle = title ?? Localized.text('ox_common.alert');
+
     if (PlatformStyle.isUseMaterial) {
       return showDialog<T>(
         context: context,
         barrierDismissible: barrierDismissible,
         builder: (ctx) => AlertDialog(
-          title: CLText(title),
+          title: CLText(displayTitle),
           content: CLText.bodyMedium(content),
           actions: _materialActions(ctx, actions),
         ),
@@ -68,7 +70,7 @@ class CLAlertDialog {
       context: context,
       barrierDismissible: barrierDismissible,
       builder: (ctx) => CupertinoAlertDialog(
-        title: CLText(title),
+        title: CLText(displayTitle),
         content: Padding(
           padding: const EdgeInsets.only(top: 8.0),
           child: CLText.bodyMedium(content),
