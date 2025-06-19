@@ -25,8 +25,6 @@ import 'package:ox_usercenter/page/settings/settings_slider.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_usercenter/utils/zaps_helper.dart';
 import 'package:ox_common/launch/launch_third_party_app.dart';
-import 'package:isar/isar.dart';
-import 'model/file_server_model.dart';
 
 class OXUserCenter extends OXFlutterModule {
 
@@ -41,9 +39,6 @@ class OXUserCenter extends OXFlutterModule {
   @override
   // TODO: implement moduleName
   String get moduleName => OXUserCenterInterface.moduleName;
-
-  @override
-  List<CollectionSchema<dynamic>> get isarDBSchemes => [FileServerModelSchema];
 
   @override
   Map<String, Function> get interfaces => {

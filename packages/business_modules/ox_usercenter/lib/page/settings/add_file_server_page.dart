@@ -10,8 +10,8 @@ import 'package:ox_common/upload/nip96_server_adaptation.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 
-import '../../model/file_server_model.dart';
-import '../../repository/file_server_repository.dart';
+import 'package:ox_common/model/file_server_model.dart';
+import 'package:ox_common/repository/file_server_repository.dart';
 
 class AddFileServerPage extends StatefulWidget {
   const AddFileServerPage({super.key, required this.type, required this.repo});
@@ -105,14 +105,6 @@ class _AddFileServerPageState extends State<AddFileServerPage> {
     ));
 
     switch (widget.type) {
-      case FileServerType.blossom:
-        widgets.add(_buildTextFormField(
-          controller: _pubkeyCtrl,
-          label: Localized.text('ox_usercenter.pubkey'),
-          validator: _validateNotEmpty,
-          textInputAction: TextInputAction.next,
-        ));
-        break;
       case FileServerType.minio:
         widgets.addAll([
           _buildTextFormField(
@@ -135,6 +127,7 @@ class _AddFileServerPageState extends State<AddFileServerPage> {
           ),
         ]);
         break;
+      case FileServerType.blossom:
       case FileServerType.nip96:
         break;
     }

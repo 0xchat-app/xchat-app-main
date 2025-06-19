@@ -4,13 +4,13 @@ import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/extension.dart';
 import 'package:ox_localizable/ox_localizable.dart';
-import 'package:ox_usercenter/repository/file_server_repository.dart';
+import 'package:ox_common/repository/file_server_repository.dart';
 import 'add_file_server_page.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'dart:async';
 
-import '../../model/file_server_model.dart';
+import 'package:ox_common/model/file_server_model.dart';
 
 /// File Server Settings page.
 class FileServerPage extends StatefulWidget {
@@ -80,9 +80,8 @@ class _FileServerPageState extends State<FileServerPage> {
     // Listen to selection changes and persist into circle config.
     _selected$.addListener(() {
       final sel = _selected$.value;
-      if (sel == null) return;
       final circle = LoginManager.instance.currentCircle;
-      circle?.updateSelectedFileServerUrl(sel.url);
+      circle?.updateSelectedFileServerUrl(sel?.url ?? '');
     });
   }
 

@@ -1,7 +1,5 @@
-import 'dart:async';
-
 import 'package:isar/isar.dart';
-import '../model/file_server_model.dart';
+import 'package:ox_common/model/file_server_model.dart';
 import 'package:ox_common/log_util.dart';
 
 /// Provide CRUD helpers for FileServerModel.

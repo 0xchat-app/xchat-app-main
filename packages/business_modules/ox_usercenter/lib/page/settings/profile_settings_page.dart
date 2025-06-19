@@ -168,7 +168,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
       CommonToast.instance.show(context, 'Update Avatar Failed.');
     } else {
       CommonToast.instance.show(context, 'Update Avatar Success.');
-      OXUserInfoManager.sharedInstance.updateUserInfo(newUser);
+      LoginUserNotifier.instance.avatarUrl$.value = avatarUrl;
     }
   }
 }

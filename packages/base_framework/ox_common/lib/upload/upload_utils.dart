@@ -4,14 +4,14 @@ import 'package:encrypt/encrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:minio/minio.dart';
 import 'package:ox_common/log_util.dart';
-import 'package:ox_common/model/file_storage_server_model.dart';
+import 'package:ox_common/model/file_server_model.dart';
 import 'package:ox_common/upload/file_type.dart';
 import 'package:ox_common/upload/minio_uploader.dart';
 import 'package:ox_common/upload/upload_exception.dart';
 import 'package:ox_common/upload/uploader.dart';
 import 'package:ox_common/utils/aes_encrypt_utils.dart';
 import 'package:ox_common/utils/file_utils.dart';
-import 'package:ox_common/utils/ox_server_manager.dart';
+import 'package:ox_common/utils/file_server_helper.dart';
 import 'package:ox_common/utils/string_utils.dart';
 import 'package:ox_common/utils/uplod_aliyun_utils.dart';
 import 'package:ox_common/widgets/common_file_cache_manager.dart';
@@ -53,49 +53,40 @@ class UploadUtils {
           nonce: encryptedNonce, mode: AESMode.gcm);
       uploadFile = encryptedFile;
     }
-    FileStorageServer fileStorageServer = OXServerManager.sharedInstance.selectedFileStorageServer;
+    final fileServer = await FileServerHelper.currentFileServer();
+    if (fileServer == null) {
+      return UploadResult.error('No file server configured.');
+    }
+
     String url = '';
     if (showLoading) OXLoading.show();
     try {
-      final protocol = fileStorageServer.protocol;
-      switch (protocol) {
-        case FileStorageProtocol.nip96:
-        case FileStorageProtocol.blossom:
-          var imageServices = fileStorageServer.name;
-          if (FileStorageProtocol.blossom == protocol) imageServices = ImageServices.BLOSSOM;
+      final type = fileServer.type;
+      switch (type) {
+        case FileServerType.nip96:
+        case FileServerType.blossom:
+          var imageServices = fileServer.name;
+          if (FileServerType.blossom == type) imageServices = ImageServices.BLOSSOM;
           url = await Uploader.upload(
                 uploadFile.path,
                 imageServices,
                 fileName: filename,
-                imageServiceAddr: fileStorageServer.url,
+                imageServiceAddr: fileServer.url,
                 onProgress: onProgress,
               ) ??
               '';
           break;
-        case FileStorageProtocol.minio:
-          MinioServer minioServer = fileStorageServer as MinioServer;
+        case FileServerType.minio:
           MinioUploader.init(
-            url: minioServer.url,
-            accessKey: minioServer.accessKey,
-            secretKey: minioServer.secretKey,
-            bucketName: minioServer.bucketName,
-            useSSL: minioServer.useSSL,
-            port: minioServer.port,
+            url: fileServer.url,
+            accessKey: fileServer.accessKey,
+            secretKey: fileServer.secretKey,
+            bucketName: fileServer.bucketName,
           );
           url = await MinioUploader.instance.uploadFile(
             file: uploadFile,
             filename: filename,
             fileType: fileType,
-            onProgress: onProgress,
-          );
-          break;
-        case FileStorageProtocol.oss:
-          url = await UplodAliyun.uploadFileToAliyun(
-            context: context,
-            file: uploadFile,
-            filename: filename,
-            fileType: convertFileTypeToUploadAliyunType(fileType),
-            showLoading: showLoading,
             onProgress: onProgress,
           );
           break;

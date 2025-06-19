@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -73,6 +72,9 @@ import 'package:path/path.dart' as Path;
 import 'package:flutter_chat_types/src/message.dart' as UIMessage;
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:ox_common/widgets/zaps/zaps_action_handler.dart';
+import 'package:ox_common/component.dart';
+import 'package:ox_usercenter/page/settings/file_server_page.dart';
+import 'package:ox_common/login/login_manager.dart';
 
 import '../../manager/chat_data_manager_models.dart';
 import 'chat_highlight_message_handler.dart';
@@ -792,6 +794,9 @@ extension ChatInputMoreHandlerEx on ChatGeneralHandler {
 
   // type: 1 - image, 2 - video
   Future albumPressHandler(BuildContext context, int type) async {
+    // Ensure file server is configured before proceeding.
+    if (!await _ensureFileServerConfigured(context)) return;
+
     if(PlatformUtils.isDesktop){
       await _goToPhoto(context, type);
       return;
@@ -835,6 +840,8 @@ extension ChatInputMoreHandlerEx on ChatGeneralHandler {
   }
 
   Future cameraPressHandler(BuildContext context,) async {
+    if (!await _ensureFileServerConfigured(context)) return;
+
     _goToCamera(context);
   }
 
@@ -962,6 +969,33 @@ extension ChatInputMoreHandlerEx on ChatGeneralHandler {
     if(res == null) return;
     final file = File(res.path ?? '');
     sendImageMessageWithFile(context, [file]);
+  }
+
+  /// Check if current circle has a file server configured.
+  /// Returns true if configured, otherwise shows an alert dialog and returns false.
+  Future<bool> _ensureFileServerConfigured(BuildContext context) async {
+    final circle = LoginManager.instance.currentCircle;
+    if (circle != null && circle.selectedFileServerUrl.isNotEmpty) {
+      return true;
+    }
+
+    final result = await CLAlertDialog.show<bool>(
+      context: context,
+      content: Localized.text('ox_chat.require_file_server'),
+      actions: [
+        CLAlertAction.cancel(),
+        CLAlertAction<bool>(
+          label: Localized.text('ox_chat.str_go_to_settings'),
+          value: true,
+          isDefaultAction: true,
+        ),
+      ],
+    );
+
+    if (result == true) {
+      OXNavigator.pushPage(context, (_) => FileServerPage(previousPageTitle: Localized.text('ox_common.back')));
+    }
+    return false;
   }
 }
 

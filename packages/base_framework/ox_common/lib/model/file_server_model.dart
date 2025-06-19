@@ -3,6 +3,8 @@ import 'package:isar/isar.dart';
 part 'file_server_model.g.dart';
 
 /// Supported file-server types.
+/// This enum is used by the new upload pipeline and is independent of
+/// the legacy `FileStorageServer` model used by OXServerManager.
 enum FileServerType { nip96, blossom, minio }
 
 @collection
@@ -23,17 +25,17 @@ class FileServerModel {
   @enumerated
   FileServerType type;
 
-  /// display name / custom name
+  /// Display name / custom name
   String name;
 
-  /// server url (ws / wss / https)
+  /// Server URL (ws / wss / https)
   String url;
 
-  /// minio / blossom extra fields
+  /// Extra fields for MinIO
   String accessKey;
   String secretKey;
   String bucketName;
-  String pubkey; // blossom pubkey
+  String pubkey; // Blossom pubkey
 
   Map<String, dynamic> toJson() => {
         'id': id,

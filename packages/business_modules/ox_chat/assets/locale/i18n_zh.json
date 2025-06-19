@@ -352,5 +352,6 @@
   "str_move_to_top": "移至顶部",
   "str_remove": "移除",
   "str_remove_moments": "移除动态",
-  "str_remove_moments_hint": "您确定要删除动态吗？此操作无法撤销。"
+  "str_remove_moments_hint": "您确定要删除动态吗？此操作无法撤销。",
+  "require_file_server": "发送图片或视频前请先配置文件服务器。"
 }
