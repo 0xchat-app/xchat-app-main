@@ -254,5 +254,6 @@
   "access_key": "Access Key",
   "secret_key": "Secret Key",
   "bucket_name": "Bucket 名称",
-  "custom_name": "自定义名称"
+  "custom_name": "自定义名称",
+  "server_already_exists": "该服务器已存在"
 }

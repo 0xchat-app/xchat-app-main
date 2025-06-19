@@ -30,7 +30,6 @@ class _AddFileServerPageState extends State<AddFileServerPage> {
   final _accessCtrl = TextEditingController();
   final _secretCtrl = TextEditingController();
   final _bucketCtrl = TextEditingController();
-  final _pubkeyCtrl = TextEditingController();
 
   String get _title {
     switch (widget.type) {
@@ -201,6 +200,13 @@ class _AddFileServerPageState extends State<AddFileServerPage> {
     try {
       OXLoading.show();
 
+      // Prevent duplicate server URLs.
+      final existing = await widget.repo.watchAll().first;
+      if (existing.any((e) => e.url == url)) {
+        _showError(Localized.text('ox_usercenter.server_already_exists'));
+        return;
+      }
+
       switch (widget.type) {
         case FileServerType.minio:
           final access = _accessCtrl.text.trim();
@@ -237,10 +243,11 @@ class _AddFileServerPageState extends State<AddFileServerPage> {
         accessKey: _accessCtrl.text.trim(),
         secretKey: _secretCtrl.text.trim(),
         bucketName: _bucketCtrl.text.trim(),
-        pubkey: _pubkeyCtrl.text.trim(),
       );
 
-      await widget.repo.create(model);
+      final newId = await widget.repo.create(model);
+      model.id = newId;
+
       if (!mounted) return;
       Navigator.pop(context, model);
     } catch (e) {

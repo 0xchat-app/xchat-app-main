@@ -17,7 +17,6 @@ class FileServerModel {
     this.accessKey = '',
     this.secretKey = '',
     this.bucketName = '',
-    this.pubkey = '',
   });
 
   Id id;
@@ -35,7 +34,6 @@ class FileServerModel {
   String accessKey;
   String secretKey;
   String bucketName;
-  String pubkey; // Blossom pubkey
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -45,6 +43,5 @@ class FileServerModel {
         'accessKey': accessKey,
         'secretKey': secretKey,
         'bucketName': bucketName,
-        'pubkey': pubkey,
       };
 } 

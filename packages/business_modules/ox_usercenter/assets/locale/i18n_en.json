@@ -254,5 +254,6 @@
   "access_key": "Access Key",
   "secret_key": "Secret Key",
   "bucket_name": "Bucket Name",
-  "custom_name": "Custom Name"
+  "custom_name": "Custom Name",
+  "server_already_exists": "The server already exists"
 }

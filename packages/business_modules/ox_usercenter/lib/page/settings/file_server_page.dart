@@ -9,6 +9,7 @@ import 'add_file_server_page.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'dart:async';
+import 'package:isar/isar.dart';
 
 import 'package:ox_common/model/file_server_model.dart';
 
@@ -28,7 +29,8 @@ class FileServerPage extends StatefulWidget {
 class _FileServerPageState extends State<FileServerPage> {
   final ValueNotifier<List<FileServerModel>> _servers$ =
       ValueNotifier<List<FileServerModel>>([]);
-  final ValueNotifier<FileServerModel?> _selected$ = ValueNotifier(null);
+  // Holds selected server id.
+  final ValueNotifier<Id?> _selected$ = ValueNotifier(null);
   bool _isEditing = false;
   late final FileServerRepository _repo;
 
@@ -65,23 +67,26 @@ class _FileServerPageState extends State<FileServerPage> {
         matched ??= event.isNotEmpty ? event.first : null;
 
         if (matched != null) {
-          _selected$.value = matched;
+          _selected$.value = matched.id;
         }
         _pendingSelectedUrl = null;
       }
 
       // If current selection has been removed, select the first available one.
-      if (_selected$.value != null &&
-          !event.any((e) => e.id == _selected$.value!.id)) {
-        _selected$.value = event.isNotEmpty ? event.first : null;
+      if (_selected$.value != null && !event.any((e) => e.id == _selected$.value)) {
+        _selected$.value = event.isNotEmpty ? event.first.id : null;
       }
     });
 
     // Listen to selection changes and persist into circle config.
     _selected$.addListener(() {
-      final sel = _selected$.value;
+      final id = _selected$.value;
       final circle = LoginManager.instance.currentCircle;
-      circle?.updateSelectedFileServerUrl(sel?.url ?? '');
+      final sel = _servers$.value.firstWhere(
+            (e) => e.id == id,
+            orElse: () => FileServerModel(type: FileServerType.nip96, url: ''),
+          );
+      circle?.updateSelectedFileServerUrl(sel.url);
     });
   }
 
@@ -118,7 +123,7 @@ class _FileServerPageState extends State<FileServerPage> {
   Widget _buildBody(BuildContext context) {
     final listWidget = ValueListenableBuilder(
       valueListenable: _servers$,
-      builder: (_, list, __) {
+      builder: (_, List<FileServerModel> list, __) {
         if (list.isEmpty) {
           return Padding(
             padding: EdgeInsets.only(top: 220.py),
@@ -129,16 +134,18 @@ class _FileServerPageState extends State<FileServerPage> {
         return CLSectionListView(
           items: [
             SectionListViewItem(
-              data: list.map((item) => SelectedItemModel(
+              data: list.map((item) => SelectedItemModel<Id?>(
                 title: item.name,
                 subtitle: item.url,
-                value: item,
+                value: item.id,
                 selected$: _selected$,
               )).toList(),
               isEditing: _isEditing,
               onDelete: (item) async {
-                final modelToDelete = (item as SelectedItemModel).value;
-                await _repo.delete(modelToDelete.id);
+                final idToDelete = (item as SelectedItemModel).value as Id?;
+                if (idToDelete != null) {
+                  await _repo.delete(idToDelete);
+                }
               },
             ),
           ],
@@ -203,6 +210,10 @@ class _FileServerPageState extends State<FileServerPage> {
         builder: (_) => AddFileServerPage(type: type, repo: _repo),
       ),
     );
+
+    if (newServer != null) {
+      _selected$.value = newServer.id;
+    }
   }
 
   Future<void> _loadInitialSelection() async {
