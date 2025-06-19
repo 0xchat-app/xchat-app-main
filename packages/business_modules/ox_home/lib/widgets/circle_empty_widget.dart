@@ -24,6 +24,7 @@ class CircleEmptyWidget extends StatelessWidget {
             iconName: 'image_home_emtyp_circle.png',
             size: 280.px,
             package: 'ox_home',
+            isPlatformStyle: true,
           ),
 
           // Title

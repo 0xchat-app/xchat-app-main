@@ -1,6 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_theme/ox_theme.dart';
 
 /// Parameter description:
@@ -18,6 +19,7 @@ class CommonImage extends StatelessWidget{
   final BoxFit? fit;
   ///plugin name
   final String? package;
+  final bool isPlatformStyle;
 
   CommonImage({
     required this.iconName,
@@ -28,11 +30,17 @@ class CommonImage extends StatelessWidget{
     double? size,
     this.package = 'ox_common',
     this.fit,
+    this.isPlatformStyle = false,
   }): this.height = size ?? height,
       this.width = size ?? width;
 
   @override
   Widget build(BuildContext context) {
+    var iconName = this.iconName;
+    if (isPlatformStyle) {
+      final platformPrefix = PlatformStyle.isUseMaterial ? 'material' : 'cupertino';
+      iconName = '${platformPrefix}_$iconName';
+    }
     return Image.asset(
         useTheme ? ThemeManager.images('assets/images/$iconName') : 'assets/images/$iconName',
         width: this.width,
