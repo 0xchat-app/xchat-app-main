@@ -7,7 +7,6 @@ import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/widgets/avatar.dart';
-import 'package:ox_common/widgets/common_image.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
@@ -36,6 +35,12 @@ class _CLNewMessagePageState extends State<CLNewMessagePage>
   Map<String, List<UserDBISAR>> _groupedUsers = {};
   List<UserDBISAR> _searchResults = [];
 
+  // True when a remote search has been requested and is still in progress.
+  bool _waitingRemoteSearch = false;
+
+  // True after user presses submit at least once for current query.
+  bool _hasSubmitted = false;
+
   @override
   void initState() {
     super.initState();
@@ -54,8 +59,11 @@ class _CLNewMessagePageState extends State<CLNewMessagePage>
   }
 
   void _loadData() {
+    // Collect all users from cache and exclude current account.
+    final myPubkey = Account.sharedInstance.me?.pubKey;
     _allUsers = Account.sharedInstance.userCache.values
         .map((e) => e.value)
+        .where((u) => myPubkey == null || u.pubKey != myPubkey)
         .toList();
     _groupUsers();
   }
@@ -144,40 +152,22 @@ class _CLNewMessagePageState extends State<CLNewMessagePage>
     return SectionListViewItem(
       data: [
         if (!PlatformStyle.isUseMaterial)
-          CustomItemModel(
-            leading: Container(
-              width: 32.px,
-              height: 32.px,
-              alignment: Alignment.center,
-              child: CommonImage(
-                iconName: 'icon_scan_qr.png',
-                size: 24.px,
-                color: ColorToken.onSurface.of(context),
-                package: 'ox_common',
-              ),
+          LabelItemModel(
+            icon: ListViewIcon(
+              iconName: 'icon_scan_qr.png',
+              package: 'ox_common',
+              size: 22.px,
             ),
-            titleWidget: CLText.bodyLarge(
-              Localized.text('ox_common.str_scan'),
-              colorToken: ColorToken.onSurface,
-            ),
+            title: Localized.text('ox_common.str_scan'),
             onTap: _onScanQRCode,
           ),
-        CustomItemModel(
-          leading: Container(
-            width: 32.px,
-            height: 32.px,
-            alignment: Alignment.center,
-            child: CommonImage(
-              iconName: 'icon_new_group.png',
-              size: 24.px,
-              color: ColorToken.onSurface.of(context),
-              package: 'ox_common',
-            ),
+        LabelItemModel(
+          icon: ListViewIcon(
+            iconName: 'icon_new_group.png',
+            package: 'ox_common',
+            size: 40.px,
           ),
-          titleWidget: CLText.bodyLarge(
-            Localized.text('ox_chat.str_new_group'),
-            colorToken: ColorToken.onSurface,
-          ),
+          title: Localized.text('ox_chat.str_new_group'),
           onTap: _onNewGroup,
         ),
       ],
@@ -233,7 +223,22 @@ class _CLNewMessagePageState extends State<CLNewMessagePage>
     }
 
     if (_searchResults.isEmpty) {
-      return _buildEmptySearchResults();
+      final query = _searchController.text.trim();
+      final potentialRemote = query.startsWith('npub') || query.contains('@');
+
+      // Hide empty UI when:
+      // • still waiting remote search, OR
+      // • potential remote search AND input field is focused.
+      if (_waitingRemoteSearch || (potentialRemote && isSearchOnFocus)) {
+        return SizedBox.expand();
+      }
+
+      // Otherwise show empty UI only if the user has submitted, or it's not a remote pattern.
+      if (_hasSubmitted || !potentialRemote) {
+        return _buildEmptySearchResults();
+      }
+
+      return SizedBox.expand();
     }
     
     final sections = <SectionListViewItem>[
@@ -300,6 +305,8 @@ class _CLNewMessagePageState extends State<CLNewMessagePage>
         _performSearch(query);
       } else {
         _searchResults.clear();
+        _waitingRemoteSearch = false; // Reset when search query cleared
+        _hasSubmitted = false;
       }
     });
   }
@@ -345,47 +352,67 @@ class _CLNewMessagePageState extends State<CLNewMessagePage>
     await OXLoading.show();
 
     String groupName = '${user.name} & ${Account.sharedInstance.me!.name}';
-    GroupDBISAR? groupDB = await Groups.sharedInstance.createMLSGroup(
-      groupName,
-      '',
-      [user.pubKey, myPubkey],
-      [myPubkey],
-      [circle.relayUrl],
-    );
+    try {
+      GroupDBISAR? groupDB = await Groups.sharedInstance.createMLSGroup(
+        groupName,
+        '',
+        [user.pubKey, myPubkey],
+        [myPubkey],
+        [circle.relayUrl],
+      );
 
-    if (groupDB == null) {
-      CommonToast.instance.show(context, Localized.text('ox_chat.create_group_fail_tips'));
-      return;
+      if (groupDB == null) {
+        CommonToast.instance.show(context, Localized.text('ox_chat.create_group_fail_tips'));
+        return;
+      }
+
+      await OXLoading.dismiss();
+      OXNavigator.pop(context);
+
+      ChatMessagePage.open(
+        context: null,
+        communityItem: ChatSessionModelISAR(
+          chatId: groupDB.groupId,
+          groupId: groupDB.groupId,
+          chatType: ChatType.chatGroup,
+          chatName: groupDB.name,
+          createTime: groupDB.updateTime,
+          avatar: groupDB.picture,
+        ),
+      );
+    } catch (e) {
+      CommonToast.instance.show(context, e.toString());
     }
-
-    await OXLoading.dismiss();
-    OXNavigator.pop(context);
-
-    ChatMessagePage.open(
-      context: null,
-      communityItem: ChatSessionModelISAR(
-        chatId: groupDB.groupId,
-        groupId: groupDB.groupId,
-        chatType: ChatType.chatGroup,
-        chatName: groupDB.name,
-        createTime: groupDB.updateTime,
-        avatar: groupDB.picture,
-      ),
-    );
   }
 
   void _onSubmittedHandler(String text) async {
     text = text.trim();
     if (text.isEmpty) return;
 
+    final isPubkeyFormat = text.startsWith('npub');
+    final isDnsFormat = text.contains('@');
+
+    // If input doesn't meet remote-search formats, simply rely on local results.
+    if (!isPubkeyFormat && !isDnsFormat) {
+      // Non-remote search pattern; mark as submitted to allow empty UI.
+      _waitingRemoteSearch = false;
+      _hasSubmitted = true;
+      setState(() {});
+      return;
+    }
+
+    _waitingRemoteSearch = true;
+    setState(() {}); // Refresh UI while waiting
+
     await OXLoading.show();
+
     String pubkey = '';
-    if (text.startsWith('npub')) {
+    if (isPubkeyFormat) {
       pubkey = UserDBISAR.decodePubkey(text) ?? '';
-    } else if (text.contains('@')) {
+    } else if (isDnsFormat) {
       pubkey = await Account.getDNSPubkey(
         text.substring(0, text.indexOf('@')),
-        text.substring(text.indexOf('@') + 1)
+        text.substring(text.indexOf('@') + 1),
       ) ?? '';
     }
 
@@ -394,14 +421,31 @@ class _CLNewMessagePageState extends State<CLNewMessagePage>
       user = await Account.sharedInstance.getUserInfo(pubkey);
     }
 
+    await OXLoading.dismiss();
+
+    _waitingRemoteSearch = false; // Remote search finished
+    _hasSubmitted = true; // Search submitted
+
     if (user == null) {
-      await OXLoading.dismiss();
+      setState(() {}); // Update UI to possibly show empty results
       CommonToast.instance.show(context, 'User not found, please re-enter.');
       return;
     }
 
-    await OXLoading.dismiss();
-    _searchResults.insert(0, user);
+    final remoteUser = user;
+    final existsInLocal = _allUsers.any((u) => u.pubKey == remoteUser.pubKey);
+    final existsInResults = _searchResults.any((u) => u.pubKey == remoteUser.pubKey);
+
+    // Add only if not already present.
+    if (!existsInResults) {
+      _searchResults.insert(0, user);
+    }
+
+    // If user is not in local contacts, optionally keep in _allUsers so future searches include it.
+    if (!existsInLocal) {
+      _allUsers.add(user);
+    }
+
     setState(() {});
   }
 }
