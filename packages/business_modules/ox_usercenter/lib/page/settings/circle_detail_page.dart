@@ -156,6 +156,7 @@ class CircleDetailPage extends StatelessWidget {
           ? ColorToken.primaryContainer.of(context)
           : null,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           SizedBox(height: 8.px),
       
@@ -169,26 +170,26 @@ class CircleDetailPage extends StatelessWidget {
       
           SizedBox(height: 12.px),
 
-          CLText.titleLarge(circle.name),
+          CLText.titleLarge(circle.name, textAlign: TextAlign.center,),
       
-          SizedBox(height: 8.px),
+          SizedBox(height: 12.px),
       
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: PlatformStyle.isUseMaterial
-                  ? 24.px
-                  : 4.px,
-              vertical: 12.px,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                CLText.bodyLarge(Localized.text('ox_chat.description')),
-                CLText.bodyMedium(description),
-              ],
-            ),
-          ),
+          // Padding(
+          //   padding: EdgeInsets.symmetric(
+          //     horizontal: PlatformStyle.isUseMaterial
+          //         ? 24.px
+          //         : 4.px,
+          //     vertical: 12.px,
+          //   ),
+          //   child: Column(
+          //     mainAxisSize: MainAxisSize.min,
+          //     crossAxisAlignment: CrossAxisAlignment.stretch,
+          //     children: [
+          //       CLText.bodyLarge(Localized.text('ox_chat.description')),
+          //       CLText.bodyMedium(description),
+          //     ],
+          //   ),
+          // ),
         ],
       ),
     );

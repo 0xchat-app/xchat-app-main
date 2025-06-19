@@ -30,6 +30,7 @@ class CircleEmptyWidget extends StatelessWidget {
           // Title
           CLText.headlineSmall(
             Localized.text('ox_home.join_or_create_circle_now'),
+            textAlign: TextAlign.center,
           ),
 
           SizedBox(height: 8.px),
@@ -37,6 +38,7 @@ class CircleEmptyWidget extends StatelessWidget {
           // Subtitle
           CLText.titleSmall(
             Localized.text('ox_home.unlock_advanced_model'),
+            textAlign: TextAlign.center,
           ),
 
           SizedBox(height: 40.px),

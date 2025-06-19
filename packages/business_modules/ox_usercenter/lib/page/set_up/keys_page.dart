@@ -90,7 +90,7 @@ class _KeysPageState extends State<KeysPage>{
             ),
           ],
           footer: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.px),
+            padding: EdgeInsets.symmetric(horizontal: 16.px, vertical: 16.px),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
