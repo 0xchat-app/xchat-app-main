@@ -9,11 +9,8 @@ import 'package:ox_common/widgets/common_appbar.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_common/utils/nip46_status_notifier.dart';
 import 'package:ox_common/login/login_manager.dart';
-
-// component
-import '../component/common_input.dart';
-import '../component/input_wrap.dart';
-import '../component/lose_focus_wrap.dart';
+import 'package:ox_common/component.dart';
+import 'package:ox_login/component/lose_focus_wrap.dart';
 
 // plugin
 import 'package:ox_localizable/ox_localizable.dart';
@@ -48,93 +45,64 @@ class _AccountKeyLoginPageState extends State<AccountKeyLoginPage> with LoginMan
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CommonAppBar(
-        title: '',
-        centerTitle: true,
-        useLargeTitle: false,
-        backgroundColor: ThemeColor.color200,
+    return CLScaffold(
+      appBar: CLAppBar(
+        title: Localized.text('ox_login.login_button'),
       ),
-      backgroundColor: ThemeColor.color200,
-      body: LoseFocusWrap(_body()),
+      body: LoseFocusWrap(_buildBody()),
     );
   }
 
-  Widget _body() {
-    String inputStr = _accountKeyEditingController.text;
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
+  Widget _buildBody() {
+    return Stack(
       children: [
-        _titleView(),
-        InputWrap(
-          title: Localized.text('ox_login.enter_account_key_login_hint'),
-          contentWidget: CommonInput(
-            hintText: 'nsec or bunker:// ',
-            textController: _accountKeyEditingController,
-            maxLines: null,
-            inputAction: TextInputAction.done,
-            onSubmitted: (value) {
-              _checkAccountKey();
-              if (_accountKeyInput.isNotEmpty && !_isLoggingIn) {
-                _loginWithKey();
-              }
-            },
-          ),
+        ListView(
+          padding: EdgeInsets.fromLTRB(30.px, 32.px, 30.px, 120.px), // bottom padding to avoid overlap with button
+          children: [
+            buildKeyInputView(),
+          ]
         ),
-        Visibility(
-          visible: !_isShowLoginBtn && inputStr.trim().startsWith('nsec') && inputStr.length >= 63,
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              Localized.text('ox_login.str_nesc_invalid_hint'),
-              style: TextStyle(color: ThemeColor.red, fontSize: 12.sp),
+        Positioned(
+          left: 30.px,
+          right: 30.px,
+          bottom: 24.px,
+          child: SafeArea(
+            child: CLButton.filled(
+              text: _isLoggingIn ? Localized.text('ox_common.loading') : Localized.text('ox_login.login_button'),
+              onTap: _isShowLoginBtn && !_isLoggingIn ? _loginWithKey : null,
+              expanded: true,
+              height: 48.px,
             ),
           ),
         ),
-        Visibility(
-          visible: _isShowLoginBtn,
-          child: Container(
-            width: double.infinity,
-            height: 45.py,
-            margin: EdgeInsets.only(top: 30.py),
-            child: ElevatedButton(
-              onPressed: _isLoggingIn ? null : _loginWithKey,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: ThemeColor.gradientMainStart,
-                padding: EdgeInsets.symmetric(vertical: 14.px),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.px),
-                ),
-              ),
-              child: Text(
-                _isLoggingIn 
-                  ? Localized.text('ox_common.loading')
-                  : Localized.text('ox_login.login_button'),
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-        ),
-        SizedBox(height: 30.py),
       ],
     );
   }
 
-  Widget _titleView() {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 40.py),
-      child: Text(
-        Localized.text('ox_login.login_title'),
-        style: TextStyle(
-          color: ThemeColor.color0,
-          fontSize: 28.sp,
-          fontWeight: FontWeight.w600,
+  Widget buildKeyInputView() {
+    final inputStr = _accountKeyEditingController.text;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CLTextField(
+          controller: _accountKeyEditingController,
+          placeholder: 'nsec or bunker://',
+          maxLines: null,
+          textInputAction: TextInputAction.done,
+          onSubmitted: (_) {
+            _checkAccountKey();
+            if (_accountKeyInput.isNotEmpty && !_isLoggingIn) {
+              _loginWithKey();
+            }
+          },
         ),
-      ),
+        SizedBox(height: 8.px),
+        if (!_isShowLoginBtn && inputStr.trim().startsWith('nsec') && inputStr.length >= 63)
+          CLText.bodySmall(
+            Localized.text('ox_login.str_nesc_invalid_hint'),
+            colorToken: ColorToken.error,
+          ),
+      ],
     );
   }
 
@@ -163,7 +131,8 @@ class _AccountKeyLoginPageState extends State<AccountKeyLoginPage> with LoginMan
 
   void _loginWithKey() async {
     if (_isLoggingIn || _accountKeyInput.isEmpty) return;
-    
+
+    FocusScope.of(context).requestFocus(FocusNode());
     setState(() {
       _isLoggingIn = true;
     });

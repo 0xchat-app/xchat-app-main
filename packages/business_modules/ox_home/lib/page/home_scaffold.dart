@@ -34,6 +34,8 @@ class _HomeScaffoldState extends State<HomeScaffold> {
 
   Duration get extendBodyDuration => const Duration(milliseconds: 200);
 
+  bool isFirstJoin = false;
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
@@ -120,24 +122,28 @@ class _HomeScaffoldState extends State<HomeScaffold> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        return AnimatedSwitcher(
-          duration: const Duration(milliseconds: 300),
-          switchInCurve: Curves.easeIn,
-          switchOutCurve: Curves.easeOut,
-          transitionBuilder: (Widget child, Animation<double> animation) {
-            return FadeTransition(opacity: animation, child: child);
-          },
-          child: loginCircle != null
-              ? SessionListWidget(
-                  ownerPubkey: loginAccount.pubkey,
-                  circle: loginCircle,
-                  itemOnTap: sessionItemOnTap,
-                )
-              : CircleEmptyWidget(
-                  onJoinCircle: _handleJoinCircle,
-                  onCreatePaidCircle: _handleCreatePaidCircle,
-                ),
+        Widget body = loginCircle != null ? SessionListWidget(
+          ownerPubkey: loginAccount.pubkey,
+          circle: loginCircle,
+          itemOnTap: sessionItemOnTap,
+        ) : CircleEmptyWidget(
+          onJoinCircle: _handleJoinCircle,
+          onCreatePaidCircle: _handleCreatePaidCircle,
         );
+
+        if (isFirstJoin) {
+          body = AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            switchInCurve: Curves.easeIn,
+            switchOutCurve: Curves.easeOut,
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+            child: body,
+          );
+        }
+
+        return body;
       },
     );
   }
