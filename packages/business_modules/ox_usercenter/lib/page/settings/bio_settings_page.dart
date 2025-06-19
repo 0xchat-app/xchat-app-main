@@ -2,6 +2,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:chatcore/chat-core.dart';
+import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/widgets/common_loading.dart';
@@ -39,7 +40,10 @@ class BioSettingsPage extends StatelessWidget {
     }
 
     final newBio = value;
-    if (Account.sharedInstance.me?.about == newBio) return;
+    if (Account.sharedInstance.me?.about == newBio) {
+      OXNavigator.pop(context);
+      return;
+    }
 
     user.about = newBio;
 
@@ -48,7 +52,7 @@ class BioSettingsPage extends StatelessWidget {
     if (newUser == null) {
       CommonToast.instance.show(context, 'Update Bio Failed.');
     } else {
-      OXUserInfoManager.sharedInstance.updateUserInfo(newUser);
+      LoginUserNotifier.instance.bio$.value = newBio;
       OXNavigator.pop(context);
     }
   }

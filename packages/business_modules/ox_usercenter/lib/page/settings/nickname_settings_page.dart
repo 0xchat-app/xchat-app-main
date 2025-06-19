@@ -1,6 +1,7 @@
 
 import 'package:flutter/widgets.dart';
 import 'package:chatcore/chat-core.dart';
+import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/widgets/common_loading.dart';
@@ -39,7 +40,10 @@ class NicknameSettingsPage extends StatelessWidget {
       CommonToast.instance.show(context, Localized.text('ox_usercenter.enter_username_tips'));
       return;
     }
-    if (Account.sharedInstance.me?.name == newNickname) return;
+    if (Account.sharedInstance.me?.name == newNickname) {
+      OXNavigator.pop(context);
+      return;
+    }
 
     user.name = newNickname;
 
@@ -48,7 +52,7 @@ class NicknameSettingsPage extends StatelessWidget {
     if (newUser == null) {
       CommonToast.instance.show(context, 'Update Nickname Failed.');
     } else {
-      OXUserInfoManager.sharedInstance.updateUserInfo(newUser);
+      LoginUserNotifier.instance.name$.value = newNickname;
       OXNavigator.pop(context);
     }
   }

@@ -167,7 +167,7 @@ class OXUserInfoManager {
   }
 
   void updateUserInfo(UserDBISAR? userDB) {
-    assert(false, 'Deprecated method');
+    assert(false, 'Deprecated method. Use LoginUserNotifier.instance');
   }
 
   void updateSuccess() {
