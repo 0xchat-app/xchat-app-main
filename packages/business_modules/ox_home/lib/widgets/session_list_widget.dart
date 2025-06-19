@@ -10,7 +10,6 @@ import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/avatar.dart';
 import 'package:chatcore/chat-core.dart';
-import 'package:ox_common/widgets/common_hint_dialog.dart';
 import 'package:ox_common/widgets/common_image.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 
@@ -170,22 +169,22 @@ class _SessionListWidgetState extends State<SessionListWidget> {
   }) {
     return CustomSlidableAction(
       onPressed: (BuildContext _) async {
-        OXCommonHintDialog.show(context,
+        final bool? confirmed = await CLAlertDialog.show(
+          context: context,
           content: Localized.text('ox_chat.message_delete_tips'),
-          actionList: [
-            OXCommonHintAction.cancel(onTap: () {
-              OXNavigator.pop(context);
-            }),
-            OXCommonHintAction.sure(
-              text: Localized.text('ox_common.confirm'),
-              onTap: () async {
-                OXNavigator.pop(context);
-                controller?.deleteSession(item);
-              },
+          actions: [
+            CLAlertAction.cancel(),
+            CLAlertAction<bool>(
+              label: Localized.text('ox_common.confirm'),
+              value: true,
+              isDestructiveAction: true,
             ),
           ],
-          isRowAction: true,
         );
+
+        if (confirmed == true) {
+          controller?.deleteSession(item);
+        }
       },
       backgroundColor: ColorToken.error.of(context),
       child: Column(

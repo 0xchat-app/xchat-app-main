@@ -2,10 +2,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:intl/intl.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/num_utils.dart';
 import 'package:ox_common/utils/theme_color.dart';
 import 'package:ox_common/utils/web_url_helper.dart';
+import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/common_image_gallery.dart';
 import 'package:photo_view/photo_view.dart' show PhotoViewComputedScale;
 import 'package:scroll_to_index/scroll_to_index.dart';
@@ -604,26 +606,14 @@ class ChatState extends State<Chat> {
         Visibility(
           visible: bottomHintParam != null,
           child: SafeArea(
-            child: GestureDetector(
+            child: CLButton.filled(
               onTap: bottomHintParam?.onTap,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: ThemeColor.color190,
-                  borderRadius: BorderRadius.circular(Adapt.px(12)),
-                ),
-                margin: EdgeInsets.only(bottom: Adapt.px(10)),
-                height: Adapt.px(58),
-                alignment: Alignment.center,
-                child: Text(
-                  bottomHintParam?.text ?? '',
-                  style: TextStyle(
-                    color: ThemeColor.gradientMainStart,
-                  ),
-                  maxLines: 2,
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
+              expanded: true,
+              text: bottomHintParam?.text ?? '',
+            ).setPadding(EdgeInsets.symmetric(
+              horizontal: 16.px,
+              vertical: 12.px,
+            )),
           ),
         ),
         Visibility(
