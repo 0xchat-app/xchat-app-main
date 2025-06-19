@@ -84,6 +84,12 @@ class CommonChatWidgetState extends State<CommonChatWidget> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       handler.chatWidgetKey = chatWidgetKey;
+
+      session.unreadCount = 0;
+      OXChatBinding.sharedInstance.updateChatSession(
+        session.chatId,
+        unreadCount: 0,
+      );
     });
   }
 

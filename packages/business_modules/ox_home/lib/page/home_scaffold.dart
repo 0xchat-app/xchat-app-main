@@ -150,17 +150,7 @@ class _HomeScaffoldState extends State<HomeScaffold> {
       context: context,
       communityItem: session,
       unreadMessageCount: unreadMessageCount,
-    ).then((_) {
-      item.rebuild();
-    });
-
-    session.unreadCount = 0;
-    OXChatBinding.sharedInstance.updateChatSession(
-      session.chatId,
-      unreadCount: 0,
     );
-
-    item.rebuild();
   }
 
   void _handleJoinCircle() {
