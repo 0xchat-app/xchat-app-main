@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/widgets/avatar.dart';
@@ -121,23 +121,18 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
   Widget _buildSearchBar(BuildContext context) {
     return CLSearch(
       controller: _searchCtrl,
-      prefixIcon: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: 200.px),
-        child: AnimatedList(
-          key: _animatedListKey,
-          shrinkWrap: true,
-          scrollDirection: Axis.horizontal,
-          reverse: true, // Reverse display, new items appear in visible area
-          initialItemCount: _selected.length,
-          itemBuilder: (context, index, animation) {
-            // Adjust index due to reverse layout
-            final reversedIndex = _selected.length - 1 - index;
-            if (reversedIndex >= 0 && reversedIndex < _selected.length) {
-              final user = _selected[reversedIndex];
-              return _buildAnimatedChip(user, animation);
-            }
-            return const SizedBox.shrink();
-          },
+      prefixIcon: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        transitionBuilder: (child, animation) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        },
+        child: _selected.isEmpty ? CLSearchIcon()
+            : ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: 200.px),
+          child: _buildSelectedUsersList(),
         ),
       ),
       padding: EdgeInsets.all(16.px),
@@ -146,31 +141,70 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
     );
   }
 
+  Widget _buildSelectedUsersList() {
+    return Container(
+      key: const ValueKey('selected_users'),
+      child: AnimatedList(
+        key: _animatedListKey,
+        shrinkWrap: true,
+        scrollDirection: Axis.horizontal,
+        reverse: true, // Reverse display, new items appear in visible area
+        initialItemCount: _selected.length,
+        itemBuilder: (context, index, animation) {
+          // Adjust index due to reverse layout
+          final reversedIndex = _selected.length - 1 - index;
+          if (reversedIndex >= 0 && reversedIndex < _selected.length) {
+            final user = _selected[reversedIndex];
+            return _buildAnimatedChip(user, animation);
+          }
+          return const SizedBox.shrink();
+        },
+      ),
+    );
+  }
+
 
 
   Widget _buildAnimatedChip(SelectableUser user, Animation<double> animation) {
+    final sizeAnimation = animation.drive(
+      Tween<double>(begin: 0.0, end: 1.0).chain(
+        CurveTween(curve: Curves.easeInOut),
+      ),
+    );
+    
     return FadeTransition(
       opacity: animation.drive(
         Tween<double>(begin: 0.0, end: 1.0).chain(
           CurveTween(curve: Curves.easeInOut),
         ),
       ),
-      child: ScaleTransition(
-        scale: animation.drive(
-          Tween<double>(begin: 0.5, end: 1.0).chain(
-            CurveTween(curve: Curves.easeInOut),
+      child: AnimatedBuilder(
+        animation: sizeAnimation,
+        builder: (context, child) {
+          return Align(
+            alignment: Alignment.centerLeft,
+            widthFactor: sizeAnimation.value,
+            heightFactor: sizeAnimation.value,
+            child: child,
+          );
+        },
+        child: ScaleTransition(
+          scale: animation.drive(
+            Tween<double>(begin: 0.5, end: 1.0).chain(
+              CurveTween(curve: Curves.easeInOut),
+            ),
           ),
-        ),
-        child: Padding(
-          padding: EdgeInsets.only(right: 8.px),
-          child: GestureDetector(
-            onTap: () => _toggleSelect(user),
-            child: Container(
-              alignment: Alignment.center,
-              child: OXUserAvatar(
-                user: null,
-                imageUrl: user.avatarUrl,
-                size: 36.px,
+          child: Padding(
+            padding: EdgeInsets.only(right: 8.px),
+            child: GestureDetector(
+              onTap: () => _toggleSelect(user),
+              child: Container(
+                alignment: Alignment.center,
+                child: OXUserAvatar(
+                  user: null,
+                  imageUrl: user.avatarUrl,
+                  size: 36.px,
+                ),
               ),
             ),
           ),
@@ -205,6 +239,9 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
   }
 
   List<SectionListViewItem> _buildSearchItems() {
+    if (_searchResults.isEmpty) {
+      return [];
+    }
     return [SectionListViewItem(data: _searchResults.map(_buildUserItem).toList())];
   }
 

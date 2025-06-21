@@ -9,7 +9,7 @@ class CLSearch extends StatefulWidget implements PreferredSizeWidget {
   CLSearch({
     super.key,
     TextEditingController? controller,
-    this.prefixIcon,
+    Widget? prefixIcon,
 
     this.focusNode,
     this.placeholder,
@@ -24,10 +24,11 @@ class CLSearch extends StatefulWidget implements PreferredSizeWidget {
     this.height,
     this.padding,
     this.preferredHeight,
-  }) : controller = controller ?? TextEditingController();
+  }) : controller = controller ?? TextEditingController(),
+       prefixIcon = prefixIcon ?? CLSearchIcon();
 
   final TextEditingController controller;
-  final Widget? prefixIcon;
+  final Widget prefixIcon;
   final FocusNode? focusNode;
   final String? placeholder;
   final ValueChanged<String>? onChanged;
@@ -95,11 +96,6 @@ class _CLSearchState extends State<CLSearch> {
   }
 
   Widget _buildMaterialSearch(BuildContext context) {
-    final prefixIcon = widget.prefixIcon ?? Icon(
-      Icons.search,
-      size: 24.px,
-      color: ColorToken.onSurfaceVariant.of(context),
-    );
     return Container(
       padding: widget.padding,
       child: SearchBar(
@@ -111,7 +107,7 @@ class _CLSearchState extends State<CLSearch> {
             left: 12.px,
             right: 8.px,
           ),
-          child: prefixIcon,
+          child: widget.prefixIcon,
         ),
         trailing: [
           if (_hasText)
@@ -139,12 +135,11 @@ class _CLSearchState extends State<CLSearch> {
   }
 
   Widget _buildCupertinoSearch(BuildContext context) {
-    final prefixIcon = widget.prefixIcon ?? const Icon(CupertinoIcons.search);
     return Container(
       padding: widget.padding,
       child: CupertinoSearchTextField(
         controller: widget.controller,
-        prefixIcon: prefixIcon,
+        prefixIcon: widget.prefixIcon,
         focusNode: _focusNode,
         onChanged: (newText) {
           _onTextChange(newText);
@@ -157,5 +152,20 @@ class _CLSearchState extends State<CLSearch> {
         placeholder: widget.placeholder,
       ),
     );
+  }
+}
+
+class CLSearchIcon extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    if (PlatformStyle.isUseMaterial) {
+      return Icon(
+        Icons.search,
+        size: 24.px,
+        color: ColorToken.onSurfaceVariant.of(context),
+      );
+    } else {
+      return Icon(CupertinoIcons.search);
+    }
   }
 }

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/mixin/common_state_view_mixin.dart';
@@ -14,6 +14,7 @@ import 'package:chatcore/chat-core.dart';
 import 'package:lpinyin/lpinyin.dart';
 
 import 'chat_message_page.dart';
+import 'select_group_members_page.dart';
 
 class CLNewMessagePage extends StatefulWidget {
   const CLNewMessagePage({super.key});
@@ -41,6 +42,9 @@ class _CLNewMessagePageState extends State<CLNewMessagePage>
   // True after user presses submit at least once for current query.
   bool _hasSubmitted = false;
 
+  // For tracking scroll-based background color changes
+  final ValueNotifier<double> _scrollOffset = ValueNotifier(0.0);
+
   @override
   void initState() {
     super.initState();
@@ -55,6 +59,7 @@ class _CLNewMessagePageState extends State<CLNewMessagePage>
     _searchFocusNode.removeListener(_onFocusChanged);
     _searchController.dispose();
     _searchFocusNode.dispose();
+    _scrollOffset.dispose();
     super.dispose();
   }
 
@@ -333,7 +338,7 @@ class _CLNewMessagePageState extends State<CLNewMessagePage>
   }
 
   void _onNewGroup() {
-
+    OXNavigator.pushPage(context, (context) => const SelectGroupMembersPage());
   }
 
   void _onUserTap(UserDBISAR user) async {

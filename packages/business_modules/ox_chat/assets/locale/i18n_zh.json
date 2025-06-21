@@ -135,6 +135,7 @@
   "str_new_group": "新群聊",
   "create_group_search_hint_text": "你想添加谁？",
   "create_group_select_toast": "请至少选择一个用户",
+  "select_at_least_one_member": "请至少选择一个成员",
   "next": "下一步",
   "group_name_item": "群聊名称",
   "group_member": "成员",
