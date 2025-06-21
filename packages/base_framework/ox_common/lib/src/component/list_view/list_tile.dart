@@ -58,6 +58,12 @@ class CLListTile extends StatelessWidget {
         isEditing: isEditing,
         onDelete: onDelete,
       );
+    if (model is MultiSelectItemModel)
+      return _ListViewMultiSelectItemWidget(
+        model: model,
+        isEditing: isEditing,
+        onDelete: onDelete,
+      );
     if (model is CustomItemModel)
       return _ListViewCustomItemWidget(
         model: model,
@@ -456,6 +462,48 @@ class _ListViewSelectedItemWidget extends StatelessWidget {
 
   void itemOnTap() {
     model.selected$.value = model.value;
+  }
+}
+
+class _ListViewMultiSelectItemWidget extends StatelessWidget {
+  const _ListViewMultiSelectItemWidget({
+    required this.model,
+    this.isEditing = false,
+    this.onDelete,
+  });
+
+  final MultiSelectItemModel model;
+
+  final bool isEditing;
+  final Function(ListViewItem item)? onDelete;
+
+  @override
+  Widget build(BuildContext context) => _ListViewItemBaseWidget(
+    model: model,
+    trailing: buildValueListenable(),
+    onTap: _toggleSelect,
+    isEditing: isEditing,
+    onDelete: onDelete,
+  );
+
+  Widget buildValueListenable() {
+    return ValueListenableBuilder<bool>(
+      valueListenable: model.value$,
+      builder: (_, selected, __) {
+        return selected
+            ? const Icon(Icons.check_circle, color: Colors.blue)
+            : const Icon(Icons.circle_outlined, color: Colors.grey);
+      },
+    );
+  }
+
+  void _toggleSelect() {
+    final onTap = model.onTap;
+    if (onTap != null) {
+      onTap();
+    } else {
+      model.value$.value = !model.value$.value;
+    }
   }
 }
 

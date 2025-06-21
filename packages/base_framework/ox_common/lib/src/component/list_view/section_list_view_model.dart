@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/adapt.dart';
 
 import '../text.dart';
@@ -24,12 +25,16 @@ class SectionListViewItem {
   final Function(ListViewItem item)? onDelete;
 
   static Widget _buildSectionHeader(String title) {
-    return Padding(
-      padding: EdgeInsets.only(
-        left: 20.px,
-        top: 16.px,
-      ),
-      child: CLText.titleSmall(title),
-    );
+    Widget widget = CLText.titleSmall(title);
+    if (PlatformStyle.isUseMaterial) {
+      widget = Padding(
+        padding: EdgeInsets.only(
+          left: 20.px,
+          top: 16.px,
+        ),
+        child: widget,
+      );
+    }
+    return widget;
   }
 }

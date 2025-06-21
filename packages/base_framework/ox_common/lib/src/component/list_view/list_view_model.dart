@@ -1,4 +1,3 @@
-
 import 'package:flutter/widgets.dart';
 
 class ListViewIcon {
@@ -132,4 +131,23 @@ class CustomItemModel extends ListViewItem {
   Widget Function(BuildContext context)? customWidgetBuilder;
 
   VoidCallback? onTap;
+}
+
+/// Model for multi-select list item. [selectedSet$] holds the global selected
+/// id set so each tile can rebuild when selection changes.
+class MultiSelectItemModel<T> extends ListViewItem {
+  MultiSelectItemModel({
+    super.icon,
+    required super.title,
+    super.subtitle,
+    super.isCupertinoAutoTrailing = false,
+    super.isUseMaterial,
+    required this.value$,
+    this.onTap,
+  });
+
+  final VoidCallback? onTap;
+
+  @override
+  ValueNotifier<bool> value$;
 }

@@ -9,6 +9,8 @@ class CLSearch extends StatefulWidget implements PreferredSizeWidget {
   CLSearch({
     super.key,
     TextEditingController? controller,
+    this.prefixIcon,
+
     this.focusNode,
     this.placeholder,
     this.onChanged,
@@ -25,6 +27,7 @@ class CLSearch extends StatefulWidget implements PreferredSizeWidget {
   }) : controller = controller ?? TextEditingController();
 
   final TextEditingController controller;
+  final Widget? prefixIcon;
   final FocusNode? focusNode;
   final String? placeholder;
   final ValueChanged<String>? onChanged;
@@ -92,6 +95,11 @@ class _CLSearchState extends State<CLSearch> {
   }
 
   Widget _buildMaterialSearch(BuildContext context) {
+    final prefixIcon = widget.prefixIcon ?? Icon(
+      Icons.search,
+      size: 24.px,
+      color: ColorToken.onSurfaceVariant.of(context),
+    );
     return Container(
       padding: widget.padding,
       child: SearchBar(
@@ -103,11 +111,7 @@ class _CLSearchState extends State<CLSearch> {
             left: 12.px,
             right: 8.px,
           ),
-          child: Icon(
-            Icons.search,
-            size: 24.px,
-            color: ColorToken.onSurfaceVariant.of(context),
-          ),
+          child: prefixIcon,
         ),
         trailing: [
           if (_hasText)
@@ -135,10 +139,12 @@ class _CLSearchState extends State<CLSearch> {
   }
 
   Widget _buildCupertinoSearch(BuildContext context) {
+    final prefixIcon = widget.prefixIcon ?? const Icon(CupertinoIcons.search);
     return Container(
       padding: widget.padding,
       child: CupertinoSearchTextField(
         controller: widget.controller,
+        prefixIcon: prefixIcon,
         focusNode: _focusNode,
         onChanged: (newText) {
           _onTextChange(newText);
