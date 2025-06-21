@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'color_token.dart';
 import 'platform_style.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 
 class CLPickerItem<T> {
-  CLPickerItem({required this.label, required this.value});
+  CLPickerItem({required this.label, required this.value, this.isDestructive = false});
+
   final String label;
   final T value;
+  /// Whether the action is destructive (e.g. delete). Rendered in red.
+  final bool isDestructive;
 }
 
 class CLPicker {
@@ -24,7 +28,12 @@ class CLPicker {
             mainAxisSize: MainAxisSize.min,
             children: items
                 .map((e) => ListTile(
-                      title: Text(e.label),
+                      title: Text(
+                        e.label,
+                        style: e.isDestructive
+                            ? TextStyle(color: ColorToken.error.of(ctx))
+                            : null,
+                      ),
                       onTap: () => Navigator.pop(ctx, e.value),
                     ))
                 .toList(),
@@ -38,6 +47,7 @@ class CLPicker {
           title: title != null ? Text(title) : null,
           actions: items
               .map((e) => CupertinoActionSheetAction(
+                    isDestructiveAction: e.isDestructive,
                     onPressed: () => Navigator.pop(ctx, e.value),
                     child: Text(e.label),
                   ))

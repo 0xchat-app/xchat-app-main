@@ -187,7 +187,6 @@ class _ListViewItemBaseWidgetState extends State<_ListViewItemBaseWidget>
   }
 
   Widget _buildCupertinoListTile() {
-    // animationController.value = 0.2;
     return AnimatedBuilder(
       animation: animationController,
       builder: (_, __) {

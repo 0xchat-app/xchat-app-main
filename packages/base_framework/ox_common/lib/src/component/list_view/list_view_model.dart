@@ -116,8 +116,9 @@ class CustomItemModel extends ListViewItem {
     this.trailing,
     this.customWidgetBuilder,
     this.onTap,
+    bool? isCupertinoAutoTrailing,
   }) : super(
-    isCupertinoAutoTrailing: trailing == null,
+    isCupertinoAutoTrailing: isCupertinoAutoTrailing ?? trailing == null,
   );
 
   @override
