@@ -54,63 +54,25 @@ class CircleDetailPage extends StatelessWidget {
   }
 
   Widget _buildMenuButton(BuildContext context) {
-    if (PlatformStyle.isUseMaterial) {
-      return PopupMenuButton<_MenuAction>(
-        icon: const Icon(Icons.more_vert),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(12.0)),
-        ),
-        onSelected: (_MenuAction action) => _handleMenuAction(context, action),
-        itemBuilder: (ctx) => [
-          PopupMenuItem<_MenuAction>(
-            value: _MenuAction.edit,
-            child: CLText(Localized.text('ox_usercenter.edit_profile')),
-          ),
-          PopupMenuItem<_MenuAction>(
-            value: _MenuAction.delete,
-            child: CLText(Localized.text('ox_usercenter.delete_circle')),
-          ),
-        ],
-      );
-    }
-
     return CLButton.icon(
       iconSize: PlatformStyle.isUseMaterial ? null : 44,
       paddingWidth: PlatformStyle.isUseMaterial ? null : 0,
-      child: const CLIcon(
-        icon: CupertinoIcons.ellipsis,
-      ),
-      onTap: () => _showCupertinoMenu(context),
-    );
-  }
-
-  void _showCupertinoMenu(BuildContext context) {
-    showCupertinoModalPopup<void>(
-      context: context,
-      builder: (BuildContext ctx) {
-        return CupertinoActionSheet(
-          actions: [
-            CupertinoActionSheetAction(
-              onPressed: () {
-                Navigator.pop(ctx);
-                _handleMenuAction(context, _MenuAction.edit);
-              },
-              child: CLText(Localized.text('ox_usercenter.edit_profile')),
-            ),
-            CupertinoActionSheetAction(
-              onPressed: () {
-                Navigator.pop(ctx);
-                _handleMenuAction(context, _MenuAction.delete);
-              },
-              isDestructiveAction: true,
-              child: CLText(Localized.text('ox_usercenter.delete_circle')),
+      child: const CLIcon(icon: CupertinoIcons.ellipsis),
+      onTap: () async {
+        final action = await CLPicker.show<_MenuAction>(
+          context: context,
+          items: [
+            // CLPickerItem(label: Localized.text('ox_usercenter.edit_profile'), value: _MenuAction.edit),
+            CLPickerItem(
+              label: Localized.text('ox_usercenter.delete_circle'),
+              value: _MenuAction.delete,
+              isDestructive: true,
             ),
           ],
-          cancelButton: CupertinoActionSheetAction(
-            onPressed: () => Navigator.pop(ctx),
-            child: CLText(Localized.text('ox_common.cancel')),
-          ),
         );
+        if (action != null) {
+          _handleMenuAction(context, action);
+        }
       },
     );
   }
@@ -205,6 +167,11 @@ class CircleDetailPage extends StatelessWidget {
           user: Account.sharedInstance.me,
           size: 32.px,
         ),
+        onTap: () {
+          OXNavigator.pushPage(context, (_) =>
+              ProfileSettingsPage(previousPageTitle: title));
+        },
+        isCupertinoAutoTrailing: true,
       ),
       // Relay Server
       LabelItemModel(
