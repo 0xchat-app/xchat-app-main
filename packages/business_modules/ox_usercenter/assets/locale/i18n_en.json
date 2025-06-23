@@ -255,5 +255,18 @@
   "secret_key": "Secret Key",
   "bucket_name": "Bucket Name",
   "custom_name": "Custom Name",
-  "server_already_exists": "The server already exists"
+  "server_already_exists": "The server already exists",
+  "my_qr_code": "My QR Code",
+  "scan_to_add_friend": "Scan to add as friend",
+  "qr_style": "QR Style",
+  "default": "Default",
+  "classic": "Classic",
+  "dots": "Dots",
+  "gradient": "Gradient",
+  "save_qr_code": "Save QR Code",
+  "share_qr_code": "Share QR Code",
+  "storage_permission_denied": "Storage permission denied",
+  "qr_code_saved": "QR code saved to gallery",
+  "save_failed": "Save failed",
+  "share_coming_soon": "Share feature coming soon"
 }

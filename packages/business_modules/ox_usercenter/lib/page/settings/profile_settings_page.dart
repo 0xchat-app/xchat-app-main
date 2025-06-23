@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -9,7 +8,6 @@ import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/upload/file_type.dart';
 import 'package:ox_common/upload/upload_utils.dart';
 import 'package:ox_common/utils/adapt.dart';
-import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_common/widgets/common_loading.dart';
@@ -19,6 +17,7 @@ import '../../widget/select_asset_dialog.dart';
 import '../set_up/avatar_preview_page.dart';
 import 'bio_settings_page.dart';
 import 'nickname_settings_page.dart';
+import 'qr_code_display_page.dart';
 
 class ProfileSettingsPage extends StatefulWidget {
   const ProfileSettingsPage({
@@ -48,6 +47,13 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
       appBar: CLAppBar(
         title: 'Profile',
         previousPageTitle: widget.previousPageTitle,
+        actions: [
+          CLButton.icon(
+            isAppBarAction: true,
+            child: const Icon(Icons.qr_code),
+            onTap: showMyQRCode,
+          ),
+        ],
       ),
       isSectionListPage: true,
       body: CLSectionListView(
@@ -170,5 +176,12 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
       CommonToast.instance.show(context, 'Update Avatar Success.');
       LoginUserNotifier.instance.avatarUrl$.value = avatarUrl;
     }
+  }
+
+  void showMyQRCode() {
+    OXNavigator.pushPage(
+      context, 
+      (context) => const QRCodeDisplayPage(previousPageTitle: 'Profile'),
+    );
   }
 }

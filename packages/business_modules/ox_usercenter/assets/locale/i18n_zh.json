@@ -255,5 +255,18 @@
   "secret_key": "Secret Key",
   "bucket_name": "Bucket 名称",
   "custom_name": "自定义名称",
-  "server_already_exists": "该服务器已存在"
+  "server_already_exists": "该服务器已存在",
+  "my_qr_code": "我的二维码",
+  "scan_to_add_friend": "扫一扫添加好友",
+  "qr_style": "二维码样式",
+  "default": "默认",
+  "classic": "经典",
+  "dots": "圆点",
+  "gradient": "渐变",
+  "save_qr_code": "保存二维码",
+  "share_qr_code": "分享二维码",
+  "storage_permission_denied": "存储权限被拒绝",
+  "qr_code_saved": "二维码已保存到相册",
+  "save_failed": "保存失败",
+  "share_coming_soon": "分享功能即将推出"
 }
