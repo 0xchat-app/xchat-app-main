@@ -49,7 +49,7 @@ class _FontSizeSettingsPageState extends State<FontSizeSettingsPage> {
         ),
         body: Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: 16.px,
+            horizontal: CLLayout.horizontalPadding,
           ),
           child: SafeArea(
             child: Column(
@@ -114,7 +114,7 @@ class _FontSizeSettingsPageState extends State<FontSizeSettingsPage> {
               Container(
                 padding: EdgeInsets.symmetric(
                   vertical: 10.px,
-                  horizontal: 16.px,
+                  horizontal: CLLayout.horizontalPadding,
                 ),
                 decoration: BoxDecoration(
                   color: isSender ? ColorToken.secondaryContainer.of(context) : ColorToken.surfaceContainer.of(context),

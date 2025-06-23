@@ -160,7 +160,7 @@ class SettingSliderState extends State<SettingSlider> {
                 return OXUserAvatar(
                   imageUrl: avatarUrl,
                   size: 60.px,
-                ).setPadding(EdgeInsets.symmetric(horizontal: 16.px));
+                ).setPadding(EdgeInsets.symmetric(horizontal: CLLayout.horizontalPadding));
               }
             ),
             Expanded(

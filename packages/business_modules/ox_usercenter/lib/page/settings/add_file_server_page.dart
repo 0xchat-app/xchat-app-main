@@ -77,8 +77,8 @@ class _AddFileServerPageState extends State<AddFileServerPage> {
         SafeArea(
           child: Padding(
             padding: EdgeInsets.only(
-              left: 16.px,
-              right: 16.px,
+              left: CLLayout.horizontalPadding,
+              right: CLLayout.horizontalPadding,
               bottom: 12.px,
             ),
             child: CLButton.filled(

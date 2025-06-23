@@ -170,8 +170,8 @@ class _FileServerPageState extends State<FileServerPage> {
           )
         else
           Positioned(
-            left: 16.px,
-            right: 16.px,
+            left: CLLayout.horizontalPadding,
+            right: CLLayout.horizontalPadding,
             bottom: 12.px,
             child: SafeArea(
               child: AnimatedOpacity(

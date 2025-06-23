@@ -93,6 +93,8 @@ class CLButton {
         child: child,
       ),
       expanded: expanded,
+      width: width,
+      height: height,
     );
   }
 
@@ -222,9 +224,15 @@ class CLButton {
     double? iconSize,
     Color? color,
     double? paddingWidth,
+    bool isAppBarAction = false,
   }) {
-    iconSize ??= CLIcon.generalIconSize;
-    paddingWidth ??= iconSize / 2;
+    bool isCupertinoAppBarAction = isAppBarAction && !PlatformStyle.isUseMaterial;
+    iconSize ??= isCupertinoAppBarAction
+        ? 44
+        : CLIcon.generalIconSize;
+    paddingWidth ??= isCupertinoAppBarAction
+        ? 0
+        : iconSize / 2;
     color ??= IconTheme.of(OXNavigator.navigatorKey.currentContext!).color;
     child ??= CLIcon(
       iconName: iconName,
@@ -234,11 +242,9 @@ class CLButton {
     );
 
     final size = iconSize + paddingWidth * 2;
-    final padding = EdgeInsets.all(paddingWidth);
     return CLIconButton(
       onTap: onTap,
       size: size,
-      padding: padding,
       child: child,
     );
   }

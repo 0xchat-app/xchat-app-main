@@ -8,14 +8,12 @@ class CLIconButton extends StatelessWidget {
   CLIconButton({
     required this.child,
     required this.size,
-    this.padding,
     this.onTap,
   });
 
   final Widget child;
   final double size;
   final VoidCallback? onTap;
-  final EdgeInsets? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -31,11 +29,11 @@ class CLIconButton extends StatelessWidget {
       dimension: size,
       child: IconButton(
         onPressed: onTap,
-        padding: padding,
         constraints: BoxConstraints(
           minWidth: size,
           minHeight: size,
         ),
+        alignment: Alignment.center,
         icon: child,
       ),
     );
@@ -47,7 +45,8 @@ class CLIconButton extends StatelessWidget {
       child: CupertinoButton(
         onPressed: onTap,
         minSize: size,
-        padding: padding,
+        padding: EdgeInsets.zero,
+        alignment: Alignment.center,
         child: child,
       ),
     );
