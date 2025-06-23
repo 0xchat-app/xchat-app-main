@@ -82,11 +82,14 @@ class _FileServerPageState extends State<FileServerPage> {
     _selected$.addListener(() {
       final id = _selected$.value;
       final circle = LoginManager.instance.currentCircle;
-      final sel = _servers$.value.firstWhere(
-            (e) => e.id == id,
-            orElse: () => FileServerModel(type: FileServerType.nip96, url: ''),
-          );
-      circle?.updateSelectedFileServerUrl(sel.url);
+      if (circle == null || id == null) return;
+      
+      final servers = _servers$.value;
+      final selectedServer = servers.where((e) => e.id == id).firstOrNull;
+      
+      if (selectedServer != null) {
+        circle.updateSelectedFileServerUrl(selectedServer.url);
+      }
     });
   }
 
@@ -212,7 +215,14 @@ class _FileServerPageState extends State<FileServerPage> {
     );
 
     if (newServer != null) {
+      // Ensure the server is selected and synced to LoginManager
       _selected$.value = newServer.id;
+      
+      // Immediately sync to LoginManager to avoid timing issues
+      final circle = LoginManager.instance.currentCircle;
+      if (circle != null) {
+        await circle.updateSelectedFileServerUrl(newServer.url);
+      }
     }
   }
 

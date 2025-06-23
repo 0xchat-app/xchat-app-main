@@ -59,19 +59,24 @@ class _AddFileServerPageState extends State<AddFileServerPage> {
     return Column(
       children: [
         Expanded(
-          child: ListView(
-            children: [
-              if (PlatformStyle.isUseMaterial)
-                ...rows
-              else
-                Form(
-                  key: _formKey,
-                  child: CupertinoListSection.insetGrouped(
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              children: [
+                if (PlatformStyle.isUseMaterial)
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: CLLayout.horizontalPadding),
+                    child: Column(
+                      children: rows,
+                    ),
+                  )
+                else
+                  CupertinoListSection.insetGrouped(
                     additionalDividerMargin: 5,
                     children: rows,
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
         SafeArea(
