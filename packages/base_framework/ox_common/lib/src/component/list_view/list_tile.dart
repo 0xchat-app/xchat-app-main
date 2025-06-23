@@ -360,8 +360,12 @@ class _ListViewLabelItemWidget extends StatelessWidget {
       builder: (_, value, child) {
         String label = model.getValueMapData(value);
         return ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: 150.px),
-          child: CLText(label),
+          constraints: BoxConstraints(maxWidth: 200.px),
+          child: CLText(
+            label,
+            maxLines: model.maxLines,
+            overflow: model.overflow ?? TextOverflow.ellipsis,
+          ),
         );
       },
     );

@@ -55,8 +55,11 @@ class LabelItemModel<T> extends ListViewItem {
     required super.title,
     super.subtitle,
     super.isUseMaterial,
+    super.isCupertinoAutoTrailing,
     this.value$,
     this.valueMapper = defaultValueMapper,
+    this.maxLines,
+    this.overflow,
     this.onTap,
   });
 
@@ -67,6 +70,8 @@ class LabelItemModel<T> extends ListViewItem {
 
   String getValueMapData(dynamic value) => valueMapper(value);
 
+  int? maxLines;
+  TextOverflow? overflow;
   VoidCallback? onTap;
 
   static String defaultValueMapper(value) => value.toString();
