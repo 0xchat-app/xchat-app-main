@@ -15,6 +15,7 @@ import 'package:lpinyin/lpinyin.dart';
 
 import 'chat_message_page.dart';
 import 'select_group_members_page.dart';
+import '../../utils/chat_session_utils.dart';
 
 class CLNewMessagePage extends StatefulWidget {
   const CLNewMessagePage({super.key});
@@ -342,52 +343,11 @@ class _CLNewMessagePageState extends State<CLNewMessagePage>
   }
 
   void _onUserTap(UserDBISAR user) async {
-    final myPubkey = Account.sharedInstance.me?.pubKey;
-    if (myPubkey == null || myPubkey.isEmpty) {
-      CommonToast.instance.show(context, 'Current account is null');
-      return;
-    }
-
-    final circle = LoginManager.instance.currentCircle;
-    if (circle == null) {
-      CommonToast.instance.show(context, 'Current circle is null');
-      return;
-    }
-
-    await OXLoading.show();
-
-    String groupName = '${user.name} & ${Account.sharedInstance.me!.name}';
-    try {
-      GroupDBISAR? groupDB = await Groups.sharedInstance.createMLSGroup(
-        groupName,
-        '',
-        [user.pubKey, myPubkey],
-        [myPubkey],
-        [circle.relayUrl],
-      );
-
-      if (groupDB == null) {
-        CommonToast.instance.show(context, Localized.text('ox_chat.create_group_fail_tips'));
-        return;
-      }
-
-      await OXLoading.dismiss();
-      OXNavigator.pop(context);
-
-      ChatMessagePage.open(
-        context: null,
-        communityItem: ChatSessionModelISAR(
-          chatId: groupDB.groupId,
-          groupId: groupDB.groupId,
-          chatType: ChatType.chatGroup,
-          chatName: groupDB.name,
-          createTime: groupDB.updateTime,
-          avatar: groupDB.picture,
-        ),
-      );
-    } catch (e) {
-      CommonToast.instance.show(context, e.toString());
-    }
+    await ChatSessionUtils.createSecretChatWithConfirmation(
+      context: context,
+      user: user,
+      isPushWithReplace: true,
+    );
   }
 
   void _onSubmittedHandler(String text) async {

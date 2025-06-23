@@ -354,5 +354,11 @@
   "str_remove": "Remove",
   "str_remove_moments": "Remove Moments",
   "str_remove_moments_hint": "Are you sure you want to remove the moment? This action cannot be undone.",
-  "require_file_server": "Please set up a file server before sending images or videos."
+  "require_file_server": "Please set up a file server before sending images or videos.",
+  "user_detail": "User Detail",
+  "name": "Name",
+  "no_bio": "No bio",
+  "send_message_to": "Send message to",
+  "create_secret_chat_confirm_title": "Create Secret Chat",
+  "create_secret_chat_confirm_content": "Are you sure you want to create a new secret chat session and send an invitation to the other party?"
 }

@@ -354,5 +354,11 @@
   "str_remove": "移除",
   "str_remove_moments": "移除动态",
   "str_remove_moments_hint": "您确定要删除动态吗？此操作无法撤销。",
-  "require_file_server": "发送图片或视频前请先配置文件服务器。"
+  "require_file_server": "发送图片或视频前请先配置文件服务器。",
+  "user_detail": "用户详情",
+  "name": "姓名",
+  "no_bio": "暂无简介",
+  "send_message_to": "发送消息给",
+  "create_secret_chat_confirm_title": "创建密聊",
+  "create_secret_chat_confirm_content": "确认创建一个新的密聊会话并发送邀请给对方？"
 }

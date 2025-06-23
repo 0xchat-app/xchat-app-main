@@ -1,92 +1,40 @@
-import 'package:chatcore/chat-core.dart';
 import 'package:flutter/material.dart';
-import 'package:ox_common/utils/platform_utils.dart';
-import 'package:ox_common/widgets/common_gradient_tab_bar.dart';
-
+import 'package:flutter/services.dart';
+import 'package:chatcore/chat-core.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/adapt.dart';
-import 'package:ox_common/utils/theme_color.dart';
+import 'package:ox_common/utils/string_utils.dart';
 import 'package:ox_common/utils/widget_tool.dart';
-
-import 'package:ox_common/widgets/common_appbar.dart';
-
-import 'package:ox_module_service/ox_module_service.dart';
-
-import 'contact_groups_widget.dart';
-import 'contact_media_widget.dart';
-import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-
-import 'contact_user_option_widget.dart';
+import 'package:ox_common/widgets/avatar.dart';
+import 'package:ox_common/widgets/common_toast.dart';
+import 'package:ox_localizable/ox_localizable.dart';
+import '../../utils/chat_session_utils.dart';
 
 class ContactUserInfoPage extends StatefulWidget {
   final String pubkey;
   final String? chatId;
 
-  ContactUserInfoPage({Key? key, required this.pubkey, this.chatId})
-      : super(key: key);
+  ContactUserInfoPage({
+    Key? key,
+    required this.pubkey,
+    this.chatId,
+  }) : super(key: key);
 
   @override
   State<ContactUserInfoPage> createState() => _ContactUserInfoPageState();
 }
 
-enum EInformationType {
-  media,
-  badges,
-  moments,
-  groups,
-}
-
-extension EInformationTypeEx on EInformationType {
-  String get text {
-    switch (this) {
-      case EInformationType.media:
-        return 'Media';
-      case EInformationType.badges:
-        return 'Badges';
-      case EInformationType.moments:
-        return 'Moment';
-      case EInformationType.groups:
-        return 'Groups';
-    }
-  }
-}
-
-class _ContactUserInfoPageState extends State<ContactUserInfoPage>
-    with SingleTickerProviderStateMixin {
-  final ScrollController _scrollController = ScrollController();
+class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
   late UserDBISAR userDB;
-  String myPubkey = '';
 
-  List<TabModel> modelList = [];
-
-  List<EMoreOptionType> moreOptionList = [
-    EMoreOptionType.secretChat,
-    EMoreOptionType.messageTimer,
-    EMoreOptionType.message,
-  ];
-
-  late TabController tabController;
-
-  int? lastTimestamp;
-  final int pageSize = 51;
-  bool hasLatMore = false;
-
-  List<types.CustomMessage> messagesList = [];
-
-  ValueNotifier<bool> isScrollBottom = ValueNotifier(false);
-
-  ValueNotifier<bool> isBlockStatus = ValueNotifier(false);
+  String get userName => userDB.name ?? userDB.shortEncodedPubkey;
+  String get userBio => userDB.about ?? '';
+  String get userPubkey => userDB.encodedPubkey;
 
   @override
   void initState() {
     super.initState();
     _initData();
-    tabController =
-        TabController(length: EInformationType.values.length, vsync: this);
-    _scrollController.addListener(() {
-      bool isBottom = _scrollController.position.pixels >=
-          _scrollController.position.maxScrollExtent - 50;
-      isScrollBottom.value = isBottom;
-    });
   }
 
   void _initData() {
@@ -95,107 +43,125 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage>
     setState(() {});
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
+
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ThemeColor.color200,
-      appBar: CommonAppBar(
-        backgroundColor: ThemeColor.color200,
-        useLargeTitle: false,
-        centerTitle: true,
-        title: '',
+    return CLScaffold(
+      appBar: CLAppBar(
+        title: Localized.text('ox_chat.user_detail'),
       ),
-      body: DefaultTabController(
-        length: EInformationType.values.length, // Tab 的数量
-        child: Center(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: PlatformUtils.listWidth,
-            ),
-            // padding: const EdgeInsets.all(8.0),
-            child: NestedScrollView(
-              controller: _scrollController,
-              headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-                return <Widget>[
-                  ContactUserOptionWidget(
-                      pubkey: widget.pubkey,
-                      chatId: widget.chatId,
-                      isBlockStatus: isBlockStatus),
-                  SliverAppBar(
-                    toolbarHeight: 38,
-                    pinned: true,
-                    floating: false,
-                    snap: false,
-                    primary: false,
-                    backgroundColor: ThemeColor.color200,
-                    automaticallyImplyLeading: false,
-                    bottom: PreferredSize(
-                      preferredSize: Size.fromHeight(0),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: CommonGradientTabBar(
-                          data: EInformationType.values
-                              .map((type) => type.text)
-                              .toList(),
-                          controller: tabController,
-                        ),
-                      ).setPadding(
-                        EdgeInsets.symmetric(horizontal: 24.px),
-                      ),
-                    ),
-                  ),
-                ];
-              },
-              body: TabBarView(
-                controller: tabController,
-                children: [
-                  ContactMediaWidget(
-                    isScrollBottom: isScrollBottom,
-                    userDB: userDB,
-                  ),
-                  OXModuleService.invoke(
-                    'ox_usercenter',
-                    'showUserCenterBadgeWallPage',
-                    [context],
-                    {
-                      #userDB: userDB,
-                      #isShowTabBar: false,
-                      #isShowBadgeAwards: false
-                    },
-                  ),
-                  _showMomentWidget(),
-                  ContactGroupsWidget(
-                    userDB: userDB,
-                  ),
-                ],
-              ).setPaddingOnly(top: 8.px),
+      isSectionListPage: true,
+      body: Column(
+        children: [
+          Expanded(
+            child: CLSectionListView(
+              header: _buildHeaderWidget(),
+              items: [
+                SectionListViewItem(
+                  data: [
+                    _buildNameItem(),
+                    _buildPubkeyItem(),
+                    _buildBioItem(),
+                  ],
+                ),
+              ],
             ),
           ),
+          Visibility(
+            visible: widget.chatId == null,
+            child: _buildBottomButton(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeaderWidget() {
+    return Column(
+      children: [
+        OXUserAvatar(
+          user: userDB,
+          size: 80.px,
+        ).setPaddingOnly(top: 8.px),
+        SizedBox(height: 12.px),
+        CLText.titleLarge(
+          userName,
+          textAlign: TextAlign.center,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        SizedBox(height: 8.px),
+      ],
+    );
+  }
+
+  LabelItemModel _buildNameItem() {
+    return LabelItemModel(
+      icon: ListViewIcon(
+        iconName: 'icon_setting_nickname.png',
+        package: 'ox_usercenter',
+      ),
+      title: Localized.text('ox_chat.name'),
+      isCupertinoAutoTrailing: false,
+      value$: ValueNotifier(userName),
+      onTap: () => _copyToClipboard(userName, Localized.text('ox_chat.public_key')),
+    );
+  }
+
+  LabelItemModel _buildPubkeyItem() {
+    return LabelItemModel(
+      icon: ListViewIcon.data(Icons.key),
+      title: Localized.text('ox_chat.public_key'),
+      isCupertinoAutoTrailing: false,
+      maxLines: 2,
+      value$: ValueNotifier(userPubkey.truncate(40)),
+      onTap: () => _copyToClipboard(userPubkey, Localized.text('ox_chat.public_key')),
+    );
+  }
+
+  LabelItemModel _buildBioItem() {
+    return LabelItemModel(
+      icon: ListViewIcon(
+        iconName: 'icon_setting_bio.png',
+        package: 'ox_usercenter',
+      ),
+      title: Localized.text('ox_chat.bio'),
+      value$: ValueNotifier(userBio.isEmpty ? Localized.text('ox_chat.no_bio') : userBio),
+      onTap: null,
+    );
+  }
+
+  Widget _buildBottomButton() {
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.only(
+          left: CLLayout.horizontalPadding,
+          right: CLLayout.horizontalPadding,
+          bottom: 12.px,
+        ),
+        child: CLButton.filled(
+          text: Localized.text('ox_chat.send_message'),
+          expanded: true,
+          onTap: _sendMessage,
         ),
       ),
     );
   }
 
-  Widget _showMomentWidget() {
-    return ValueListenableBuilder<bool>(
-      valueListenable: isBlockStatus,
-      builder: (context, value, child) {
-        if (value) return const SizedBox();
-        return Container(
-          padding: EdgeInsets.symmetric(horizontal: 24.px),
-          child: OXModuleService.invoke(
-            'ox_discovery',
-            'showPersonMomentsPage',
-            [context],
-            {#userDB: userDB},
-          ),
-        );
-      },
+  void _copyToClipboard(String text, String label) {
+    Clipboard.setData(ClipboardData(text: text));
+    CommonToast.instance.show(
+      context, 
+      '$label ${Localized.text('ox_common.copied_to_clipboard')}',
+    );
+  }
+
+  void _sendMessage() async {
+    await ChatSessionUtils.createSecretChatWithConfirmation(
+      context: context,
+      user: userDB,
+      isPushWithReplace: true,
     );
   }
 }

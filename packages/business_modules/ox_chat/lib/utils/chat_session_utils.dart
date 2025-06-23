@@ -13,6 +13,9 @@ import 'package:nostr_core_dart/nostr.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
+import 'package:ox_common/component.dart';
+import 'package:ox_common/login/login_manager.dart';
+import '../page/session/chat_message_page.dart';
 
 ///Title: chat_session_utils
 ///Description: TODO(Fill in by oneself)
@@ -361,4 +364,90 @@ class ChatSessionUtils {
     OXNavigator.popToRoot(context);
   }
 
+  /// Create a secret chat session with confirmation dialog
+  /// Returns true if session was created successfully, false otherwise
+  static Future<bool> createSecretChatWithConfirmation({
+    required BuildContext context,
+    required UserDBISAR user,
+    bool isPushWithReplace = false,
+  }) async {
+    // Validate current account
+    final myPubkey = Account.sharedInstance.me?.pubKey;
+    if (myPubkey == null || myPubkey.isEmpty) {
+      CommonToast.instance.show(context, 'Current account is null');
+      return false;
+    }
+
+    // Validate current circle
+    final circle = LoginManager.instance.currentCircle;
+    if (circle == null) {
+      CommonToast.instance.show(context, 'Current circle is null');
+      return false;
+    }
+
+    // Show confirmation dialog
+    final bool? confirmed = await CLAlertDialog.show<bool>(
+      context: context,
+      title: Localized.text('ox_chat.create_secret_chat_confirm_title'),
+      content: Localized.text('ox_chat.create_secret_chat_confirm_content'),
+      actions: [
+        CLAlertAction.cancel(),
+        CLAlertAction<bool>(
+          label: Localized.text('ox_common.confirm'),
+          value: true,
+          isDefaultAction: true,
+        ),
+      ],
+    );
+
+    // If user cancelled, return false
+    if (confirmed != true) {
+      return false;
+    }
+
+    // Show loading
+    await OXLoading.show();
+
+    try {
+      // Create group name
+      String groupName = '${user.name} & ${Account.sharedInstance.me!.name}';
+      
+      // Create MLS group
+      GroupDBISAR? groupDB = await Groups.sharedInstance.createMLSGroup(
+        groupName,
+        '',
+        [user.pubKey, myPubkey],
+        [myPubkey],
+        [circle.relayUrl],
+      );
+
+      if (groupDB == null) {
+        await OXLoading.dismiss();
+        CommonToast.instance.show(context, Localized.text('ox_chat.create_group_fail_tips'));
+        return false;
+      }
+
+      await OXLoading.dismiss();
+
+      // Navigate to chat page
+      ChatMessagePage.open(
+        context: null,
+        communityItem: ChatSessionModelISAR(
+          chatId: groupDB.groupId,
+          groupId: groupDB.groupId,
+          chatType: ChatType.chatGroup,
+          chatName: groupDB.name,
+          createTime: groupDB.updateTime,
+          avatar: groupDB.picture,
+        ),
+        isPushWithReplace: isPushWithReplace,
+      );
+
+      return true;
+    } catch (e) {
+      await OXLoading.dismiss();
+      CommonToast.instance.show(context, e.toString());
+      return false;
+    }
+  }
 }

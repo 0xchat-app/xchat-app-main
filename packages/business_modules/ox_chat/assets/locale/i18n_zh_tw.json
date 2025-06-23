@@ -341,5 +341,11 @@
   "str_all_chats_mark_as_read": "全部標記為已讀",
   "str_show_in_chat": "在聊天中顯示",
   "media_message_delete_tips": "您確定要刪除此本地媒體訊息嗎？",
-  "chat_input_length_over_hint": "您輸入的文字過長，無法發送。"
+  "chat_input_length_over_hint": "您輸入的文字過長，無法發送。",
+  "user_detail": "用戶詳情",
+  "name": "姓名",
+  "no_bio": "暫無簡介",
+  "send_message_to": "發送消息給",
+  "create_secret_chat_confirm_title": "創建密聊",
+  "create_secret_chat_confirm_content": "確認創建一個新的密聊會話並發送邀請給對方？"
 }
