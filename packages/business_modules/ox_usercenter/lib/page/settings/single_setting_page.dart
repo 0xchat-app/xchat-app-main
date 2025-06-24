@@ -6,7 +6,7 @@ import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 
 class SingleSettingPage extends StatefulWidget {
-  SingleSettingPage({
+  const SingleSettingPage({
     super.key,
     this.previousPageTitle,
     this.title,

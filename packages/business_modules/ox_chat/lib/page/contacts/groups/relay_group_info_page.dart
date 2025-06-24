@@ -582,7 +582,6 @@ class _RelayGroupInfoPageState extends State<RelayGroupInfoPage> {
                   context,
                   (context) => ContactGroupMemberPage(
                     groupId: widget.groupId,
-                    groupListAction: GroupListAction.send,
                     groupType: groupDBInfo != null && groupDBInfo!.closed ? GroupType.closeGroup : GroupType.openGroup,
                   ),
                   type: OXPushPageType.present,
@@ -629,7 +628,6 @@ class _RelayGroupInfoPageState extends State<RelayGroupInfoPage> {
       context,
       (context) => ContactGroupMemberPage(
         groupId: widget.groupId,
-        groupListAction: action,
         groupType: groupDBInfo != null ? (groupDBInfo!.closed ? GroupType.closeGroup : GroupType.openGroup) : null,
       ),
       type: OXPushPageType.present,

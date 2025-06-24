@@ -198,6 +198,9 @@
   "option_auto_delete": "${option} Auto-Delete",
   "set": "Set",
   "enable": "Enable",
+  "search_member": "Search members",
+  "no_search_results": "No search results",
+  "no_members": "No members",
   "disable": "Disable",
   "set_msg_auto_delete_system": "${username} Set messages to auto-delete after ${time} ",
   "disabled_msg_auto_delete_system": "${username} Disabled the auto-delete timer",
@@ -361,5 +364,9 @@
   "no_bio": "No bio",
   "send_message_to": "Send message to",
   "create_secret_chat_confirm_title": "Start a Private Chat",
-  "create_secret_chat_confirm_content": "Are you sure you want to start a new private chat and send an invitation to the other person?"
+  "create_secret_chat_confirm_content": "Are you sure you want to start a new private chat and send an invitation to the other person?",
+  "delete_group_confirm_title": "Delete Group",
+  "delete_group_confirm_content": "This action will permanently delete the group and cannot be undone. All group data will be lost.",
+  "leave_group_confirm_title": "Leave Group",
+  "leave_group_confirm_content": "You will no longer receive messages from this group and will need to be re-invited to rejoin."
 }

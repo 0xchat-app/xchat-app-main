@@ -11,14 +11,17 @@ import 'package:ox_localizable/ox_localizable.dart';
 import '../../utils/chat_session_utils.dart';
 
 class ContactUserInfoPage extends StatefulWidget {
-  final String pubkey;
+  final String? pubkey;
+  final UserDBISAR? user;
   final String? chatId;
 
   ContactUserInfoPage({
     Key? key,
-    required this.pubkey,
+    this.pubkey,
+    this.user,
     this.chatId,
-  }) : super(key: key);
+  }) : assert(pubkey != null || user != null),
+    super(key: key);
 
   @override
   State<ContactUserInfoPage> createState() => _ContactUserInfoPageState();
@@ -39,8 +42,8 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
   }
 
   void _initData() {
-    userDB = Account.sharedInstance.userCache[widget.pubkey]?.value ??
-        UserDBISAR(pubKey: widget.pubkey);
+    userDB = widget.user ?? Account.sharedInstance.userCache[widget.pubkey]?.value ??
+        UserDBISAR(pubKey: widget.pubkey!);
     setState(() {});
   }
 

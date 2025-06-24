@@ -197,6 +197,9 @@
   "option_auto_delete": "${option} 自动删除",
   "set": "设置",
   "enable": "启用",
+  "search_member": "搜索成員",
+  "no_search_results": "無搜索結果",
+  "no_members": "暫無成員",
   "disable": "禁用",
   "set_msg_auto_delete_system": "${username} 设置消息在 ${time} 天后自动删除",
   "disabled_msg_auto_delete_system": "${username} 禁用了自动删除计时器",
@@ -347,5 +350,9 @@
   "no_bio": "暫無簡介",
   "send_message_to": "發送消息給",
   "create_secret_chat_confirm_title": "創建密聊",
-  "create_secret_chat_confirm_content": "確認創建一個新的密聊會話並發送邀請給對方？"
+  "create_secret_chat_confirm_content": "確認創建一個新的密聊會話並發送邀請給對方？",
+  "delete_group_confirm_title": "刪除群組",
+  "delete_group_confirm_content": "此操作將永久刪除群組且無法撤銷，所有群組數據將丟失。",
+  "leave_group_confirm_title": "退出群組",
+  "leave_group_confirm_content": "退出後將無法接收此群組消息，需要重新邀請才能加入。"
 }

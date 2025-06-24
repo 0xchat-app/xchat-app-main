@@ -10,7 +10,6 @@ import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
-import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_localizable/ox_localizable.dart';
@@ -30,6 +29,7 @@ class ChatGroupMessagePage extends StatefulWidget {
 
 class _ChatGroupMessagePageState extends State<ChatGroupMessagePage> {
   GroupDBISAR? group;
+  late ValueNotifier<GroupDBISAR?> _groupNotifier;
   ChatGeneralHandler get handler => widget.handler;
   ChatSessionModelISAR get session => handler.session;
   String get groupId => group?.privateGroupId ?? session.groupId ?? '';
@@ -48,6 +48,7 @@ class _ChatGroupMessagePageState extends State<ChatGroupMessagePage> {
     final groupId = session.groupId;
     if (groupId == null) return;
     group = Groups.sharedInstance.groups[groupId]?.value;
+    _groupNotifier = Groups.sharedInstance.getPrivateGroupNotifier(groupId);
   }
 
   void prepareData() {
@@ -56,42 +57,46 @@ class _ChatGroupMessagePageState extends State<ChatGroupMessagePage> {
 
   @override
   Widget build(BuildContext context) {
-    GroupDBISAR? group = Groups.sharedInstance.groups[groupId]?.value;
-    String showName = group?.name ?? '';
-    UserDBISAR? otherUser;
-    if (group?.isDirectMessage == true) {
-      otherUser = Account.sharedInstance.userCache[group?.otherPubkey]?.value;
-      showName = otherUser?.getUserShowName() ?? '';
-    }
-    return CommonChatWidget(
-      handler: handler,
-      title: showName,
-      actions: [
-        Container(
-          alignment: Alignment.center,
-          child: group?.isDirectMessage == true
-              ? OXUserAvatar(
-                  chatId: session.chatId,
-                  user: otherUser,
-                  size: Adapt.px(36),
-                  isClickable: true,
-                  onReturnFromNextPage: () {
-                    if (!mounted) return;
-                    setState(() {});
-                  },
-                )
-              : OXGroupAvatar(
-                  group: group,
-                  size: Adapt.px(36),
-                  isClickable: true,
-                  onReturnFromNextPage: () {
-                    if (!mounted) return;
-                    setState(() {});
-                  },
-                ),
-        ),
-      ],
-      bottomHintParam: bottomHintParam,
+    return ValueListenableBuilder<GroupDBISAR?>(
+      valueListenable: _groupNotifier,
+      builder: (context, group, child) {
+        String showName = group?.name ?? '';
+        UserDBISAR? otherUser;
+        if (group?.isDirectMessage == true) {
+          otherUser = Account.sharedInstance.userCache[group?.otherPubkey]?.value;
+          showName = otherUser?.getUserShowName() ?? '';
+        }
+        return CommonChatWidget(
+          handler: handler,
+          title: showName,
+          actions: [
+            Container(
+              alignment: Alignment.center,
+              child: group?.isDirectMessage == true
+                  ? OXUserAvatar(
+                      chatId: session.chatId,
+                      user: otherUser,
+                      size: Adapt.px(36),
+                      isClickable: true,
+                      onReturnFromNextPage: () {
+                        if (!mounted) return;
+                        setState(() {});
+                      },
+                    )
+                  : OXGroupAvatar(
+                      group: group,
+                      size: Adapt.px(36),
+                      isClickable: true,
+                      onReturnFromNextPage: () {
+                        if (!mounted) return;
+                        setState(() {});
+                      },
+                    ),
+            ),
+          ],
+          bottomHintParam: bottomHintParam,
+        );
+      },
     );
   }
 

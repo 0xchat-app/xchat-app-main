@@ -198,6 +198,9 @@
   "option_auto_delete": "${option} 自动删除",
   "set": "设置",
   "enable": "启用",
+  "search_member": "搜索成员",
+  "no_search_results": "无搜索结果",
+  "no_members": "暂无成员",
   "disable": "禁用",
   "set_msg_auto_delete_system": "${username} 设置消息在 ${time} 后自动删除",
   "disabled_msg_auto_delete_system": "${username} 禁用了自动删除计时器",
@@ -361,5 +364,9 @@
   "no_bio": "暂无简介",
   "send_message_to": "发送消息给",
   "create_secret_chat_confirm_title": "创建密聊",
-  "create_secret_chat_confirm_content": "确认创建一个新的密聊会话并发送邀请给对方？"
+  "create_secret_chat_confirm_content": "确认创建一个新的密聊会话并发送邀请给对方？",
+  "delete_group_confirm_title": "删除群组",
+  "delete_group_confirm_content": "此操作将永久删除群组且无法撤销，所有群组数据将丢失。",
+  "leave_group_confirm_title": "退出群组",
+  "leave_group_confirm_content": "退出后将无法接收此群组消息，需要重新邀请才能加入。"
 }

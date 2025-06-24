@@ -32,7 +32,6 @@ class GroupShareUtils{
             context,
                 (context) => ContactGroupMemberPage(
               groupId: groupId,
-              groupListAction: GroupListAction.send,
               groupType: groupType,
             ),
             type: OXPushPageType.present,
@@ -44,7 +43,6 @@ class GroupShareUtils{
         context,
             (context) => ContactGroupMemberPage(
           groupId: groupId,
-          groupListAction: GroupListAction.send,
         ),
         type: OXPushPageType.present,
       );

@@ -1,217 +1,264 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_chat/model/option_model.dart';
-import 'package:ox_chat/page/contacts/contact_group_list_page.dart';
 import 'package:chatcore/chat-core.dart';
-import 'package:nostr_core_dart/nostr.dart';
-import 'package:ox_chat/page/session/chat_message_page.dart';
-import 'package:ox_chat/utils/chat_send_invited_template_helper.dart';
-import 'package:ox_common/model/chat_session_model_isar.dart';
-import 'package:ox_common/model/chat_type.dart';
+import 'package:ox_chat/page/contacts/contact_user_info_page.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/navigator/navigator.dart';
-import 'package:ox_common/widgets/common_hint_dialog.dart';
-import 'package:ox_common/widgets/common_loading.dart';
-import 'package:ox_common/widgets/common_toast.dart';
+import 'package:ox_common/utils/adapt.dart';
+import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_localizable/ox_localizable.dart';
+import 'package:lpinyin/lpinyin.dart';
 
-
-class ContactGroupMemberPage extends ContactGroupListPage {
+class ContactGroupMemberPage extends StatefulWidget {
   final String groupId;
   final String? title;
-  final GroupListAction? groupListAction;
+  final GroupType? groupType;
 
   const ContactGroupMemberPage({
+    super.key,
     required this.groupId,
     this.title,
-    this.groupListAction,
-    super.groupType,
-  }) : super(title: title);
+    this.groupType,
+  });
 
   @override
-  _ContactGroupMemberState createState() => _ContactGroupMemberState();
+  _ContactGroupMemberPageState createState() => _ContactGroupMemberPageState();
 }
 
-class _ContactGroupMemberState extends ContactGroupListPageState {
+class _ContactGroupMemberPageState extends State<ContactGroupMemberPage> {
+  final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
 
-  late final groupId;
-  String buzzBot = '066e91c4339d2c0df14797ffe478069c39663825dd4fb35f753b528d8fd8f92c';
+  List<UserDBISAR> _allMembers = [];
+  List<UserDBISAR> _filteredMembers = [];
+  Map<String, List<UserDBISAR>> _groupedMembers = {};
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    groupId = (widget as ContactGroupMemberPage).groupId;
-    _fetchUserListAsync();
-  }
-
-  Future<void> _fetchUserListAsync() async {
-    List<UserDBISAR> users = await fetchUserList();
-    if(widget.groupListAction == GroupListAction.add){
-      UserDBISAR? notifyBot = await Account.sharedInstance.getUserInfo(buzzBot);
-      if(notifyBot != null) users.add(notifyBot);
-    }
-    setState(() {
-      userList = users;
-      super.groupedUser(specialPubkey: buzzBot);
-    });
-  }
-
-  Future<List<UserDBISAR>> fetchUserList() async {
-    List<UserDBISAR> allGroupMembers = widget.groupType ==null || widget.groupType == GroupType.privateGroup ? await Groups.sharedInstance.getAllGroupMembers(groupId)
-      : await RelayGroup.sharedInstance.getGroupMembersFromLocal(groupId);
-    List<UserDBISAR> allContacts = Contacts.sharedInstance.allContacts.values.toList();
-    String owner = '';
-    if (widget.groupType ==null || widget.groupType == GroupType.privateGroup) {
-      GroupDBISAR? groupDB = Groups.sharedInstance.groups[groupId]?.value;
-      if (groupDB != null) owner = groupDB.owner;
-    } else {
-      RelayGroupDBISAR? groupDB = RelayGroup.sharedInstance.groups[groupId]?.value;
-      if (groupDB != null) owner = groupDB.author;
-    }
-    switch (widget.groupListAction) {
-      case GroupListAction.view:
-        return allGroupMembers;
-      case GroupListAction.add:
-        for(int index =0;index <allGroupMembers.length;index ++){
-          allContacts.removeWhere((element) => element.pubKey == allGroupMembers[index].pubKey);
-        }
-        return allContacts;
-      case GroupListAction.remove:
-        allGroupMembers.removeWhere((element) => element.pubKey == owner);
-        return allGroupMembers;
-      case GroupListAction.send:
-        return allContacts;
-      default:
-        return [];
-    }
+    _searchController.addListener(_onSearchChanged);
+    _loadGroupMembers();
   }
 
   @override
-  String buildTitle() {
-    final userCount = userList.length;
-    final selectedUserCount = selectedUserList.length;
-    if (widget.title == null) {
-      switch (widget.groupListAction) {
-        case GroupListAction.view:
-          return '${Localized.text('ox_chat.group_member')} ${userCount > 0 ? '($userCount)' : ''}';
-        case GroupListAction.add:
-          return '${Localized.text('ox_chat.add_member_title')} ${selectedUserCount > 0 ? '($selectedUserCount)' : ''}';
-        case GroupListAction.remove:
-          return '${Localized.text('ox_chat.remove_member_title')} ${selectedUserCount > 0 ? '($selectedUserCount)' : ''}';
-        case GroupListAction.send:
-          return '${Localized.text('ox_chat.select_chat')}';
-        default:
-          return '';
+  void dispose() {
+    _searchController.dispose();
+    _searchFocusNode.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadGroupMembers() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      List<UserDBISAR> members;
+      if (widget.groupType == null || widget.groupType == GroupType.privateGroup) {
+        members = await Groups.sharedInstance.getAllGroupMembers(widget.groupId);
+      } else {
+        members = await RelayGroup.sharedInstance.getGroupMembersFromLocal(widget.groupId);
       }
+
+      setState(() {
+        _allMembers = members;
+        _filteredMembers = members;
+        _groupMembers();
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
     }
-    return widget.title!;
+  }
+
+  void _onSearchChanged() {
+    final query = _searchController.text.trim().toLowerCase();
+    setState(() {
+      if (query.isEmpty) {
+        _filteredMembers = _allMembers;
+      } else {
+        _filteredMembers = _allMembers.where((user) {
+          final name = (user.name ?? '').toLowerCase();
+          final nickName = (user.nickName ?? '').toLowerCase();
+          final pubkey = user.encodedPubkey.toLowerCase();
+          return name.contains(query) || 
+                 nickName.contains(query) || 
+                 pubkey.contains(query);
+        }).toList();
+      }
+      _groupMembers();
+    });
+  }
+
+  void _groupMembers() {
+    _groupedMembers.clear();
+    
+    for (final user in _filteredMembers) {
+      String firstChar = '#';
+      final name = user.name ?? '';
+      if (name.isNotEmpty) {
+        final pinyin = PinyinHelper.getFirstWordPinyin(name);
+        if (pinyin.isNotEmpty && RegExp(r'^[A-Za-z]').hasMatch(pinyin)) {
+          firstChar = pinyin[0].toUpperCase();
+        }
+      }
+      
+      _groupedMembers.putIfAbsent(firstChar, () => []).add(user);
+    }
+
+    // Sort each group
+    _groupedMembers.forEach((key, users) {
+      users.sort((a, b) => (a.name ?? '').compareTo(b.name ?? ''));
+    });
+  }
+
+  String get _pageTitle {
+    if (widget.title != null) return widget.title!;
+    final memberCount = _allMembers.length;
+    return '${Localized.text('ox_chat.group_member')} ${memberCount > 0 ? '($memberCount)' : ''}';
   }
 
   @override
   Widget build(BuildContext context) {
-    return super.build(context);
-  }
-
-  @override
-  buildViewPressed() {
-    OXNavigator.pushPage(
-      context,
-      (context) => ContactGroupMemberPage(groupId:groupId,groupListAction: GroupListAction.add,),
-      type: OXPushPageType.present,
+    return CLScaffold(
+      appBar: CLAppBar(
+        title: _pageTitle,
+      ),
+      isSectionListPage: true,
+      body: Column(
+        children: [
+          _buildSearchBar(),
+          Expanded(
+            child: _buildMemberList(),
+          ),
+        ],
+      ),
     );
   }
 
-  @override
-  buildAddPressed() async {
-    if(userList.isEmpty){
-      CommonToast.instance.show(context, Localized.text('ox_chat.create_group_select_toast'));
-      return;
-    }
-    await OXLoading.show();
-    List<String> members = selectedUserList.map((user) => user.pubKey).toList();
-    OKEvent? okEvent;
-    if (widget.groupType == GroupType.privateGroup) {
-      await OXLoading.show();
-      GroupDBISAR? groupDB = await Groups.sharedInstance
-          .addMembersToPrivateGroup(groupId, members);
-      await OXLoading.dismiss();
-      _createGroup(groupDB);
-      return;
-    } else {
-      okEvent = await RelayGroup.sharedInstance.addUser(groupId, List.from(members), '');
-    }
-    await OXLoading.dismiss();
-    if(okEvent.status){
-      await CommonToast.instance.show(context, Localized.text('ox_chat.add_member_success_tips'));
-      OXNavigator.pop(context,true);
-      ChatSendInvitedTemplateHelper.sendGroupInvitedTemplate(selectedUserList,groupId, widget.groupType ?? GroupType.openGroup);
-      return;
-    } else {
-      CommonToast.instance.show(context, okEvent.message);
-    }
+  Widget _buildSearchBar() {
+    return CLSearch(
+      padding: EdgeInsets.all(16.px),
+      controller: _searchController,
+      focusNode: _searchFocusNode,
+      placeholder: Localized.text('ox_chat.search_member'),
+      showClearButton: true,
+    );
   }
 
-  @override
-  buildRemovePressed() async {
-    await OXLoading.show();
-    List<String> members = selectedUserList.map((user) => user.pubKey).toList();
-    OKEvent? okEvent;
-    if (widget.groupType == GroupType.privateGroup) {
-      await OXLoading.show();
-      GroupDBISAR? groupDB = await Groups.sharedInstance
-          .removeMembersFromPrivateGroup(groupId, members);
-      await OXLoading.dismiss();
-      _createGroup(groupDB);
-      return;
-    } else {
-      okEvent = await RelayGroup.sharedInstance.removeUser(groupId, List.from(members), '');
-    }
-    await OXLoading.dismiss();
-    if(okEvent.status){
-      await CommonToast.instance.show(context, Localized.text('ox_chat.remove_member_success_tips'));
-      OXNavigator.pop(context,true);
-      return;
-    } else {
-      CommonToast.instance.show(context, okEvent.message);
-    }
-  }
-
-  @override
-  buildSendPressed() {
-    OXCommonHintDialog.show(context,
-        title: Localized.text('ox_common.tips'),
-        content: Localized.text('ox_chat.group_share_tips'),
-        actionList: [
-          OXCommonHintAction.cancel(onTap: () {
-            OXNavigator.pop(context, false);
-          }),
-          OXCommonHintAction.sure(
-              text: Localized.text('ox_common.confirm'),
-              onTap: () async {
-                OXNavigator.pop(context, true);
-                ChatSendInvitedTemplateHelper.sendGroupInvitedTemplate(selectedUserList,groupId, widget.groupType ?? GroupType.openGroup);
-                OXNavigator.pop(context, true);
-              }),
-        ],
-        isRowAction: true);
-  }
-
-  Future<void> _createGroup(GroupDBISAR? groupDB) async {
-    if (groupDB != null) {
-      OXNavigator.pop(context);
-      ChatMessagePage.open(
-        context: context,
-        communityItem: ChatSessionModelISAR(
-          chatId: groupDB.privateGroupId,
-          groupId: groupDB.privateGroupId,
-          chatType: ChatType.chatGroup,
-          chatName: groupDB.name,
-          createTime: groupDB.updateTime,
-          avatar: groupDB.picture,
-        ),
-        isPushWithReplace: true,
+  Widget _buildMemberList() {
+    if (_isLoading) {
+      return Center(
+        child: CLProgressIndicator.circular(),
       );
-    } else {
-      CommonToast.instance.show(context, Localized.text('ox_chat.create_group_fail_tips'));
     }
+
+    if (_filteredMembers.isEmpty) {
+      return _buildEmptyState();
+    }
+
+    return CLSectionListView(
+      items: _buildSectionItems(),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    final isSearching = _searchController.text.trim().isNotEmpty;
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(32.px),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              isSearching ? Icons.search_off : Icons.people_outline,
+              size: 64.px,
+              color: ColorToken.onSurfaceVariant.of(context),
+            ),
+            SizedBox(height: 16.px),
+            CLText.bodyLarge(
+              isSearching 
+                ? Localized.text('ox_chat.no_search_results')
+                : Localized.text('ox_chat.no_members'),
+              colorToken: ColorToken.onSurfaceVariant,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  List<SectionListViewItem> _buildSectionItems() {
+    final sections = <SectionListViewItem>[];
+    
+    // Sort section keys
+    final sortedKeys = _groupedMembers.keys.toList()..sort((a, b) {
+      if (a == '#') return 1;
+      if (b == '#') return -1;
+      return a.compareTo(b);
+    });
+
+    for (final key in sortedKeys) {
+      final users = _groupedMembers[key]!;
+      sections.add(
+        SectionListViewItem(
+          header: key,
+          data: users.map((user) => _buildMemberItem(user)).toList(),
+        ),
+      );
+    }
+
+    return sections;
+  }
+
+  CustomItemModel _buildMemberItem(UserDBISAR user) {
+    return CustomItemModel(
+      leading: OXUserAvatar(
+        user: user,
+        size: 40.px,
+        isClickable: false,
+      ),
+      titleWidget: CLText.bodyLarge(
+        _getUserDisplayName(user),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+      subtitleWidget: user.about?.isNotEmpty == true
+          ? CLText.bodySmall(
+              user.about!,
+              colorToken: ColorToken.onSurfaceVariant,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            )
+          : CLText.bodySmall(
+              user.encodedPubkey,
+              colorToken: ColorToken.onSurfaceVariant,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+      onTap: () => _onMemberTap(user),
+    );
+  }
+
+  String _getUserDisplayName(UserDBISAR user) {
+    final name = user.name ?? '';
+    final nickName = user.nickName ?? '';
+    
+    if (name.isNotEmpty && nickName.isNotEmpty) {
+      return '$name($nickName)';
+    } else if (name.isNotEmpty) {
+      return name;
+    } else if (nickName.isNotEmpty) {
+      return nickName;
+    }
+    return 'Unknown User';
+  }
+
+  void _onMemberTap(UserDBISAR user) {
+    OXNavigator.pushPage(context, (_) => ContactUserInfoPage(user: user));
   }
 }

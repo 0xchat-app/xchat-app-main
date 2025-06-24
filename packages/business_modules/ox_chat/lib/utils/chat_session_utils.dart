@@ -232,97 +232,53 @@ class ChatSessionUtils {
   }
 
   static void leaveConfirmWidget(BuildContext context, int chatType, String groupId, {bool isGroupOwner = false, bool isGroupMember = false, bool hasDeleteGroupPermission = false}) {
-    String tips = '';
+    String title = '';
     String content = '';
+    String actionText = '';
+    
     if (chatType == ChatType.chatRelayGroup) {
-      tips = !isGroupMember
-          ? Localized.text('ox_common.tips')
-          : (hasDeleteGroupPermission
-          ? 'delete_group_tips'.localized()
-          : 'leave_group_tips'.localized());
-      content = hasDeleteGroupPermission
-          ? Localized.text('ox_chat.delete_and_leave_item')
-          : Localized.text('ox_chat.str_leave_group');
+      if (hasDeleteGroupPermission) {
+        title = Localized.text('ox_chat.delete_group_confirm_title');
+        content = Localized.text('ox_chat.delete_group_confirm_content');
+        actionText = Localized.text('ox_chat.delete_and_leave_item');
+      } else {
+        title = Localized.text('ox_chat.leave_group_confirm_title');
+        content = Localized.text('ox_chat.leave_group_confirm_content');
+        actionText = Localized.text('ox_chat.str_leave_group');
+      }
     } else if (chatType == ChatType.chatGroup) {
-      tips = isGroupOwner
-          ? Localized.text('ox_chat.delete_group_tips')
-          : Localized.text('ox_chat.leave_group_tips');
-      content = isGroupOwner ? Localized.text('ox_chat.delete_and_leave_item') : Localized.text('ox_chat.str_leave_group');
+      if (isGroupOwner) {
+        title = Localized.text('ox_chat.delete_group_confirm_title');
+        content = Localized.text('ox_chat.delete_group_confirm_content');
+        actionText = Localized.text('ox_chat.delete_and_leave_item');
+      } else {
+        title = Localized.text('ox_chat.leave_group_confirm_title');
+        content = Localized.text('ox_chat.leave_group_confirm_content');
+        actionText = Localized.text('ox_chat.str_leave_group');
+      }
     }
-    showModalBottomSheet(
+
+    CLAlertDialog.show<bool>(
       context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return SafeArea(
-          bottom: false,
-          child: Material(
-            type: MaterialType.transparency,
-            child: Opacity(
-              opacity: 1,
-              child: Container(
-                alignment: Alignment.bottomCenter,
-                height: 156.5.px,
-                decoration: BoxDecoration(
-                  color: ThemeColor.color180,
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(12.px), topRight: Radius.circular(12.px)),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      alignment: Alignment.center,
-                      width: double.infinity,
-                      height: 36.px,
-                      child: MyText(tips, 14, ThemeColor.color100, textAlign: TextAlign.center),
-                    ),
-                    Divider(
-                      height: 0.5.px,
-                      color: ThemeColor.color160,
-                    ),
-                    GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () {
-                        if (chatType == ChatType.chatRelayGroup) {
-                          leaveRelayGroupFn(
-                              context, hasDeleteGroupPermission, groupId);
-                        } else if (chatType == ChatType.chatGroup) {
-                          leaveGroupFn(context, groupId, isGroupOwner);
-                        }
-                      },
-                      child: Container(
-                        alignment: Alignment.center,
-                        width: double.infinity,
-                        height: 56.px,
-                        child: MyText(content, 16, ThemeColor.red, textAlign: TextAlign.center),
-                      ),
-                    ),
-                    Container(
-                      height: 8.px,
-                      color: ThemeColor.color190,
-                    ),
-                    GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () {
-                        OXNavigator.pop(context);
-                      },
-                      child: Container(
-                        alignment: Alignment.center,
-                        width: double.infinity,
-                        height: 56.px,
-                        color: ThemeColor.color180,
-                        child: MyText(Localized.text('ox_common.cancel'), 16, ThemeColor.color0, textAlign: TextAlign.center),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
+      title: title,
+      content: content,
+      actions: [
+        CLAlertAction.cancel(),
+        CLAlertAction<bool>(
+          label: actionText,
+          value: true,
+          isDestructiveAction: true,
+        ),
+      ],
+    ).then((result) {
+      if (result == true) {
+        if (chatType == ChatType.chatRelayGroup) {
+          leaveRelayGroupFn(context, hasDeleteGroupPermission, groupId);
+        } else if (chatType == ChatType.chatGroup) {
+          leaveGroupFn(context, groupId, isGroupOwner);
+        }
+      }
+    });
   }
 
   static void leaveRelayGroupFn(BuildContext context, bool hasDeleteGroupPermission, String groupId) async {

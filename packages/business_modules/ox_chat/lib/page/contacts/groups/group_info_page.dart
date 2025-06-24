@@ -1,27 +1,17 @@
-import 'package:avatar_stack/avatar_stack.dart';
-import 'package:avatar_stack/positions.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_chat/model/option_model.dart';
 import 'package:ox_chat/utils/chat_session_utils.dart';
-import 'package:ox_chat/utils/widget_tool.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
-import 'package:ox_common/utils/ox_userinfo_manager.dart';
-import 'package:ox_common/utils/theme_color.dart';
-import 'package:ox_common/widgets/common_appbar.dart';
-import 'package:ox_common/widgets/common_hint_dialog.dart';
-import 'package:ox_common/widgets/common_image.dart';
-import 'package:ox_common/widgets/common_network_image.dart';
+import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 
 import '../contact_group_list_page.dart';
 import '../contact_group_member_page.dart';
-import 'group_edit_page.dart';
-import 'group_join_requests.dart';
-import 'group_notice_page.dart';
-import 'group_setting_qrcode_page.dart';
+import 'group_name_settings_page.dart';
 
 import 'package:chatcore/chat-core.dart';
 
@@ -37,13 +27,24 @@ class GroupInfoPage extends StatefulWidget {
 class _GroupInfoPageState extends State<GroupInfoPage> {
   bool _isMute = false;
   List<UserDBISAR> groupMember = [];
-  GroupDBISAR? groupDBInfo = null;
+  late ValueNotifier<GroupDBISAR> _groupNotifier;
 
-  bool requestTag = true;
   @override
   void initState() {
     super.initState();
+    _groupNotifier = Groups.sharedInstance.getPrivateGroupNotifier(widget.groupId);
     _groupInfoInit();
+  }
+
+  void _groupInfoInit() async {
+    String groupId = widget.groupId;
+    List<UserDBISAR>? groupList =
+    await Groups.sharedInstance.getAllGroupMembers(groupId);
+
+    setState(() {
+      groupMember = groupList;
+      _isMute = _groupNotifier.value.mute;
+    });
   }
 
   @override
@@ -51,447 +52,189 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
     super.dispose();
   }
 
-  String get _getGroupNotice {
-    String groupNotice = '';
-    List<String>? pinned = groupDBInfo?.pinned;
-    if (pinned != null && pinned.length > 0) {
-      groupNotice = pinned[0];
-    }
-    return groupNotice.isEmpty ? Localized.text('ox_chat.group_notice_default_hint') : groupNotice;
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ThemeColor.color190,
-      appBar: CommonAppBar(
-        useLargeTitle: false,
-        centerTitle: true,
+    return CLScaffold(
+      appBar: CLAppBar(
         title: Localized.text('ox_chat.group_info'),
-        backgroundColor: ThemeColor.color190,
-        // actions: [
-        //   _appBarActionWidget(),
-        //   SizedBox(
-        //     width: Adapt.px(24),
-        //   ),
-        // ],
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          margin: EdgeInsets.symmetric(
-            horizontal: Adapt.px(24),
-          ),
-          child: Column(
-            children: [
-              _optionMemberWidget(),
-              _groupBaseOptionView(),
-              _muteWidget(),
-              // _groupLocationView(),
-              _leaveBtnWidget(),
-            ],
-          ),
-        ),
+      isSectionListPage: true,
+      body: CLSectionListView(
+        header: _buildHeaderWidget(),
+        items: [
+          _buildGroupInfoSection(),
+          _buildSettingsSection(),
+          _buildDangerSection(),
+        ],
       ),
     );
   }
 
-  Widget _appBarActionWidget() {
-    return GestureDetector(
-      onTap: _shareGroupFn,
-      child: Container(
-        child: CommonImage(
-          iconName: 'share_icon.png',
-          width: Adapt.px(20),
-          height: Adapt.px(20),
-          useTheme: true,
-        ),
-      ),
-    );
-  }
-
-  Widget _optionMemberWidget() {
-    return Container(
-      margin: EdgeInsets.only(
-        top: Adapt.px(12),
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _memberAvatarWidget(),
-              _addOrDelMember(),
-            ],
-          ),
-          GestureDetector(
-            onTap: () => _groupMemberOptionFn(GroupListAction.view),
-            child: Container(
-              margin: EdgeInsets.symmetric(
-                vertical: Adapt.px(16),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    height: Adapt.px(20),
-                    child: Text(
-                      Localized.text('ox_chat.view_all_members').replaceAll(r'${count}', '${groupMember.length}'),
-                      style: TextStyle(
-                        fontSize: Adapt.px(14),
-                        color: ThemeColor.color100,
-                      ),
-                    ),
-                  ),
-                  CommonImage(
-                    iconName: 'icon_more.png',
-                    width: Adapt.px(24),
-                    height: Adapt.px(24),
-                    package: 'ox_chat',
-                    useTheme: true,
-                  ),
-                ],
-              ),
+  Widget _buildHeaderWidget() {
+    return ValueListenableBuilder<GroupDBISAR>(
+      valueListenable: _groupNotifier,
+      builder: (context, groupInfo, child) {
+        return Column(
+          children: [
+            SizedBox(height: 16.px),
+            // Group avatar or member avatars
+            OXGroupAvatar(
+              group: groupInfo,
+              size: 80.px,
             ),
+            SizedBox(height: 12.px),
+            // Group name
+            CLText.titleLarge(
+              groupInfo.name.isEmpty ? '--' : groupInfo.name,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            SizedBox(height: 4.px),
+            // Member count
+            CLText.bodyMedium(
+              '${groupMember.length} ${Localized.text('ox_chat.group_member')}',
+              colorToken: ColorToken.onSurfaceVariant,
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 16.px),
+            // Action buttons
+            _buildActionButtons(),
+            SizedBox(height: 8.px),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildActionButtons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        if (_isGroupMember) ...[
+          _buildActionButton(
+            icon: Icons.person_add,
+            label: Localized.text('ox_chat.add_member_title'),
+            onTap: () => _groupMemberOptionFn(GroupListAction.add),
+          ),
+          SizedBox(width: 24.px),
+          _buildActionButton(
+            icon: Icons.person_remove,
+            label: Localized.text('ox_chat.remove_member_title'),
+            onTap: () => _groupMemberOptionFn(GroupListAction.remove),
           ),
         ],
-      ),
+      ],
     );
   }
 
-  Widget _memberAvatarWidget() {
-    int groupMemberNum = groupMember.length;
-    if (groupMemberNum == 0) return Container();
-    int renderCount = groupMemberNum > 8 ? 8 : groupMemberNum;
-    return Container(
-      margin: EdgeInsets.only(
-        right: Adapt.px(0),
-      ),
-      constraints: BoxConstraints(
-          maxWidth: Adapt.px(24 * renderCount + 24), minWidth: Adapt.px(48)),
-      child: AvatarStack(
-        settings: RestrictedPositions(
-            // maxCoverage: 0.1,
-            // minCoverage: 0.2,
-            align: StackAlign.left,
-            laying: StackLaying.first),
-        borderColor: ThemeColor.color180,
-        height: Adapt.px(48),
-        avatars: _showMemberAvatarWidget(renderCount),
-      ),
-    );
-  }
-
-  List<ImageProvider<Object>> _showMemberAvatarWidget(int renderCount) {
-    List<ImageProvider<Object>> avatarList = [];
-    for (var n = 0; n < renderCount; n++) {
-      String? groupPic = groupMember[n].picture;
-      if (groupPic != null && groupPic.isNotEmpty) {
-        avatarList.add(OXCachedImageProviderEx.create(
-          groupPic,
-          // height: Adapt.px(26),
-        ));
-      } else {
-        avatarList.add(
-            AssetImage('assets/images/user_image.png', package: 'ox_common'));
-      }
-      // CachedNetworkImageProvider()
-    }
-    return avatarList;
-  }
-
-  Widget _addOrDelMember() {
-    return Container(
-      child: Row(
-        children: [
-          _addMemberBtnWidget(),
-          _removeMemberBtnWidget(),
-        ],
-      ),
-    );
-  }
-
-  Widget _addMemberBtnWidget() {
-    return GestureDetector(
-      onTap: () => _groupMemberOptionFn(GroupListAction.add),
-      child: CommonImage(
-        iconName: 'add_circle_icon.png',
-        width: Adapt.px(48),
-        height: Adapt.px(48),
-        useTheme: true,
-      ),
-    );
-  }
-
-  Widget _removeMemberBtnWidget() {
-    // if (!_isGroupOwner) return Container();
-    return GestureDetector(
-      onTap: () => _groupMemberOptionFn(GroupListAction.remove),
-      child: Container(
-        margin: EdgeInsets.only(
-          left: Adapt.px(12),
-        ),
-        child: CommonImage(
-          iconName: 'del_circle_icon.png',
-          width: Adapt.px(48),
-          height: Adapt.px(48),
-          useTheme: true,
-        ),
-      ),
-    );
-  }
-
-  Widget _groupBaseOptionView() {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(Adapt.px(16)),
-        color: ThemeColor.color180,
-      ),
-      child: Column(
-        children: [
-          _topItemBuild(
-            title: Localized.text('ox_chat.group_name'),
-            subTitle: groupDBInfo?.name ?? '--',
-            onTap: _updateGroupNameFn,
-            isShowMoreIcon: _isGroupMember,
-          ),
-          _topItemBuild(
-            title: Localized.text('ox_chat.group_member'),
-            subTitle: groupMember.length.toString(),
-            onTap: () => _groupMemberOptionFn(GroupListAction.view),
-            isShowMoreIcon: _isGroupMember,
-          ),
-          // _topItemBuild(
-          //   title: Localized.text('ox_chat.group_qr_code'),
-          //   actionWidget: CommonImage(
-          //     iconName: 'qrcode_icon.png',
-          //     width: Adapt.px(24),
-          //     height: Adapt.px(24),
-          //     useTheme: true,
-          //   ),
-          //   onTap: _groupQrCodeFn,
-          // ),
-          // _topItemBuild(
-          //   title: Localized.text('ox_chat.group_notice'),
-          //   titleDes: _getGroupNotice,
-          //   onTap: _updateGroupNoticeFn,
-          //   isShowMoreIcon: _isGroupMember,
-          // ),
-          // _topItemBuild(
-          //   title: Localized.text('ox_chat.join_request'),
-          //   onTap: _jumpJoinRequestFn,
-          //   isShowMoreIcon: _isGroupOwner,
-          //   isShowDivider: false,
-          // ),
-        ],
-      ),
-    );
-  }
-
-  void _jumpJoinRequestFn() {
-    if (!_isGroupOwner) return;
-    OXNavigator.pushPage(
-      context,
-      (context) => GroupJoinRequests(groupId: groupDBInfo?.privateGroupId ?? ''),
-    );
-  }
-
-  Widget _muteWidget() {
-    return Container(
-      margin: EdgeInsets.only(
-        top: Adapt.px(16),
-      ),
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(Adapt.px(16)),
-        color: ThemeColor.color180,
-      ),
-      child: _topItemBuild(
-        title: Localized.text('ox_chat.mute_item'),
-        isShowDivider: false,
-        actionWidget: _muteSwitchWidget(),
-        isShowMoreIcon: false,
-      ),
-    );
-  }
-
-  Widget _groupLocationView() {
-    return Container(
-      margin: EdgeInsets.only(
-        top: Adapt.px(12),
-      ),
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(Adapt.px(16)),
-        color: ThemeColor.color180,
-      ),
-      child: Column(
-        children: [],
-      ),
-    );
-  }
-
-  Widget _muteSwitchWidget() {
-    return Container(
-      height: Adapt.px(25),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Switch(
-            value: _isMute,
-            activeColor: Colors.white,
-            activeTrackColor: ThemeColor.gradientMainStart,
-            inactiveThumbColor: Colors.white,
-            inactiveTrackColor: ThemeColor.color160,
-            onChanged: (value) => _changeMuteFn(value),
-            materialTapTargetSize: MaterialTapTargetSize.padded,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _topItemBuild({
-    String? title,
-    String? titleDes,
-    String? subTitle,
-    bool isShowMoreIcon = true,
-    bool isShowDivider = true,
-    Widget? actionWidget,
-    GestureTapCallback? onTap,
+  Widget _buildActionButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
   }) {
     return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTap: onTap != null ? onTap : () {},
+      onTap: onTap,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            margin: EdgeInsets.symmetric(
-              horizontal: Adapt.px(16),
+            width: 48.px,
+            height: 48.px,
+            decoration: BoxDecoration(
+              color: ColorToken.surface.of(context),
+              borderRadius: BorderRadius.circular(24.px),
             ),
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(
-              vertical: Adapt.px(12),
-            ),
-            // height: Adapt.px(52),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  // margin: EdgeInsets.only(left: Adapt.px(12)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title ?? '',
-                        style: TextStyle(
-                          color: ThemeColor.color0,
-                          fontSize: Adapt.px(16),
-                        ),
-                      ),
-                      titleDes != null
-                          ? Container(
-                              width: Adapt.px(280),
-                              margin: EdgeInsets.only(
-                                top: Adapt.px(4),
-                              ),
-                              child: Text(
-                                titleDes,
-                                style: TextStyle(
-                                  fontSize: Adapt.px(14),
-                                  fontWeight: FontWeight.w400,
-                                  color: ThemeColor.color100,
-                                ),
-                              ),
-                            )
-                          : Container(),
-                    ],
-                  ),
-                ),
-                Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      actionWidget != null ? actionWidget : Container(),
-                      subTitle != null
-                          ? Text(
-                              subTitle,
-                              style: TextStyle(
-                                fontSize: Adapt.px(14),
-                                fontWeight: FontWeight.w400,
-                                color: ThemeColor.color100,
-                              ),
-                            )
-                          : Container(),
-                      isShowMoreIcon
-                          ? CommonImage(
-                              iconName: 'icon_arrow_more.png',
-                              width: Adapt.px(24),
-                              height: Adapt.px(24),
-                            )
-                          : Container(),
-                    ],
-                  ),
-                ),
-              ],
+            child: CLIcon(
+              icon: icon,
+              size: 24.px,
+              color: ColorToken.onSurface.of(context),
             ),
           ),
-          Visibility(
-            visible: isShowDivider,
-            child: Divider(
-              height: Adapt.px(0.5),
-              color: ThemeColor.color160,
-            ),
+          SizedBox(height: 4.px),
+          CLText.labelSmall(
+            label,
+            colorToken: ColorToken.onSurfaceVariant,
+            textAlign: TextAlign.center,
           ),
         ],
       ),
     );
   }
 
-  Widget _leaveBtnWidget() {
-    String content = '';
-    if (!_isGroupMember) {
-      content = 'delete_and_leave_item'.localized();
-    } else {
-      content = _isGroupOwner ? Localized.text('ox_chat.delete_and_leave_item') : Localized.text('ox_chat.str_leave_group');
-    }
-    return GestureDetector(
-      child: Container(
-        margin: EdgeInsets.only(
-          top: Adapt.px(16),
-          bottom: Adapt.px(50),
+  SectionListViewItem _buildGroupInfoSection() {
+    return SectionListViewItem(
+      data: [
+        LabelItemModel(
+          title: Localized.text('ox_chat.group_name'),
+          value$: ValueNotifier(_groupNotifier.value.name.isEmpty ? '--' : _groupNotifier.value.name),
+          onTap: _isGroupMember ? _updateGroupNameFn : null,
         ),
-        width: double.infinity,
-        height: Adapt.px(48),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          color: ThemeColor.color180,
+        LabelItemModel(
+          title: Localized.text('ox_chat.group_member'),
+          value$: ValueNotifier('${groupMember.length}'),
+          onTap: () => _groupMemberOptionFn(GroupListAction.view),
         ),
-        alignment: Alignment.center,
-        child: Text(
-          content,
-          style: TextStyle(
-            color: ThemeColor.red,
-            fontSize: Adapt.px(16),
-            fontWeight: FontWeight.w600,
+      ],
+    );
+  }
+
+  SectionListViewItem _buildSettingsSection() {
+    final muteNotifier = ValueNotifier(_isMute);
+    muteNotifier.addListener(() {
+      _changeMuteFn(muteNotifier.value);
+    });
+    
+    return SectionListViewItem(
+      data: [
+        SwitcherItemModel(
+          title: Localized.text('ox_chat.mute_item'),
+          value$: muteNotifier,
+        ),
+      ],
+    );
+  }
+
+  SectionListViewItem _buildDangerSection() {
+    String buttonText = _isGroupOwner 
+        ? Localized.text('ox_chat.delete_and_leave_item')
+        : Localized.text('ox_chat.str_leave_group');
+    
+    return SectionListViewItem(
+      data: [
+        CustomItemModel(
+          customWidgetBuilder: (context) => GestureDetector(
+            onTap: () {
+              ChatSessionUtils.leaveConfirmWidget(
+                context, 
+                ChatType.chatGroup, 
+                widget.groupId, 
+                isGroupOwner: _isGroupOwner,
+              );
+            },
+            child: Container(
+              width: double.infinity,
+              height: 48.px,
+              decoration: BoxDecoration(
+                color: ColorToken.surface.of(context),
+                borderRadius: BorderRadius.circular(12.px),
+              ),
+              alignment: Alignment.center,
+              child: CLText.bodyLarge(
+                buttonText,
+                colorToken: ColorToken.error,
+              ),
+            ),
           ),
         ),
-      ),
-      onTap: () {
-        ChatSessionUtils.leaveConfirmWidget(context, ChatType.chatGroup, widget.groupId, isGroupOwner: _isGroupOwner);
-      },
+      ],
     );
   }
 
   bool get _isGroupOwner {
     UserDBISAR? userInfo = Account.sharedInstance.me;
-    if (userInfo == null || groupDBInfo == null) return false;
+    if (userInfo == null) return false;
 
-    return userInfo.pubKey == groupDBInfo?.owner;
+    return userInfo.pubKey == _groupNotifier.value.owner;
   }
 
   bool get _isGroupMember {
@@ -505,60 +248,22 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
   void _updateGroupNameFn() async {
     if (!_isGroupMember) return;
 
-    bool? result = await OXNavigator.pushPage(
-      context,
-      (context) => GroupEditPage(
-        pageType: EGroupEditType.groupName,
-        groupId: widget.groupId,
-      ),
-    );
-
-    if (result != null && result) _groupInfoInit();
-  }
-
-  void _updateGroupNoticeFn() async {
-    if (!_isGroupOwner) return;
-    await OXNavigator.pushPage(
-      context,
-      (context) => GroupNoticePage(
-        groupId: widget.groupId,
-      ),
-    );
-    _groupInfoInit();
-  }
-
-  void _groupQrCodeFn() {
-    if (!_isGroupMember) return _DisableShareDialog();
     OXNavigator.pushPage(
       context,
-      (context) => GroupSettingQrcodePage(groupId: widget.groupId, groupType: GroupType.privateGroup),
-    );
-  }
-
-  void _DisableShareDialog() {
-    OXCommonHintDialog.show(
-      context,
-      title: "",
-      content: Localized.text('ox_chat.enabled_group_join_verification'),
-      actionList: [
-        OXCommonHintAction.sure(
-          text: Localized.text('ox_common.confirm'),
-          onTap: () => OXNavigator.pop(context),
-        ),
-      ],
-      isRowAction: true,
-    );
-  }
-
-  void _shareGroupFn() {
-    if (!_isGroupMember) return _DisableShareDialog();
-    OXNavigator.pushPage(
-      context,
-      (context) => ContactGroupMemberPage(
-        groupId: widget.groupId,
-        groupListAction: GroupListAction.send,
+      (context) => GroupNameSettingsPage(
+        groupInfo: _groupNotifier.value,
+        previousPageTitle: Localized.text('ox_chat.group_info'),
       ),
-      type: OXPushPageType.present,
+    );
+  }
+
+  void _groupMemberOptionFn(GroupListAction action) async {
+    if (!_isGroupMember) return;
+    OXNavigator.pushPage(
+      context, (context) => ContactGroupMemberPage(
+        groupId: widget.groupId,
+        groupType: GroupType.privateGroup,
+      ),
     );
   }
 
@@ -577,33 +282,5 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
     setState(() {
       _isMute = value;
     });
-  }
-
-  void _groupMemberOptionFn(GroupListAction action) async {
-    if (!_isGroupMember) return;
-    // if (GroupListAction.add == action && !_isGroupOwner) return _shareGroupFn();
-    bool? result = await OXNavigator.pushPage(
-      context,
-      (context) => ContactGroupMemberPage(
-        groupId: widget.groupId,
-        groupListAction: action,
-        groupType: GroupType.privateGroup,
-      ),
-      type: OXPushPageType.present,
-    );
-    if (result != null && result) _groupInfoInit();
-  }
-
-  void _groupInfoInit() async {
-    String groupId = widget.groupId;
-    GroupDBISAR? groupDB = await Groups.sharedInstance.myGroups[groupId]?.value;
-    List<UserDBISAR>? groupList =
-        await Groups.sharedInstance.getAllGroupMembers(groupId);
-
-    if (groupDB != null) {
-      groupDBInfo = groupDB;
-      groupMember = groupList;
-      setState(() {});
-    }
   }
 }
