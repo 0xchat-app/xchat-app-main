@@ -293,7 +293,7 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
     if (!_isGroupOwner) return;
     OXNavigator.pushPage(
       context,
-      (context) => GroupJoinRequests(groupId: groupDBInfo?.groupId ?? ''),
+      (context) => GroupJoinRequests(groupId: groupDBInfo?.privateGroupId ?? ''),
     );
   }
 

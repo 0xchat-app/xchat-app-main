@@ -275,7 +275,7 @@ class OXGroupAvatarState extends State<OXGroupAvatar> {
     if (widget.groupId != null) {
       groupId = widget.groupId ?? '';
     }else{
-      groupId = widget.group?.groupId ?? '';
+      groupId = widget.group?.privateGroupId ?? '';
     }
     _getMembers();
     _imageLoader = _loadImageFromCache();
@@ -331,7 +331,7 @@ class OXGroupAvatarState extends State<OXGroupAvatar> {
     final groupDB = widget.group;
     if (groupDB != null) {
       await OXModuleService.pushPage(context, 'ox_chat', 'GroupInfoPage', {
-        'groupId': groupDB.groupId,
+        'groupId': groupDB.privateGroupId,
       });
     }
   }

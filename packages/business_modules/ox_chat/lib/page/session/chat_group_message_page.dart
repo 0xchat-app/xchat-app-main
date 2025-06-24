@@ -32,7 +32,7 @@ class _ChatGroupMessagePageState extends State<ChatGroupMessagePage> {
   GroupDBISAR? group;
   ChatGeneralHandler get handler => widget.handler;
   ChatSessionModelISAR get session => handler.session;
-  String get groupId => group?.groupId ?? session.groupId ?? '';
+  String get groupId => group?.privateGroupId ?? session.groupId ?? '';
 
   ChatHintParam? bottomHintParam;
 

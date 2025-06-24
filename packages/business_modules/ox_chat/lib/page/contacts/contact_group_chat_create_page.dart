@@ -321,8 +321,8 @@ class _ContactGroupChatCreatePageState extends State<ContactGroupChatCreatePage>
       ChatMessagePage.open(
         context: context,
         communityItem: ChatSessionModelISAR(
-          chatId: groupDB.groupId,
-          groupId: groupDB.groupId,
+          chatId: groupDB.privateGroupId,
+          groupId: groupDB.privateGroupId,
           chatType: ChatType.chatGroup,
           chatName: groupDB.name,
           createTime: groupDB.updateTime,

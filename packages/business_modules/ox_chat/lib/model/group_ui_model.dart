@@ -41,7 +41,7 @@ class GroupUIModel {
     if(groupDB.name.isEmpty) groupDB.name = groupDB.shortGroupId;
     return GroupUIModel(
       name: groupDB.name,
-      groupId: groupDB.groupId,
+      groupId: groupDB.privateGroupId,
       about: groupDB.about,
       members: groupDB.members,
       mute: groupDB.mute,

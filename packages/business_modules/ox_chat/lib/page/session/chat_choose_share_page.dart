@@ -277,7 +277,7 @@ class _ChatChooseSharePageState extends State<ChatChooseSharePage> with ShareIte
           List<ChatSessionModelISAR> groupSessions = [];
           tempGroupList.forEach((element) {
             groupSessions.add(ChatSessionModelISAR(
-              chatId: element.groupId,
+              chatId: element.privateGroupId,
               chatType: ChatType.chatGroup,
             ));
           });

@@ -389,7 +389,7 @@ class _GroupSettingQrcodePageState extends State<GroupSettingQrcodePage> {
   void _getGroupQrcode(GroupDBISAR groupDB){
     String relay = groupDB.relay ?? '';
     String groupOwner = groupDB.owner;
-    String groupId = groupDB.groupId;
+    String groupId = groupDB.privateGroupId;
     _groupNevent = Groups.encodeGroup(groupId,[relay],groupOwner);
     _groupQrCodeUrl = CustomURIHelper.createNostrURI(_groupNevent ?? '');
   }

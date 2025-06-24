@@ -178,7 +178,7 @@ class ChatNostrSchemeHandle {
     String link = CustomURIHelper.createModuleActionURI(
         module: 'ox_chat',
         action: 'groupInfoPage',
-        params: {'groupId': groupDB?.groupId ?? ''});
+        params: {'groupId': groupDB?.privateGroupId ?? ''});
     String? name = groupDB?.name.isEmpty == true ? groupDB?.shortGroupId : groupDB?.name;
     String? about = groupDB?.about?.isEmpty == true ? groupDB?.shortGroupId : groupDB?.about;
     Map<String, dynamic> map = {};

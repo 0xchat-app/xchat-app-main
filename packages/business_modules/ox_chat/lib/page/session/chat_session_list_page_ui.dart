@@ -208,7 +208,7 @@ extension ChatSessionListPageUI on ChatSessionListPageState{
             (item.chatType == ChatType.chatGroup)
                 ? Center(
                 child: GroupedAvatar(
-                  avatars: _groupMembersCache[item.groupId] ?? [],
+                  avatars: _groupMembersCache[item.privateGroupId] ?? [],
                   size: 60.px,
                 ))
                 : ClipRRect(
