@@ -200,6 +200,8 @@
   "search_member": "搜索成員",
   "no_search_results": "無搜索結果",
   "no_members": "暫無成員",
+  "no_removable_members": "暫無可移除成員",
+  "remove_member_confirm_content": "確定要從群組中移除 {count} 名成員嗎？",
   "disable": "禁用",
   "set_msg_auto_delete_system": "${username} 设置消息在 ${time} 天后自动删除",
   "disabled_msg_auto_delete_system": "${username} 禁用了自动删除计时器",

@@ -201,6 +201,8 @@
   "search_member": "Search members",
   "no_search_results": "No search results",
   "no_members": "No members",
+  "no_removable_members": "No removable members",
+  "remove_member_confirm_content": "Are you sure you want to remove {count} member(s) from the group?",
   "disable": "Disable",
   "set_msg_auto_delete_system": "${username} Set messages to auto-delete after ${time} ",
   "disabled_msg_auto_delete_system": "${username} Disabled the auto-delete timer",

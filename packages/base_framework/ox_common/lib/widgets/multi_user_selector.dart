@@ -246,10 +246,32 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
   }
 
   ListViewItem _buildUserItem(SelectableUser user) {
-    return MultiSelectItemModel<String>(
-      title: user.displayName,
-      value$: user.selected$,
-      icon: null,
+    return CustomItemModel(
+      leading: OXUserAvatar(
+        user: null,
+        imageUrl: user.avatarUrl,
+        size: 40.px,
+      ),
+      isCupertinoAutoTrailing: false,
+      titleWidget: Row(
+        children: [
+          Expanded(
+            child: CLText.bodyLarge(user.displayName),
+          ),
+          ValueListenableBuilder<bool>(
+            valueListenable: user.selected$,
+            builder: (context, isSelected, child) {
+              return CLIcon(
+                icon: isSelected ? Icons.check_circle : Icons.radio_button_unchecked,
+                size: 24.px,
+                color: isSelected
+                    ? ColorToken.primary.of(context)
+                    : ColorToken.onSurfaceVariant.of(context),
+              );
+            },
+          ),
+        ],
+      ),
       onTap: () {
         _toggleSelect(user);
       },

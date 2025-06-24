@@ -11,7 +11,9 @@ import 'package:ox_localizable/ox_localizable.dart';
 
 import '../contact_group_list_page.dart';
 import '../contact_group_member_page.dart';
+import 'group_add_members_page.dart';
 import 'group_name_settings_page.dart';
+import 'group_remove_members_page.dart';
 
 import 'package:chatcore/chat-core.dart';
 
@@ -115,13 +117,13 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
           _buildActionButton(
             icon: Icons.person_add,
             label: Localized.text('ox_chat.add_member_title'),
-            onTap: () => _groupMemberOptionFn(GroupListAction.add),
+            onTap: _addMembersFn,
           ),
           SizedBox(width: 24.px),
           _buildActionButton(
             icon: Icons.person_remove,
             label: Localized.text('ox_chat.remove_member_title'),
-            onTap: () => _groupMemberOptionFn(GroupListAction.remove),
+            onTap: _removeMembersFn,
           ),
         ],
       ],
@@ -251,6 +253,30 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
     OXNavigator.pushPage(
       context,
       (context) => GroupNameSettingsPage(
+        groupInfo: _groupNotifier.value,
+        previousPageTitle: Localized.text('ox_chat.group_info'),
+      ),
+    );
+  }
+
+  void _addMembersFn() async {
+    if (!_isGroupMember) return;
+    
+    OXNavigator.pushPage(
+      context,
+      (context) => GroupAddMembersPage(
+        groupInfo: _groupNotifier.value,
+        previousPageTitle: Localized.text('ox_chat.group_info'),
+      ),
+    );
+  }
+
+  void _removeMembersFn() async {
+    if (!_isGroupMember) return;
+    
+    OXNavigator.pushPage(
+      context,
+      (context) => GroupRemoveMembersPage(
         groupInfo: _groupNotifier.value,
         previousPageTitle: Localized.text('ox_chat.group_info'),
       ),
