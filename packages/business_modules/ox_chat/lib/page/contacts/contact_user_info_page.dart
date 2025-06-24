@@ -30,6 +30,7 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
   String get userName => userDB.name ?? userDB.shortEncodedPubkey;
   String get userBio => userDB.about ?? '';
   String get userPubkey => userDB.encodedPubkey;
+  String get userNip05 => userDB.dns ?? '';
 
   @override
   void initState() {
@@ -60,8 +61,8 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
               items: [
                 SectionListViewItem(
                   data: [
-                    _buildNameItem(),
                     _buildPubkeyItem(),
+                    _buildNIP05Item(),
                     _buildBioItem(),
                   ],
                 ),
@@ -96,16 +97,17 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
     );
   }
 
-  LabelItemModel _buildNameItem() {
+  LabelItemModel _buildNIP05Item() {
     return LabelItemModel(
       icon: ListViewIcon(
         iconName: 'icon_setting_nickname.png',
         package: 'ox_usercenter',
       ),
-      title: Localized.text('ox_chat.name'),
+      title: Localized.text('ox_chat.nip05'),
       isCupertinoAutoTrailing: false,
-      value$: ValueNotifier(userName),
-      onTap: () => _copyToClipboard(userName, Localized.text('ox_chat.public_key')),
+      maxLines: 1,
+      value$: ValueNotifier(userNip05),
+      onTap: () => _copyToClipboard(userNip05, Localized.text('ox_chat.nip05')),
     );
   }
 
@@ -114,8 +116,8 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
       icon: ListViewIcon.data(Icons.key),
       title: Localized.text('ox_chat.public_key'),
       isCupertinoAutoTrailing: false,
-      maxLines: 2,
-      value$: ValueNotifier(userPubkey.truncate(40)),
+      maxLines: 1,
+      value$: ValueNotifier(userPubkey.truncate(24)),
       onTap: () => _copyToClipboard(userPubkey, Localized.text('ox_chat.public_key')),
     );
   }

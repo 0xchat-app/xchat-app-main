@@ -357,8 +357,9 @@
   "require_file_server": "Please set up a file server before sending images or videos.",
   "user_detail": "User Detail",
   "name": "Name",
+  "nip05": "NIP05",
   "no_bio": "No bio",
   "send_message_to": "Send message to",
-  "create_secret_chat_confirm_title": "Create Secret Chat",
-  "create_secret_chat_confirm_content": "Are you sure you want to create a new secret chat session and send an invitation to the other party?"
+  "create_secret_chat_confirm_title": "Start a Private Chat",
+  "create_secret_chat_confirm_content": "Are you sure you want to start a new private chat and send an invitation to the other person?"
 }
