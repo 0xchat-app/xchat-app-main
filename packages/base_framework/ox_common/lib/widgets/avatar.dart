@@ -265,30 +265,30 @@ class OXGroupAvatarState extends State<OXGroupAvatar> {
 
   List<String> _avatars = [];
 
-  String groupId = '';
+  String get groupId => widget.groupId ?? widget.group?.privateGroupId ?? '';
 
-  late Future<ImageProvider> _imageLoader;
+  late Future _imageLoader;
 
   @override
   void initState() {
     super.initState();
-    if (widget.groupId != null) {
-      groupId = widget.groupId ?? '';
-    }else{
-      groupId = widget.group?.privateGroupId ?? '';
-    }
-    _getMembers();
-    _imageLoader = _loadImageFromCache();
+    _imageLoader = _getMembers();
   }
 
-  Future<ImageProvider> _loadImageFromCache() async {
-    return throw Exception('load error');
-  }
-
-  void _getMembers() async {
+  Future _getMembers() async {
     List<UserDBISAR> groupList = await Groups.sharedInstance.getAllGroupMembers(groupId);
     _avatars = groupList.map((element) => element.picture ?? '').toList();
     _avatars.removeWhere((element) => element.isEmpty);
+  }
+
+  @override
+  void didUpdateWidget(covariant OXGroupAvatar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.groupId != oldWidget.groupId || widget.group != oldWidget.group) {
+      _getMembers().then((_) {
+        setState(() {});
+      });
+    }
   }
 
   @override
@@ -296,33 +296,23 @@ class OXGroupAvatarState extends State<OXGroupAvatar> {
     return FutureBuilder(
       future: _imageLoader,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting || snapshot.hasError) {
-          if (_avatars.isEmpty) {
-            return BaseAvatarWidget(
-              defaultImageName: defaultImageName,
-              size: widget.size,
-              imageUrl: '',
-              isCircular: widget.isCircular,
-              isClickable: widget.isClickable,
-              onTap: _onTap,
-            );
-          }
-          return GroupedAvatar(
-            avatars: _avatars,
+        if (snapshot.connectionState != ConnectionState.done || _avatars.isEmpty) {
+          return BaseAvatarWidget(
+            defaultImageName: defaultImageName,
             size: widget.size,
-            isCircular: widget.isCircular,
-            isClickable: widget.isClickable,
-            onTap: _onTap,
-          );
-        } else {
-          return GroupedAvatar(
-            avatars: _avatars,
-            size: widget.size,
+            imageUrl: '',
             isCircular: widget.isCircular,
             isClickable: widget.isClickable,
             onTap: _onTap,
           );
         }
+        return GroupedAvatar(
+          avatars: _avatars,
+          size: widget.size,
+          isCircular: widget.isCircular,
+          isClickable: widget.isClickable,
+          onTap: _onTap,
+        );
       },
     );
   }

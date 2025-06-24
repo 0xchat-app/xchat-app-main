@@ -50,7 +50,9 @@ class _AddFileServerPageState extends State<AddFileServerPage> {
         autoTrailing: false,
       ),
       isSectionListPage: true,
-      body: LoseFocusWrap(_buildBody()),
+      body: LoseFocusWrap(
+        child: _buildBody(),
+      ),
     );
   }
 

@@ -91,18 +91,13 @@ class OXCupertinoSheetRoute<T> extends CupertinoSheetRoute<T> {
     super.settings,
     required WidgetBuilder builder,
   }) : super(
-    builder: (ctx) => FractionallySizedBox(
-      alignment: Alignment.topCenter,
-      // Fix issue in CupertinoSheetRoute where only offset was applied without reducing content height, causing bottom overflow
-      heightFactor: 1 - 0.08,
-      child: MediaQuery(
-        data: MediaQuery.of(ctx).copyWith(
-          padding: MediaQuery.of(ctx).padding.copyWith(top: 12),
-        ),
+    builder: (ctx) => MediaQuery(
+      data: MediaQuery.of(ctx).copyWith(
+        padding: MediaQuery.of(ctx).padding.copyWith(top: 12),
+      ),
+      child: HeroControllerScope(
+        controller: HeroController(),
         child: Navigator(
-          observers: [
-            HeroController(),
-          ],
           onGenerateRoute: (_) => CupertinoPageRoute(
             builder: builder,
           ),
@@ -110,27 +105,4 @@ class OXCupertinoSheetRoute<T> extends CupertinoSheetRoute<T> {
       ),
     ),
   );
-
-  @override
-  void install() {
-    super.install();
-    animation?.addStatusListener(_onStatusChanged);
-  }
-
-  void _onStatusChanged(AnimationStatus status) async {
-    if (status == AnimationStatus.dismissed) {
-      // HACK: delegatedTransition in CupertinoSheetRoute calls setSystemUIOverlayStyle
-      // too early (before the sheet is fully removed), so we wait an extra 100ms
-      // to ensure the sheet is actually dismissed before restoring the app's overlay style.
-      await Future.delayed(Duration(milliseconds: 100));
-      final style = themeManager.themeStyle.toOverlayStyle;
-      SystemChrome.setSystemUIOverlayStyle(style);
-    }
-  }
-
-  @override
-  void dispose() {
-    animation?.removeStatusListener(_onStatusChanged);
-    super.dispose();
-  }
 }

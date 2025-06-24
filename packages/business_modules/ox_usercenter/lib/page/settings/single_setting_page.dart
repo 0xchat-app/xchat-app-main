@@ -56,7 +56,7 @@ class SingleSettingPageState extends State<SingleSettingPage> {
         ],
       ),
       body: LoseFocusWrap(
-        ListView(
+        child: ListView(
           padding: EdgeInsets.symmetric(
             horizontal: 16.px,
             vertical: 12.px,

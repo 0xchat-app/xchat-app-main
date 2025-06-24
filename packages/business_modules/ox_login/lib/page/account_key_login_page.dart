@@ -49,7 +49,9 @@ class _AccountKeyLoginPageState extends State<AccountKeyLoginPage> with LoginMan
       appBar: CLAppBar(
         title: Localized.text('ox_login.login_button'),
       ),
-      body: LoseFocusWrap(_buildBody()),
+      body: LoseFocusWrap(
+        child: _buildBody(),
+      ),
     );
   }
 

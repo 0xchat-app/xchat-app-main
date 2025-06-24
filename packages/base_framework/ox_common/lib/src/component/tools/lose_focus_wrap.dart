@@ -1,9 +1,9 @@
 import 'package:flutter/widgets.dart';
 
 class LoseFocusWrap extends StatelessWidget {
-  final Widget body;
+  final Widget child;
 
-  LoseFocusWrap(this.body);
+  LoseFocusWrap({required this.child});
 
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -11,7 +11,7 @@ class LoseFocusWrap extends StatelessWidget {
       onTap: () {
         FocusScope.of(context).requestFocus(FocusNode());
       },
-      child: body,
+      child: child,
     );
   }
 }

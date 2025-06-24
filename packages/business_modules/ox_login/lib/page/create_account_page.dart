@@ -80,7 +80,9 @@ class _CreateAccountPageState extends State<CreateAccountPage> with LoginManager
       appBar: CLAppBar(
         title: Localized.text('ox_login.create_account'),
       ),
-      body: LoseFocusWrap(_buildBody()),
+      body: LoseFocusWrap(
+        child: _buildBody(),
+      ),
     );
   }
 
