@@ -11,16 +11,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_web_plugins:
-    sdk: flutter
-  plugin_platform_interface: ^2.0.2
 
   ox_module_service:
     path: ../../base_framework/ox_module_service
   ox_common:
     path: ../../base_framework/ox_common
-  ox_network:
-    path: ../../base_framework/ox_network
   ox_theme:
     path: ../../base_framework/ox_theme
   ox_localizable:

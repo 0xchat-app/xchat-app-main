@@ -11,11 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-
-  keframe: ^3.0.0
   pull_to_refresh_notification: ^3.1.0
-  awesome_select: ^6.0.0
-  flutter_cache_manager: 3.3.1
 
   ox_module_service:
     path: ../../base_framework/ox_module_service
@@ -29,7 +25,6 @@ dependencies:
     path: ../../base_framework/ox_localizable
   ox_cache_manager:
     path: ../../base_framework/ox_cache_manager
-  waterfall_flow: ^3.0.2
   ox_push:
     path: ../../base_framework/ox_push
 
