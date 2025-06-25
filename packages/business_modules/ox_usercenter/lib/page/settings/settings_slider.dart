@@ -78,7 +78,7 @@ class SettingSliderState extends State<SettingSlider> {
         ),
         LabelItemModel(
           icon: ListViewIcon(iconName: 'icon_setting_circles.png', package: 'ox_usercenter'),
-          title: 'Circles',
+          title: 'Circle',
           onTap: circleItemOnTap,
         ),
       ]),
