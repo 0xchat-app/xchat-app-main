@@ -1,4 +1,3 @@
-
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:intl/intl.dart';
 
@@ -10,33 +9,73 @@ class OXDateUtils {
     return format.format(date);
   }
 
-  /// Returned "Yesterday" Today "Just" "a minute ago" "an hour ago"
-  static String convertTimeFormatString2(int timestamp, {String pattern = 'MM-dd HH:mm'}){
-    var format = new DateFormat('yyyy-MM-dd');
-    var curDateString = format.format(DateTime.now());
-    var curDateLoose = format.parse(curDateString);
-    int todayTimeStamp = curDateLoose.millisecondsSinceEpoch;
-    double time = (todayTimeStamp - timestamp)/1000;
-    if(time <= 0){
+  static String convertTimeFormatString2(int timestamp, {String pattern = 'MM-dd HH:mm'}) {
+    final DateTime messageTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
+    final DateTime now = DateTime.now();
+    
+    final DateTime today = DateTime(now.year, now.month, now.day);
+    final DateTime msgDate = DateTime(messageTime.year, messageTime.month, messageTime.day);
+    final int daysDiff = today.difference(msgDate).inDays;
+    
+    if (daysDiff == 0) {
+      return formatTimestamp(timestamp, pattern: 'HH:mm');
+    }
+    
+    if (daysDiff == 1) {
+      return Localized.text('ox_common.yesterday') + ' ' + formatTimestamp(timestamp, pattern: 'HH:mm');
+    }
+    
+    if (daysDiff <= 7) {
+      return _getWeekdayText(messageTime.weekday);
+    }
+    
+    if (daysDiff <= 30) {
+      return _getLocalizedDateFormat(messageTime, false);
+    }
+    
+    return _getLocalizedDateFormat(messageTime, true);
+  }
 
-      int nowTimeStamp = DateTime.now().millisecondsSinceEpoch;
-      double t = (nowTimeStamp - timestamp)/1000;
-      if(t <= 60){
-        return Localized.text('ox_common.now');
-      }
-      else if(t > 60 && t < 60*60){
-        return (t~/60).toString() + Localized.text('ox_common.oneminute');
-      }
-      else if(t >= 60*60 && t < 60*60*24){
-        return (t~/(60*60)).toString() + Localized.text('ox_common.onehour');
-      }
-      return Localized.text('ox_common.today') + ' ' + formatTimestamp(timestamp, pattern : 'HH:mm');
+  static String _getWeekdayText(int weekday) {
+    const List<String> weekdayKeys = [
+      'ox_common.monday',
+      'ox_common.tuesday', 
+      'ox_common.wednesday',
+      'ox_common.thursday',
+      'ox_common.friday',
+      'ox_common.saturday',
+      'ox_common.sunday'
+    ];
+    
+    // weekday: 1=Monday, 7=Sunday
+    String key = weekdayKeys[weekday - 1];
+    String localizedText = Localized.text(key);
+    
+    if (localizedText == key) {
+      const List<String> englishWeekdays = [
+        'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
+      ];
+      return englishWeekdays[weekday - 1];
     }
-    else if(time > 0 && time <= 3600 * 24){
-      return Localized.text('ox_common.yesterday') + ' ' + formatTimestamp(timestamp, pattern : 'HH:mm');
-    }
-    else{
-      return formatTimestamp(timestamp, pattern : pattern);
+    
+    return localizedText;
+  }
+
+  static String _getLocalizedDateFormat(DateTime dateTime, bool includeYear) {
+    final bool isChinese = localized.localeType == LocaleType.zh || localized.localeType == LocaleType.zh_tw;
+    
+    if (isChinese) {
+      if (includeYear) {
+        return '${dateTime.year}年${dateTime.month}月${dateTime.day}日';
+      } else {
+        return '${dateTime.month}月${dateTime.day}日';
+      }
+    } else {
+      if (includeYear) {
+        return DateFormat('MM/dd/yyyy').format(dateTime);
+      } else {
+        return DateFormat('MM/dd').format(dateTime);
+      }
     }
   }
 
