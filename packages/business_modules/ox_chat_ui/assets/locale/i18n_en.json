@@ -9,6 +9,7 @@
   "channel_join": "Join Channel",
   "group_join": "Join Group",
   "group_request": "Request to join Group",
+  "not_in_group": "You're not in the group",
   "channel_badge_requirements": "Sending messages in this channel has Badge requirements",
   "friend_requirements": "Unable to message, as they're no longer a friend",
   "giphy_emoji": "Emojis",

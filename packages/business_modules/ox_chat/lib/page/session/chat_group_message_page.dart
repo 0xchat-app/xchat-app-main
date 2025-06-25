@@ -107,8 +107,8 @@ class _ChatGroupMessagePageState extends State<ChatGroupMessagePage> {
   void _updateChatStatus() {
     if (!Groups.sharedInstance.checkInGroup(groupId)) {
       bottomHintParam = ChatHintParam(
-        Localized.text('ox_chat_ui.group_request'),
-        onRequestGroupTap,
+        Localized.text('ox_chat_ui.not_in_group'),
+        (){}
       );
       return;
     } else if (!Groups.sharedInstance.checkInMyGroupList(groupId)) {
