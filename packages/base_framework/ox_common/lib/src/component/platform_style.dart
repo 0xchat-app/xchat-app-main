@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 
 class PlatformStyle {
 
-  static const isMock = true;
+  static const isMock = false;
 
   static bool _isUseMaterial = false;
   static bool get isUseMaterial => _isUseMaterial;
