@@ -126,30 +126,30 @@ extension InputMoreItemEx on InputMoreItem {
         },
       );
 
-  static InputMoreItem zaps(ChatGeneralHandler handler, UserDBISAR? otherUser) =>
-      InputMoreItem(
-        id: 'zaps',
-        title: () => Localized.text('ox_chat_ui.input_more_zaps'),
-        iconName: 'chat_zaps_icon.png',
-        action: (context) {
-          final user = otherUser;
-          if (user == null) {
-            ChatLogUtils.error(className: 'ChatPageConfig', funcName: 'zaps', message: 'user is null');
-            CommonToast.instance.show(context, 'User info not found');
-            return ;
-          }
-          handler.zapsPressHandler(context, user);
-        },
-      );
+  // static InputMoreItem zaps(ChatGeneralHandler handler, UserDBISAR? otherUser) =>
+  //     InputMoreItem(
+  //       id: 'zaps',
+  //       title: () => Localized.text('ox_chat_ui.input_more_zaps'),
+  //       iconName: 'chat_zaps_icon.png',
+  //       action: (context) {
+  //         final user = otherUser;
+  //         if (user == null) {
+  //           ChatLogUtils.error(className: 'ChatPageConfig', funcName: 'zaps', message: 'user is null');
+  //           CommonToast.instance.show(context, 'User info not found');
+  //           return ;
+  //         }
+  //         handler.zapsPressHandler(context, user);
+  //       },
+  //     );
 
-  static InputMoreItem ecash(ChatGeneralHandler handler) =>
-      InputMoreItem(
-        id: 'ecash',
-        title: () => Localized.text('ox_chat_ui.input_more_nuts'),
-        iconName: 'chat_ecash_icon.png',
-        action: (context) {
-          handler.ecashPressHandler(context);
-        },
-      );
+  // static InputMoreItem ecash(ChatGeneralHandler handler) =>
+  //     InputMoreItem(
+  //       id: 'ecash',
+  //       title: () => Localized.text('ox_chat_ui.input_more_nuts'),
+  //       iconName: 'chat_ecash_icon.png',
+  //       action: (context) {
+  //         handler.ecashPressHandler(context);
+  //       },
+  //     );
 
 }

@@ -8,10 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ox_chat/manager/chat_message_helper.dart';
 import 'package:ox_chat/manager/chat_page_config.dart';
-import 'package:ox_chat/manager/ecash_helper.dart';
 import 'package:ox_chat/model/constant.dart';
-import 'package:ox_chat/page/ecash/ecash_open_dialog.dart';
-import 'package:ox_chat/page/ecash/ecash_sending_page.dart';
 import 'package:ox_chat/utils/custom_message_utils.dart';
 import 'package:ox_chat/utils/general_handler/chat_mention_handler.dart';
 import 'package:ox_chat/utils/general_handler/chat_reply_handler.dart';
@@ -71,7 +68,6 @@ import 'package:nostr_core_dart/nostr.dart';
 import 'package:path/path.dart' as Path;
 import 'package:flutter_chat_types/src/message.dart' as UIMessage;
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:ox_common/widgets/zaps/zaps_action_handler.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_usercenter/page/settings/file_server_page.dart';
 import 'package:ox_common/login/login_manager.dart';
@@ -318,22 +314,22 @@ extension ChatGestureHandlerEx on ChatGeneralHandler {
       );
     } else if (message is types.CustomMessage) {
       switch(message.customType) {
-        case CustomMessageType.zaps:
-          await zapsMessagePressHandler(context, message);
-          break;
-        case CustomMessageType.call:
-          callMessagePressHandler(context, message);
-          break;
+        // case CustomMessageType.zaps:
+        //   await zapsMessagePressHandler(context, message);
+        //   break;
+        // case CustomMessageType.call:
+        //   callMessagePressHandler(context, message);
+        //   break;
         case CustomMessageType.template:
           templateMessagePressHandler(context, message);
           break;
         case CustomMessageType.note:
           noteMessagePressHandler(context, message);
           break;
-        case CustomMessageType.ecash:
-        case CustomMessageType.ecashV2:
-          ecashMessagePressHandler(context, message);
-          break;
+        // case CustomMessageType.ecash:
+        // case CustomMessageType.ecashV2:
+        //   ecashMessagePressHandler(context, message);
+        //   break;
         case CustomMessageType.imageSending:
           imageMessagePressHandler(
             messageId: message.id,
@@ -393,48 +389,48 @@ extension ChatGestureHandlerEx on ChatGeneralHandler {
     );
   }
 
-  Future zapsMessagePressHandler(BuildContext context, types.CustomMessage message) async {
-
-    OXLoading.show();
-
-    final senderPubkey = message.author.sourceObject?.encodedPubkey ?? '';
-    final myPubkey = Account.sharedInstance.me?.encodedPubkey ?? '';
-
-    if (senderPubkey.isEmpty) {
-      CommonToast.instance.show(context, 'Error');
-      return ;
-    }
-    if (myPubkey.isEmpty) {
-      CommonToast.instance.show(context, 'Error');
-      return ;
-    }
-
-    final receiverPubkey = senderPubkey == myPubkey
-        ? session.chatId : myPubkey;
-    final invoice = ZapsMessageEx(message).invoice;
-    final zapper = ZapsMessageEx(message).zapper;
-    final description = ZapsMessageEx(message).description;
-
-    final requestInfo = Zaps.getPaymentRequestInfo(invoice);
-    final amount = Zaps.getPaymentRequestAmount(invoice);
-
-    final zapsReceiptList = await Zaps.getZapReceipt(zapper, invoice: invoice);
-    final zapsReceipt = zapsReceiptList.length > 0 ? zapsReceiptList.first : null;
-
-    OXLoading.dismiss();
-
-    final zapsDetail = ZapsRecordDetail(
-      invoice: invoice,
-      amount: amount,
-      fromPubKey: senderPubkey,
-      toPubKey: receiverPubkey,
-      zapsTime: (requestInfo.timestamp.toInt() * 1000).toString(),
-      description: description,
-      isConfirmed: zapsReceipt != null,
-    );
-
-    OXUserCenterInterface.jumpToZapsRecordPage(context, zapsDetail);
-  }
+  // Future zapsMessagePressHandler(BuildContext context, types.CustomMessage message) async {
+  //
+  //   OXLoading.show();
+  //
+  //   final senderPubkey = message.author.sourceObject?.encodedPubkey ?? '';
+  //   final myPubkey = Account.sharedInstance.me?.encodedPubkey ?? '';
+  //
+  //   if (senderPubkey.isEmpty) {
+  //     CommonToast.instance.show(context, 'Error');
+  //     return ;
+  //   }
+  //   if (myPubkey.isEmpty) {
+  //     CommonToast.instance.show(context, 'Error');
+  //     return ;
+  //   }
+  //
+  //   final receiverPubkey = senderPubkey == myPubkey
+  //       ? session.chatId : myPubkey;
+  //   final invoice = ZapsMessageEx(message).invoice;
+  //   final zapper = ZapsMessageEx(message).zapper;
+  //   final description = ZapsMessageEx(message).description;
+  //
+  //   final requestInfo = Zaps.getPaymentRequestInfo(invoice);
+  //   final amount = Zaps.getPaymentRequestAmount(invoice);
+  //
+  //   final zapsReceiptList = await Zaps.getZapReceipt(zapper, invoice: invoice);
+  //   final zapsReceipt = zapsReceiptList.length > 0 ? zapsReceiptList.first : null;
+  //
+  //   OXLoading.dismiss();
+  //
+  //   final zapsDetail = ZapsRecordDetail(
+  //     invoice: invoice,
+  //     amount: amount,
+  //     fromPubKey: senderPubkey,
+  //     toPubKey: receiverPubkey,
+  //     zapsTime: (requestInfo.timestamp.toInt() * 1000).toString(),
+  //     description: description,
+  //     isConfirmed: zapsReceipt != null,
+  //   );
+  //
+  //   OXUserCenterInterface.jumpToZapsRecordPage(context, zapsDetail);
+  // }
 
   void callMessagePressHandler(BuildContext context, types.CustomMessage message) {
     final otherUser = this.otherUser;
@@ -471,55 +467,24 @@ extension ChatGestureHandlerEx on ChatGeneralHandler {
     link.tryHandleCustomUri(context: context);
   }
 
-  void ecashMessagePressHandler(BuildContext context, types.CustomMessage message) async {
-    if (!OXWalletInterface.checkWalletActivate()) return ;
-    final package = await EcashHelper.createPackageFromMessage(message);
-    EcashOpenDialog.show(
-      context: context,
-      package: package,
-      approveOnTap: () async {
-        if (message.customType != CustomMessageType.ecashV2) return ;
-
-        await Future.wait([
-          ecashApproveHandler(context, message),
-          Future.delayed(const Duration(seconds: 1)),
-        ]);
-
-        OXNavigator.pop(context);
-      },
-    );
-  }
-
-  Future ecashApproveHandler(BuildContext context, types.CustomMessage message) async {
-    final tokenList = EcashV2MessageEx(message).tokenList;
-    final signatureTokenList = <String>[];
-    for (var token in tokenList) {
-      final newToken = await EcashHelper.addP2PKSignatureToToken(token);
-      if (newToken.isEmpty) {
-        CommonToast.instance.show(context, 'Signature failure');
-        return ;
-      }
-      signatureTokenList.add(newToken);
-    }
-
-    final signees = <EcashSignee>[];
-    EcashV2MessageEx(message).signees.forEach((signee) {
-      if (OXUserInfoManager.sharedInstance.isCurrentUser(signee.$1)) {
-        signees.add((signee.$1, 'finished'));
-      } else {
-        signees.add(signee);
-      }
-    });
-
-    sendEcashMessage(
-      context,
-      tokenList: signatureTokenList,
-      receiverPubkeys: EcashV2MessageEx(message).receiverPubkeys,
-      signees: signees,
-    );
-
-    EcashHelper.setMessageSigned(message.id);
-  }
+  // void ecashMessagePressHandler(BuildContext context, types.CustomMessage message) async {
+  //   if (!OXWalletInterface.checkWalletActivate()) return ;
+  //   final package = await EcashHelper.createPackageFromMessage(message);
+  //   EcashOpenDialog.show(
+  //     context: context,
+  //     package: package,
+  //     approveOnTap: () async {
+  //       if (message.customType != CustomMessageType.ecashV2) return ;
+  //
+  //       await Future.wait([
+  //         ecashApproveHandler(context, message),
+  //         Future.delayed(const Duration(seconds: 1)),
+  //       ]);
+  //
+  //       OXNavigator.pop(context);
+  //     },
+  //   );
+  // }
 }
 
 extension ChatMenuHandlerEx on ChatGeneralHandler {
@@ -538,9 +503,9 @@ extension ChatMenuHandlerEx on ChatGeneralHandler {
       case MessageLongPressEventType.quote:
         replyHandler.quoteMenuItemPressHandler(message);
         break;
-      case MessageLongPressEventType.zaps:
-        _zapMenuItemPressHandler(context, message);
-        break;
+      // case MessageLongPressEventType.zaps:
+      //   _zapMenuItemPressHandler(context, message);
+      //   break;
       default:
         break;
     }
@@ -687,25 +652,6 @@ extension ChatMenuHandlerEx on ChatGeneralHandler {
     if (reportSuccess == true) {
       messageDeleteHandler(message);
     }
-  }
-
-  void _zapMenuItemPressHandler(BuildContext context, types.Message message) async {
-    final user = await Account.sharedInstance.getUserInfo(message.author.id);
-    final eventId = message.remoteId;
-    if (user == null || eventId == null || eventId.isEmpty) {
-      CommonToast.instance.show(
-        context,
-        'Failed: Critical information is missing, user is null: ${user == null}, eventId: $eventId',
-      );
-      return ;
-    }
-    ZapsActionHandler handler = await ZapsActionHandler.create(
-      userDB: user,
-      isAssistedProcess: true,
-      zapType: session.asZapType,
-      groupId: session.hasMultipleUsers ? session.groupId : null,
-    );
-    await handler.handleZap(context: context, eventId: eventId);
   }
 
   void messageDeleteHandler(types.Message message) {
@@ -862,69 +808,6 @@ extension ChatInputMoreHandlerEx on ChatGeneralHandler {
         oxActionModel.identify == 1 ? CallMessageType.audio : CallMessageType.video,
       );
     }
-  }
-
-  Future zapsPressHandler(BuildContext context, UserDBISAR user) async {
-    ZapsActionHandler handler = await ZapsActionHandler.create(
-      userDB: user,
-      isAssistedProcess: true,
-      zapType: session.asZapType,
-      zapsInfoCallback: (zapsInfo) {
-        final zapper = zapsInfo['zapper'] ?? '';
-        final invoice = zapsInfo['invoice'] ?? '';
-        final amount = zapsInfo['amount'] ?? '';
-        final description = zapsInfo['description'] ?? '';
-        if (zapper.isNotEmpty && invoice.isNotEmpty && amount.isNotEmpty && description.isNotEmpty) {
-          sendZapsMessage(context, zapper, invoice, amount, description);
-        } else {
-          ChatLogUtils.error(
-            className: 'ChatGeneralHandler',
-            funcName: 'zapsPressHandler',
-            message: 'zapper: $zapper, invoice: $invoice, amount: $amount, description: $description, ',
-          );
-        }
-      }
-    );
-    await handler.handleZap(context: context,);
-  }
-
-  Future ecashPressHandler(BuildContext context) async {
-    if (!OXWalletInterface.checkWalletActivate()) return ;
-    await OXNavigator.pushPage<Map<String, String>>(
-      context, (_) =>
-        EcashSendingPage(
-          isGroupEcash: session.hasMultipleUsers,
-          singleReceiver: !session.hasMultipleUsers ? otherUser : null,
-          membersGetter: () async {
-            final getter = session.userListGetter;
-            return getter?.call();
-          },
-          ecashInfoCallback: (ecash) async {
-            final (
-              List<String> tokenList,
-              List<String> receiverPubkeys,
-              List<String> signeePubkeys,
-              _,
-            ) = ecash;
-            if (tokenList.isEmpty) return ;
-
-            if (tokenList.length == 1 && receiverPubkeys.isEmpty && signeePubkeys.isEmpty) {
-              await sendTextMessage(context, tokenList.first);
-            } else {
-              sendEcashMessage(
-                context,
-                tokenList: tokenList,
-                receiverPubkeys: receiverPubkeys,
-                signees: signeePubkeys.map((pubkey) {
-                  return (pubkey, '');
-                }).toList(),
-              );
-            }
-            OXNavigator.pop(context);
-          },
-        ),
-      type: OXPushPageType.present,
-    );
   }
 
   Future<void> _goToPhoto(BuildContext context, int type) async {

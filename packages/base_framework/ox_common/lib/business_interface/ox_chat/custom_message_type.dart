@@ -1,11 +1,11 @@
 
 enum CustomMessageType {
-  zaps,
-  call,
+  // zaps,
+  // call,
   template,
   note,
-  ecash,    // normal token
-  ecashV2,  // support specifying recipient & signature
+  // ecash,    // normal token
+  // ecashV2,  // support specifying recipient & signature
   imageSending,
   video,
 }
@@ -13,18 +13,18 @@ enum CustomMessageType {
 extension CustomMessageTypeEx on CustomMessageType {
   String get value {
     switch (this) {
-      case CustomMessageType.zaps:
-        return '1';
-      case CustomMessageType.call:
-        return '2';
+      // case CustomMessageType.zaps:
+      //   return '1';
+      // case CustomMessageType.call:
+      //   return '2';
       case CustomMessageType.template:
         return '3';
       case CustomMessageType.note:
         return '4';
-      case CustomMessageType.ecash:
-        return '5';
-      case CustomMessageType.ecashV2:
-        return '6';
+      // case CustomMessageType.ecash:
+      //   return '5';
+      // case CustomMessageType.ecashV2:
+      //   return '6';
       case CustomMessageType.imageSending:
         return '7';
       case CustomMessageType.video:

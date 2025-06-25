@@ -14,7 +14,7 @@ import 'package:ox_theme/ox_theme.dart';
 import 'package:ox_usercenter/page/settings/language_settings_page.dart';
 import 'package:ox_usercenter/page/settings/theme_settings_page.dart';
 
-import '../set_up/keys_page.dart';
+import 'keys_page.dart';
 import 'circle_detail_page.dart';
 import 'font_size_settings_page.dart';
 import 'profile_settings_page.dart';

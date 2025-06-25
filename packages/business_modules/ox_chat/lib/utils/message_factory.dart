@@ -227,105 +227,105 @@ class VideoMessageFactory implements MessageFactory {
   }
 }
 
-class CallMessageFactory implements MessageFactory {
-  types.Message? createMessage({
-    required types.User author,
-    required int timestamp,
-    required String roomId,
-    required String? messageId,
-    required String? remoteId,
-    required dynamic sourceKey,
-    required String content,
-    UIMessage.Status? status,
-    UIMessage.EncryptionType fileEncryptionType = UIMessage.EncryptionType.none,
-    types.Message? repliedMessage,
-    String? repliedMessageId,
-    String? previewData,
-    String? decryptKey,
-    String? decryptNonce,
-    int? expiration,
-    List<types.Reaction> reactions = const [],
-    List<types.ZapsInfo> zapsInfoList = const [],
-  }) {
-    if (content.isEmpty) return null;
-
-    var contentMap;
-    try {
-      contentMap = json.decode(content);
-      if (contentMap is! Map) return null;
-    } catch (_) {}
-
-    final state = CallMessageState.values
-        .cast<CallMessageState?>()
-        .firstWhere((state) => state.toString() == contentMap['state'], orElse: () => null);
-    var duration = contentMap['duration'];
-    final media = CallMessageTypeEx.fromValue(contentMap['media']);
-    if (state is! CallMessageState || duration is! int || media == null) return null;
-
-    if (!state.shouldShowMessage) return null;
-
-    duration = max(duration, 0);
-    final isMe = OXUserInfoManager.sharedInstance.isCurrentUser(author.id);
-    final durationText = Duration(milliseconds: duration).toString().substring(2, 7);
-    return types.CustomMessage(
-      author: author,
-      createdAt: timestamp,
-      id: remoteId ?? messageId ?? '',
-      sourceKey: sourceKey,
-      remoteId: remoteId,
-      roomId: roomId,
-      repliedMessage: repliedMessage,
-      repliedMessageId: repliedMessageId,
-      metadata: CustomMessageEx.callMetaData(
-        text: state.messageText(isMe, durationText),
-        type: media,
-      ),
-      type: types.MessageType.custom,
-      expiration: expiration,
-      reactions: reactions,
-      zapsInfoList: zapsInfoList,
-      viewWithoutBubble: false,
-    );
-  }
-}
-
-extension CallStateMessageEx on CallMessageState {
-  bool get shouldShowMessage {
-    switch (this) {
-      case CallMessageState.cancel:
-      case CallMessageState.reject:
-      case CallMessageState.timeout:
-      case CallMessageState.disconnect:
-      case CallMessageState.inCalling:
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  String messageText(bool isMe, String durationText) {
-    switch (this) {
-      case CallMessageState.cancel:
-        return isMe
-            ? Localized.text('ox_calling.str_call_canceled')
-            : Localized.text('ox_calling.str_call_other_canceled');
-      case CallMessageState.reject:
-        return isMe
-            ? Localized.text('ox_calling.str_call_other_rejected')
-            : Localized.text('ox_calling.str_call_rejected');
-      case CallMessageState.timeout:
-        return isMe
-            ? Localized.text('ox_calling.str_call_other_not_answered')
-            : Localized.text('ox_calling.str_call_not_answered');
-      case CallMessageState.disconnect:
-        return Localized.text('ox_calling.str_call_duration').replaceAll(r'${time}', durationText);
-      case CallMessageState.inCalling:
-        return Localized.text('ox_calling.str_call_busy');
-      default:
-        return '';
-    }
-  }
-}
+// class CallMessageFactory implements MessageFactory {
+//   types.Message? createMessage({
+//     required types.User author,
+//     required int timestamp,
+//     required String roomId,
+//     required String? messageId,
+//     required String? remoteId,
+//     required dynamic sourceKey,
+//     required String content,
+//     UIMessage.Status? status,
+//     UIMessage.EncryptionType fileEncryptionType = UIMessage.EncryptionType.none,
+//     types.Message? repliedMessage,
+//     String? repliedMessageId,
+//     String? previewData,
+//     String? decryptKey,
+//     String? decryptNonce,
+//     int? expiration,
+//     List<types.Reaction> reactions = const [],
+//     List<types.ZapsInfo> zapsInfoList = const [],
+//   }) {
+//     if (content.isEmpty) return null;
+//
+//     var contentMap;
+//     try {
+//       contentMap = json.decode(content);
+//       if (contentMap is! Map) return null;
+//     } catch (_) {}
+//
+//     final state = CallMessageState.values
+//         .cast<CallMessageState?>()
+//         .firstWhere((state) => state.toString() == contentMap['state'], orElse: () => null);
+//     var duration = contentMap['duration'];
+//     final media = CallMessageTypeEx.fromValue(contentMap['media']);
+//     if (state is! CallMessageState || duration is! int || media == null) return null;
+//
+//     if (!state.shouldShowMessage) return null;
+//
+//     duration = max(duration, 0);
+//     final isMe = OXUserInfoManager.sharedInstance.isCurrentUser(author.id);
+//     final durationText = Duration(milliseconds: duration).toString().substring(2, 7);
+//     return types.CustomMessage(
+//       author: author,
+//       createdAt: timestamp,
+//       id: remoteId ?? messageId ?? '',
+//       sourceKey: sourceKey,
+//       remoteId: remoteId,
+//       roomId: roomId,
+//       repliedMessage: repliedMessage,
+//       repliedMessageId: repliedMessageId,
+//       metadata: CustomMessageEx.callMetaData(
+//         text: state.messageText(isMe, durationText),
+//         type: media,
+//       ),
+//       type: types.MessageType.custom,
+//       expiration: expiration,
+//       reactions: reactions,
+//       zapsInfoList: zapsInfoList,
+//       viewWithoutBubble: false,
+//     );
+//   }
+// }
+//
+// extension CallStateMessageEx on CallMessageState {
+//   bool get shouldShowMessage {
+//     switch (this) {
+//       case CallMessageState.cancel:
+//       case CallMessageState.reject:
+//       case CallMessageState.timeout:
+//       case CallMessageState.disconnect:
+//       case CallMessageState.inCalling:
+//         return true;
+//       default:
+//         return false;
+//     }
+//   }
+//
+//   String messageText(bool isMe, String durationText) {
+//     switch (this) {
+//       case CallMessageState.cancel:
+//         return isMe
+//             ? Localized.text('ox_calling.str_call_canceled')
+//             : Localized.text('ox_calling.str_call_other_canceled');
+//       case CallMessageState.reject:
+//         return isMe
+//             ? Localized.text('ox_calling.str_call_other_rejected')
+//             : Localized.text('ox_calling.str_call_rejected');
+//       case CallMessageState.timeout:
+//         return isMe
+//             ? Localized.text('ox_calling.str_call_other_not_answered')
+//             : Localized.text('ox_calling.str_call_not_answered');
+//       case CallMessageState.disconnect:
+//         return Localized.text('ox_calling.str_call_duration').replaceAll(r'${time}', durationText);
+//       case CallMessageState.inCalling:
+//         return Localized.text('ox_calling.str_call_busy');
+//       default:
+//         return '';
+//     }
+//   }
+// }
 
 class SystemMessageFactory implements MessageFactory {
   types.Message? createMessage({
@@ -418,27 +418,27 @@ class CustomMessageFactory implements MessageFactory {
     final contentMap = info.content;
 
     switch (type) {
-      case CustomMessageType.zaps:
-        final zapper = contentMap['zapper'];
-        final invoice = contentMap['invoice'];
-        final amount = contentMap['amount'];
-        final description = contentMap['description'];
-        return createZapsMessage(
-          author: author,
-          timestamp: timestamp,
-          roomId: roomId,
-          id: remoteId ?? messageId ?? '',
-          remoteId: remoteId,
-          sourceKey: sourceKey,
-          zapper: zapper,
-          invoice: invoice,
-          amount: amount,
-          description: description,
-          expiration: expiration,
-          status: status,
-          reactions: reactions,
-          zapsInfoList: zapsInfoList,
-        );
+      // case CustomMessageType.zaps:
+      //   final zapper = contentMap['zapper'];
+      //   final invoice = contentMap['invoice'];
+      //   final amount = contentMap['amount'];
+      //   final description = contentMap['description'];
+      //   return createZapsMessage(
+      //     author: author,
+      //     timestamp: timestamp,
+      //     roomId: roomId,
+      //     id: remoteId ?? messageId ?? '',
+      //     remoteId: remoteId,
+      //     sourceKey: sourceKey,
+      //     zapper: zapper,
+      //     invoice: invoice,
+      //     amount: amount,
+      //     description: description,
+      //     expiration: expiration,
+      //     status: status,
+      //     reactions: reactions,
+      //     zapsInfoList: zapsInfoList,
+      //   );
 
       case CustomMessageType.template:
         final title = contentMap['title'];
@@ -492,66 +492,66 @@ class CustomMessageFactory implements MessageFactory {
           zapsInfoList: zapsInfoList,
         );
 
-      case CustomMessageType.ecash:
-        try {
-          final tokenList = (contentMap[EcashMessageEx.metaTokenListKey] as List)
-              .map((e) => e.toString())
-              .toList();
-          final isOpened = contentMap[EcashMessageEx.metaIsOpenedKey] ?? '';
-          return createEcashMessage(
-            author: author,
-            timestamp: timestamp,
-            roomId: roomId,
-            id: remoteId ?? messageId ?? '',
-            remoteId: remoteId,
-            sourceKey: sourceKey,
-            tokenList: tokenList,
-            isOpened: isOpened,
-            expiration: expiration,
-            status: status,
-            reactions: reactions,
-            zapsInfoList: zapsInfoList,
-          );
-        } catch (e) {
-          print(e);
-          return null;
-        }
-
-      case CustomMessageType.ecashV2:
-        try {
-          final tokenListRaw = contentMap[EcashV2MessageEx.metaTokenListKey];
-          List<String> tokenList = [];
-          if (tokenListRaw is List) {
-            tokenList = tokenListRaw.map((e) => e.toString()).toList();
-          }
-
-          final receiverPubkeysRaw = contentMap[EcashV2MessageEx.metaReceiverPubkeysKey];
-          List<String> receiverPubkeys = [];
-          if (receiverPubkeysRaw is List) {
-            receiverPubkeys = receiverPubkeysRaw.map((e) => e.toString()).toList();
-          }
-          return createEcashMessage(
-            author: author,
-            timestamp: timestamp,
-            roomId: roomId,
-            id: remoteId ?? messageId ?? '',
-            remoteId: remoteId,
-            sourceKey: sourceKey,
-            tokenList: tokenList,
-            receiverPubkeys: receiverPubkeys,
-            signees: EcashV2MessageEx.getSigneesWithContentMap(contentMap),
-            validityDate: contentMap[EcashV2MessageEx.metaValidityDateKey] ?? '',
-            isOpened: contentMap[EcashV2MessageEx.metaIsOpenedKey] ?? '',
-            expiration: expiration,
-            status: status,
-            reactions: reactions,
-            zapsInfoList: zapsInfoList,
-          );
-        } catch (e, stack) {
-          print(e);
-          print(stack);
-          return null;
-        }
+      // case CustomMessageType.ecash:
+      //   try {
+      //     final tokenList = (contentMap[EcashMessageEx.metaTokenListKey] as List)
+      //         .map((e) => e.toString())
+      //         .toList();
+      //     final isOpened = contentMap[EcashMessageEx.metaIsOpenedKey] ?? '';
+      //     return createEcashMessage(
+      //       author: author,
+      //       timestamp: timestamp,
+      //       roomId: roomId,
+      //       id: remoteId ?? messageId ?? '',
+      //       remoteId: remoteId,
+      //       sourceKey: sourceKey,
+      //       tokenList: tokenList,
+      //       isOpened: isOpened,
+      //       expiration: expiration,
+      //       status: status,
+      //       reactions: reactions,
+      //       zapsInfoList: zapsInfoList,
+      //     );
+      //   } catch (e) {
+      //     print(e);
+      //     return null;
+      //   }
+      //
+      // case CustomMessageType.ecashV2:
+      //   try {
+      //     final tokenListRaw = contentMap[EcashV2MessageEx.metaTokenListKey];
+      //     List<String> tokenList = [];
+      //     if (tokenListRaw is List) {
+      //       tokenList = tokenListRaw.map((e) => e.toString()).toList();
+      //     }
+      //
+      //     final receiverPubkeysRaw = contentMap[EcashV2MessageEx.metaReceiverPubkeysKey];
+      //     List<String> receiverPubkeys = [];
+      //     if (receiverPubkeysRaw is List) {
+      //       receiverPubkeys = receiverPubkeysRaw.map((e) => e.toString()).toList();
+      //     }
+      //     return createEcashMessage(
+      //       author: author,
+      //       timestamp: timestamp,
+      //       roomId: roomId,
+      //       id: remoteId ?? messageId ?? '',
+      //       remoteId: remoteId,
+      //       sourceKey: sourceKey,
+      //       tokenList: tokenList,
+      //       receiverPubkeys: receiverPubkeys,
+      //       signees: EcashV2MessageEx.getSigneesWithContentMap(contentMap),
+      //       validityDate: contentMap[EcashV2MessageEx.metaValidityDateKey] ?? '',
+      //       isOpened: contentMap[EcashV2MessageEx.metaIsOpenedKey] ?? '',
+      //       expiration: expiration,
+      //       status: status,
+      //       reactions: reactions,
+      //       zapsInfoList: zapsInfoList,
+      //     );
+      //   } catch (e, stack) {
+      //     print(e);
+      //     print(stack);
+      //     return null;
+      //   }
 
       case CustomMessageType.imageSending:
         String fileId = contentMap[ImageSendingMessageEx.metaFileIdKey] ?? '';
@@ -610,48 +610,46 @@ class CustomMessageFactory implements MessageFactory {
           encryptedKey: encryptedKey,
           encryptedNonce: encryptedNonce,
         );
-      default:
-        return null;
     }
   }
 
-  types.CustomMessage createZapsMessage({
-    required types.User author,
-    required int timestamp,
-    required String roomId,
-    required String id,
-    String? remoteId,
-    dynamic sourceKey,
-    UIMessage.Status? status,
-    int? expiration,
-    List<types.Reaction> reactions = const [],
-    List<types.ZapsInfo> zapsInfoList = const [],
-    required String zapper,
-    required String invoice,
-    required String amount,
-    required String description,
-  }) {
-    return types.CustomMessage(
-      author: author,
-      createdAt: timestamp,
-      id: id,
-      sourceKey: sourceKey,
-      remoteId: remoteId,
-      roomId: roomId,
-      metadata: CustomMessageEx.zapsMetaData(
-        zapper: zapper,
-        invoice: invoice,
-        amount: amount,
-        description: description,
-      ),
-      type: types.MessageType.custom,
-      expiration: expiration,
-      status: status,
-      reactions: reactions,
-      zapsInfoList: zapsInfoList,
-      viewWithoutBubble: true,
-    );
-  }
+  // types.CustomMessage createZapsMessage({
+  //   required types.User author,
+  //   required int timestamp,
+  //   required String roomId,
+  //   required String id,
+  //   String? remoteId,
+  //   dynamic sourceKey,
+  //   UIMessage.Status? status,
+  //   int? expiration,
+  //   List<types.Reaction> reactions = const [],
+  //   List<types.ZapsInfo> zapsInfoList = const [],
+  //   required String zapper,
+  //   required String invoice,
+  //   required String amount,
+  //   required String description,
+  // }) {
+  //   return types.CustomMessage(
+  //     author: author,
+  //     createdAt: timestamp,
+  //     id: id,
+  //     sourceKey: sourceKey,
+  //     remoteId: remoteId,
+  //     roomId: roomId,
+  //     metadata: CustomMessageEx.zapsMetaData(
+  //       zapper: zapper,
+  //       invoice: invoice,
+  //       amount: amount,
+  //       description: description,
+  //     ),
+  //     type: types.MessageType.custom,
+  //     expiration: expiration,
+  //     status: status,
+  //     reactions: reactions,
+  //     zapsInfoList: zapsInfoList,
+  //     viewWithoutBubble: true,
+  //   );
+  // }
 
   types.CustomMessage createTemplateMessage({
     required types.User author,
@@ -737,45 +735,45 @@ class CustomMessageFactory implements MessageFactory {
     );
   }
 
-  types.CustomMessage createEcashMessage({
-    required types.User author,
-    required int timestamp,
-    required String roomId,
-    required String id,
-    String? remoteId,
-    dynamic sourceKey,
-    UIMessage.Status? status,
-    int? expiration,
-    List<types.Reaction> reactions = const [],
-    List<types.ZapsInfo> zapsInfoList = const [],
-    required List<String> tokenList,
-    List<String> receiverPubkeys = const [],
-    List<EcashSignee> signees = const [],
-    String validityDate = '',
-    String isOpened = '',
-  }) {
-    return types.CustomMessage(
-      author: author,
-      createdAt: timestamp,
-      id: id,
-      sourceKey: sourceKey,
-      remoteId: remoteId,
-      roomId: roomId,
-      metadata: CustomMessageEx.ecashV2MetaData(
-        tokenList: tokenList,
-        receiverPubkeys: receiverPubkeys,
-        signees: signees,
-        validityDate: validityDate,
-        isOpened: isOpened,
-      ),
-      type: types.MessageType.custom,
-      expiration: expiration,
-      status: status,
-      reactions: reactions,
-      zapsInfoList: zapsInfoList,
-      viewWithoutBubble: true,
-    );
-  }
+  // types.CustomMessage createEcashMessage({
+  //   required types.User author,
+  //   required int timestamp,
+  //   required String roomId,
+  //   required String id,
+  //   String? remoteId,
+  //   dynamic sourceKey,
+  //   UIMessage.Status? status,
+  //   int? expiration,
+  //   List<types.Reaction> reactions = const [],
+  //   List<types.ZapsInfo> zapsInfoList = const [],
+  //   required List<String> tokenList,
+  //   List<String> receiverPubkeys = const [],
+  //   List<EcashSignee> signees = const [],
+  //   String validityDate = '',
+  //   String isOpened = '',
+  // }) {
+  //   return types.CustomMessage(
+  //     author: author,
+  //     createdAt: timestamp,
+  //     id: id,
+  //     sourceKey: sourceKey,
+  //     remoteId: remoteId,
+  //     roomId: roomId,
+  //     metadata: CustomMessageEx.ecashV2MetaData(
+  //       tokenList: tokenList,
+  //       receiverPubkeys: receiverPubkeys,
+  //       signees: signees,
+  //       validityDate: validityDate,
+  //       isOpened: isOpened,
+  //     ),
+  //     type: types.MessageType.custom,
+  //     expiration: expiration,
+  //     status: status,
+  //     reactions: reactions,
+  //     zapsInfoList: zapsInfoList,
+  //     viewWithoutBubble: true,
+  //   );
+  // }
 
   types.CustomMessage createImageSendingMessage({
     required types.User author,

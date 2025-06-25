@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:chatcore/chat-core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:ox_calling/ox_calling.dart';
 import 'package:ox_chat/ox_chat.dart';
 import 'package:ox_chat_ui/ox_chat_ui.dart';
 import 'package:ox_common/component.dart';
@@ -101,7 +100,6 @@ class AppInitializer {
       OXPush().setup(),
       OXChat().setup(),
       OXChatUI().setup(),
-      OxCalling().setup(),
       OxChatHome().setup(),
     ]);
   }

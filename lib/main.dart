@@ -7,7 +7,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:ox_calling/manager/call_manager.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/scheme/scheme_helper.dart';
@@ -231,26 +230,12 @@ class MainState extends State<MainApp>
           NotificationHelper.sharedInstance.setOnline();
         SchemeHelper.tryHandlerForOpenAppScheme();
         keepHeartBeat();
-        if (lastUserInteractionTime != 0 &&
-            DateTime.now().millisecondsSinceEpoch - lastUserInteractionTime >
-                const Duration(minutes: 5).inMilliseconds) {
-          lastUserInteractionTime = 0;
-          showPasswordDialog();
-        }
         break;
       case AppLifecycleState.paused:
         PromptToneManager.sharedInstance.isAppPaused = true;
         if (LoginManager.instance.isLoginCircle)
           NotificationHelper.sharedInstance.setOffline();
         lastUserInteractionTime = DateTime.now().millisecondsSinceEpoch;
-        if (CallManager.instance.getInCallIng &&
-            CallManager.instance.isAudioVoice) {
-          OXCommon.channelPreferences.invokeMethod('startVoiceCallService', {
-            'notice_voice_title': CallManager.instance.otherName,
-            'notice_voice_content':
-                Localized.text('ox_calling.str_voice_call_in_use')
-          });
-        }
         break;
       default:
         break;
@@ -264,16 +249,6 @@ class MainState extends State<MainApp>
       Account.sharedInstance.startHeartBeat();
       NotificationHelper.sharedInstance.startHeartBeat();
     }
-  }
-
-  void showPasswordDialog() async {
-    String localPasscode = UserConfigTool.getSetting(
-        StorageSettingKey.KEY_PASSCODE.name,
-        defaultValue: '');
-    if (localPasscode.isNotEmpty &&
-        OXNavigator.navigatorKey.currentContext != null)
-      OXModuleService.pushPage(OXNavigator.navigatorKey.currentContext!,
-          'ox_usercenter', 'VerifyPasscodePage', {});
   }
 
   void printMemoryUsage() {

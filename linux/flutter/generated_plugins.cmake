@@ -6,9 +6,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   audioplayers_linux
   emoji_picker_flutter
   file_selector_linux
-  flutter_webrtc
   isar_flutter_libs
-  ox_calling
   rive_common
   screen_retriever_linux
   url_launcher_linux

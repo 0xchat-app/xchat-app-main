@@ -14,29 +14,29 @@ extension CustomMessageEx on types.CustomMessage {
   CustomMessageType? get customType =>
       CustomMessageTypeEx.fromValue(metadata?[CustomMessageEx.metaTypeKey]);
 
-  static Map<String, dynamic> zapsMetaData({
-    required String zapper,
-    required String invoice,
-    required String amount,
-    required String description,
-  }) {
-    return _metaData(CustomMessageType.zaps, {
-      'zapper': zapper,
-      'invoice': invoice,
-      'amount': amount,
-      'description': description,
-    });
-  }
-
-  static Map<String, dynamic> callMetaData({
-    required String text,
-    required CallMessageType type,
-  }) {
-    return _metaData(CustomMessageType.call, {
-      'text': text,
-      'type': type.value,
-    });
-  }
+  // static Map<String, dynamic> zapsMetaData({
+  //   required String zapper,
+  //   required String invoice,
+  //   required String amount,
+  //   required String description,
+  // }) {
+  //   return _metaData(CustomMessageType.zaps, {
+  //     'zapper': zapper,
+  //     'invoice': invoice,
+  //     'amount': amount,
+  //     'description': description,
+  //   });
+  // }
+  //
+  // static Map<String, dynamic> callMetaData({
+  //   required String text,
+  //   required CallMessageType type,
+  // }) {
+  //   return _metaData(CustomMessageType.call, {
+  //     'text': text,
+  //     'type': type.value,
+  //   });
+  // }
 
   static Map<String, dynamic> templateMetaData({
     required String title,
@@ -74,37 +74,37 @@ extension CustomMessageEx on types.CustomMessage {
     });
   }
 
-  static Map<String, dynamic> ecashMetaData({
-    required List<String> tokenList,
-    String isOpened = '',
-  }) {
-    return _metaData(CustomMessageType.ecash, {
-      EcashMessageEx.metaTokenListKey: tokenList,
-      EcashMessageEx.metaIsOpenedKey: isOpened,
-    });
-  }
-
-  static Map<String, dynamic> ecashV2MetaData({
-    required List<String> tokenList,
-    List<String> receiverPubkeys = const [],
-    List<EcashSignee> signees = const [],
-    String validityDate = '',
-    String isOpened = '',
-  }) {
-    return _metaData(CustomMessageType.ecashV2, {
-      EcashV2MessageEx.metaTokenListKey: tokenList,
-      EcashV2MessageEx.metaIsOpenedKey: isOpened,
-      if (receiverPubkeys.isNotEmpty)
-        EcashV2MessageEx.metaReceiverPubkeysKey: receiverPubkeys,
-      if (signees.isNotEmpty)
-        EcashV2MessageEx.metaSigneesKey: signees.map((e) => {
-          EcashV2MessageEx.metaSigneesPubkeyKey: e.$1,
-          EcashV2MessageEx.metaSigneesSignatureKey: e.$2,
-        }).toList(),
-      if (validityDate.isNotEmpty)
-        EcashV2MessageEx.metaValidityDateKey: validityDate,
-    });
-  }
+  // static Map<String, dynamic> ecashMetaData({
+  //   required List<String> tokenList,
+  //   String isOpened = '',
+  // }) {
+  //   return _metaData(CustomMessageType.ecash, {
+  //     EcashMessageEx.metaTokenListKey: tokenList,
+  //     EcashMessageEx.metaIsOpenedKey: isOpened,
+  //   });
+  // }
+  //
+  // static Map<String, dynamic> ecashV2MetaData({
+  //   required List<String> tokenList,
+  //   List<String> receiverPubkeys = const [],
+  //   List<EcashSignee> signees = const [],
+  //   String validityDate = '',
+  //   String isOpened = '',
+  // }) {
+  //   return _metaData(CustomMessageType.ecashV2, {
+  //     EcashV2MessageEx.metaTokenListKey: tokenList,
+  //     EcashV2MessageEx.metaIsOpenedKey: isOpened,
+  //     if (receiverPubkeys.isNotEmpty)
+  //       EcashV2MessageEx.metaReceiverPubkeysKey: receiverPubkeys,
+  //     if (signees.isNotEmpty)
+  //       EcashV2MessageEx.metaSigneesKey: signees.map((e) => {
+  //         EcashV2MessageEx.metaSigneesPubkeyKey: e.$1,
+  //         EcashV2MessageEx.metaSigneesSignatureKey: e.$2,
+  //       }).toList(),
+  //     if (validityDate.isNotEmpty)
+  //       EcashV2MessageEx.metaValidityDateKey: validityDate,
+  //   });
+  // }
 
   static Map<String, dynamic> imageSendingMetaData({
     String fileId = '',

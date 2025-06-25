@@ -191,27 +191,6 @@ extension ChatMessageSendEx on ChatGeneralHandler {
       sendingType: sendingType,
       contentEncoder: messageContentEncoder,
       sourceCreator: (message) {
-        if (message is types.CustomMessage) {
-          switch (message.customType) {
-            case CustomMessageType.ecash:
-              final tokenList = EcashMessageEx(message).tokenList;
-              if (tokenList.length == 1) {
-                return tokenList.first;
-              } else {
-                return '''[You've received cashu token via 0xchat]''';
-              }
-            case CustomMessageType.ecashV2:
-              final tokenList = EcashV2MessageEx(message).tokenList;
-              final signees = EcashV2MessageEx(message).signees;
-              if (tokenList.length == 1 && signees.isEmpty) {
-                return tokenList.first;
-              } else {
-                return '''[You've received cashu token via 0xchat]''';
-              }
-            default:
-              break;
-          }
-        }
         return null;
       },
       replaceMessageId: replaceMessageId,
@@ -343,23 +322,6 @@ extension ChatMessageSendEx on ChatGeneralHandler {
     );
     replyHandler.updateReplyMessage(null);
     return true;
-  }
-
-  void sendZapsMessage(BuildContext context, String zapper, String invoice, String amount,
-      String description) async {
-    try {
-      final content = jsonEncode(CustomMessageEx.zapsMetaData(
-        zapper: zapper,
-        invoice: invoice,
-        amount: amount,
-        description: description,
-      ));
-      _sendMessageHandler(
-        context: context,
-        content: content,
-        messageType: MessageType.template,
-      );
-    } catch (_) {}
   }
 
   Future sendImageMessageWithFile(BuildContext? context, List<File> images) async {
@@ -865,28 +827,6 @@ extension ChatMessageSendEx on ChatGeneralHandler {
       messageType: MessageType.system,
       sendingType: sendingType,
     );
-  }
-
-  void sendEcashMessage(
-    BuildContext context, {
-    required List<String> tokenList,
-    List<String> receiverPubkeys = const [],
-    List<EcashSignee> signees = const [],
-    String validityDate = '',
-  }) {
-    try {
-      final content = jsonEncode(CustomMessageEx.ecashV2MetaData(
-        tokenList: tokenList,
-        receiverPubkeys: receiverPubkeys,
-        signees: signees,
-        validityDate: validityDate,
-      ));
-      _sendMessageHandler(
-        context: context,
-        content: content,
-        messageType: MessageType.template,
-      );
-    } catch (_) {}
   }
 }
 

@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ox_common/component.dart';
-import 'package:ox_common/utils/storage_key_tool.dart';
-import 'package:ox_common/utils/user_config_tool.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_module_service/ox_module_service.dart';
 import 'package:rive/rive.dart';
@@ -29,20 +27,22 @@ class LaunchPageViewState extends State<LaunchPageView> {
   late StateMachineController? riveControllers;
   Artboard? riveArtboards;
 
-  String _localPasscode = '';
-
   @override
   void initState() {
     super.initState();
-    _loadData();
+
+    // Try auto login with LoginManager
+    _tryAutoLogin().then((_) async {
+      // Navigate to HomePage regardless of login status
+      // HomePage will handle the login/not-login state internally
+      await WidgetsBinding.instance.waitUntilFirstFrameRasterized;
+      Navigator.of(context).pushReplacement(
+          CustomRouteFadeIn(const HomePage())
+      );
+    });
+
 
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
-  }
-
-  void _loadData() async {
-    _localPasscode = UserConfigTool.getSetting(StorageSettingKey.KEY_PASSCODE.name, defaultValue: '');
-    // _loadRiveFile();
-    _onLoaded();
   }
 
   @override
@@ -53,74 +53,8 @@ class LaunchPageViewState extends State<LaunchPageView> {
   @override
   Widget build(BuildContext context) {
     return CLScaffold(
-      body: buildBody(context),
+      body: Container(),
     );
-  }
-
-  Widget buildBody(BuildContext context) {
-    // if (riveArtboards != null && riveControllers != null) {
-    //   return Container(
-    //     color: Colors.black,
-    //     width: double.infinity,
-    //     height: double.infinity,
-    //     child: Center(
-    //       child: Container(
-    //         width: Adapt.px(360),
-    //         height: Adapt.px(360),
-    //         margin: EdgeInsets.only(
-    //           bottom: Adapt.px(100),
-    //         ),
-    //         child: Rive(artboard: riveArtboards!),
-    //       ),
-    //     ),
-    //   );
-    // }
-    return Container();
-  }
-
-  Future<void> _loadRiveFile() async {
-    await RiveFile.initialize();
-
-    String animPath =
-        "packages/ox_home/assets/${ThemeManager.images(riveFileNames)}.riv";
-
-    final data = await rootBundle.load(animPath);
-    final file = RiveFile.import(data);
-    final artboard = file.mainArtboard;
-
-    StateMachineController? controller =
-        StateMachineController.fromArtboard(artboard, stateMachineNames);
-    //
-    if (controller != null) {
-      artboard.addController(controller);
-      riveControllers = controller;
-      riveArtboards = artboard;
-      setState(() {});
-    }
-
-    StateMachineController? animController = riveControllers;
-
-    final input = animController?.findInput<bool>(riveInputs);
-    if (input != null) {
-      input.value = true;
-    }
-  }
-
-  void _onLoaded() async {
-    if (_localPasscode.isNotEmpty) {
-      OXModuleService.pushPage(context, 'ox_usercenter', 'VerifyPasscodePage', {});
-    } else {
-      // Try auto login with LoginManager
-      await _tryAutoLogin();
-
-      // Navigate to HomePage regardless of login status
-      // HomePage will handle the login/not-login state internally
-      if (mounted) {
-        Navigator.of(context).pushReplacement(
-            CustomRouteFadeIn(const HomePage())
-        );
-      }
-    }
   }
 
   /// Try auto login using LoginManager

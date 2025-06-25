@@ -92,18 +92,6 @@ class OXChatInterface {
     );
   }
 
-  static Future<bool?> showCashuOpenDialog(String cashuToken) async {
-    return OXModuleService.invoke<Future<bool?>>(
-      moduleName,
-      'showCashuOpenDialog',
-      [cashuToken],
-    );
-  }
-
-  static Widget showRelayInfoWidget({bool showRelayIcon = true}) {
-    return OXModuleService.invoke(moduleName, 'showRelayInfoWidget', [showRelayIcon]);
-  }
-
   static void addContact(BuildContext context) {
     OXModuleService.invoke(
       moduleName,

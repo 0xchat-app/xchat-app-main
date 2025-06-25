@@ -124,21 +124,21 @@ class ChatMessageHelper {
         if (type == null) break;
 
         switch (type) {
-          case CustomMessageType.zaps:
-            return Localized.text('ox_common.message_type_zaps');
+          // case CustomMessageType.zaps:
+          //   return Localized.text('ox_common.message_type_zaps');
           case CustomMessageType.template:
             if (content is Map) {
               final title = content['title'] ?? '';
               return Localized.text('ox_common.message_type_template') + title;
             }
             break ;
-          case CustomMessageType.ecash:
-          case CustomMessageType.ecashV2:
-            var memo = '';
-            try {
-              memo = EcashMessageEx.getDescriptionWithMetadata(json.decode(contentText));
-            } catch (_) { }
-            return '[Cashu Ecash] $memo';
+          // case CustomMessageType.ecash:
+          // case CustomMessageType.ecashV2:
+          //   var memo = '';
+          //   try {
+          //     memo = EcashMessageEx.getDescriptionWithMetadata(json.decode(contentText));
+          //   } catch (_) { }
+          //   return '[Cashu Ecash] $memo';
           case CustomMessageType.imageSending:
             return Localized.text('ox_common.message_type_image');
           case CustomMessageType.video:
@@ -147,8 +147,8 @@ class ChatMessageHelper {
             final sourceScheme = NoteMessageEx.getSourceSchemeWithMetadata(metaMap);
             if (sourceScheme != null && sourceScheme.isNotEmpty) return sourceScheme;
             return Localized.text('ox_common.message_type_template');
-          case CustomMessageType.call:
-            return CallMessageEx.getDescriptionWithMetadata(metaMap) ?? unknownText;
+          // case CustomMessageType.call:
+          //   return CallMessageEx.getDescriptionWithMetadata(metaMap) ?? unknownText;
         }
         break ;
     }
@@ -211,23 +211,6 @@ class ChatMessageHelper {
               asyncParseCallback?.call(nostrSchemeContent, MessageType.template);
             }
           });
-        } else if(Zaps.isLightningInvoice(initialText)) {
-          // Zaps Msg
-          Map<String, String> req = Zaps.decodeInvoice(initialText);
-          final amount = req['amount'] ?? '';
-          if (amount.isNotEmpty) {
-            Map<String, dynamic> map = CustomMessageEx.zapsMetaData(
-                zapper: '',
-                invoice: initialText,
-                amount: amount,
-                description: 'Best wishes'
-            );
-            return (jsonEncode(map), MessageType.template);
-          }
-        } else if (Cashu.isCashuToken(initialText)) {
-          // Ecash Msg
-          final newContent = jsonEncode(CustomMessageEx.ecashV2MetaData(tokenList: [initialText]));
-          return (newContent, MessageType.template);
         }
 
         MessageDBISAR.identifyUrl(content).then((value) {
@@ -298,8 +281,6 @@ class ChatMessageHelper {
       case MessageType.audio:
       case MessageType.encryptedAudio:
         return AudioMessageFactory();
-      case MessageType.call:
-        return CallMessageFactory();
       case MessageType.system:
         return SystemMessageFactory();
       case MessageType.template:
@@ -755,9 +736,10 @@ extension UIMessageEx on types.Message {
   }
 
   bool get isEcashMessage {
-    final msg = this;
-    return msg is types.CustomMessage
-        && msg.customType == CustomMessageType.ecashV2;
+    return false;
+    // final msg = this;
+    // return msg is types.CustomMessage
+    //     && msg.customType == CustomMessageType.ecashV2;
   }
 
   bool get isSingleEcashMessage {

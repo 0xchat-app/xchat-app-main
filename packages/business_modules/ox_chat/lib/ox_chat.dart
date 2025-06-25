@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:ox_chat/manager/chat_data_cache.dart';
 import 'package:ox_chat/manager/chat_message_helper.dart';
-import 'package:ox_chat/manager/ecash_helper.dart';
 import 'package:ox_chat/model/community_menu_option_model.dart';
 import 'package:ox_chat/model/option_model.dart';
 import 'package:ox_chat/model/recent_search_user.dart';
@@ -20,11 +19,6 @@ import 'package:ox_chat/page/contacts/groups/group_share_page.dart';
 import 'package:ox_chat/page/contacts/groups/relay_group_info_page.dart';
 import 'package:ox_chat/page/contacts/my_idcard_dialog.dart';
 import 'package:ox_chat/page/contacts/user_list_page.dart';
-import 'package:ox_chat/page/ecash/ecash_open_dialog.dart';
-import 'package:ox_chat/page/ecash/ecash_info.dart';
-import 'package:ox_chat/page/ecash/ecash_info_isar.dart';
-import 'package:ox_chat/page/ecash/ecash_signature_record.dart';
-import 'package:ox_chat/page/ecash/ecash_signature_record_isar.dart';
 import 'package:ox_chat/page/session/chat_choose_share_page.dart';
 import 'package:ox_chat/page/session/chat_message_page.dart';
 import 'package:ox_chat/page/session/chat_video_play_page.dart';
@@ -32,7 +26,6 @@ import 'package:ox_chat/page/session/search_page.dart';
 import 'package:ox_chat/page/session/unified_search_page.dart';
 import 'package:ox_chat/utils/general_handler/chat_general_handler.dart';
 import 'package:ox_chat/utils/general_handler/chat_nostr_scheme_handler.dart';
-import 'package:ox_chat/widget/relay_info_widget.dart';
 import 'package:ox_common/business_interface/ox_chat/contact_base_page_state.dart';
 import 'package:ox_common/business_interface/ox_chat/interface.dart';
 import 'package:ox_common/business_interface/ox_usercenter/interface.dart';
@@ -75,13 +68,10 @@ class OXChat extends OXFlutterModule {
     'contactChanneDetailsPage': _contactChanneDetailsPage,
     'relayGroupInfoPage': _relayGroupInfoPage,
     'groupInfoPage': _groupInfoPage,
-    'zapsRecordDetail' : _zapsRecordDetail,
     'sendTextMsg': _sendTextMsg,
     'sendTemplateMessage': _sendTemplateMessage,
     'openWebviewForEncryptedFile': openWebviewForEncryptedFile,
     'getTryDecodeNostrScheme': getTryDecodeNostrScheme,
-    'showRelayInfoWidget': _showRelayInfoWidget,
-    'showCashuOpenDialog': showCashuOpenDialog,
     'addContact': addContact,
     'addGroup': addGroup,
   };
@@ -90,10 +80,10 @@ class OXChat extends OXFlutterModule {
   String get moduleName => OXChatInterface.moduleName;
 
   @override
-  List<CollectionSchema> get isarDBSchemes => [RecentSearchUserISARSchema, SearchHistoryModelISARSchema, EcashReceiptHistoryISARSchema, EcashSignatureRecordISARSchema];
+  List<CollectionSchema> get isarDBSchemes => [RecentSearchUserISARSchema, SearchHistoryModelISARSchema];
 
   @override
-  List<Function> get migrateFunctions => [RecentSearchUser.migrateToISAR, SearchHistoryModel.migrateToISAR, EcashReceiptHistory.migrateToISAR, EcashSignatureRecord.migrateToISAR];
+  List<Function> get migrateFunctions => [RecentSearchUser.migrateToISAR, SearchHistoryModel.migrateToISAR];
 
   @override
   Future<T?>? navigateToPage<T>(BuildContext context, String pageName, Map<String, dynamic>? params) {
@@ -177,10 +167,6 @@ class OXChat extends OXFlutterModule {
     return null;
   }
 
-  Widget _showRelayInfoWidget(bool showRelayIcon) {
-    return RelayInfoWidget(showRelayIcon: showRelayIcon);
-  }
-
   void _showMyIdCardDialog(BuildContext context,{UserDBISAR? otherUser}) {
     showDialog(
         context: context,
@@ -223,20 +209,6 @@ class OXChat extends OXFlutterModule {
 
   Future<void> _groupInfoPage(BuildContext? context,{required String groupId}) async {
     OXNavigator.pushPage(context!, (context) => GroupInfoPage(groupId: groupId));
-  }
-
-  Future<void> _zapsRecordDetail(BuildContext? context,{required String invoice, required String amount, required String zapsTime}) async {
-    final zapsDetail = ZapsRecordDetail(
-      invoice: invoice,
-      amount: int.parse(amount),
-      fromPubKey: '',
-      toPubKey: '',
-      zapsTime: zapsTime,
-      description: '',
-      isConfirmed: false,
-    );
-
-    OXUserCenterInterface.jumpToZapsRecordPage(context!, zapsDetail);
   }
 
   void _sendSystemMsg(BuildContext context,{required String chatId,required String content, required String localTextKey}){
@@ -353,11 +325,6 @@ class OXChat extends OXFlutterModule {
   Future<String?> getTryDecodeNostrScheme(String content) async {
     String? result = await ChatNostrSchemeHandle.tryDecodeNostrScheme(content);
     return result;
-  }
-
-  Future<bool?> showCashuOpenDialog(String cashuToken) async {
-    final package = await EcashHelper.createPackageFromCashuToken(cashuToken);
-    return EcashOpenDialog.show(package: package, approveOnTap: () { });
   }
 
   void addContact(BuildContext context) async {

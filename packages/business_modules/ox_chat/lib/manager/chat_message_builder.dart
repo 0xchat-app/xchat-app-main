@@ -234,18 +234,18 @@ class ChatMessageBuilder {
     final type = message.customType;
 
     switch (type) {
-      case CustomMessageType.zaps:
-        return ChatMessageBuilderCustomEx._buildZapsMessage(message, reactionWidget, isMe);
-      case CustomMessageType.call:
-        return ChatMessageBuilderCustomEx._buildCallMessage(message, isMe);
+      // case CustomMessageType.zaps:
+      //   return ChatMessageBuilderCustomEx._buildZapsMessage(message, reactionWidget, isMe);
+      // case CustomMessageType.call:
+      //   return ChatMessageBuilderCustomEx._buildCallMessage(message, isMe);
       case CustomMessageType.template:
         return ChatMessageBuilderCustomEx._buildTemplateMessage(message, reactionWidget, isMe);
       case CustomMessageType.note:
         return ChatMessageBuilderCustomEx._buildNoteMessage(message, reactionWidget, isMe);
-      case CustomMessageType.ecash:
-        return ChatMessageBuilderCustomEx._buildEcashMessage(message, reactionWidget, isMe);
-      case CustomMessageType.ecashV2:
-        return ChatMessageBuilderCustomEx._buildEcashV2Message(message, reactionWidget, isMe);
+      // case CustomMessageType.ecash:
+      //   return ChatMessageBuilderCustomEx._buildEcashMessage(message, reactionWidget, isMe);
+      // case CustomMessageType.ecashV2:
+      //   return ChatMessageBuilderCustomEx._buildEcashV2Message(message, reactionWidget, isMe);
       case CustomMessageType.imageSending:
         return ChatMessageBuilderCustomEx._buildImageSendingMessage(message, messageWidth, reactionWidget, receiverPubkey, isMe);
       case CustomMessageType.video:

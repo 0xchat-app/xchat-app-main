@@ -68,10 +68,6 @@ dependencies:
   ox_chat_ui:
     path: packages/business_modules/ox_chat_ui
 
-  ox_calling:
-    path: packages/business_modules/ox_calling
-
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

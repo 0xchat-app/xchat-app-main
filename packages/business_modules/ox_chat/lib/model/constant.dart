@@ -6,7 +6,7 @@ enum MessageLongPressEventType {
   forward,
   quote,
   report,
-  zaps,
+  // zaps,
 }
 
 enum ChatSendingType {

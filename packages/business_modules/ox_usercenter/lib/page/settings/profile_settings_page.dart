@@ -14,7 +14,7 @@ import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 
 import '../../widget/select_asset_dialog.dart';
-import '../set_up/avatar_preview_page.dart';
+import 'avatar_preview_page.dart';
 import 'bio_settings_page.dart';
 import 'nickname_settings_page.dart';
 import 'qr_code_display_page.dart';
