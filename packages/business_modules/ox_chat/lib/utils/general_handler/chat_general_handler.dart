@@ -980,6 +980,7 @@ extension ChatInputMoreHandlerEx on ChatGeneralHandler {
     }
 
     final result = await CLAlertDialog.show<bool>(
+      title: Localized.text('ox_chat.require_file_server_title'),
       context: context,
       content: Localized.text('ox_chat.require_file_server'),
       actions: [

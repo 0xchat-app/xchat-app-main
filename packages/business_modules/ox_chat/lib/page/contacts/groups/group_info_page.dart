@@ -84,7 +84,7 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
               group: groupInfo,
               size: 80.px,
             ),
-            SizedBox(height: 12.px),
+            SizedBox(height: 6.px),
             // Group name
             CLText.titleLarge(
               groupInfo.name.isEmpty ? '--' : groupInfo.name,
@@ -92,13 +92,13 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
-            SizedBox(height: 4.px),
-            // Member count
-            CLText.bodyMedium(
-              '${groupMember.length} ${Localized.text('ox_chat.group_member')}',
-              colorToken: ColorToken.onSurfaceVariant,
-              textAlign: TextAlign.center,
-            ),
+            // SizedBox(height: 4.px),
+            // // Member count
+            // CLText.bodyMedium(
+            //   '${groupMember.length} ${Localized.text('ox_chat.group_member')}',
+            //   colorToken: ColorToken.onSurfaceVariant,
+            //   textAlign: TextAlign.center,
+            // ),
             SizedBox(height: 16.px),
             // Action buttons
             _buildActionButtons(),
