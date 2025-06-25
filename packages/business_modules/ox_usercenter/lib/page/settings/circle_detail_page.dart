@@ -29,7 +29,7 @@ class CircleDetailPage extends StatelessWidget {
 
   final String description;
 
-  String get title => Localized.text('ox_usercenter.circle_detail');
+  String get title => Localized.text('ox_usercenter.circle_settings');
 
   @override
   Widget build(BuildContext context) {
