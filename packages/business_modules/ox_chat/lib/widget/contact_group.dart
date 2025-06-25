@@ -17,6 +17,7 @@ import 'package:ox_common/utils/font_size_notifier.dart';
 import 'package:ox_common/utils/theme_color.dart';
 import 'package:ox_common/utils/took_kit.dart';
 import 'package:ox_common/widgets/avatar.dart';
+import 'package:ox_common/widgets/smart_group_avatar.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 
 double itemHeight = Adapt.px(68.0);
@@ -416,7 +417,7 @@ class _GroupContactListItemState extends State<GroupContactListItem> {
     switch (widget.item.chatType) {
       case ChatType.chatGroup:
         GroupDBISAR? tempGroupDB = Groups.sharedInstance.myGroups[widget.item.groupId]?.value;
-        iconAvatar = OXGroupAvatar(group: tempGroupDB);
+        iconAvatar = SmartGroupAvatar(group: tempGroupDB);
         showName = tempGroupDB?.name ?? '';
         if (showName.isEmpty) showName = Groups.encodeGroup(widget.item.groupId, null, null);
         break;

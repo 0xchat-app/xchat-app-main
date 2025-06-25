@@ -7,6 +7,7 @@ import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/theme_color.dart';
 import 'package:ox_common/widgets/avatar.dart';
+import 'package:ox_common/widgets/smart_group_avatar.dart';
 import 'package:ox_common/widgets/common_image.dart';
 
 ///Title: share_item_info
@@ -115,8 +116,8 @@ mixin ShareItemInfoMixin {
         height: Adapt.px(60),
         child: (item.chatType == ChatType.chatGroup)
             ? Center(
-                child: GroupedAvatar(
-                avatars: _groupMembersCache[item.groupId] ?? [],
+                child: SmartGroupAvatar(
+                groupId: item.groupId,
                 size: 60.px,
               ))
             : ClipRRect(

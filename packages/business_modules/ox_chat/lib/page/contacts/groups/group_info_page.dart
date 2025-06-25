@@ -6,6 +6,7 @@ import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/widgets/avatar.dart';
+import 'package:ox_common/widgets/smart_group_avatar.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 
@@ -36,6 +37,9 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
     super.initState();
     _groupNotifier = Groups.sharedInstance.getPrivateGroupNotifier(widget.groupId);
     _groupInfoInit();
+    
+    // Listen to group changes and update member list
+    _groupNotifier.addListener(_onGroupChanged);
   }
 
   void _groupInfoInit() async {
@@ -49,8 +53,14 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
     });
   }
 
+  void _onGroupChanged() {
+    // Reload member list when group changes
+    _groupInfoInit();
+  }
+
   @override
   void dispose() {
+    _groupNotifier.removeListener(_onGroupChanged);
     super.dispose();
   }
 
@@ -61,13 +71,18 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
         title: Localized.text('ox_chat.group_info'),
       ),
       isSectionListPage: true,
-      body: CLSectionListView(
-        header: _buildHeaderWidget(),
-        items: [
-          _buildGroupInfoSection(),
-          _buildSettingsSection(),
-          _buildDangerSection(),
-        ],
+      body: ValueListenableBuilder<GroupDBISAR>(
+        valueListenable: _groupNotifier,
+        builder: (context, groupInfo, child) {
+          return CLSectionListView(
+            header: _buildHeaderWidget(),
+            items: [
+              _buildGroupInfoSection(),
+              _buildSettingsSection(),
+              _buildDangerSection(),
+            ],
+          );
+        },
       ),
     );
   }
@@ -80,7 +95,7 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
           children: [
             SizedBox(height: 16.px),
             // Group avatar or member avatars
-            OXGroupAvatar(
+            SmartGroupAvatar(
               group: groupInfo,
               size: 80.px,
             ),
@@ -92,13 +107,6 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
-            // SizedBox(height: 4.px),
-            // // Member count
-            // CLText.bodyMedium(
-            //   '${groupMember.length} ${Localized.text('ox_chat.group_member')}',
-            //   colorToken: ColorToken.onSurfaceVariant,
-            //   textAlign: TextAlign.center,
-            // ),
             SizedBox(height: 16.px),
             // Action buttons
             _buildActionButtons(),
@@ -171,9 +179,19 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
           value$: ValueNotifier(_groupNotifier.value.name.isEmpty ? '--' : _groupNotifier.value.name),
           onTap: _isGroupMember ? _updateGroupNameFn : null,
         ),
-        LabelItemModel(
+        CustomItemModel(
           title: Localized.text('ox_chat.group_member'),
-          value$: ValueNotifier('${groupMember.length}'),
+          titleWidget: CLText.bodyLarge(Localized.text('ox_chat.group_member')),
+          trailing: FutureBuilder<List<UserDBISAR>>(
+            future: Groups.sharedInstance.getAllGroupMembers(_groupNotifier.value.privateGroupId),
+            builder: (context, snapshot) {
+              final memberCount = snapshot.data?.length ?? groupMember.length;
+              return CLText.bodyMedium(
+                '$memberCount',
+                colorToken: ColorToken.onSurfaceVariant,
+              );
+            },
+          ),
           onTap: () => _groupMemberOptionFn(GroupListAction.view),
         ),
       ],

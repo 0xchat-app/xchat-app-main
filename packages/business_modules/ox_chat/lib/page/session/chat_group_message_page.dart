@@ -8,6 +8,7 @@ import 'package:ox_chat/utils/chat_log_utils.dart';
 import 'package:ox_common/business_interface/ox_chat/utils.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/widgets/avatar.dart';
+import 'package:ox_common/widgets/smart_group_avatar.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
 import 'package:ox_common/widgets/common_toast.dart';
@@ -83,11 +84,14 @@ class _ChatGroupMessagePageState extends State<ChatGroupMessagePage> {
                         setState(() {});
                       },
                     )
-                  : OXGroupAvatar(
+                  : SmartGroupAvatar(
                       group: group,
                       size: Adapt.px(36),
                       isClickable: true,
-                      onReturnFromNextPage: () {
+                      onTap: () async {
+                        await OXModuleService.pushPage(context, 'ox_chat', 'GroupInfoPage', {
+                          'groupId': group?.privateGroupId ?? '',
+                        });
                         if (!mounted) return;
                         setState(() {});
                       },

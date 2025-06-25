@@ -5,9 +5,11 @@ import 'package:ox_chat/utils/chat_session_utils.dart';
 import 'package:ox_common/business_interface/ox_chat/utils.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_models.dart';
+import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/avatar.dart';
+import 'package:ox_common/widgets/smart_group_avatar.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_common/widgets/common_image.dart';
 import 'package:ox_localizable/ox_localizable.dart';
@@ -263,9 +265,9 @@ class _SessionListWidgetState extends State<SessionListWidget> {
           builder: (context, groupMember, _) {
             final isSingleChat = _AdaptHelperEx(entity).isSingleChat;
             final size = 40.px;
-            if (!isSingleChat && groupMember.isNotEmpty) {
-              return GroupedAvatar(
-                avatars: groupMember,
+            if (!isSingleChat && item.sessionModel.chatType == ChatType.chatGroup) {
+              return SmartGroupAvatar(
+                groupId: item.sessionModel.groupId,
                 size: size,
               );
             }
