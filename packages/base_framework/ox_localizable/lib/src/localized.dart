@@ -277,7 +277,7 @@ extension LocaleTypeExtension on LocaleType{
             case LocaleType.th:
                 return 'ภาษาไทย';
             case LocaleType.zh_tw:
-                return '繁體中文(中國台灣)';
+                return '繁體中文';
             case LocaleType.it:
                 return 'Italiano';
             case LocaleType.tr:
