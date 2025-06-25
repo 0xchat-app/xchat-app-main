@@ -91,15 +91,20 @@ class OXCupertinoSheetRoute<T> extends CupertinoSheetRoute<T> {
     super.settings,
     required WidgetBuilder builder,
   }) : super(
-    builder: (ctx) => MediaQuery(
-      data: MediaQuery.of(ctx).copyWith(
-        padding: MediaQuery.of(ctx).padding.copyWith(top: 12),
-      ),
-      child: HeroControllerScope(
-        controller: HeroController(),
-        child: Navigator(
-          onGenerateRoute: (_) => CupertinoPageRoute(
-            builder: builder,
+    builder: (ctx) => FractionallySizedBox(
+      alignment: Alignment.topCenter,
+      // Fix issue in CupertinoSheetRoute where only offset was applied without reducing content height, causing bottom overflow
+      heightFactor: 1 - 0.08,
+      child: MediaQuery(
+        data: MediaQuery.of(ctx).copyWith(
+          padding: MediaQuery.of(ctx).padding.copyWith(top: 12),
+        ),
+        child: HeroControllerScope(
+          controller: HeroController(),
+          child: Navigator(
+            onGenerateRoute: (_) => CupertinoPageRoute(
+              builder: builder,
+            ),
           ),
         ),
       ),
