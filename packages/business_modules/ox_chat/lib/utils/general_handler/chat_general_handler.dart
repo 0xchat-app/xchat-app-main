@@ -16,8 +16,6 @@ import 'package:ox_chat/utils/message_parser/define.dart';
 import 'package:ox_chat/utils/send_message/chat_send_message_helper.dart';
 import 'package:ox_chat/widget/chat_send_image_prepare_dialog.dart';
 import 'package:ox_common/business_interface/ox_chat/call_message_type.dart';
-import 'package:ox_common/business_interface/ox_wallet/interface.dart';
-import 'package:ox_common/log_util.dart';
 import 'package:ox_common/ox_common.dart';
 import 'package:ox_common/upload/file_type.dart';
 import 'package:ox_common/upload/upload_utils.dart';
@@ -515,9 +513,6 @@ extension ChatMenuHandlerEx on ChatGeneralHandler {
   void _copyMenuItemPressHandler(types.Message message) async {
     if (message is types.TextMessage) {
       Clipboard.setData(ClipboardData(text: message.text));
-    } else if (message.isSingleEcashMessage) {
-      final token = EcashV2MessageEx(message as types.CustomMessage).tokenList.first;
-      Clipboard.setData(ClipboardData(text: token));
     } else if (message is types.CustomMessage && message.customType == CustomMessageType.imageSending) {
       var path = ImageSendingMessageEx(message).path;
       final url = ImageSendingMessageEx(message).url;

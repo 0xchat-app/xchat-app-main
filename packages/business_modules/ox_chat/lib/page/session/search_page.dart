@@ -2,10 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:ox_chat/model/group_ui_model.dart';
-import 'package:ox_chat/model/recent_search_user_isar.dart';
 import 'package:ox_chat/model/search_chat_model.dart';
-import 'package:ox_chat/model/search_history_model.dart';
-import 'package:ox_chat/model/search_history_model_isar.dart';
 import 'package:ox_chat/page/session/chat_message_page.dart';
 import 'package:ox_chat/page/session/search_discover_ui.dart';
 import 'package:ox_chat/utils/search_txt_util.dart';
@@ -13,7 +10,6 @@ import 'package:ox_chat/utils/widget_tool.dart';
 import 'package:ox_common/business_interface/ox_chat/utils.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/widgets/avatar.dart';
-import 'package:ox_common/log_util.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_common/navigator/navigator.dart';
@@ -21,12 +17,10 @@ import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/theme_color.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
-import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/widgets/common_appbar.dart';
 import 'package:ox_common/widgets/common_image.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:chatcore/chat-core.dart';
-import 'package:isar/isar.dart';
 
 import 'package:ox_chat/page/contacts/contact_user_info_page.dart';
 
@@ -75,7 +69,6 @@ class SearchPageState extends State<SearchPage> {
   String searchQuery = '';
   List<Group> dataGroups = [];
   List<UserDBISAR> _selectedHistoryList = [];
-  List<SearchHistoryModel> _txtHistoryList = [];
   bool isSubpage = false;
   TextEditingController editingController = TextEditingController();
   int lastRequestId = 0;
@@ -150,32 +143,11 @@ class SearchPageState extends State<SearchPage> {
       _loadMessagesData();
       loadOnlineChannelsData();
       _loadUsersData();
-    } else {
-      _loadHistory();
     }
     // if (isInput && searchQuery.trim().isNotEmpty) {
     //   _updateSearchHistory(null);
     // }
   }
-
-  void _loadHistory() async {
-    _selectedHistoryList.clear();
-    _txtHistoryList.clear();
-    // _txtHistoryList = await DB.sharedInstance.objects<SearchHistoryModel>();
-    final isar = DBISAR.sharedInstance.isar;
-    final userList = await isar.recentSearchUserISARs.where().findAll();
-    await Future.forEach(userList, (e) async {
-      final user = await Account.sharedInstance.getUserInfo(e.pubKey);
-      if (user != null) {
-        _selectedHistoryList.add(user);
-      }
-    });
-
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
 
   void _loadGroupsData() async {
     List<GroupUIModel>? tempGroupList = await SearchTxtUtil.loadChatGroupWithSymbol(searchQuery);
@@ -472,73 +444,25 @@ class SearchPageState extends State<SearchPage> {
   }
 
   Widget _buildEmptySearchView() {
-    final hasHistory =
-        _selectedHistoryList.length > 0 || _txtHistoryList.length > 0;
-    if (!hasHistory) {
-      String hintStr = '';
-      if(widget.searchPageType == SearchPageType.discover) hintStr = Localized.text('ox_chat.search_tips_discovery');
-      else
-        hintStr = Localized.text('ox_chat.search_tips_prefix') +
+    String hintStr = '';
+    if(widget.searchPageType == SearchPageType.discover) hintStr = Localized.text('ox_chat.search_tips_discovery');
+    else
+      hintStr = Localized.text('ox_chat.search_tips_prefix') +
           '${widget.searchPageType == SearchPageType.all ? Localized.text('ox_chat.search_tips_suffix_all') : ''}' +
           '${widget.searchPageType != SearchPageType.all && widget.searchPageType == SearchPageType.singleFriend ? Localized.text('ox_chat.search_tips_suffix_friend') : ''}' +
           '${widget.searchPageType != SearchPageType.all && widget.searchPageType == SearchPageType.singleChannel ? Localized.text('ox_chat.search_tips_suffix_channel') : ''}';
-      return Container(
-        width: double.infinity,
-        height: Adapt.px(22),
-        alignment: Alignment.topCenter,
-        child: Text(
-          hintStr,
-          style: TextStyle(
-            fontSize: Adapt.px(15),
-            color: ThemeColor.color110,
-            fontWeight: FontWeight.w400,
-          ),
+    return Container(
+      width: double.infinity,
+      height: Adapt.px(22),
+      alignment: Alignment.topCenter,
+      child: Text(
+        hintStr,
+        style: TextStyle(
+          fontSize: Adapt.px(15),
+          color: ThemeColor.color110,
+          fontWeight: FontWeight.w400,
         ),
-      );
-    }
-
-    return _buildHistoryView();
-  }
-
-  Widget _buildHistoryView() {
-    return Column(
-      children: [
-        Container(
-          padding: EdgeInsets.symmetric(vertical: 4.px),
-          width: double.infinity,
-          alignment: Alignment.center,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                Localized.text('ox_chat.recent_searches'),
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: Adapt.px(14),
-                  color: Colors.white,
-                  height: 20.px,
-                ),
-              ),
-              GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                child: CommonImage(
-                  iconName: 'icon_clearbutton.png',
-                  fit: BoxFit.fill,
-                  width: Adapt.px(20),
-                  height: Adapt.px(20),
-                ),
-                onTap: () {
-                  _clearRecentSearches();
-                },
-              ),
-            ],
-          ),
-        ),
-        _buildHistoryUserView(),
-        Expanded(
-          child: _buildHistoryTextView(),
-        ),
-      ],
+      ),
     );
   }
 
@@ -589,47 +513,6 @@ class SearchPageState extends State<SearchPage> {
               ))
           .toList(),
     ).setPadding(EdgeInsets.symmetric(vertical: Adapt.px(12)));
-  }
-
-  Widget _buildHistoryTextView() {
-    return ListView.builder(
-      padding: EdgeInsets.zero,
-      scrollDirection: Axis.vertical,
-      itemCount: _txtHistoryList.length,
-      itemBuilder: (context, index) {
-        SearchHistoryModel itemModel = _txtHistoryList[index];
-        return GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onTap: () {
-            editingController.text = itemModel.searchTxt ?? '';
-            _onTextChanged(itemModel.searchTxt ?? '');
-          },
-          child: Container(
-            height: Adapt.px(40),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  itemModel.searchTxt ?? '',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w400,
-                    fontSize: Adapt.px(14),
-                    color: Colors.white,
-                  ),
-                ),
-                CommonImage(
-                  iconName: 'icon_search_arrow.png',
-                  fit: BoxFit.fill,
-                  width: Adapt.px(16),
-                  height: Adapt.px(16),
-                  package: 'ox_chat',
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
   }
 
   Widget highlightText(String mainText, {int? maxLines = 1}) {
@@ -760,22 +643,6 @@ class SearchPageState extends State<SearchPage> {
     );
   }
 
-  Future<void> _updateSearchHistory(UserDBISAR? userDB) async {
-    final userPubkey = userDB?.pubKey;
-    if (userPubkey != null) {
-      await DBISAR.sharedInstance.saveToDB(RecentSearchUserISAR(pubKey: userPubkey));
-    } else {
-      await DBISAR.sharedInstance.saveToDB(
-          SearchHistoryModelISAR(
-            searchTxt: searchQuery,
-            pubKey: userDB?.pubKey ?? null,
-            name: userDB?.name ?? null,
-            picture: userDB?.picture ?? null,
-          )
-      );
-    }
-  }
-
   Image placeholderImage(bool isUser, double wh) {
     String localAvatarPath = isUser
         ? 'assets/images/user_image.png'
@@ -802,7 +669,6 @@ class SearchPageState extends State<SearchPage> {
   }
 
   void _gotoFriendSession(UserDBISAR userDB) {
-    _updateSearchHistory(userDB);
     ChatMessagePage.open(
       context: context,
       communityItem: ChatSessionModelISAR(
@@ -914,19 +780,6 @@ class SearchPageState extends State<SearchPage> {
         createTime: channelDB.createTime,
       ),
     );
-  }
-
-  void _clearRecentSearches() async {
-    final isar = DBISAR.sharedInstance.isar;
-    await isar.writeTxn(() async {
-      await isar.searchHistoryModelISARs.clear();
-      await isar.recentSearchUserISARs.clear();
-    });
-
-    _selectedHistoryList.clear();
-    _txtHistoryList.clear();
-    searchQuery = '';
-    setState(() {});
   }
 }
 

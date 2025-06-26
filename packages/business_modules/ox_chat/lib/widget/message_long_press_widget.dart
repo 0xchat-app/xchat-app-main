@@ -75,7 +75,7 @@ class MessageLongPressWidgetState extends State<MessageLongPressWidget> {
     // Base
     final message = this.message;
     menuList.addAll([
-      if (message is types.TextMessage || message.isSingleEcashMessage || (message is types.CustomMessage && message.customType == CustomMessageType.imageSending))
+      if (message is types.TextMessage || (message is types.CustomMessage && message.customType == CustomMessageType.imageSending))
         ItemModel(
           Localized.text('ox_chat.message_menu_copy'),
           AssetImageData('icon_copy.png', package: 'ox_chat'),

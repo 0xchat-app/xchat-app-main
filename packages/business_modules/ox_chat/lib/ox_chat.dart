@@ -7,10 +7,6 @@ import 'package:ox_chat/manager/chat_data_cache.dart';
 import 'package:ox_chat/manager/chat_message_helper.dart';
 import 'package:ox_chat/model/community_menu_option_model.dart';
 import 'package:ox_chat/model/option_model.dart';
-import 'package:ox_chat/model/recent_search_user.dart';
-import 'package:ox_chat/model/recent_search_user_isar.dart';
-import 'package:ox_chat/model/search_history_model.dart';
-import 'package:ox_chat/model/search_history_model_isar.dart';
 import 'package:ox_chat/page/contacts/contact_channel_detail_page.dart';
 import 'package:ox_chat/page/contacts/contact_user_choose_page.dart';
 import 'package:ox_chat/page/contacts/contact_user_info_page.dart';
@@ -26,10 +22,7 @@ import 'package:ox_chat/page/session/search_page.dart';
 import 'package:ox_chat/page/session/unified_search_page.dart';
 import 'package:ox_chat/utils/general_handler/chat_general_handler.dart';
 import 'package:ox_chat/utils/general_handler/chat_nostr_scheme_handler.dart';
-import 'package:ox_common/business_interface/ox_chat/contact_base_page_state.dart';
 import 'package:ox_common/business_interface/ox_chat/interface.dart';
-import 'package:ox_common/business_interface/ox_usercenter/interface.dart';
-import 'package:ox_common/business_interface/ox_usercenter/zaps_detail_model.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'package:ox_common/model/chat_type.dart';
@@ -38,7 +31,6 @@ import 'package:ox_common/network/network_general.dart';
 import 'package:ox_common/scheme/scheme_helper.dart';
 import 'package:ox_common/utils/aes_encrypt_utils.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
-import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/utils/string_utils.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/widgets/common_toast.dart';
@@ -80,10 +72,7 @@ class OXChat extends OXFlutterModule {
   String get moduleName => OXChatInterface.moduleName;
 
   @override
-  List<CollectionSchema> get isarDBSchemes => [RecentSearchUserISARSchema, SearchHistoryModelISARSchema];
-
-  @override
-  List<Function> get migrateFunctions => [RecentSearchUser.migrateToISAR, SearchHistoryModel.migrateToISAR];
+  List<IsarGeneratedSchema> get isarDBSchemes => [];
 
   @override
   Future<T?>? navigateToPage<T>(BuildContext context, String pageName, Map<String, dynamic>? params) {
