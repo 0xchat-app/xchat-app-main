@@ -39,18 +39,18 @@ class OXDefaultCacheManager extends CacheManager with ImageCacheManager {
 
 class DecryptedCacheManager extends CacheManager {
   static const key = "decryptCache";
-  static Config config = Config(
+  static Config _config = Config(
     key,
     repo: JsonCacheInfoRepository(databaseName: key),
   );
-  static final decryptedStore = CacheManager(config).store;
-  static final decryptedWebHelper = CacheManager(config).webHelper;
+  static final decryptedStore = CacheManager(_config).store;
+  static final decryptedWebHelper = CacheManager(_config).webHelper;
 
   final String decryptKey;
   final String decryptNonce;
 
   DecryptedCacheManager(this.decryptKey, this.decryptNonce) : super.custom(
-    config,
+    _config,
     cacheStore: decryptedStore,
     webHelper: decryptedWebHelper,
   );

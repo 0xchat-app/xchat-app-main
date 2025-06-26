@@ -64,6 +64,8 @@ class GiphyService {
       case GiphyCategory.EMOJIS:
         url = host + '/v2/emoji';
         break;
+      case GiphyCategory.COLLECT:
+        break;
     }
 
     params = <String, dynamic>{
