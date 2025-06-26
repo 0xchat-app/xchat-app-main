@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-import 'package:cashu_dart/cashu_dart.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:flutter_chat_types/src/message.dart' as UIMessage;
 import 'package:ox_chat/model/message_content_model.dart';
@@ -733,19 +732,5 @@ extension UIMessageEx on types.Message {
     return msg is types.CustomMessage
         && msg.customType == CustomMessageType.video
         && ImageSendingMessageEx(msg).url.isNotEmpty;
-  }
-
-  bool get isEcashMessage {
-    return false;
-    // final msg = this;
-    // return msg is types.CustomMessage
-    //     && msg.customType == CustomMessageType.ecashV2;
-  }
-
-  bool get isSingleEcashMessage {
-    if (!isEcashMessage) return false;
-
-    final msg = this as types.CustomMessage;
-    return EcashV2MessageEx(msg).tokenList.length == 1;
   }
 }

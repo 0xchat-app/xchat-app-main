@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:cashu_dart/cashu_dart.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_common/const/common_constant.dart';
@@ -42,8 +41,6 @@ class ScanUtils {
       ScanAnalysisHandlerEx.scanUserHandler,
       ScanAnalysisHandlerEx.scanGroupHandler,
       ScanAnalysisHandlerEx.scanNWCHandler,
-      ScanAnalysisHandlerEx.scanCashuHandler,
-      ScanAnalysisHandlerEx.scanLnInvoiceHandler,
     ];
     for (var handler in handlers) {
       if (await handler.matcher(url)) {
@@ -197,28 +194,6 @@ extension ScanAnalysisHandlerEx on ScanUtils {
           ),
         ],
       );
-    },
-  );
-
-  static ScanAnalysisHandler scanCashuHandler = ScanAnalysisHandler(
-    matcher: (String str) {
-      return Cashu.isCashuToken(str);
-    },
-    action: (String token, BuildContext context) async {
-      final response = await Cashu.redeemEcash(ecashString: token);
-      if (!response.isSuccess) return ;
-      final (memo, amount) = response.data;
-      OXModuleService.pushPage(context, 'ox_wallet', 'WalletSuccessfulRedeemClaimedPage',{'amount':amount.toString()});
-    },
-  );
-
-  static ScanAnalysisHandler scanLnInvoiceHandler = ScanAnalysisHandler(
-    matcher: (String str) {
-      return Cashu.isLnInvoice(str);
-    },
-    action: (String invoice, BuildContext context) async {
-      final amount = Cashu.amountOfLightningInvoice(invoice);
-      OXModuleService.pushPage(context, 'ox_wallet', 'WalletSendLightningPage', {'invoice': invoice, 'amount': amount.toString()});
     },
   );
 }
