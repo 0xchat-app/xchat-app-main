@@ -2,5 +2,14 @@
   "Home": "ホーム",
   "Contact": "連絡先",
   "Discover": "発見",
-  "Me": "マイページ"
+  "Me": "マイページ",
+  "add_circle": "サークルを追加",
+  "join_circle_title": "サークルを追加",
+  "join_circle": "サークルを追加",
+  "new_paid_circle": "新しい有料サークル 💎",
+  "add": "追加",
+  "join_circle_input_label": "リンク",
+  "join_or_create_circle_now": "今すぐサークルを追加または作成",
+  "join_circle_description": "サークルを追加するには、リレーアドレスまたは有効な招待リンクを入力してください。\n例：wss://groups.nostr.com",
+  "unlock_advanced_model": "友達や家族とプライベートチャットを始めましょう！"
 }

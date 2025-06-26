@@ -37,5 +37,8 @@
   "str_login_with_qrcode_hint": "QRコードを使用して0xchatにログイン",
   "str_login_with_qrcode_description": "1 携帯電話で0xchatを開く\n2 追加 > スキャンに移動\n3 この画面を携帯電話でスキャンしてログインを確認",
   "str_login_with_account": "アカウントでログイン",
-  "str_login_with_copy_url": "URLをコピー"
+  "str_login_with_copy_url": "URLをコピー",
+  "wait_link_service": "サービスへの接続を待機中、または署名アプリが認証を求めているかご確認ください！",
+  "generate_new_key": "新しいキーを生成",
+  "login_with_aegis": "Aegisでログイン"
 }

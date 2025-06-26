@@ -2,5 +2,14 @@
   "Home": "Accueil",
   "Contact": "Contact",
   "Discover": "Découvrir",
-  "Me": "Moi"
+  "Me": "Moi",
+  "add_circle": "Ajouter un cercle",
+  "join_circle_title": "Ajouter un cercle",
+  "join_circle": "Ajouter un cercle",
+  "new_paid_circle": "Nouveau cercle payant 💎",
+  "add": "Ajouter",
+  "join_circle_input_label": "Lien",
+  "join_or_create_circle_now": "Ajoutez ou créez un cercle maintenant",
+  "join_circle_description": "Pour ajouter un cercle, entrez une adresse de relais ou un lien d'invitation valide.\nPar exemple : wss://groups.nostr.com",
+  "unlock_advanced_model": "et commencez des discussions privées avec vos amis et votre famille !"
 }

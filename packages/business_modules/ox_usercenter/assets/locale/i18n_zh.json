@@ -268,5 +268,6 @@
   "storage_permission_denied": "存储权限被拒绝",
   "qr_code_saved": "二维码已保存到相册",
   "save_failed": "保存失败",
-  "share_coming_soon": "分享功能即将推出"
+  "share_coming_soon": "分享功能即将推出",
+  "circle_settings": "圈子设置"
 }

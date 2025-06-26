@@ -18,5 +18,7 @@
   "giphy_tips": "由GIPHY提供技術支持",
   "chat_input_hint_text": "輸入訊息",
   "giphy_use_hint": "啟用Giphy功能以支持發送GIF圖像，並在聊天中享受更多樂趣。然而，由於我們使用Giphy的API接口，請求Giphy API會將您的IP地址暴露給Giphy服務。您同意啟用它嗎？",
-  "giphy_continue": "繼續"
+  "giphy_continue": "繼續",
+  "input_more_nuts": "Cashu堅果",
+  "not_in_group": "您不在群組中"
 }

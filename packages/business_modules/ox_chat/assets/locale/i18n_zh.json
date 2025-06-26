@@ -370,5 +370,6 @@
   "delete_group_confirm_title": "删除群组",
   "delete_group_confirm_content": "此操作将永久删除群组且无法撤销，所有群组数据将丢失。",
   "leave_group_confirm_title": "退出群组",
-  "leave_group_confirm_content": "退出后将无法接收此群组消息，需要重新邀请才能加入。"
+  "leave_group_confirm_content": "退出后将无法接收此群组消息，需要重新邀请才能加入。",
+  "require_file_server_title": "无文件服务器"
 }
