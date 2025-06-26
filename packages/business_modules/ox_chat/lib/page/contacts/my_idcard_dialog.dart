@@ -62,10 +62,9 @@ class _MyIdCardDialogState extends BasePageState<MyIdCardDialog> {
   void _initData() async {
     List<String> relayAddressList;
     if(widget.otherUser != null){
-      relayAddressList = await Account.sharedInstance.getUserGeneralRelayList(widget.otherUser?.pubKey ?? '');
+      relayAddressList = [];
     }else{
-      relayAddressList = Account.sharedInstance.getMyGeneralRelayList().map((e) => e.url).toList();
-
+      relayAddressList = Account.sharedInstance.getCurrentCircleRelay().toList();
     }
     List<String> relayList = relayAddressList.take(5).toList();
     if (widget.type == CommonConstant.qrCodeUser) {
