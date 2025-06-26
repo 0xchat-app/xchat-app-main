@@ -244,6 +244,7 @@ class _AddFileServerPageState extends State<AddFileServerPage> {
       }
 
       final model = FileServerModel(
+        id: 0, // Isar will auto-assign the ID when saving
         type: widget.type,
         url: url,
         name: name,

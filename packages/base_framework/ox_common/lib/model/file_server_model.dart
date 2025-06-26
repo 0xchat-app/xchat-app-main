@@ -10,7 +10,7 @@ enum FileServerType { nip96, blossom, minio }
 @collection
 class FileServerModel {
   FileServerModel({
-    this.id = Isar.autoIncrement,
+    required this.id,
     required this.type,
     required this.url,
     this.name = '',
@@ -19,9 +19,9 @@ class FileServerModel {
     this.bucketName = '',
   });
 
-  Id id;
+  late int id;
 
-  @enumerated
+  // @enumerated // TODO: Enable when isar_generator is available
   FileServerType type;
 
   /// Display name / custom name

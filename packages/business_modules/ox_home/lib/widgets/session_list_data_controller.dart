@@ -27,8 +27,8 @@ class SessionListDataController with OXChatObserver {
     if (chatIds.isEmpty) return;
 
     final isar = DBISAR.sharedInstance.isar;
-    await isar.writeTxn(() async {
-       await isar.chatSessionModelISARs
+    await isar.writeAsync((isar) {
+       isar.chatSessionModelISARs
           .where()
           .anyOf(chatIds, (q, chatId) => q.chatIdEqualTo(chatId))
           .deleteAll();
@@ -149,7 +149,7 @@ class SessionListDataController with OXChatObserver {
 
     final sessionModel = viewModel.sessionModel;
     sessionModel.mentionMessageIds = [];
-    await ChatSessionModelISAR.saveChatSessionModelToDB(sessionModel);
+    ChatSessionModelISAR.saveChatSessionModelToDB(sessionModel);
     if (sendNotification) {
       viewModel.rebuild();
     }
@@ -159,12 +159,14 @@ class SessionListDataController with OXChatObserver {
 extension SessionDCInterface on SessionListDataController {
   void initialized() async {
     final isar = DBISAR.sharedInstance.isar;
-    final List<ChatSessionModelISAR> sessionList = await isar
+    final List<ChatSessionModelISAR> sessionList = isar
         .chatSessionModelISARs
         .where()
-        .chatIdNotEqualTo('')
-        .sortByCreateTimeDesc()
         .findAll();
+    
+    // Filter out empty chatIds and sort by createTime descending
+    sessionList.removeWhere((session) => session.chatId.isEmpty);
+    sessionList.sort((a, b) => b.createTime.compareTo(a.createTime));
 
     final viewModelData = <SessionListViewModel>[];
     for (var sessionModel in sessionList) {
@@ -189,8 +191,8 @@ extension SessionDCInterface on SessionListDataController {
 
     final isar = DBISAR.sharedInstance.isar;
     int count = 0;
-    await isar.writeTxn(() async {
-      count = await isar.chatSessionModelISARs
+    await isar.writeAsync((isar) {
+      count = isar.chatSessionModelISARs
           .where()
           .chatIdEqualTo(chatId)
           .deleteAll();

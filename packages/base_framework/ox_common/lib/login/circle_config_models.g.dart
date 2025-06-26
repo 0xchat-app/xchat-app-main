@@ -3,462 +3,473 @@
 part of 'circle_config_models.dart';
 
 // **************************************************************************
-// IsarCollectionGenerator
+// _IsarCollectionGenerator
 // **************************************************************************
 
 // coverage:ignore-file
-// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+// ignore_for_file: duplicate_ignore, invalid_use_of_protected_member, lines_longer_than_80_chars, constant_identifier_names, avoid_js_rounded_ints, no_leading_underscores_for_local_identifiers, require_trailing_commas, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_in_if_null_operators, library_private_types_in_public_api, prefer_const_constructors
+// ignore_for_file: type=lint
 
 extension GetCircleConfigISARCollection on Isar {
-  IsarCollection<CircleConfigISAR> get circleConfigISARs => this.collection();
+  IsarCollection<int, CircleConfigISAR> get circleConfigISARs =>
+      this.collection();
 }
 
-const CircleConfigISARSchema = CollectionSchema(
-  name: r'CircleConfigISAR',
-  id: -4688355573579726760,
-  properties: {
-    r'boolValue': PropertySchema(
-      id: 0,
-      name: r'boolValue',
-      type: IsarType.bool,
-    ),
-    r'circleId': PropertySchema(
-      id: 1,
-      name: r'circleId',
-      type: IsarType.string,
-    ),
-    r'doubleValue': PropertySchema(
-      id: 2,
-      name: r'doubleValue',
-      type: IsarType.double,
-    ),
-    r'intValue': PropertySchema(
-      id: 3,
-      name: r'intValue',
-      type: IsarType.long,
-    ),
-    r'key': PropertySchema(
-      id: 4,
-      name: r'key',
-      type: IsarType.string,
-    ),
-    r'stringValue': PropertySchema(
-      id: 5,
-      name: r'stringValue',
-      type: IsarType.string,
-    ),
-    r'updatedAt': PropertySchema(
-      id: 6,
-      name: r'updatedAt',
-      type: IsarType.long,
-    )
-  },
-  estimateSize: _circleConfigISAREstimateSize,
-  serialize: _circleConfigISARSerialize,
-  deserialize: _circleConfigISARDeserialize,
-  deserializeProp: _circleConfigISARDeserializeProp,
-  idName: r'id',
-  indexes: {
-    r'key_circleId': IndexSchema(
-      id: -4635695710115973506,
-      name: r'key_circleId',
-      unique: true,
-      replace: true,
-      properties: [
-        IndexPropertySchema(
-          name: r'key',
-          type: IndexType.hash,
-          caseSensitive: true,
-        ),
-        IndexPropertySchema(
-          name: r'circleId',
-          type: IndexType.hash,
-          caseSensitive: true,
-        )
-      ],
-    )
-  },
-  links: {},
-  embeddedSchemas: {},
-  getId: _circleConfigISARGetId,
-  getLinks: _circleConfigISARGetLinks,
-  attach: _circleConfigISARAttach,
-  version: '3.1.0+1',
+const CircleConfigISARSchema = IsarGeneratedSchema(
+  schema: IsarSchema(
+    name: 'CircleConfigISAR',
+    idName: 'id',
+    embedded: false,
+    properties: [
+      IsarPropertySchema(
+        name: 'circleId',
+        type: IsarType.string,
+      ),
+      IsarPropertySchema(
+        name: 'keyName',
+        type: IsarType.string,
+      ),
+      IsarPropertySchema(
+        name: 'stringValue',
+        type: IsarType.string,
+      ),
+      IsarPropertySchema(
+        name: 'intValue',
+        type: IsarType.long,
+      ),
+      IsarPropertySchema(
+        name: 'doubleValue',
+        type: IsarType.double,
+      ),
+      IsarPropertySchema(
+        name: 'boolValue',
+        type: IsarType.bool,
+      ),
+      IsarPropertySchema(
+        name: 'updatedAt',
+        type: IsarType.long,
+      ),
+    ],
+    indexes: [
+      IsarIndexSchema(
+        name: 'keyName',
+        properties: [
+          "keyName",
+        ],
+        unique: true,
+        hash: false,
+      ),
+    ],
+  ),
+  converter: IsarObjectConverter<int, CircleConfigISAR>(
+    serialize: serializeCircleConfigISAR,
+    deserialize: deserializeCircleConfigISAR,
+    deserializeProperty: deserializeCircleConfigISARProp,
+  ),
+  embeddedSchemas: [],
 );
 
-int _circleConfigISAREstimateSize(
-  CircleConfigISAR object,
-  List<int> offsets,
-  Map<Type, List<int>> allOffsets,
-) {
-  var bytesCount = offsets.last;
-  bytesCount += 3 + object.circleId.length * 3;
-  bytesCount += 3 + object.key.length * 3;
+@isarProtected
+int serializeCircleConfigISAR(IsarWriter writer, CircleConfigISAR object) {
+  IsarCore.writeString(writer, 1, object.circleId);
+  IsarCore.writeString(writer, 2, object.keyName);
   {
     final value = object.stringValue;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
+    if (value == null) {
+      IsarCore.writeNull(writer, 3);
+    } else {
+      IsarCore.writeString(writer, 3, value);
     }
   }
-  return bytesCount;
-}
-
-void _circleConfigISARSerialize(
-  CircleConfigISAR object,
-  IsarWriter writer,
-  List<int> offsets,
-  Map<Type, List<int>> allOffsets,
-) {
-  writer.writeBool(offsets[0], object.boolValue);
-  writer.writeString(offsets[1], object.circleId);
-  writer.writeDouble(offsets[2], object.doubleValue);
-  writer.writeLong(offsets[3], object.intValue);
-  writer.writeString(offsets[4], object.key);
-  writer.writeString(offsets[5], object.stringValue);
-  writer.writeLong(offsets[6], object.updatedAt);
-}
-
-CircleConfigISAR _circleConfigISARDeserialize(
-  Id id,
-  IsarReader reader,
-  List<int> offsets,
-  Map<Type, List<int>> allOffsets,
-) {
-  final object = CircleConfigISAR(
-    boolValue: reader.readBoolOrNull(offsets[0]),
-    circleId: reader.readString(offsets[1]),
-    doubleValue: reader.readDoubleOrNull(offsets[2]),
-    intValue: reader.readLongOrNull(offsets[3]),
-    key: reader.readStringOrNull(offsets[4]) ?? '',
-    stringValue: reader.readStringOrNull(offsets[5]),
-    updatedAt: reader.readLongOrNull(offsets[6]) ?? 0,
-  );
-  object.id = id;
-  return object;
-}
-
-P _circleConfigISARDeserializeProp<P>(
-  IsarReader reader,
-  int propertyId,
-  int offset,
-  Map<Type, List<int>> allOffsets,
-) {
-  switch (propertyId) {
-    case 0:
-      return (reader.readBoolOrNull(offset)) as P;
-    case 1:
-      return (reader.readString(offset)) as P;
-    case 2:
-      return (reader.readDoubleOrNull(offset)) as P;
-    case 3:
-      return (reader.readLongOrNull(offset)) as P;
-    case 4:
-      return (reader.readStringOrNull(offset) ?? '') as P;
-    case 5:
-      return (reader.readStringOrNull(offset)) as P;
-    case 6:
-      return (reader.readLongOrNull(offset) ?? 0) as P;
-    default:
-      throw IsarError('Unknown property with id $propertyId');
+  IsarCore.writeLong(writer, 4, object.intValue ?? -9223372036854775808);
+  IsarCore.writeDouble(writer, 5, object.doubleValue ?? double.nan);
+  {
+    final value = object.boolValue;
+    if (value == null) {
+      IsarCore.writeNull(writer, 6);
+    } else {
+      IsarCore.writeBool(writer, 6, value);
+    }
   }
-}
-
-Id _circleConfigISARGetId(CircleConfigISAR object) {
+  IsarCore.writeLong(writer, 7, object.updatedAt);
   return object.id;
 }
 
-List<IsarLinkBase<dynamic>> _circleConfigISARGetLinks(CircleConfigISAR object) {
-  return [];
+@isarProtected
+CircleConfigISAR deserializeCircleConfigISAR(IsarReader reader) {
+  final String _circleId;
+  _circleId = IsarCore.readString(reader, 1) ?? '';
+  final String _keyName;
+  _keyName = IsarCore.readString(reader, 2) ?? '';
+  final String? _stringValue;
+  _stringValue = IsarCore.readString(reader, 3);
+  final int? _intValue;
+  {
+    final value = IsarCore.readLong(reader, 4);
+    if (value == -9223372036854775808) {
+      _intValue = null;
+    } else {
+      _intValue = value;
+    }
+  }
+  final double? _doubleValue;
+  {
+    final value = IsarCore.readDouble(reader, 5);
+    if (value.isNaN) {
+      _doubleValue = null;
+    } else {
+      _doubleValue = value;
+    }
+  }
+  final bool? _boolValue;
+  {
+    if (IsarCore.readNull(reader, 6)) {
+      _boolValue = null;
+    } else {
+      _boolValue = IsarCore.readBool(reader, 6);
+    }
+  }
+  final int _updatedAt;
+  {
+    final value = IsarCore.readLong(reader, 7);
+    if (value == -9223372036854775808) {
+      _updatedAt = 0;
+    } else {
+      _updatedAt = value;
+    }
+  }
+  final object = CircleConfigISAR(
+    circleId: _circleId,
+    keyName: _keyName,
+    stringValue: _stringValue,
+    intValue: _intValue,
+    doubleValue: _doubleValue,
+    boolValue: _boolValue,
+    updatedAt: _updatedAt,
+  );
+  object.id = IsarCore.readId(reader);
+  return object;
 }
 
-void _circleConfigISARAttach(
-    IsarCollection<dynamic> col, Id id, CircleConfigISAR object) {
-  object.id = id;
-}
-
-extension CircleConfigISARByIndex on IsarCollection<CircleConfigISAR> {
-  Future<CircleConfigISAR?> getByKeyCircleId(String key, String circleId) {
-    return getByIndex(r'key_circleId', [key, circleId]);
-  }
-
-  CircleConfigISAR? getByKeyCircleIdSync(String key, String circleId) {
-    return getByIndexSync(r'key_circleId', [key, circleId]);
-  }
-
-  Future<bool> deleteByKeyCircleId(String key, String circleId) {
-    return deleteByIndex(r'key_circleId', [key, circleId]);
-  }
-
-  bool deleteByKeyCircleIdSync(String key, String circleId) {
-    return deleteByIndexSync(r'key_circleId', [key, circleId]);
-  }
-
-  Future<List<CircleConfigISAR?>> getAllByKeyCircleId(
-      List<String> keyValues, List<String> circleIdValues) {
-    final len = keyValues.length;
-    assert(circleIdValues.length == len,
-        'All index values must have the same length');
-    final values = <List<dynamic>>[];
-    for (var i = 0; i < len; i++) {
-      values.add([keyValues[i], circleIdValues[i]]);
-    }
-
-    return getAllByIndex(r'key_circleId', values);
-  }
-
-  List<CircleConfigISAR?> getAllByKeyCircleIdSync(
-      List<String> keyValues, List<String> circleIdValues) {
-    final len = keyValues.length;
-    assert(circleIdValues.length == len,
-        'All index values must have the same length');
-    final values = <List<dynamic>>[];
-    for (var i = 0; i < len; i++) {
-      values.add([keyValues[i], circleIdValues[i]]);
-    }
-
-    return getAllByIndexSync(r'key_circleId', values);
-  }
-
-  Future<int> deleteAllByKeyCircleId(
-      List<String> keyValues, List<String> circleIdValues) {
-    final len = keyValues.length;
-    assert(circleIdValues.length == len,
-        'All index values must have the same length');
-    final values = <List<dynamic>>[];
-    for (var i = 0; i < len; i++) {
-      values.add([keyValues[i], circleIdValues[i]]);
-    }
-
-    return deleteAllByIndex(r'key_circleId', values);
-  }
-
-  int deleteAllByKeyCircleIdSync(
-      List<String> keyValues, List<String> circleIdValues) {
-    final len = keyValues.length;
-    assert(circleIdValues.length == len,
-        'All index values must have the same length');
-    final values = <List<dynamic>>[];
-    for (var i = 0; i < len; i++) {
-      values.add([keyValues[i], circleIdValues[i]]);
-    }
-
-    return deleteAllByIndexSync(r'key_circleId', values);
-  }
-
-  Future<Id> putByKeyCircleId(CircleConfigISAR object) {
-    return putByIndex(r'key_circleId', object);
-  }
-
-  Id putByKeyCircleIdSync(CircleConfigISAR object, {bool saveLinks = true}) {
-    return putByIndexSync(r'key_circleId', object, saveLinks: saveLinks);
-  }
-
-  Future<List<Id>> putAllByKeyCircleId(List<CircleConfigISAR> objects) {
-    return putAllByIndex(r'key_circleId', objects);
-  }
-
-  List<Id> putAllByKeyCircleIdSync(List<CircleConfigISAR> objects,
-      {bool saveLinks = true}) {
-    return putAllByIndexSync(r'key_circleId', objects, saveLinks: saveLinks);
-  }
-}
-
-extension CircleConfigISARQueryWhereSort
-    on QueryBuilder<CircleConfigISAR, CircleConfigISAR, QWhere> {
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterWhere> anyId() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(const IdWhereClause.any());
-    });
-  }
-}
-
-extension CircleConfigISARQueryWhere
-    on QueryBuilder<CircleConfigISAR, CircleConfigISAR, QWhereClause> {
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterWhereClause> idEqualTo(
-      Id id) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: id,
-        upper: id,
-      ));
-    });
-  }
-
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterWhereClause>
-      idNotEqualTo(Id id) {
-    return QueryBuilder.apply(this, (query) {
-      if (query.whereSort == Sort.asc) {
-        return query
-            .addWhereClause(
-              IdWhereClause.lessThan(upper: id, includeUpper: false),
-            )
-            .addWhereClause(
-              IdWhereClause.greaterThan(lower: id, includeLower: false),
-            );
-      } else {
-        return query
-            .addWhereClause(
-              IdWhereClause.greaterThan(lower: id, includeLower: false),
-            )
-            .addWhereClause(
-              IdWhereClause.lessThan(upper: id, includeUpper: false),
-            );
+@isarProtected
+dynamic deserializeCircleConfigISARProp(IsarReader reader, int property) {
+  switch (property) {
+    case 0:
+      return IsarCore.readId(reader);
+    case 1:
+      return IsarCore.readString(reader, 1) ?? '';
+    case 2:
+      return IsarCore.readString(reader, 2) ?? '';
+    case 3:
+      return IsarCore.readString(reader, 3);
+    case 4:
+      {
+        final value = IsarCore.readLong(reader, 4);
+        if (value == -9223372036854775808) {
+          return null;
+        } else {
+          return value;
+        }
       }
-    });
+    case 5:
+      {
+        final value = IsarCore.readDouble(reader, 5);
+        if (value.isNaN) {
+          return null;
+        } else {
+          return value;
+        }
+      }
+    case 6:
+      {
+        if (IsarCore.readNull(reader, 6)) {
+          return null;
+        } else {
+          return IsarCore.readBool(reader, 6);
+        }
+      }
+    case 7:
+      {
+        final value = IsarCore.readLong(reader, 7);
+        if (value == -9223372036854775808) {
+          return 0;
+        } else {
+          return value;
+        }
+      }
+    default:
+      throw ArgumentError('Unknown property: $property');
   }
+}
 
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterWhereClause>
-      idGreaterThan(Id id, {bool include = false}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IdWhereClause.greaterThan(lower: id, includeLower: include),
-      );
-    });
-  }
+sealed class _CircleConfigISARUpdate {
+  bool call({
+    required int id,
+    String? circleId,
+    String? keyName,
+    String? stringValue,
+    int? intValue,
+    double? doubleValue,
+    bool? boolValue,
+    int? updatedAt,
+  });
+}
 
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterWhereClause>
-      idLessThan(Id id, {bool include = false}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IdWhereClause.lessThan(upper: id, includeUpper: include),
-      );
-    });
-  }
+class _CircleConfigISARUpdateImpl implements _CircleConfigISARUpdate {
+  const _CircleConfigISARUpdateImpl(this.collection);
 
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterWhereClause> idBetween(
-    Id lowerId,
-    Id upperId, {
-    bool includeLower = true,
-    bool includeUpper = true,
+  final IsarCollection<int, CircleConfigISAR> collection;
+
+  @override
+  bool call({
+    required int id,
+    Object? circleId = ignore,
+    Object? keyName = ignore,
+    Object? stringValue = ignore,
+    Object? intValue = ignore,
+    Object? doubleValue = ignore,
+    Object? boolValue = ignore,
+    Object? updatedAt = ignore,
   }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: lowerId,
-        includeLower: includeLower,
-        upper: upperId,
-        includeUpper: includeUpper,
-      ));
-    });
+    return collection.updateProperties([
+          id
+        ], {
+          if (circleId != ignore) 1: circleId as String?,
+          if (keyName != ignore) 2: keyName as String?,
+          if (stringValue != ignore) 3: stringValue as String?,
+          if (intValue != ignore) 4: intValue as int?,
+          if (doubleValue != ignore) 5: doubleValue as double?,
+          if (boolValue != ignore) 6: boolValue as bool?,
+          if (updatedAt != ignore) 7: updatedAt as int?,
+        }) >
+        0;
   }
+}
 
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterWhereClause>
-      keyEqualToAnyCircleId(String key) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'key_circleId',
-        value: [key],
-      ));
-    });
-  }
+sealed class _CircleConfigISARUpdateAll {
+  int call({
+    required List<int> id,
+    String? circleId,
+    String? keyName,
+    String? stringValue,
+    int? intValue,
+    double? doubleValue,
+    bool? boolValue,
+    int? updatedAt,
+  });
+}
 
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterWhereClause>
-      keyNotEqualToAnyCircleId(String key) {
-    return QueryBuilder.apply(this, (query) {
-      if (query.whereSort == Sort.asc) {
-        return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'key_circleId',
-              lower: [],
-              upper: [key],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'key_circleId',
-              lower: [key],
-              includeLower: false,
-              upper: [],
-            ));
-      } else {
-        return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'key_circleId',
-              lower: [key],
-              includeLower: false,
-              upper: [],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'key_circleId',
-              lower: [],
-              upper: [key],
-              includeUpper: false,
-            ));
-      }
-    });
-  }
+class _CircleConfigISARUpdateAllImpl implements _CircleConfigISARUpdateAll {
+  const _CircleConfigISARUpdateAllImpl(this.collection);
 
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterWhereClause>
-      keyCircleIdEqualTo(String key, String circleId) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'key_circleId',
-        value: [key, circleId],
-      ));
-    });
-  }
+  final IsarCollection<int, CircleConfigISAR> collection;
 
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterWhereClause>
-      keyEqualToCircleIdNotEqualTo(String key, String circleId) {
-    return QueryBuilder.apply(this, (query) {
-      if (query.whereSort == Sort.asc) {
-        return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'key_circleId',
-              lower: [key],
-              upper: [key, circleId],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'key_circleId',
-              lower: [key, circleId],
-              includeLower: false,
-              upper: [key],
-            ));
-      } else {
-        return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'key_circleId',
-              lower: [key, circleId],
-              includeLower: false,
-              upper: [key],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'key_circleId',
-              lower: [key],
-              upper: [key, circleId],
-              includeUpper: false,
-            ));
-      }
+  @override
+  int call({
+    required List<int> id,
+    Object? circleId = ignore,
+    Object? keyName = ignore,
+    Object? stringValue = ignore,
+    Object? intValue = ignore,
+    Object? doubleValue = ignore,
+    Object? boolValue = ignore,
+    Object? updatedAt = ignore,
+  }) {
+    return collection.updateProperties(id, {
+      if (circleId != ignore) 1: circleId as String?,
+      if (keyName != ignore) 2: keyName as String?,
+      if (stringValue != ignore) 3: stringValue as String?,
+      if (intValue != ignore) 4: intValue as int?,
+      if (doubleValue != ignore) 5: doubleValue as double?,
+      if (boolValue != ignore) 6: boolValue as bool?,
+      if (updatedAt != ignore) 7: updatedAt as int?,
     });
   }
+}
+
+extension CircleConfigISARUpdate on IsarCollection<int, CircleConfigISAR> {
+  _CircleConfigISARUpdate get update => _CircleConfigISARUpdateImpl(this);
+
+  _CircleConfigISARUpdateAll get updateAll =>
+      _CircleConfigISARUpdateAllImpl(this);
+}
+
+sealed class _CircleConfigISARQueryUpdate {
+  int call({
+    String? circleId,
+    String? keyName,
+    String? stringValue,
+    int? intValue,
+    double? doubleValue,
+    bool? boolValue,
+    int? updatedAt,
+  });
+}
+
+class _CircleConfigISARQueryUpdateImpl implements _CircleConfigISARQueryUpdate {
+  const _CircleConfigISARQueryUpdateImpl(this.query, {this.limit});
+
+  final IsarQuery<CircleConfigISAR> query;
+  final int? limit;
+
+  @override
+  int call({
+    Object? circleId = ignore,
+    Object? keyName = ignore,
+    Object? stringValue = ignore,
+    Object? intValue = ignore,
+    Object? doubleValue = ignore,
+    Object? boolValue = ignore,
+    Object? updatedAt = ignore,
+  }) {
+    return query.updateProperties(limit: limit, {
+      if (circleId != ignore) 1: circleId as String?,
+      if (keyName != ignore) 2: keyName as String?,
+      if (stringValue != ignore) 3: stringValue as String?,
+      if (intValue != ignore) 4: intValue as int?,
+      if (doubleValue != ignore) 5: doubleValue as double?,
+      if (boolValue != ignore) 6: boolValue as bool?,
+      if (updatedAt != ignore) 7: updatedAt as int?,
+    });
+  }
+}
+
+extension CircleConfigISARQueryUpdate on IsarQuery<CircleConfigISAR> {
+  _CircleConfigISARQueryUpdate get updateFirst =>
+      _CircleConfigISARQueryUpdateImpl(this, limit: 1);
+
+  _CircleConfigISARQueryUpdate get updateAll =>
+      _CircleConfigISARQueryUpdateImpl(this);
+}
+
+class _CircleConfigISARQueryBuilderUpdateImpl
+    implements _CircleConfigISARQueryUpdate {
+  const _CircleConfigISARQueryBuilderUpdateImpl(this.query, {this.limit});
+
+  final QueryBuilder<CircleConfigISAR, CircleConfigISAR, QOperations> query;
+  final int? limit;
+
+  @override
+  int call({
+    Object? circleId = ignore,
+    Object? keyName = ignore,
+    Object? stringValue = ignore,
+    Object? intValue = ignore,
+    Object? doubleValue = ignore,
+    Object? boolValue = ignore,
+    Object? updatedAt = ignore,
+  }) {
+    final q = query.build();
+    try {
+      return q.updateProperties(limit: limit, {
+        if (circleId != ignore) 1: circleId as String?,
+        if (keyName != ignore) 2: keyName as String?,
+        if (stringValue != ignore) 3: stringValue as String?,
+        if (intValue != ignore) 4: intValue as int?,
+        if (doubleValue != ignore) 5: doubleValue as double?,
+        if (boolValue != ignore) 6: boolValue as bool?,
+        if (updatedAt != ignore) 7: updatedAt as int?,
+      });
+    } finally {
+      q.close();
+    }
+  }
+}
+
+extension CircleConfigISARQueryBuilderUpdate
+    on QueryBuilder<CircleConfigISAR, CircleConfigISAR, QOperations> {
+  _CircleConfigISARQueryUpdate get updateFirst =>
+      _CircleConfigISARQueryBuilderUpdateImpl(this, limit: 1);
+
+  _CircleConfigISARQueryUpdate get updateAll =>
+      _CircleConfigISARQueryBuilderUpdateImpl(this);
 }
 
 extension CircleConfigISARQueryFilter
     on QueryBuilder<CircleConfigISAR, CircleConfigISAR, QFilterCondition> {
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
-      boolValueIsNull() {
+      idEqualTo(
+    int value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'boolValue',
-      ));
+      return query.addFilterCondition(
+        EqualCondition(
+          property: 0,
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
-      boolValueIsNotNull() {
+      idGreaterThan(
+    int value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'boolValue',
-      ));
+      return query.addFilterCondition(
+        GreaterCondition(
+          property: 0,
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
-      boolValueEqualTo(bool? value) {
+      idGreaterThanOrEqualTo(
+    int value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'boolValue',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        GreaterOrEqualCondition(
+          property: 0,
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
+      idLessThan(
+    int value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessCondition(
+          property: 0,
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
+      idLessThanOrEqualTo(
+    int value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessOrEqualCondition(
+          property: 0,
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
+      idBetween(
+    int lower,
+    int upper,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        BetweenCondition(
+          property: 0,
+          lower: lower,
+          upper: upper,
+        ),
+      );
     });
   }
 
@@ -468,43 +479,77 @@ extension CircleConfigISARQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'circleId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        EqualCondition(
+          property: 1,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
       circleIdGreaterThan(
     String value, {
-    bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'circleId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        GreaterCondition(
+          property: 1,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
+      circleIdGreaterThanOrEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterOrEqualCondition(
+          property: 1,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
       circleIdLessThan(
     String value, {
-    bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'circleId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        LessCondition(
+          property: 1,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
+      circleIdLessThanOrEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessOrEqualCondition(
+          property: 1,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -512,19 +557,17 @@ extension CircleConfigISARQueryFilter
       circleIdBetween(
     String lower,
     String upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'circleId',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        BetweenCondition(
+          property: 1,
+          lower: lower,
+          upper: upper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -534,11 +577,13 @@ extension CircleConfigISARQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'circleId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        StartsWithCondition(
+          property: 1,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -548,421 +593,257 @@ extension CircleConfigISARQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'circleId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        EndsWithCondition(
+          property: 1,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
       circleIdContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'circleId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        ContainsCondition(
+          property: 1,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
       circleIdMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'circleId',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        MatchesCondition(
+          property: 1,
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
       circleIdIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'circleId',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        const EqualCondition(
+          property: 1,
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
       circleIdIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'circleId',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        const GreaterCondition(
+          property: 1,
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
-      doubleValueIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'doubleValue',
-      ));
-    });
-  }
-
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
-      doubleValueIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'doubleValue',
-      ));
-    });
-  }
-
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
-      doubleValueEqualTo(
-    double? value, {
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'doubleValue',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
-      doubleValueGreaterThan(
-    double? value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'doubleValue',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
-      doubleValueLessThan(
-    double? value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'doubleValue',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
-      doubleValueBetween(
-    double? lower,
-    double? upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'doubleValue',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
-      idEqualTo(Id value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'id',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
-      idGreaterThan(
-    Id value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
-      idLessThan(
-    Id value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
-      idBetween(
-    Id lower,
-    Id upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'id',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
-      intValueIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'intValue',
-      ));
-    });
-  }
-
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
-      intValueIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'intValue',
-      ));
-    });
-  }
-
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
-      intValueEqualTo(int? value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'intValue',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
-      intValueGreaterThan(
-    int? value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'intValue',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
-      intValueLessThan(
-    int? value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'intValue',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
-      intValueBetween(
-    int? lower,
-    int? upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'intValue',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
-      keyEqualTo(
+      keyNameEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'key',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        EqualCondition(
+          property: 2,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
-      keyGreaterThan(
+      keyNameGreaterThan(
     String value, {
-    bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'key',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        GreaterCondition(
+          property: 2,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
-      keyLessThan(
+      keyNameGreaterThanOrEqualTo(
     String value, {
-    bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'key',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        GreaterOrEqualCondition(
+          property: 2,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
-      keyBetween(
+      keyNameLessThan(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessCondition(
+          property: 2,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
+      keyNameLessThanOrEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessOrEqualCondition(
+          property: 2,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
+      keyNameBetween(
     String lower,
     String upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'key',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        BetweenCondition(
+          property: 2,
+          lower: lower,
+          upper: upper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
-      keyStartsWith(
+      keyNameStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'key',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        StartsWithCondition(
+          property: 2,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
-      keyEndsWith(
+      keyNameEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'key',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        EndsWithCondition(
+          property: 2,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
-      keyContains(String value, {bool caseSensitive = true}) {
+      keyNameContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'key',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        ContainsCondition(
+          property: 2,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
-      keyMatches(String pattern, {bool caseSensitive = true}) {
+      keyNameMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'key',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        MatchesCondition(
+          property: 2,
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
-      keyIsEmpty() {
+      keyNameIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'key',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        const EqualCondition(
+          property: 2,
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
-      keyIsNotEmpty() {
+      keyNameIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'key',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        const GreaterCondition(
+          property: 2,
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
       stringValueIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'stringValue',
-      ));
+      return query.addFilterCondition(const IsNullCondition(property: 3));
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
       stringValueIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'stringValue',
-      ));
+    return QueryBuilder.apply(not(), (query) {
+      return query.addFilterCondition(const IsNullCondition(property: 3));
     });
   }
 
@@ -972,43 +853,77 @@ extension CircleConfigISARQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'stringValue',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        EqualCondition(
+          property: 3,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
       stringValueGreaterThan(
     String? value, {
-    bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'stringValue',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        GreaterCondition(
+          property: 3,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
+      stringValueGreaterThanOrEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterOrEqualCondition(
+          property: 3,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
       stringValueLessThan(
     String? value, {
-    bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'stringValue',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        LessCondition(
+          property: 3,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
+      stringValueLessThanOrEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessOrEqualCondition(
+          property: 3,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1016,19 +931,17 @@ extension CircleConfigISARQueryFilter
       stringValueBetween(
     String? lower,
     String? upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'stringValue',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        BetweenCondition(
+          property: 3,
+          lower: lower,
+          upper: upper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1038,11 +951,13 @@ extension CircleConfigISARQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'stringValue',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        StartsWithCondition(
+          property: 3,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1052,109 +967,389 @@ extension CircleConfigISARQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'stringValue',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        EndsWithCondition(
+          property: 3,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
       stringValueContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'stringValue',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        ContainsCondition(
+          property: 3,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
       stringValueMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'stringValue',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        MatchesCondition(
+          property: 3,
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
       stringValueIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'stringValue',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        const EqualCondition(
+          property: 3,
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
       stringValueIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'stringValue',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        const GreaterCondition(
+          property: 3,
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
-      updatedAtEqualTo(int value) {
+      intValueIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'updatedAt',
-        value: value,
-      ));
+      return query.addFilterCondition(const IsNullCondition(property: 4));
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
+      intValueIsNotNull() {
+    return QueryBuilder.apply(not(), (query) {
+      return query.addFilterCondition(const IsNullCondition(property: 4));
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
+      intValueEqualTo(
+    int? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        EqualCondition(
+          property: 4,
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
+      intValueGreaterThan(
+    int? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterCondition(
+          property: 4,
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
+      intValueGreaterThanOrEqualTo(
+    int? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterOrEqualCondition(
+          property: 4,
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
+      intValueLessThan(
+    int? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessCondition(
+          property: 4,
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
+      intValueLessThanOrEqualTo(
+    int? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessOrEqualCondition(
+          property: 4,
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
+      intValueBetween(
+    int? lower,
+    int? upper,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        BetweenCondition(
+          property: 4,
+          lower: lower,
+          upper: upper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
+      doubleValueIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const IsNullCondition(property: 5));
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
+      doubleValueIsNotNull() {
+    return QueryBuilder.apply(not(), (query) {
+      return query.addFilterCondition(const IsNullCondition(property: 5));
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
+      doubleValueEqualTo(
+    double? value, {
+    double epsilon = Filter.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        EqualCondition(
+          property: 5,
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
+      doubleValueGreaterThan(
+    double? value, {
+    double epsilon = Filter.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterCondition(
+          property: 5,
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
+      doubleValueGreaterThanOrEqualTo(
+    double? value, {
+    double epsilon = Filter.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterOrEqualCondition(
+          property: 5,
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
+      doubleValueLessThan(
+    double? value, {
+    double epsilon = Filter.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessCondition(
+          property: 5,
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
+      doubleValueLessThanOrEqualTo(
+    double? value, {
+    double epsilon = Filter.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessOrEqualCondition(
+          property: 5,
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
+      doubleValueBetween(
+    double? lower,
+    double? upper, {
+    double epsilon = Filter.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        BetweenCondition(
+          property: 5,
+          lower: lower,
+          upper: upper,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
+      boolValueIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const IsNullCondition(property: 6));
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
+      boolValueIsNotNull() {
+    return QueryBuilder.apply(not(), (query) {
+      return query.addFilterCondition(const IsNullCondition(property: 6));
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
+      boolValueEqualTo(
+    bool? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        EqualCondition(
+          property: 6,
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
+      updatedAtEqualTo(
+    int value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        EqualCondition(
+          property: 7,
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
       updatedAtGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
+    int value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'updatedAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        GreaterCondition(
+          property: 7,
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
+      updatedAtGreaterThanOrEqualTo(
+    int value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterOrEqualCondition(
+          property: 7,
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
       updatedAtLessThan(
-    int value, {
-    bool include = false,
-  }) {
+    int value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'updatedAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        LessCondition(
+          property: 7,
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
+      updatedAtLessThanOrEqualTo(
+    int value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessOrEqualCondition(
+          property: 7,
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterFilterCondition>
       updatedAtBetween(
     int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
+    int upper,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'updatedAt',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        BetweenCondition(
+          property: 7,
+          lower: lower,
+          upper: upper,
+        ),
+      );
     });
   }
 }
@@ -1162,323 +1357,470 @@ extension CircleConfigISARQueryFilter
 extension CircleConfigISARQueryObject
     on QueryBuilder<CircleConfigISAR, CircleConfigISAR, QFilterCondition> {}
 
-extension CircleConfigISARQueryLinks
-    on QueryBuilder<CircleConfigISAR, CircleConfigISAR, QFilterCondition> {}
-
 extension CircleConfigISARQuerySortBy
     on QueryBuilder<CircleConfigISAR, CircleConfigISAR, QSortBy> {
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
-      sortByBoolValue() {
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy> sortById() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'boolValue', Sort.asc);
+      return query.addSortBy(0);
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
-      sortByBoolValueDesc() {
+      sortByIdDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'boolValue', Sort.desc);
+      return query.addSortBy(0, sort: Sort.desc);
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy> sortByCircleId(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(
+        1,
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
-      sortByCircleId() {
+      sortByCircleIdDesc({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'circleId', Sort.asc);
+      return query.addSortBy(
+        1,
+        sort: Sort.desc,
+        caseSensitive: caseSensitive,
+      );
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy> sortByKeyName(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(
+        2,
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
-      sortByCircleIdDesc() {
+      sortByKeyNameDesc({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'circleId', Sort.desc);
+      return query.addSortBy(
+        2,
+        sort: Sort.desc,
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
-      sortByDoubleValue() {
+      sortByStringValue({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'doubleValue', Sort.asc);
+      return query.addSortBy(
+        3,
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
-      sortByDoubleValueDesc() {
+      sortByStringValueDesc({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'doubleValue', Sort.desc);
+      return query.addSortBy(
+        3,
+        sort: Sort.desc,
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
       sortByIntValue() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'intValue', Sort.asc);
+      return query.addSortBy(4);
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
       sortByIntValueDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'intValue', Sort.desc);
-    });
-  }
-
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy> sortByKey() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'key', Sort.asc);
+      return query.addSortBy(4, sort: Sort.desc);
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
-      sortByKeyDesc() {
+      sortByDoubleValue() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'key', Sort.desc);
+      return query.addSortBy(5);
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
-      sortByStringValue() {
+      sortByDoubleValueDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'stringValue', Sort.asc);
+      return query.addSortBy(5, sort: Sort.desc);
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
-      sortByStringValueDesc() {
+      sortByBoolValue() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'stringValue', Sort.desc);
+      return query.addSortBy(6);
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
+      sortByBoolValueDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(6, sort: Sort.desc);
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
       sortByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'updatedAt', Sort.asc);
+      return query.addSortBy(7);
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
       sortByUpdatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'updatedAt', Sort.desc);
+      return query.addSortBy(7, sort: Sort.desc);
     });
   }
 }
 
 extension CircleConfigISARQuerySortThenBy
     on QueryBuilder<CircleConfigISAR, CircleConfigISAR, QSortThenBy> {
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
-      thenByBoolValue() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'boolValue', Sort.asc);
-    });
-  }
-
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
-      thenByBoolValueDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'boolValue', Sort.desc);
-    });
-  }
-
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
-      thenByCircleId() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'circleId', Sort.asc);
-    });
-  }
-
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
-      thenByCircleIdDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'circleId', Sort.desc);
-    });
-  }
-
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
-      thenByDoubleValue() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'doubleValue', Sort.asc);
-    });
-  }
-
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
-      thenByDoubleValueDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'doubleValue', Sort.desc);
-    });
-  }
-
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'id', Sort.asc);
+      return query.addSortBy(0);
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
       thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'id', Sort.desc);
+      return query.addSortBy(0, sort: Sort.desc);
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy> thenByCircleId(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(1, caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
+      thenByCircleIdDesc({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(1, sort: Sort.desc, caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy> thenByKeyName(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(2, caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
+      thenByKeyNameDesc({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(2, sort: Sort.desc, caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
+      thenByStringValue({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(3, caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
+      thenByStringValueDesc({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(3, sort: Sort.desc, caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
       thenByIntValue() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'intValue', Sort.asc);
+      return query.addSortBy(4);
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
       thenByIntValueDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'intValue', Sort.desc);
-    });
-  }
-
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy> thenByKey() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'key', Sort.asc);
+      return query.addSortBy(4, sort: Sort.desc);
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
-      thenByKeyDesc() {
+      thenByDoubleValue() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'key', Sort.desc);
+      return query.addSortBy(5);
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
-      thenByStringValue() {
+      thenByDoubleValueDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'stringValue', Sort.asc);
+      return query.addSortBy(5, sort: Sort.desc);
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
-      thenByStringValueDesc() {
+      thenByBoolValue() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'stringValue', Sort.desc);
+      return query.addSortBy(6);
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
+      thenByBoolValueDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(6, sort: Sort.desc);
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
       thenByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'updatedAt', Sort.asc);
+      return query.addSortBy(7);
     });
   }
 
   QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterSortBy>
       thenByUpdatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'updatedAt', Sort.desc);
+      return query.addSortBy(7, sort: Sort.desc);
     });
   }
 }
 
 extension CircleConfigISARQueryWhereDistinct
     on QueryBuilder<CircleConfigISAR, CircleConfigISAR, QDistinct> {
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QDistinct>
-      distinctByBoolValue() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'boolValue');
-    });
-  }
-
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QDistinct>
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterDistinct>
       distinctByCircleId({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'circleId', caseSensitive: caseSensitive);
+      return query.addDistinctBy(1, caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QDistinct>
-      distinctByDoubleValue() {
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterDistinct>
+      distinctByKeyName({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'doubleValue');
+      return query.addDistinctBy(2, caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QDistinct>
-      distinctByIntValue() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'intValue');
-    });
-  }
-
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QDistinct> distinctByKey(
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'key', caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QDistinct>
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterDistinct>
       distinctByStringValue({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'stringValue', caseSensitive: caseSensitive);
+      return query.addDistinctBy(3, caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QDistinct>
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterDistinct>
+      distinctByIntValue() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(4);
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterDistinct>
+      distinctByDoubleValue() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(5);
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterDistinct>
+      distinctByBoolValue() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(6);
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, CircleConfigISAR, QAfterDistinct>
       distinctByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'updatedAt');
+      return query.addDistinctBy(7);
     });
   }
 }
 
-extension CircleConfigISARQueryProperty
-    on QueryBuilder<CircleConfigISAR, CircleConfigISAR, QQueryProperty> {
-  QueryBuilder<CircleConfigISAR, int, QQueryOperations> idProperty() {
+extension CircleConfigISARQueryProperty1
+    on QueryBuilder<CircleConfigISAR, CircleConfigISAR, QProperty> {
+  QueryBuilder<CircleConfigISAR, int, QAfterProperty> idProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'id');
+      return query.addProperty(0);
     });
   }
 
-  QueryBuilder<CircleConfigISAR, bool?, QQueryOperations> boolValueProperty() {
+  QueryBuilder<CircleConfigISAR, String, QAfterProperty> circleIdProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'boolValue');
+      return query.addProperty(1);
     });
   }
 
-  QueryBuilder<CircleConfigISAR, String, QQueryOperations> circleIdProperty() {
+  QueryBuilder<CircleConfigISAR, String, QAfterProperty> keyNameProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'circleId');
+      return query.addProperty(2);
     });
   }
 
-  QueryBuilder<CircleConfigISAR, double?, QQueryOperations>
-      doubleValueProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'doubleValue');
-    });
-  }
-
-  QueryBuilder<CircleConfigISAR, int?, QQueryOperations> intValueProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'intValue');
-    });
-  }
-
-  QueryBuilder<CircleConfigISAR, String, QQueryOperations> keyProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'key');
-    });
-  }
-
-  QueryBuilder<CircleConfigISAR, String?, QQueryOperations>
+  QueryBuilder<CircleConfigISAR, String?, QAfterProperty>
       stringValueProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'stringValue');
+      return query.addProperty(3);
     });
   }
 
-  QueryBuilder<CircleConfigISAR, int, QQueryOperations> updatedAtProperty() {
+  QueryBuilder<CircleConfigISAR, int?, QAfterProperty> intValueProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'updatedAt');
+      return query.addProperty(4);
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, double?, QAfterProperty>
+      doubleValueProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(5);
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, bool?, QAfterProperty> boolValueProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(6);
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, int, QAfterProperty> updatedAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(7);
+    });
+  }
+}
+
+extension CircleConfigISARQueryProperty2<R>
+    on QueryBuilder<CircleConfigISAR, R, QAfterProperty> {
+  QueryBuilder<CircleConfigISAR, (R, int), QAfterProperty> idProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(0);
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, (R, String), QAfterProperty>
+      circleIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(1);
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, (R, String), QAfterProperty>
+      keyNameProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(2);
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, (R, String?), QAfterProperty>
+      stringValueProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(3);
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, (R, int?), QAfterProperty> intValueProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(4);
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, (R, double?), QAfterProperty>
+      doubleValueProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(5);
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, (R, bool?), QAfterProperty>
+      boolValueProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(6);
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, (R, int), QAfterProperty> updatedAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(7);
+    });
+  }
+}
+
+extension CircleConfigISARQueryProperty3<R1, R2>
+    on QueryBuilder<CircleConfigISAR, (R1, R2), QAfterProperty> {
+  QueryBuilder<CircleConfigISAR, (R1, R2, int), QOperations> idProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(0);
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, (R1, R2, String), QOperations>
+      circleIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(1);
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, (R1, R2, String), QOperations>
+      keyNameProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(2);
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, (R1, R2, String?), QOperations>
+      stringValueProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(3);
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, (R1, R2, int?), QOperations>
+      intValueProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(4);
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, (R1, R2, double?), QOperations>
+      doubleValueProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(5);
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, (R1, R2, bool?), QOperations>
+      boolValueProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(6);
+    });
+  }
+
+  QueryBuilder<CircleConfigISAR, (R1, R2, int), QOperations>
+      updatedAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(7);
     });
   }
 }

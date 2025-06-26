@@ -3,739 +3,646 @@
 part of 'account_models.dart';
 
 // **************************************************************************
-// IsarCollectionGenerator
+// _IsarCollectionGenerator
 // **************************************************************************
 
 // coverage:ignore-file
-// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+// ignore_for_file: duplicate_ignore, invalid_use_of_protected_member, lines_longer_than_80_chars, constant_identifier_names, avoid_js_rounded_ints, no_leading_underscores_for_local_identifiers, require_trailing_commas, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_in_if_null_operators, library_private_types_in_public_api, prefer_const_constructors
+// ignore_for_file: type=lint
 
 extension GetAccountDataISARCollection on Isar {
-  IsarCollection<AccountDataISAR> get accountDataISARs => this.collection();
+  IsarCollection<int, AccountDataISAR> get accountDataISARs =>
+      this.collection();
 }
 
-const AccountDataISARSchema = CollectionSchema(
-  name: r'AccountDataISAR',
-  id: 7530337607083051246,
-  properties: {
-    r'boolValue': PropertySchema(
-      id: 0,
-      name: r'boolValue',
-      type: IsarType.bool,
-    ),
-    r'doubleValue': PropertySchema(
-      id: 1,
-      name: r'doubleValue',
-      type: IsarType.double,
-    ),
-    r'intValue': PropertySchema(
-      id: 2,
-      name: r'intValue',
-      type: IsarType.long,
-    ),
-    r'key': PropertySchema(
-      id: 3,
-      name: r'key',
-      type: IsarType.string,
-    ),
-    r'stringValue': PropertySchema(
-      id: 4,
-      name: r'stringValue',
-      type: IsarType.string,
-    ),
-    r'updatedAt': PropertySchema(
-      id: 5,
-      name: r'updatedAt',
-      type: IsarType.long,
-    )
-  },
-  estimateSize: _accountDataISAREstimateSize,
-  serialize: _accountDataISARSerialize,
-  deserialize: _accountDataISARDeserialize,
-  deserializeProp: _accountDataISARDeserializeProp,
-  idName: r'id',
-  indexes: {
-    r'key': IndexSchema(
-      id: -4906094122524121629,
-      name: r'key',
-      unique: true,
-      replace: true,
-      properties: [
-        IndexPropertySchema(
-          name: r'key',
-          type: IndexType.hash,
-          caseSensitive: true,
-        )
-      ],
-    )
-  },
-  links: {},
-  embeddedSchemas: {},
-  getId: _accountDataISARGetId,
-  getLinks: _accountDataISARGetLinks,
-  attach: _accountDataISARAttach,
-  version: '3.1.0+1',
+const AccountDataISARSchema = IsarGeneratedSchema(
+  schema: IsarSchema(
+    name: 'AccountDataISAR',
+    idName: 'id',
+    embedded: false,
+    properties: [
+      IsarPropertySchema(
+        name: 'keyName',
+        type: IsarType.string,
+      ),
+      IsarPropertySchema(
+        name: 'stringValue',
+        type: IsarType.string,
+      ),
+      IsarPropertySchema(
+        name: 'intValue',
+        type: IsarType.long,
+      ),
+      IsarPropertySchema(
+        name: 'doubleValue',
+        type: IsarType.double,
+      ),
+      IsarPropertySchema(
+        name: 'boolValue',
+        type: IsarType.bool,
+      ),
+      IsarPropertySchema(
+        name: 'updatedAt',
+        type: IsarType.long,
+      ),
+    ],
+    indexes: [
+      IsarIndexSchema(
+        name: 'keyName',
+        properties: [
+          "keyName",
+        ],
+        unique: true,
+        hash: false,
+      ),
+    ],
+  ),
+  converter: IsarObjectConverter<int, AccountDataISAR>(
+    serialize: serializeAccountDataISAR,
+    deserialize: deserializeAccountDataISAR,
+    deserializeProperty: deserializeAccountDataISARProp,
+  ),
+  embeddedSchemas: [],
 );
 
-int _accountDataISAREstimateSize(
-  AccountDataISAR object,
-  List<int> offsets,
-  Map<Type, List<int>> allOffsets,
-) {
-  var bytesCount = offsets.last;
-  bytesCount += 3 + object.key.length * 3;
+@isarProtected
+int serializeAccountDataISAR(IsarWriter writer, AccountDataISAR object) {
+  IsarCore.writeString(writer, 1, object.keyName);
   {
     final value = object.stringValue;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
+    if (value == null) {
+      IsarCore.writeNull(writer, 2);
+    } else {
+      IsarCore.writeString(writer, 2, value);
     }
   }
-  return bytesCount;
-}
-
-void _accountDataISARSerialize(
-  AccountDataISAR object,
-  IsarWriter writer,
-  List<int> offsets,
-  Map<Type, List<int>> allOffsets,
-) {
-  writer.writeBool(offsets[0], object.boolValue);
-  writer.writeDouble(offsets[1], object.doubleValue);
-  writer.writeLong(offsets[2], object.intValue);
-  writer.writeString(offsets[3], object.key);
-  writer.writeString(offsets[4], object.stringValue);
-  writer.writeLong(offsets[5], object.updatedAt);
-}
-
-AccountDataISAR _accountDataISARDeserialize(
-  Id id,
-  IsarReader reader,
-  List<int> offsets,
-  Map<Type, List<int>> allOffsets,
-) {
-  final object = AccountDataISAR(
-    boolValue: reader.readBoolOrNull(offsets[0]),
-    doubleValue: reader.readDoubleOrNull(offsets[1]),
-    intValue: reader.readLongOrNull(offsets[2]),
-    key: reader.readStringOrNull(offsets[3]) ?? '',
-    stringValue: reader.readStringOrNull(offsets[4]),
-    updatedAt: reader.readLongOrNull(offsets[5]) ?? 0,
-  );
-  object.id = id;
-  return object;
-}
-
-P _accountDataISARDeserializeProp<P>(
-  IsarReader reader,
-  int propertyId,
-  int offset,
-  Map<Type, List<int>> allOffsets,
-) {
-  switch (propertyId) {
-    case 0:
-      return (reader.readBoolOrNull(offset)) as P;
-    case 1:
-      return (reader.readDoubleOrNull(offset)) as P;
-    case 2:
-      return (reader.readLongOrNull(offset)) as P;
-    case 3:
-      return (reader.readStringOrNull(offset) ?? '') as P;
-    case 4:
-      return (reader.readStringOrNull(offset)) as P;
-    case 5:
-      return (reader.readLongOrNull(offset) ?? 0) as P;
-    default:
-      throw IsarError('Unknown property with id $propertyId');
+  IsarCore.writeLong(writer, 3, object.intValue ?? -9223372036854775808);
+  IsarCore.writeDouble(writer, 4, object.doubleValue ?? double.nan);
+  {
+    final value = object.boolValue;
+    if (value == null) {
+      IsarCore.writeNull(writer, 5);
+    } else {
+      IsarCore.writeBool(writer, 5, value);
+    }
   }
-}
-
-Id _accountDataISARGetId(AccountDataISAR object) {
+  IsarCore.writeLong(writer, 6, object.updatedAt);
   return object.id;
 }
 
-List<IsarLinkBase<dynamic>> _accountDataISARGetLinks(AccountDataISAR object) {
-  return [];
+@isarProtected
+AccountDataISAR deserializeAccountDataISAR(IsarReader reader) {
+  final String _keyName;
+  _keyName = IsarCore.readString(reader, 1) ?? '';
+  final String? _stringValue;
+  _stringValue = IsarCore.readString(reader, 2);
+  final int? _intValue;
+  {
+    final value = IsarCore.readLong(reader, 3);
+    if (value == -9223372036854775808) {
+      _intValue = null;
+    } else {
+      _intValue = value;
+    }
+  }
+  final double? _doubleValue;
+  {
+    final value = IsarCore.readDouble(reader, 4);
+    if (value.isNaN) {
+      _doubleValue = null;
+    } else {
+      _doubleValue = value;
+    }
+  }
+  final bool? _boolValue;
+  {
+    if (IsarCore.readNull(reader, 5)) {
+      _boolValue = null;
+    } else {
+      _boolValue = IsarCore.readBool(reader, 5);
+    }
+  }
+  final int _updatedAt;
+  {
+    final value = IsarCore.readLong(reader, 6);
+    if (value == -9223372036854775808) {
+      _updatedAt = 0;
+    } else {
+      _updatedAt = value;
+    }
+  }
+  final object = AccountDataISAR(
+    keyName: _keyName,
+    stringValue: _stringValue,
+    intValue: _intValue,
+    doubleValue: _doubleValue,
+    boolValue: _boolValue,
+    updatedAt: _updatedAt,
+  );
+  object.id = IsarCore.readId(reader);
+  return object;
 }
 
-void _accountDataISARAttach(
-    IsarCollection<dynamic> col, Id id, AccountDataISAR object) {
-  object.id = id;
-}
-
-extension AccountDataISARByIndex on IsarCollection<AccountDataISAR> {
-  Future<AccountDataISAR?> getByKey(String key) {
-    return getByIndex(r'key', [key]);
-  }
-
-  AccountDataISAR? getByKeySync(String key) {
-    return getByIndexSync(r'key', [key]);
-  }
-
-  Future<bool> deleteByKey(String key) {
-    return deleteByIndex(r'key', [key]);
-  }
-
-  bool deleteByKeySync(String key) {
-    return deleteByIndexSync(r'key', [key]);
-  }
-
-  Future<List<AccountDataISAR?>> getAllByKey(List<String> keyValues) {
-    final values = keyValues.map((e) => [e]).toList();
-    return getAllByIndex(r'key', values);
-  }
-
-  List<AccountDataISAR?> getAllByKeySync(List<String> keyValues) {
-    final values = keyValues.map((e) => [e]).toList();
-    return getAllByIndexSync(r'key', values);
-  }
-
-  Future<int> deleteAllByKey(List<String> keyValues) {
-    final values = keyValues.map((e) => [e]).toList();
-    return deleteAllByIndex(r'key', values);
-  }
-
-  int deleteAllByKeySync(List<String> keyValues) {
-    final values = keyValues.map((e) => [e]).toList();
-    return deleteAllByIndexSync(r'key', values);
-  }
-
-  Future<Id> putByKey(AccountDataISAR object) {
-    return putByIndex(r'key', object);
-  }
-
-  Id putByKeySync(AccountDataISAR object, {bool saveLinks = true}) {
-    return putByIndexSync(r'key', object, saveLinks: saveLinks);
-  }
-
-  Future<List<Id>> putAllByKey(List<AccountDataISAR> objects) {
-    return putAllByIndex(r'key', objects);
-  }
-
-  List<Id> putAllByKeySync(List<AccountDataISAR> objects,
-      {bool saveLinks = true}) {
-    return putAllByIndexSync(r'key', objects, saveLinks: saveLinks);
-  }
-}
-
-extension AccountDataISARQueryWhereSort
-    on QueryBuilder<AccountDataISAR, AccountDataISAR, QWhere> {
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterWhere> anyId() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(const IdWhereClause.any());
-    });
-  }
-}
-
-extension AccountDataISARQueryWhere
-    on QueryBuilder<AccountDataISAR, AccountDataISAR, QWhereClause> {
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterWhereClause> idEqualTo(
-      Id id) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: id,
-        upper: id,
-      ));
-    });
-  }
-
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterWhereClause>
-      idNotEqualTo(Id id) {
-    return QueryBuilder.apply(this, (query) {
-      if (query.whereSort == Sort.asc) {
-        return query
-            .addWhereClause(
-              IdWhereClause.lessThan(upper: id, includeUpper: false),
-            )
-            .addWhereClause(
-              IdWhereClause.greaterThan(lower: id, includeLower: false),
-            );
-      } else {
-        return query
-            .addWhereClause(
-              IdWhereClause.greaterThan(lower: id, includeLower: false),
-            )
-            .addWhereClause(
-              IdWhereClause.lessThan(upper: id, includeUpper: false),
-            );
+@isarProtected
+dynamic deserializeAccountDataISARProp(IsarReader reader, int property) {
+  switch (property) {
+    case 0:
+      return IsarCore.readId(reader);
+    case 1:
+      return IsarCore.readString(reader, 1) ?? '';
+    case 2:
+      return IsarCore.readString(reader, 2);
+    case 3:
+      {
+        final value = IsarCore.readLong(reader, 3);
+        if (value == -9223372036854775808) {
+          return null;
+        } else {
+          return value;
+        }
       }
-    });
+    case 4:
+      {
+        final value = IsarCore.readDouble(reader, 4);
+        if (value.isNaN) {
+          return null;
+        } else {
+          return value;
+        }
+      }
+    case 5:
+      {
+        if (IsarCore.readNull(reader, 5)) {
+          return null;
+        } else {
+          return IsarCore.readBool(reader, 5);
+        }
+      }
+    case 6:
+      {
+        final value = IsarCore.readLong(reader, 6);
+        if (value == -9223372036854775808) {
+          return 0;
+        } else {
+          return value;
+        }
+      }
+    default:
+      throw ArgumentError('Unknown property: $property');
   }
+}
 
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterWhereClause>
-      idGreaterThan(Id id, {bool include = false}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IdWhereClause.greaterThan(lower: id, includeLower: include),
-      );
-    });
-  }
+sealed class _AccountDataISARUpdate {
+  bool call({
+    required int id,
+    String? keyName,
+    String? stringValue,
+    int? intValue,
+    double? doubleValue,
+    bool? boolValue,
+    int? updatedAt,
+  });
+}
 
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterWhereClause> idLessThan(
-      Id id,
-      {bool include = false}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IdWhereClause.lessThan(upper: id, includeUpper: include),
-      );
-    });
-  }
+class _AccountDataISARUpdateImpl implements _AccountDataISARUpdate {
+  const _AccountDataISARUpdateImpl(this.collection);
 
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterWhereClause> idBetween(
-    Id lowerId,
-    Id upperId, {
-    bool includeLower = true,
-    bool includeUpper = true,
+  final IsarCollection<int, AccountDataISAR> collection;
+
+  @override
+  bool call({
+    required int id,
+    Object? keyName = ignore,
+    Object? stringValue = ignore,
+    Object? intValue = ignore,
+    Object? doubleValue = ignore,
+    Object? boolValue = ignore,
+    Object? updatedAt = ignore,
   }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: lowerId,
-        includeLower: includeLower,
-        upper: upperId,
-        includeUpper: includeUpper,
-      ));
-    });
+    return collection.updateProperties([
+          id
+        ], {
+          if (keyName != ignore) 1: keyName as String?,
+          if (stringValue != ignore) 2: stringValue as String?,
+          if (intValue != ignore) 3: intValue as int?,
+          if (doubleValue != ignore) 4: doubleValue as double?,
+          if (boolValue != ignore) 5: boolValue as bool?,
+          if (updatedAt != ignore) 6: updatedAt as int?,
+        }) >
+        0;
   }
+}
 
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterWhereClause> keyEqualTo(
-      String key) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'key',
-        value: [key],
-      ));
-    });
-  }
+sealed class _AccountDataISARUpdateAll {
+  int call({
+    required List<int> id,
+    String? keyName,
+    String? stringValue,
+    int? intValue,
+    double? doubleValue,
+    bool? boolValue,
+    int? updatedAt,
+  });
+}
 
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterWhereClause>
-      keyNotEqualTo(String key) {
-    return QueryBuilder.apply(this, (query) {
-      if (query.whereSort == Sort.asc) {
-        return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'key',
-              lower: [],
-              upper: [key],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'key',
-              lower: [key],
-              includeLower: false,
-              upper: [],
-            ));
-      } else {
-        return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'key',
-              lower: [key],
-              includeLower: false,
-              upper: [],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'key',
-              lower: [],
-              upper: [key],
-              includeUpper: false,
-            ));
-      }
+class _AccountDataISARUpdateAllImpl implements _AccountDataISARUpdateAll {
+  const _AccountDataISARUpdateAllImpl(this.collection);
+
+  final IsarCollection<int, AccountDataISAR> collection;
+
+  @override
+  int call({
+    required List<int> id,
+    Object? keyName = ignore,
+    Object? stringValue = ignore,
+    Object? intValue = ignore,
+    Object? doubleValue = ignore,
+    Object? boolValue = ignore,
+    Object? updatedAt = ignore,
+  }) {
+    return collection.updateProperties(id, {
+      if (keyName != ignore) 1: keyName as String?,
+      if (stringValue != ignore) 2: stringValue as String?,
+      if (intValue != ignore) 3: intValue as int?,
+      if (doubleValue != ignore) 4: doubleValue as double?,
+      if (boolValue != ignore) 5: boolValue as bool?,
+      if (updatedAt != ignore) 6: updatedAt as int?,
     });
   }
+}
+
+extension AccountDataISARUpdate on IsarCollection<int, AccountDataISAR> {
+  _AccountDataISARUpdate get update => _AccountDataISARUpdateImpl(this);
+
+  _AccountDataISARUpdateAll get updateAll =>
+      _AccountDataISARUpdateAllImpl(this);
+}
+
+sealed class _AccountDataISARQueryUpdate {
+  int call({
+    String? keyName,
+    String? stringValue,
+    int? intValue,
+    double? doubleValue,
+    bool? boolValue,
+    int? updatedAt,
+  });
+}
+
+class _AccountDataISARQueryUpdateImpl implements _AccountDataISARQueryUpdate {
+  const _AccountDataISARQueryUpdateImpl(this.query, {this.limit});
+
+  final IsarQuery<AccountDataISAR> query;
+  final int? limit;
+
+  @override
+  int call({
+    Object? keyName = ignore,
+    Object? stringValue = ignore,
+    Object? intValue = ignore,
+    Object? doubleValue = ignore,
+    Object? boolValue = ignore,
+    Object? updatedAt = ignore,
+  }) {
+    return query.updateProperties(limit: limit, {
+      if (keyName != ignore) 1: keyName as String?,
+      if (stringValue != ignore) 2: stringValue as String?,
+      if (intValue != ignore) 3: intValue as int?,
+      if (doubleValue != ignore) 4: doubleValue as double?,
+      if (boolValue != ignore) 5: boolValue as bool?,
+      if (updatedAt != ignore) 6: updatedAt as int?,
+    });
+  }
+}
+
+extension AccountDataISARQueryUpdate on IsarQuery<AccountDataISAR> {
+  _AccountDataISARQueryUpdate get updateFirst =>
+      _AccountDataISARQueryUpdateImpl(this, limit: 1);
+
+  _AccountDataISARQueryUpdate get updateAll =>
+      _AccountDataISARQueryUpdateImpl(this);
+}
+
+class _AccountDataISARQueryBuilderUpdateImpl
+    implements _AccountDataISARQueryUpdate {
+  const _AccountDataISARQueryBuilderUpdateImpl(this.query, {this.limit});
+
+  final QueryBuilder<AccountDataISAR, AccountDataISAR, QOperations> query;
+  final int? limit;
+
+  @override
+  int call({
+    Object? keyName = ignore,
+    Object? stringValue = ignore,
+    Object? intValue = ignore,
+    Object? doubleValue = ignore,
+    Object? boolValue = ignore,
+    Object? updatedAt = ignore,
+  }) {
+    final q = query.build();
+    try {
+      return q.updateProperties(limit: limit, {
+        if (keyName != ignore) 1: keyName as String?,
+        if (stringValue != ignore) 2: stringValue as String?,
+        if (intValue != ignore) 3: intValue as int?,
+        if (doubleValue != ignore) 4: doubleValue as double?,
+        if (boolValue != ignore) 5: boolValue as bool?,
+        if (updatedAt != ignore) 6: updatedAt as int?,
+      });
+    } finally {
+      q.close();
+    }
+  }
+}
+
+extension AccountDataISARQueryBuilderUpdate
+    on QueryBuilder<AccountDataISAR, AccountDataISAR, QOperations> {
+  _AccountDataISARQueryUpdate get updateFirst =>
+      _AccountDataISARQueryBuilderUpdateImpl(this, limit: 1);
+
+  _AccountDataISARQueryUpdate get updateAll =>
+      _AccountDataISARQueryBuilderUpdateImpl(this);
 }
 
 extension AccountDataISARQueryFilter
     on QueryBuilder<AccountDataISAR, AccountDataISAR, QFilterCondition> {
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
-      boolValueIsNull() {
+      idEqualTo(
+    int value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'boolValue',
-      ));
-    });
-  }
-
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
-      boolValueIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'boolValue',
-      ));
-    });
-  }
-
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
-      boolValueEqualTo(bool? value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'boolValue',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
-      doubleValueIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'doubleValue',
-      ));
-    });
-  }
-
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
-      doubleValueIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'doubleValue',
-      ));
-    });
-  }
-
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
-      doubleValueEqualTo(
-    double? value, {
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'doubleValue',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
-      doubleValueGreaterThan(
-    double? value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'doubleValue',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
-      doubleValueLessThan(
-    double? value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'doubleValue',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
-      doubleValueBetween(
-    double? lower,
-    double? upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'doubleValue',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
-      idEqualTo(Id value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        EqualCondition(
+          property: 0,
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
       idGreaterThan(
-    Id value, {
-    bool include = false,
-  }) {
+    int value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        GreaterCondition(
+          property: 0,
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
+      idGreaterThanOrEqualTo(
+    int value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterOrEqualCondition(
+          property: 0,
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
       idLessThan(
-    Id value, {
-    bool include = false,
-  }) {
+    int value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        LessCondition(
+          property: 0,
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
+      idLessThanOrEqualTo(
+    int value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessOrEqualCondition(
+          property: 0,
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
       idBetween(
-    Id lower,
-    Id upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
+    int lower,
+    int upper,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'id',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        BetweenCondition(
+          property: 0,
+          lower: lower,
+          upper: upper,
+        ),
+      );
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
-      intValueIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'intValue',
-      ));
-    });
-  }
-
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
-      intValueIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'intValue',
-      ));
-    });
-  }
-
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
-      intValueEqualTo(int? value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'intValue',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
-      intValueGreaterThan(
-    int? value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'intValue',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
-      intValueLessThan(
-    int? value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'intValue',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
-      intValueBetween(
-    int? lower,
-    int? upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'intValue',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
-      keyEqualTo(
+      keyNameEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'key',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        EqualCondition(
+          property: 1,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
-      keyGreaterThan(
+      keyNameGreaterThan(
     String value, {
-    bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'key',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        GreaterCondition(
+          property: 1,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
-      keyLessThan(
+      keyNameGreaterThanOrEqualTo(
     String value, {
-    bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'key',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        GreaterOrEqualCondition(
+          property: 1,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
-      keyBetween(
+      keyNameLessThan(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessCondition(
+          property: 1,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
+      keyNameLessThanOrEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessOrEqualCondition(
+          property: 1,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
+      keyNameBetween(
     String lower,
     String upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'key',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        BetweenCondition(
+          property: 1,
+          lower: lower,
+          upper: upper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
-      keyStartsWith(
+      keyNameStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'key',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        StartsWithCondition(
+          property: 1,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
-      keyEndsWith(
+      keyNameEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'key',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        EndsWithCondition(
+          property: 1,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
-      keyContains(String value, {bool caseSensitive = true}) {
+      keyNameContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'key',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        ContainsCondition(
+          property: 1,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
-      keyMatches(String pattern, {bool caseSensitive = true}) {
+      keyNameMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'key',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        MatchesCondition(
+          property: 1,
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
-      keyIsEmpty() {
+      keyNameIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'key',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        const EqualCondition(
+          property: 1,
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
-      keyIsNotEmpty() {
+      keyNameIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'key',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        const GreaterCondition(
+          property: 1,
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
       stringValueIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'stringValue',
-      ));
+      return query.addFilterCondition(const IsNullCondition(property: 2));
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
       stringValueIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'stringValue',
-      ));
+    return QueryBuilder.apply(not(), (query) {
+      return query.addFilterCondition(const IsNullCondition(property: 2));
     });
   }
 
@@ -745,43 +652,77 @@ extension AccountDataISARQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'stringValue',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        EqualCondition(
+          property: 2,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
       stringValueGreaterThan(
     String? value, {
-    bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'stringValue',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        GreaterCondition(
+          property: 2,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
+      stringValueGreaterThanOrEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterOrEqualCondition(
+          property: 2,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
       stringValueLessThan(
     String? value, {
-    bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'stringValue',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        LessCondition(
+          property: 2,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
+      stringValueLessThanOrEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessOrEqualCondition(
+          property: 2,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -789,19 +730,17 @@ extension AccountDataISARQueryFilter
       stringValueBetween(
     String? lower,
     String? upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'stringValue',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        BetweenCondition(
+          property: 2,
+          lower: lower,
+          upper: upper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -811,11 +750,13 @@ extension AccountDataISARQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'stringValue',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        StartsWithCondition(
+          property: 2,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -825,109 +766,389 @@ extension AccountDataISARQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'stringValue',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        EndsWithCondition(
+          property: 2,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
       stringValueContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'stringValue',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        ContainsCondition(
+          property: 2,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
       stringValueMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'stringValue',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        MatchesCondition(
+          property: 2,
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
       stringValueIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'stringValue',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        const EqualCondition(
+          property: 2,
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
       stringValueIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'stringValue',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        const GreaterCondition(
+          property: 2,
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
-      updatedAtEqualTo(int value) {
+      intValueIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'updatedAt',
-        value: value,
-      ));
+      return query.addFilterCondition(const IsNullCondition(property: 3));
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
+      intValueIsNotNull() {
+    return QueryBuilder.apply(not(), (query) {
+      return query.addFilterCondition(const IsNullCondition(property: 3));
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
+      intValueEqualTo(
+    int? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        EqualCondition(
+          property: 3,
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
+      intValueGreaterThan(
+    int? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterCondition(
+          property: 3,
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
+      intValueGreaterThanOrEqualTo(
+    int? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterOrEqualCondition(
+          property: 3,
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
+      intValueLessThan(
+    int? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessCondition(
+          property: 3,
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
+      intValueLessThanOrEqualTo(
+    int? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessOrEqualCondition(
+          property: 3,
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
+      intValueBetween(
+    int? lower,
+    int? upper,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        BetweenCondition(
+          property: 3,
+          lower: lower,
+          upper: upper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
+      doubleValueIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const IsNullCondition(property: 4));
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
+      doubleValueIsNotNull() {
+    return QueryBuilder.apply(not(), (query) {
+      return query.addFilterCondition(const IsNullCondition(property: 4));
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
+      doubleValueEqualTo(
+    double? value, {
+    double epsilon = Filter.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        EqualCondition(
+          property: 4,
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
+      doubleValueGreaterThan(
+    double? value, {
+    double epsilon = Filter.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterCondition(
+          property: 4,
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
+      doubleValueGreaterThanOrEqualTo(
+    double? value, {
+    double epsilon = Filter.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterOrEqualCondition(
+          property: 4,
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
+      doubleValueLessThan(
+    double? value, {
+    double epsilon = Filter.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessCondition(
+          property: 4,
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
+      doubleValueLessThanOrEqualTo(
+    double? value, {
+    double epsilon = Filter.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessOrEqualCondition(
+          property: 4,
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
+      doubleValueBetween(
+    double? lower,
+    double? upper, {
+    double epsilon = Filter.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        BetweenCondition(
+          property: 4,
+          lower: lower,
+          upper: upper,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
+      boolValueIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const IsNullCondition(property: 5));
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
+      boolValueIsNotNull() {
+    return QueryBuilder.apply(not(), (query) {
+      return query.addFilterCondition(const IsNullCondition(property: 5));
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
+      boolValueEqualTo(
+    bool? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        EqualCondition(
+          property: 5,
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
+      updatedAtEqualTo(
+    int value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        EqualCondition(
+          property: 6,
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
       updatedAtGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
+    int value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'updatedAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        GreaterCondition(
+          property: 6,
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
+      updatedAtGreaterThanOrEqualTo(
+    int value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterOrEqualCondition(
+          property: 6,
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
       updatedAtLessThan(
-    int value, {
-    bool include = false,
-  }) {
+    int value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'updatedAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        LessCondition(
+          property: 6,
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
+      updatedAtLessThanOrEqualTo(
+    int value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessOrEqualCondition(
+          property: 6,
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterFilterCondition>
       updatedAtBetween(
     int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
+    int upper,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'updatedAt',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        BetweenCondition(
+          property: 6,
+          lower: lower,
+          upper: upper,
+        ),
+      );
     });
   }
 }
@@ -935,279 +1156,403 @@ extension AccountDataISARQueryFilter
 extension AccountDataISARQueryObject
     on QueryBuilder<AccountDataISAR, AccountDataISAR, QFilterCondition> {}
 
-extension AccountDataISARQueryLinks
-    on QueryBuilder<AccountDataISAR, AccountDataISAR, QFilterCondition> {}
-
 extension AccountDataISARQuerySortBy
     on QueryBuilder<AccountDataISAR, AccountDataISAR, QSortBy> {
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy>
-      sortByBoolValue() {
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy> sortById() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'boolValue', Sort.asc);
+      return query.addSortBy(0);
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy> sortByIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(0, sort: Sort.desc);
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy> sortByKeyName(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(
+        1,
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy>
-      sortByBoolValueDesc() {
+      sortByKeyNameDesc({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'boolValue', Sort.desc);
+      return query.addSortBy(
+        1,
+        sort: Sort.desc,
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy>
-      sortByDoubleValue() {
+      sortByStringValue({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'doubleValue', Sort.asc);
+      return query.addSortBy(
+        2,
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy>
-      sortByDoubleValueDesc() {
+      sortByStringValueDesc({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'doubleValue', Sort.desc);
+      return query.addSortBy(
+        2,
+        sort: Sort.desc,
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy>
       sortByIntValue() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'intValue', Sort.asc);
+      return query.addSortBy(3);
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy>
       sortByIntValueDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'intValue', Sort.desc);
-    });
-  }
-
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy> sortByKey() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'key', Sort.asc);
-    });
-  }
-
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy> sortByKeyDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'key', Sort.desc);
+      return query.addSortBy(3, sort: Sort.desc);
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy>
-      sortByStringValue() {
+      sortByDoubleValue() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'stringValue', Sort.asc);
+      return query.addSortBy(4);
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy>
-      sortByStringValueDesc() {
+      sortByDoubleValueDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'stringValue', Sort.desc);
+      return query.addSortBy(4, sort: Sort.desc);
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy>
+      sortByBoolValue() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(5);
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy>
+      sortByBoolValueDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(5, sort: Sort.desc);
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy>
       sortByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'updatedAt', Sort.asc);
+      return query.addSortBy(6);
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy>
       sortByUpdatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'updatedAt', Sort.desc);
+      return query.addSortBy(6, sort: Sort.desc);
     });
   }
 }
 
 extension AccountDataISARQuerySortThenBy
     on QueryBuilder<AccountDataISAR, AccountDataISAR, QSortThenBy> {
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy>
-      thenByBoolValue() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'boolValue', Sort.asc);
-    });
-  }
-
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy>
-      thenByBoolValueDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'boolValue', Sort.desc);
-    });
-  }
-
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy>
-      thenByDoubleValue() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'doubleValue', Sort.asc);
-    });
-  }
-
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy>
-      thenByDoubleValueDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'doubleValue', Sort.desc);
-    });
-  }
-
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'id', Sort.asc);
+      return query.addSortBy(0);
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy> thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'id', Sort.desc);
+      return query.addSortBy(0, sort: Sort.desc);
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy> thenByKeyName(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(1, caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy>
+      thenByKeyNameDesc({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(1, sort: Sort.desc, caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy>
+      thenByStringValue({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(2, caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy>
+      thenByStringValueDesc({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(2, sort: Sort.desc, caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy>
       thenByIntValue() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'intValue', Sort.asc);
+      return query.addSortBy(3);
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy>
       thenByIntValueDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'intValue', Sort.desc);
-    });
-  }
-
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy> thenByKey() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'key', Sort.asc);
-    });
-  }
-
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy> thenByKeyDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'key', Sort.desc);
+      return query.addSortBy(3, sort: Sort.desc);
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy>
-      thenByStringValue() {
+      thenByDoubleValue() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'stringValue', Sort.asc);
+      return query.addSortBy(4);
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy>
-      thenByStringValueDesc() {
+      thenByDoubleValueDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'stringValue', Sort.desc);
+      return query.addSortBy(4, sort: Sort.desc);
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy>
+      thenByBoolValue() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(5);
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy>
+      thenByBoolValueDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(5, sort: Sort.desc);
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy>
       thenByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'updatedAt', Sort.asc);
+      return query.addSortBy(6);
     });
   }
 
   QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterSortBy>
       thenByUpdatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'updatedAt', Sort.desc);
+      return query.addSortBy(6, sort: Sort.desc);
     });
   }
 }
 
 extension AccountDataISARQueryWhereDistinct
     on QueryBuilder<AccountDataISAR, AccountDataISAR, QDistinct> {
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QDistinct>
-      distinctByBoolValue() {
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterDistinct>
+      distinctByKeyName({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'boolValue');
+      return query.addDistinctBy(1, caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QDistinct>
-      distinctByDoubleValue() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'doubleValue');
-    });
-  }
-
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QDistinct>
-      distinctByIntValue() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'intValue');
-    });
-  }
-
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QDistinct> distinctByKey(
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'key', caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QDistinct>
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterDistinct>
       distinctByStringValue({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'stringValue', caseSensitive: caseSensitive);
+      return query.addDistinctBy(2, caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<AccountDataISAR, AccountDataISAR, QDistinct>
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterDistinct>
+      distinctByIntValue() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(3);
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterDistinct>
+      distinctByDoubleValue() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(4);
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterDistinct>
+      distinctByBoolValue() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(5);
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, AccountDataISAR, QAfterDistinct>
       distinctByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'updatedAt');
+      return query.addDistinctBy(6);
     });
   }
 }
 
-extension AccountDataISARQueryProperty
-    on QueryBuilder<AccountDataISAR, AccountDataISAR, QQueryProperty> {
-  QueryBuilder<AccountDataISAR, int, QQueryOperations> idProperty() {
+extension AccountDataISARQueryProperty1
+    on QueryBuilder<AccountDataISAR, AccountDataISAR, QProperty> {
+  QueryBuilder<AccountDataISAR, int, QAfterProperty> idProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'id');
+      return query.addProperty(0);
     });
   }
 
-  QueryBuilder<AccountDataISAR, bool?, QQueryOperations> boolValueProperty() {
+  QueryBuilder<AccountDataISAR, String, QAfterProperty> keyNameProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'boolValue');
+      return query.addProperty(1);
     });
   }
 
-  QueryBuilder<AccountDataISAR, double?, QQueryOperations>
-      doubleValueProperty() {
+  QueryBuilder<AccountDataISAR, String?, QAfterProperty> stringValueProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'doubleValue');
+      return query.addProperty(2);
     });
   }
 
-  QueryBuilder<AccountDataISAR, int?, QQueryOperations> intValueProperty() {
+  QueryBuilder<AccountDataISAR, int?, QAfterProperty> intValueProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'intValue');
+      return query.addProperty(3);
     });
   }
 
-  QueryBuilder<AccountDataISAR, String, QQueryOperations> keyProperty() {
+  QueryBuilder<AccountDataISAR, double?, QAfterProperty> doubleValueProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'key');
+      return query.addProperty(4);
     });
   }
 
-  QueryBuilder<AccountDataISAR, String?, QQueryOperations>
+  QueryBuilder<AccountDataISAR, bool?, QAfterProperty> boolValueProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(5);
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, int, QAfterProperty> updatedAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(6);
+    });
+  }
+}
+
+extension AccountDataISARQueryProperty2<R>
+    on QueryBuilder<AccountDataISAR, R, QAfterProperty> {
+  QueryBuilder<AccountDataISAR, (R, int), QAfterProperty> idProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(0);
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, (R, String), QAfterProperty> keyNameProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(1);
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, (R, String?), QAfterProperty>
       stringValueProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'stringValue');
+      return query.addProperty(2);
     });
   }
 
-  QueryBuilder<AccountDataISAR, int, QQueryOperations> updatedAtProperty() {
+  QueryBuilder<AccountDataISAR, (R, int?), QAfterProperty> intValueProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'updatedAt');
+      return query.addProperty(3);
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, (R, double?), QAfterProperty>
+      doubleValueProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(4);
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, (R, bool?), QAfterProperty>
+      boolValueProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(5);
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, (R, int), QAfterProperty> updatedAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(6);
+    });
+  }
+}
+
+extension AccountDataISARQueryProperty3<R1, R2>
+    on QueryBuilder<AccountDataISAR, (R1, R2), QAfterProperty> {
+  QueryBuilder<AccountDataISAR, (R1, R2, int), QOperations> idProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(0);
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, (R1, R2, String), QOperations>
+      keyNameProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(1);
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, (R1, R2, String?), QOperations>
+      stringValueProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(2);
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, (R1, R2, int?), QOperations>
+      intValueProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(3);
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, (R1, R2, double?), QOperations>
+      doubleValueProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(4);
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, (R1, R2, bool?), QOperations>
+      boolValueProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(5);
+    });
+  }
+
+  QueryBuilder<AccountDataISAR, (R1, R2, int), QOperations>
+      updatedAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(6);
     });
   }
 }

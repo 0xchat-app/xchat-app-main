@@ -30,7 +30,7 @@ class _FileServerPageState extends State<FileServerPage> {
   final ValueNotifier<List<FileServerModel>> _servers$ =
       ValueNotifier<List<FileServerModel>>([]);
   // Holds selected server id.
-  final ValueNotifier<Id?> _selected$ = ValueNotifier(null);
+  final ValueNotifier<int?> _selected$ = ValueNotifier(null);
   bool _isEditing = false;
   late final FileServerRepository _repo;
 
@@ -137,7 +137,7 @@ class _FileServerPageState extends State<FileServerPage> {
         return CLSectionListView(
           items: [
             SectionListViewItem(
-              data: list.map((item) => SelectedItemModel<Id?>(
+              data: list.map((item) => SelectedItemModel<int?>(
                 title: item.name,
                 subtitle: item.url,
                 value: item.id,
@@ -145,7 +145,7 @@ class _FileServerPageState extends State<FileServerPage> {
               )).toList(),
               isEditing: _isEditing,
               onDelete: (item) async {
-                final idToDelete = (item as SelectedItemModel).value as Id?;
+                final idToDelete = (item as SelectedItemModel).value as int?;
                 if (idToDelete != null) {
                   await _repo.delete(idToDelete);
                 }

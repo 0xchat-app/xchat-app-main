@@ -1,13 +1,6 @@
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'package:ox_common/model/chat_type.dart';
-import 'package:ox_common/utils/ox_userinfo_manager.dart';
-
-///Title: chat_session_model
-///Description: TODO(Fill in by oneself)
-///Copyright: Copyright (c) 2021
-///@author Michael
-///CreateTime: 2023/5/18 10:01
 
 @reflector
 class ChatSessionModel extends DBObject {
@@ -137,9 +130,8 @@ class ChatSessionModel extends DBObject {
     for(var chatSessionModel in chatSessionModels){
       chatSessionModelsISAR.add(ChatSessionModelISAR.fromMap(chatSessionModel.toMap()));
     }
-    await DBISAR.sharedInstance.isar.writeTxn(() async {
-      await DBISAR.sharedInstance.isar.chatSessionModelISARs
-          .putAll(chatSessionModelsISAR);
+    await DBISAR.sharedInstance.isar.writeAsync((isar) {
+      isar.chatSessionModelISARs.putAll(chatSessionModelsISAR);
     });
   }
 }

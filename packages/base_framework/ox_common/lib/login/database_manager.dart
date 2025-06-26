@@ -34,12 +34,11 @@ class DatabaseUtils {
       final accountDir = accountDbPath.substring(0, accountDbPath.lastIndexOf('/'));
 
       // Create own Isar instance with account schemas
-      final accountIsar = Isar.getInstance('account_$pubkey') ??
-        await Isar.open(
-          AccountSchemas.schemas,
-          directory: accountDir,
-          name: 'account_$pubkey',
-        );
+      final accountIsar = await Isar.openAsync(
+        schemas: AccountSchemas.schemas,
+        directory: accountDir,
+        name: 'account_$pubkey',
+      );
 
       debugPrint('Account database initialized for $pubkey with own Isar instance');
       return accountIsar;

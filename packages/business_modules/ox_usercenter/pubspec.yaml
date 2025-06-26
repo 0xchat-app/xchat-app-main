@@ -30,7 +30,6 @@ dependencies:
 
 dev_dependencies:
   build_runner: ^2.4.9
-  isar_generator: ^3.1.0+1
   flutter_test:
     sdk: flutter
   flutter_lints: ^1.0.0

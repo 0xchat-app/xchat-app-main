@@ -44,7 +44,6 @@ abstract class OXFlutterModule {
     await Localized.registerLocale(moduleName, assetPath);
     DB.sharedInstance.schemes.addAll(dbSchemes);
     DBISAR.sharedInstance.schemas.addAll(isarDBSchemes);
-    DB.sharedInstance.migrationFunctions.addAll(migrateFunctions);
   }
 
   @protected
@@ -74,9 +73,8 @@ abstract class OXFlutterModule {
   /// External interface methods
   List<Type> get dbSchemes => [];
 
-  List<Function> get migrateFunctions => [];
   /// isar schemes
-  List<CollectionSchema<dynamic>> get isarDBSchemes => [];
+  List<IsarGeneratedSchema> get isarDBSchemes => [];
 
   /// Module listener, <eventName : List<observerHandle>>
   Map<String, List<OXObserverCallback>> observerMap = {};

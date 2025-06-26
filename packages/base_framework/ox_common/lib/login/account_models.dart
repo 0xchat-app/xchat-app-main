@@ -1,9 +1,10 @@
-import 'package:isar/isar.dart';
 import 'dart:collection';
+
+import 'package:isar/isar.dart';
 import 'dart:convert';
 import 'package:convert/convert.dart';
 import 'package:flutter/foundation.dart';
-import 'package:nostr_core_dart/nostr.dart';
+import 'package:nostr_core_dart/nostr.dart' hide Filter;
 import 'login_models.dart';
 
 part 'account_models.g.dart';
@@ -14,10 +15,10 @@ part 'account_models.g.dart';
 /// Examples: pubkey, createdAt, lastLoginAt, themeMode, language, fontSize, etc.
 @collection
 class AccountDataISAR {
-  Id id = Isar.autoIncrement;
+  late int id;
 
-  @Index(unique: true, replace: true)
-  String key;
+  @Index(unique: true)
+  String keyName;
 
   String? stringValue;
   int? intValue;
@@ -27,7 +28,7 @@ class AccountDataISAR {
   int updatedAt;
 
   AccountDataISAR({
-    this.key = '',
+    this.keyName = '',
     this.stringValue,
     this.intValue,
     this.doubleValue,
@@ -37,7 +38,7 @@ class AccountDataISAR {
 
   Map<String, dynamic> toMap() {
     return {
-      'key': key,
+      'key': keyName,
       'stringValue': stringValue,
       'intValue': intValue,
       'doubleValue': doubleValue,
@@ -48,7 +49,7 @@ class AccountDataISAR {
 
   static AccountDataISAR fromMap(Map<String, dynamic> map) {
     return AccountDataISAR(
-      key: map['key'] ?? '',
+      keyName: map['key'] ?? '',
       stringValue: map['stringValue'],
       intValue: map['intValue'],
       doubleValue: map['doubleValue']?.toDouble(),
@@ -60,7 +61,7 @@ class AccountDataISAR {
   // Helper methods for different value types
   static AccountDataISAR createString(String key, String value) {
     return AccountDataISAR(
-      key: key,
+      keyName: key,
       stringValue: value,
       updatedAt: DateTime.now().millisecondsSinceEpoch,
     );
@@ -68,7 +69,7 @@ class AccountDataISAR {
 
   static AccountDataISAR createInt(String key, int value) {
     return AccountDataISAR(
-      key: key,
+      keyName: key,
       intValue: value,
       updatedAt: DateTime.now().millisecondsSinceEpoch,
     );
@@ -76,7 +77,7 @@ class AccountDataISAR {
 
   static AccountDataISAR createDouble(String key, double value) {
     return AccountDataISAR(
-      key: key,
+      keyName: key,
       doubleValue: value,
       updatedAt: DateTime.now().millisecondsSinceEpoch,
     );
@@ -84,7 +85,7 @@ class AccountDataISAR {
 
   static AccountDataISAR createBool(String key, bool value) {
     return AccountDataISAR(
-      key: key,
+      keyName: key,
       boolValue: value,
       updatedAt: DateTime.now().millisecondsSinceEpoch,
     );
@@ -107,13 +108,13 @@ class AccountSchemas {
   AccountSchemas._(); // Private constructor to prevent instantiation
 
   // Private static list to avoid recreating the list every time
-  static final List<CollectionSchema<dynamic>> _schemas = [
+  static final List<IsarGeneratedSchema> _schemas = [
     AccountDataISARSchema,
   ];
 
   /// Get account level schemas for independent Isar instance
   /// Returns an unmodifiable view to prevent external modification
-  static List<CollectionSchema<dynamic>> get schemas => 
+  static List<IsarGeneratedSchema> get schemas =>
       UnmodifiableListView(_schemas);
 }
 
@@ -230,7 +231,7 @@ class AccountHelper {
       final accountData = await accountDb.accountDataISARs.where()
         .anyOf([keyPubkey, keyLoginType, keyEncryptedPrivKey, keyDefaultPassword, 
                keyNostrConnectUri, keyCircles, keyCreatedAt, keyLastLoginAt, keyLastLoginCircleId],
-               (q, String key) => q.keyEqualTo(key))
+               (q, String key) => q.keyNameEqualTo(key))
         .findAll();
 
       if (accountData.isEmpty) return null;
@@ -238,13 +239,13 @@ class AccountHelper {
       final dataMap = <String, dynamic>{};
       for (final data in accountData) {
         if (data.stringValue != null) {
-          dataMap[data.key] = data.stringValue;
+          dataMap[data.keyName] = data.stringValue;
         } else if (data.intValue != null) {
-          dataMap[data.key] = data.intValue;
+          dataMap[data.keyName] = data.intValue;
         } else if (data.doubleValue != null) {
-          dataMap[data.key] = data.doubleValue;
+          dataMap[data.keyName] = data.doubleValue;
         } else if (data.boolValue != null) {
-          dataMap[data.key] = data.boolValue;
+          dataMap[data.keyName] = data.boolValue;
         }
       }
 
@@ -291,16 +292,16 @@ class AccountHelper {
   /// Save AccountModel to database
   static Future<void> _saveAccount(Isar accountDb, AccountModel account) async {
     final accountDataList = toAccountDataList(account);
-    await accountDb.writeTxn(() async {
-      await accountDb.accountDataISARs.putAll(accountDataList);
+    await accountDb.writeAsync((accountDb) {
+      accountDb.accountDataISARs.putAll(accountDataList);
     });
   }
 
   /// Update last login time
   static Future<void> updateLastLoginTime(Isar accountDb, String pubkey) async {
     final now = DateTime.now().millisecondsSinceEpoch;
-    await accountDb.writeTxn(() async {
-      await accountDb.accountDataISARs.put(
+    await accountDb.writeAsync((accountDb) {
+      accountDb.accountDataISARs.put(
         AccountDataISAR.createInt(keyLastLoginAt, now),
       );
     });

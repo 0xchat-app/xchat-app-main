@@ -1,5 +1,6 @@
 import 'package:isar/isar.dart';
 import 'dart:collection';
+import 'package:flutter/foundation.dart';
 
 part 'circle_config_models.g.dart';
 
@@ -10,14 +11,14 @@ part 'circle_config_models.g.dart';
 /// own independent set of configurations.
 @collection
 class CircleConfigISAR {
-  Id id = Isar.autoIncrement;
+  late int id;
 
   /// Belongs to which circle – pubkey or uuid defined by business layer.
   late String circleId;
 
   /// Configuration key. Unique together with [circleId].
-  @Index(composite: [CompositeIndex('circleId')], unique: true, replace: true)
-  late String key;
+  @Index(unique: true)
+  late String keyName;
 
   String? stringValue;
   int? intValue;
@@ -28,7 +29,7 @@ class CircleConfigISAR {
 
   CircleConfigISAR({
     required this.circleId,
-    this.key = '',
+    this.keyName = '',
     this.stringValue,
     this.intValue,
     this.doubleValue,
@@ -39,7 +40,7 @@ class CircleConfigISAR {
   Map<String, dynamic> toMap() {
     return {
       'circleId': circleId,
-      'key': key,
+      'key': keyName,
       'stringValue': stringValue,
       'intValue': intValue,
       'doubleValue': doubleValue,
@@ -51,7 +52,7 @@ class CircleConfigISAR {
   static CircleConfigISAR fromMap(Map<String, dynamic> map) {
     return CircleConfigISAR(
       circleId: map['circleId'] ?? '',
-      key: map['key'] ?? '',
+      keyName: map['key'] ?? '',
       stringValue: map['stringValue'],
       intValue: map['intValue'],
       doubleValue: map['doubleValue']?.toDouble(),
@@ -65,7 +66,7 @@ class CircleConfigISAR {
       String circleId, String key, String value) {
     return CircleConfigISAR(
       circleId: circleId,
-      key: key,
+      keyName: key,
       stringValue: value,
     );
   }
@@ -73,7 +74,7 @@ class CircleConfigISAR {
   static CircleConfigISAR createInt(String circleId, String key, int value) {
     return CircleConfigISAR(
       circleId: circleId,
-      key: key,
+      keyName: key,
       intValue: value,
     );
   }
@@ -82,7 +83,7 @@ class CircleConfigISAR {
       String circleId, String key, double value) {
     return CircleConfigISAR(
       circleId: circleId,
-      key: key,
+      keyName: key,
       doubleValue: value,
     );
   }
@@ -90,7 +91,7 @@ class CircleConfigISAR {
   static CircleConfigISAR createBool(String circleId, String key, bool value) {
     return CircleConfigISAR(
       circleId: circleId,
-      key: key,
+      keyName: key,
       boolValue: value,
     );
   }
@@ -103,11 +104,11 @@ class CircleConfigISAR {
 class CircleConfigSchemas {
   CircleConfigSchemas._();
 
-  static final List<CollectionSchema<dynamic>> _schemas = [
+  static final List<IsarGeneratedSchema> _schemas = [
     CircleConfigISARSchema,
   ];
 
-  static List<CollectionSchema<dynamic>> get schemas =>
+  static List<IsarGeneratedSchema> get schemas =>
       UnmodifiableListView(_schemas);
 }
 
@@ -149,7 +150,7 @@ class CircleConfigHelper {
   /// Load configuration from database for given circle
   static Future<CircleConfigModel> loadConfig(Isar circleDb, String circleId) async {
     final kvs = await circleDb.circleConfigISARs
-        .filter()
+        .where()
         .circleIdEqualTo(circleId)
         .findAll();
 
@@ -158,7 +159,7 @@ class CircleConfigHelper {
     }
 
     // Map from key to record for fast lookup
-    final map = {for (final kv in kvs) kv.key: kv};
+    final map = {for (final kv in kvs) kv.keyName: kv};
 
     return CircleConfigModel(
       selectedFileServerUrl:
@@ -170,8 +171,8 @@ class CircleConfigHelper {
   static Future<void> saveConfig(
       Isar circleDb, String circleId, CircleConfigModel config) async {
     final dataList = toConfigDataList(circleId, config);
-    await circleDb.writeTxn(() async {
-      await circleDb.circleConfigISARs.putAll(dataList);
+    await circleDb.writeAsync((circleDb) {
+      circleDb.circleConfigISARs.putAll(dataList);
     });
   }
 } 

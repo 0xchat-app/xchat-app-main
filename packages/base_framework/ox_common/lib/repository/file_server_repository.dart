@@ -15,16 +15,21 @@ class FileServerRepository {
 
   Future<int> create(FileServerModel server) async {
     try {
-      return await isar.writeTxn(() async => await isar.fileServerModels.put(server));
+      await isar.writeAsync((isar) {
+        isar.fileServerModels.put(server);
+      });
+      return server.id;
     } catch (e) {
       LogUtil.e("create server failed $e");
       rethrow;
     }
   }
 
-  Future<void> delete(Id id) async {
+  Future<void> delete(int id) async {
     try {
-      await isar.writeTxn(() async => await isar.fileServerModels.delete(id));
+      await isar.writeAsync((isar) {
+        isar.fileServerModels.delete(id);
+      });
     } catch (e) {
       LogUtil.e('delete server failed $e');
     }

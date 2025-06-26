@@ -3,569 +3,484 @@
 part of 'file_server_model.dart';
 
 // **************************************************************************
-// IsarCollectionGenerator
+// _IsarCollectionGenerator
 // **************************************************************************
 
 // coverage:ignore-file
-// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+// ignore_for_file: duplicate_ignore, invalid_use_of_protected_member, lines_longer_than_80_chars, constant_identifier_names, avoid_js_rounded_ints, no_leading_underscores_for_local_identifiers, require_trailing_commas, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_in_if_null_operators, library_private_types_in_public_api, prefer_const_constructors
+// ignore_for_file: type=lint
 
 extension GetFileServerModelCollection on Isar {
-  IsarCollection<FileServerModel> get fileServerModels => this.collection();
+  IsarCollection<int, FileServerModel> get fileServerModels =>
+      this.collection();
 }
 
-const FileServerModelSchema = CollectionSchema(
-  name: r'FileServerModel',
-  id: 4859175782050046534,
-  properties: {
-    r'accessKey': PropertySchema(
-      id: 0,
-      name: r'accessKey',
-      type: IsarType.string,
-    ),
-    r'bucketName': PropertySchema(
-      id: 1,
-      name: r'bucketName',
-      type: IsarType.string,
-    ),
-    r'name': PropertySchema(
-      id: 2,
-      name: r'name',
-      type: IsarType.string,
-    ),
-    r'secretKey': PropertySchema(
-      id: 3,
-      name: r'secretKey',
-      type: IsarType.string,
-    ),
-    r'type': PropertySchema(
-      id: 4,
-      name: r'type',
-      type: IsarType.byte,
-      enumMap: _FileServerModeltypeEnumValueMap,
-    ),
-    r'url': PropertySchema(
-      id: 5,
-      name: r'url',
-      type: IsarType.string,
-    )
-  },
-  estimateSize: _fileServerModelEstimateSize,
-  serialize: _fileServerModelSerialize,
-  deserialize: _fileServerModelDeserialize,
-  deserializeProp: _fileServerModelDeserializeProp,
-  idName: r'id',
-  indexes: {},
-  links: {},
-  embeddedSchemas: {},
-  getId: _fileServerModelGetId,
-  getLinks: _fileServerModelGetLinks,
-  attach: _fileServerModelAttach,
-  version: '3.1.0+1',
+const FileServerModelSchema = IsarGeneratedSchema(
+  schema: IsarSchema(
+    name: 'FileServerModel',
+    idName: 'id',
+    embedded: false,
+    properties: [
+      IsarPropertySchema(
+        name: 'type',
+        type: IsarType.byte,
+        enumMap: {"nip96": 0, "blossom": 1, "minio": 2},
+      ),
+      IsarPropertySchema(
+        name: 'name',
+        type: IsarType.string,
+      ),
+      IsarPropertySchema(
+        name: 'url',
+        type: IsarType.string,
+      ),
+      IsarPropertySchema(
+        name: 'accessKey',
+        type: IsarType.string,
+      ),
+      IsarPropertySchema(
+        name: 'secretKey',
+        type: IsarType.string,
+      ),
+      IsarPropertySchema(
+        name: 'bucketName',
+        type: IsarType.string,
+      ),
+    ],
+    indexes: [],
+  ),
+  converter: IsarObjectConverter<int, FileServerModel>(
+    serialize: serializeFileServerModel,
+    deserialize: deserializeFileServerModel,
+    deserializeProperty: deserializeFileServerModelProp,
+  ),
+  embeddedSchemas: [],
 );
 
-int _fileServerModelEstimateSize(
-  FileServerModel object,
-  List<int> offsets,
-  Map<Type, List<int>> allOffsets,
-) {
-  var bytesCount = offsets.last;
-  bytesCount += 3 + object.accessKey.length * 3;
-  bytesCount += 3 + object.bucketName.length * 3;
-  bytesCount += 3 + object.name.length * 3;
-  bytesCount += 3 + object.secretKey.length * 3;
-  bytesCount += 3 + object.url.length * 3;
-  return bytesCount;
+@isarProtected
+int serializeFileServerModel(IsarWriter writer, FileServerModel object) {
+  IsarCore.writeByte(writer, 1, object.type.index);
+  IsarCore.writeString(writer, 2, object.name);
+  IsarCore.writeString(writer, 3, object.url);
+  IsarCore.writeString(writer, 4, object.accessKey);
+  IsarCore.writeString(writer, 5, object.secretKey);
+  IsarCore.writeString(writer, 6, object.bucketName);
+  return object.id;
 }
 
-void _fileServerModelSerialize(
-  FileServerModel object,
-  IsarWriter writer,
-  List<int> offsets,
-  Map<Type, List<int>> allOffsets,
-) {
-  writer.writeString(offsets[0], object.accessKey);
-  writer.writeString(offsets[1], object.bucketName);
-  writer.writeString(offsets[2], object.name);
-  writer.writeString(offsets[3], object.secretKey);
-  writer.writeByte(offsets[4], object.type.index);
-  writer.writeString(offsets[5], object.url);
-}
-
-FileServerModel _fileServerModelDeserialize(
-  Id id,
-  IsarReader reader,
-  List<int> offsets,
-  Map<Type, List<int>> allOffsets,
-) {
+@isarProtected
+FileServerModel deserializeFileServerModel(IsarReader reader) {
+  final int _id;
+  _id = IsarCore.readId(reader);
+  final FileServerType _type;
+  {
+    if (IsarCore.readNull(reader, 1)) {
+      _type = FileServerType.nip96;
+    } else {
+      _type = _fileServerModelType[IsarCore.readByte(reader, 1)] ??
+          FileServerType.nip96;
+    }
+  }
+  final String _name;
+  _name = IsarCore.readString(reader, 2) ?? '';
+  final String _url;
+  _url = IsarCore.readString(reader, 3) ?? '';
+  final String _accessKey;
+  _accessKey = IsarCore.readString(reader, 4) ?? '';
+  final String _secretKey;
+  _secretKey = IsarCore.readString(reader, 5) ?? '';
+  final String _bucketName;
+  _bucketName = IsarCore.readString(reader, 6) ?? '';
   final object = FileServerModel(
-    accessKey: reader.readStringOrNull(offsets[0]) ?? '',
-    bucketName: reader.readStringOrNull(offsets[1]) ?? '',
-    id: id,
-    name: reader.readStringOrNull(offsets[2]) ?? '',
-    secretKey: reader.readStringOrNull(offsets[3]) ?? '',
-    type: _FileServerModeltypeValueEnumMap[reader.readByteOrNull(offsets[4])] ??
-        FileServerType.nip96,
-    url: reader.readString(offsets[5]),
+    id: _id,
+    type: _type,
+    name: _name,
+    url: _url,
+    accessKey: _accessKey,
+    secretKey: _secretKey,
+    bucketName: _bucketName,
   );
   return object;
 }
 
-P _fileServerModelDeserializeProp<P>(
-  IsarReader reader,
-  int propertyId,
-  int offset,
-  Map<Type, List<int>> allOffsets,
-) {
-  switch (propertyId) {
+@isarProtected
+dynamic deserializeFileServerModelProp(IsarReader reader, int property) {
+  switch (property) {
     case 0:
-      return (reader.readStringOrNull(offset) ?? '') as P;
+      return IsarCore.readId(reader);
     case 1:
-      return (reader.readStringOrNull(offset) ?? '') as P;
+      {
+        if (IsarCore.readNull(reader, 1)) {
+          return FileServerType.nip96;
+        } else {
+          return _fileServerModelType[IsarCore.readByte(reader, 1)] ??
+              FileServerType.nip96;
+        }
+      }
     case 2:
-      return (reader.readStringOrNull(offset) ?? '') as P;
+      return IsarCore.readString(reader, 2) ?? '';
     case 3:
-      return (reader.readStringOrNull(offset) ?? '') as P;
+      return IsarCore.readString(reader, 3) ?? '';
     case 4:
-      return (_FileServerModeltypeValueEnumMap[reader.readByteOrNull(offset)] ??
-          FileServerType.nip96) as P;
+      return IsarCore.readString(reader, 4) ?? '';
     case 5:
-      return (reader.readString(offset)) as P;
+      return IsarCore.readString(reader, 5) ?? '';
+    case 6:
+      return IsarCore.readString(reader, 6) ?? '';
     default:
-      throw IsarError('Unknown property with id $propertyId');
+      throw ArgumentError('Unknown property: $property');
   }
 }
 
-const _FileServerModeltypeEnumValueMap = {
-  'nip96': 0,
-  'blossom': 1,
-  'minio': 2,
-};
-const _FileServerModeltypeValueEnumMap = {
+sealed class _FileServerModelUpdate {
+  bool call({
+    required int id,
+    FileServerType? type,
+    String? name,
+    String? url,
+    String? accessKey,
+    String? secretKey,
+    String? bucketName,
+  });
+}
+
+class _FileServerModelUpdateImpl implements _FileServerModelUpdate {
+  const _FileServerModelUpdateImpl(this.collection);
+
+  final IsarCollection<int, FileServerModel> collection;
+
+  @override
+  bool call({
+    required int id,
+    Object? type = ignore,
+    Object? name = ignore,
+    Object? url = ignore,
+    Object? accessKey = ignore,
+    Object? secretKey = ignore,
+    Object? bucketName = ignore,
+  }) {
+    return collection.updateProperties([
+          id
+        ], {
+          if (type != ignore) 1: type as FileServerType?,
+          if (name != ignore) 2: name as String?,
+          if (url != ignore) 3: url as String?,
+          if (accessKey != ignore) 4: accessKey as String?,
+          if (secretKey != ignore) 5: secretKey as String?,
+          if (bucketName != ignore) 6: bucketName as String?,
+        }) >
+        0;
+  }
+}
+
+sealed class _FileServerModelUpdateAll {
+  int call({
+    required List<int> id,
+    FileServerType? type,
+    String? name,
+    String? url,
+    String? accessKey,
+    String? secretKey,
+    String? bucketName,
+  });
+}
+
+class _FileServerModelUpdateAllImpl implements _FileServerModelUpdateAll {
+  const _FileServerModelUpdateAllImpl(this.collection);
+
+  final IsarCollection<int, FileServerModel> collection;
+
+  @override
+  int call({
+    required List<int> id,
+    Object? type = ignore,
+    Object? name = ignore,
+    Object? url = ignore,
+    Object? accessKey = ignore,
+    Object? secretKey = ignore,
+    Object? bucketName = ignore,
+  }) {
+    return collection.updateProperties(id, {
+      if (type != ignore) 1: type as FileServerType?,
+      if (name != ignore) 2: name as String?,
+      if (url != ignore) 3: url as String?,
+      if (accessKey != ignore) 4: accessKey as String?,
+      if (secretKey != ignore) 5: secretKey as String?,
+      if (bucketName != ignore) 6: bucketName as String?,
+    });
+  }
+}
+
+extension FileServerModelUpdate on IsarCollection<int, FileServerModel> {
+  _FileServerModelUpdate get update => _FileServerModelUpdateImpl(this);
+
+  _FileServerModelUpdateAll get updateAll =>
+      _FileServerModelUpdateAllImpl(this);
+}
+
+sealed class _FileServerModelQueryUpdate {
+  int call({
+    FileServerType? type,
+    String? name,
+    String? url,
+    String? accessKey,
+    String? secretKey,
+    String? bucketName,
+  });
+}
+
+class _FileServerModelQueryUpdateImpl implements _FileServerModelQueryUpdate {
+  const _FileServerModelQueryUpdateImpl(this.query, {this.limit});
+
+  final IsarQuery<FileServerModel> query;
+  final int? limit;
+
+  @override
+  int call({
+    Object? type = ignore,
+    Object? name = ignore,
+    Object? url = ignore,
+    Object? accessKey = ignore,
+    Object? secretKey = ignore,
+    Object? bucketName = ignore,
+  }) {
+    return query.updateProperties(limit: limit, {
+      if (type != ignore) 1: type as FileServerType?,
+      if (name != ignore) 2: name as String?,
+      if (url != ignore) 3: url as String?,
+      if (accessKey != ignore) 4: accessKey as String?,
+      if (secretKey != ignore) 5: secretKey as String?,
+      if (bucketName != ignore) 6: bucketName as String?,
+    });
+  }
+}
+
+extension FileServerModelQueryUpdate on IsarQuery<FileServerModel> {
+  _FileServerModelQueryUpdate get updateFirst =>
+      _FileServerModelQueryUpdateImpl(this, limit: 1);
+
+  _FileServerModelQueryUpdate get updateAll =>
+      _FileServerModelQueryUpdateImpl(this);
+}
+
+class _FileServerModelQueryBuilderUpdateImpl
+    implements _FileServerModelQueryUpdate {
+  const _FileServerModelQueryBuilderUpdateImpl(this.query, {this.limit});
+
+  final QueryBuilder<FileServerModel, FileServerModel, QOperations> query;
+  final int? limit;
+
+  @override
+  int call({
+    Object? type = ignore,
+    Object? name = ignore,
+    Object? url = ignore,
+    Object? accessKey = ignore,
+    Object? secretKey = ignore,
+    Object? bucketName = ignore,
+  }) {
+    final q = query.build();
+    try {
+      return q.updateProperties(limit: limit, {
+        if (type != ignore) 1: type as FileServerType?,
+        if (name != ignore) 2: name as String?,
+        if (url != ignore) 3: url as String?,
+        if (accessKey != ignore) 4: accessKey as String?,
+        if (secretKey != ignore) 5: secretKey as String?,
+        if (bucketName != ignore) 6: bucketName as String?,
+      });
+    } finally {
+      q.close();
+    }
+  }
+}
+
+extension FileServerModelQueryBuilderUpdate
+    on QueryBuilder<FileServerModel, FileServerModel, QOperations> {
+  _FileServerModelQueryUpdate get updateFirst =>
+      _FileServerModelQueryBuilderUpdateImpl(this, limit: 1);
+
+  _FileServerModelQueryUpdate get updateAll =>
+      _FileServerModelQueryBuilderUpdateImpl(this);
+}
+
+const _fileServerModelType = {
   0: FileServerType.nip96,
   1: FileServerType.blossom,
   2: FileServerType.minio,
 };
 
-Id _fileServerModelGetId(FileServerModel object) {
-  return object.id;
-}
-
-List<IsarLinkBase<dynamic>> _fileServerModelGetLinks(FileServerModel object) {
-  return [];
-}
-
-void _fileServerModelAttach(
-    IsarCollection<dynamic> col, Id id, FileServerModel object) {
-  object.id = id;
-}
-
-extension FileServerModelQueryWhereSort
-    on QueryBuilder<FileServerModel, FileServerModel, QWhere> {
-  QueryBuilder<FileServerModel, FileServerModel, QAfterWhere> anyId() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(const IdWhereClause.any());
-    });
-  }
-}
-
-extension FileServerModelQueryWhere
-    on QueryBuilder<FileServerModel, FileServerModel, QWhereClause> {
-  QueryBuilder<FileServerModel, FileServerModel, QAfterWhereClause> idEqualTo(
-      Id id) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: id,
-        upper: id,
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterWhereClause>
-      idNotEqualTo(Id id) {
-    return QueryBuilder.apply(this, (query) {
-      if (query.whereSort == Sort.asc) {
-        return query
-            .addWhereClause(
-              IdWhereClause.lessThan(upper: id, includeUpper: false),
-            )
-            .addWhereClause(
-              IdWhereClause.greaterThan(lower: id, includeLower: false),
-            );
-      } else {
-        return query
-            .addWhereClause(
-              IdWhereClause.greaterThan(lower: id, includeLower: false),
-            )
-            .addWhereClause(
-              IdWhereClause.lessThan(upper: id, includeUpper: false),
-            );
-      }
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterWhereClause>
-      idGreaterThan(Id id, {bool include = false}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IdWhereClause.greaterThan(lower: id, includeLower: include),
-      );
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterWhereClause> idLessThan(
-      Id id,
-      {bool include = false}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IdWhereClause.lessThan(upper: id, includeUpper: include),
-      );
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterWhereClause> idBetween(
-    Id lowerId,
-    Id upperId, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: lowerId,
-        includeLower: includeLower,
-        upper: upperId,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-}
-
 extension FileServerModelQueryFilter
     on QueryBuilder<FileServerModel, FileServerModel, QFilterCondition> {
   QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      accessKeyEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+      idEqualTo(
+    int value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'accessKey',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      accessKeyGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'accessKey',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      accessKeyLessThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'accessKey',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      accessKeyBetween(
-    String lower,
-    String upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'accessKey',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      accessKeyStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'accessKey',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      accessKeyEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'accessKey',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      accessKeyContains(String value, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'accessKey',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      accessKeyMatches(String pattern, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'accessKey',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      accessKeyIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'accessKey',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      accessKeyIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'accessKey',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      bucketNameEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'bucketName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      bucketNameGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'bucketName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      bucketNameLessThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'bucketName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      bucketNameBetween(
-    String lower,
-    String upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'bucketName',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      bucketNameStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'bucketName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      bucketNameEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'bucketName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      bucketNameContains(String value, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'bucketName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      bucketNameMatches(String pattern, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'bucketName',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      bucketNameIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'bucketName',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      bucketNameIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'bucketName',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      idEqualTo(Id value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        EqualCondition(
+          property: 0,
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
       idGreaterThan(
-    Id value, {
-    bool include = false,
-  }) {
+    int value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        GreaterCondition(
+          property: 0,
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      idGreaterThanOrEqualTo(
+    int value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterOrEqualCondition(
+          property: 0,
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
       idLessThan(
-    Id value, {
-    bool include = false,
-  }) {
+    int value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        LessCondition(
+          property: 0,
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      idLessThanOrEqualTo(
+    int value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessOrEqualCondition(
+          property: 0,
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
       idBetween(
-    Id lower,
-    Id upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
+    int lower,
+    int upper,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'id',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        BetweenCondition(
+          property: 0,
+          lower: lower,
+          upper: upper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      typeEqualTo(
+    FileServerType value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        EqualCondition(
+          property: 1,
+          value: value.index,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      typeGreaterThan(
+    FileServerType value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterCondition(
+          property: 1,
+          value: value.index,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      typeGreaterThanOrEqualTo(
+    FileServerType value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterOrEqualCondition(
+          property: 1,
+          value: value.index,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      typeLessThan(
+    FileServerType value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessCondition(
+          property: 1,
+          value: value.index,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      typeLessThanOrEqualTo(
+    FileServerType value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessOrEqualCondition(
+          property: 1,
+          value: value.index,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      typeBetween(
+    FileServerType lower,
+    FileServerType upper,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        BetweenCondition(
+          property: 1,
+          lower: lower.index,
+          upper: upper.index,
+        ),
+      );
     });
   }
 
@@ -575,43 +490,77 @@ extension FileServerModelQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'name',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        EqualCondition(
+          property: 2,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
       nameGreaterThan(
     String value, {
-    bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'name',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        GreaterCondition(
+          property: 2,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      nameGreaterThanOrEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterOrEqualCondition(
+          property: 2,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
       nameLessThan(
     String value, {
-    bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'name',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        LessCondition(
+          property: 2,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      nameLessThanOrEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessOrEqualCondition(
+          property: 2,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -619,19 +568,17 @@ extension FileServerModelQueryFilter
       nameBetween(
     String lower,
     String upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'name',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        BetweenCondition(
+          property: 2,
+          lower: lower,
+          upper: upper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -641,11 +588,13 @@ extension FileServerModelQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'name',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        StartsWithCondition(
+          property: 2,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -655,245 +604,63 @@ extension FileServerModelQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'name',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        EndsWithCondition(
+          property: 2,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
       nameContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'name',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        ContainsCondition(
+          property: 2,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
       nameMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'name',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        MatchesCondition(
+          property: 2,
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
       nameIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'name',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        const EqualCondition(
+          property: 2,
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
       nameIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'name',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      secretKeyEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'secretKey',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      secretKeyGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'secretKey',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      secretKeyLessThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'secretKey',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      secretKeyBetween(
-    String lower,
-    String upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'secretKey',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      secretKeyStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'secretKey',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      secretKeyEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'secretKey',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      secretKeyContains(String value, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'secretKey',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      secretKeyMatches(String pattern, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'secretKey',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      secretKeyIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'secretKey',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      secretKeyIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'secretKey',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      typeEqualTo(FileServerType value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'type',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      typeGreaterThan(
-    FileServerType value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'type',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      typeLessThan(
-    FileServerType value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'type',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
-      typeBetween(
-    FileServerType lower,
-    FileServerType upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'type',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        const GreaterCondition(
+          property: 2,
+          value: '',
+        ),
+      );
     });
   }
 
@@ -903,43 +670,77 @@ extension FileServerModelQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'url',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        EqualCondition(
+          property: 3,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
       urlGreaterThan(
     String value, {
-    bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'url',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        GreaterCondition(
+          property: 3,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      urlGreaterThanOrEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterOrEqualCondition(
+          property: 3,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
       urlLessThan(
     String value, {
-    bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'url',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        LessCondition(
+          property: 3,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      urlLessThanOrEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessOrEqualCondition(
+          property: 3,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -947,19 +748,17 @@ extension FileServerModelQueryFilter
       urlBetween(
     String lower,
     String upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'url',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        BetweenCondition(
+          property: 3,
+          lower: lower,
+          upper: upper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -969,11 +768,13 @@ extension FileServerModelQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'url',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        StartsWithCondition(
+          property: 3,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -983,53 +784,603 @@ extension FileServerModelQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'url',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        EndsWithCondition(
+          property: 3,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
       urlContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'url',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        ContainsCondition(
+          property: 3,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
       urlMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'url',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        MatchesCondition(
+          property: 3,
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
       urlIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'url',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        const EqualCondition(
+          property: 3,
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
       urlIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'url',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        const GreaterCondition(
+          property: 3,
+          value: '',
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      accessKeyEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        EqualCondition(
+          property: 4,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      accessKeyGreaterThan(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterCondition(
+          property: 4,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      accessKeyGreaterThanOrEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterOrEqualCondition(
+          property: 4,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      accessKeyLessThan(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessCondition(
+          property: 4,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      accessKeyLessThanOrEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessOrEqualCondition(
+          property: 4,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      accessKeyBetween(
+    String lower,
+    String upper, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        BetweenCondition(
+          property: 4,
+          lower: lower,
+          upper: upper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      accessKeyStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        StartsWithCondition(
+          property: 4,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      accessKeyEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        EndsWithCondition(
+          property: 4,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      accessKeyContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        ContainsCondition(
+          property: 4,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      accessKeyMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        MatchesCondition(
+          property: 4,
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      accessKeyIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const EqualCondition(
+          property: 4,
+          value: '',
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      accessKeyIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const GreaterCondition(
+          property: 4,
+          value: '',
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      secretKeyEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        EqualCondition(
+          property: 5,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      secretKeyGreaterThan(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterCondition(
+          property: 5,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      secretKeyGreaterThanOrEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterOrEqualCondition(
+          property: 5,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      secretKeyLessThan(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessCondition(
+          property: 5,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      secretKeyLessThanOrEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessOrEqualCondition(
+          property: 5,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      secretKeyBetween(
+    String lower,
+    String upper, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        BetweenCondition(
+          property: 5,
+          lower: lower,
+          upper: upper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      secretKeyStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        StartsWithCondition(
+          property: 5,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      secretKeyEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        EndsWithCondition(
+          property: 5,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      secretKeyContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        ContainsCondition(
+          property: 5,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      secretKeyMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        MatchesCondition(
+          property: 5,
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      secretKeyIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const EqualCondition(
+          property: 5,
+          value: '',
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      secretKeyIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const GreaterCondition(
+          property: 5,
+          value: '',
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      bucketNameEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        EqualCondition(
+          property: 6,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      bucketNameGreaterThan(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterCondition(
+          property: 6,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      bucketNameGreaterThanOrEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterOrEqualCondition(
+          property: 6,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      bucketNameLessThan(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessCondition(
+          property: 6,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      bucketNameLessThanOrEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessOrEqualCondition(
+          property: 6,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      bucketNameBetween(
+    String lower,
+    String upper, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        BetweenCondition(
+          property: 6,
+          lower: lower,
+          upper: upper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      bucketNameStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        StartsWithCondition(
+          property: 6,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      bucketNameEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        EndsWithCondition(
+          property: 6,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      bucketNameContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        ContainsCondition(
+          property: 6,
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      bucketNameMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        MatchesCondition(
+          property: 6,
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      bucketNameIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const EqualCondition(
+          property: 6,
+          value: '',
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterFilterCondition>
+      bucketNameIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const GreaterCondition(
+          property: 6,
+          value: '',
+        ),
+      );
     });
   }
 }
@@ -1037,273 +1388,421 @@ extension FileServerModelQueryFilter
 extension FileServerModelQueryObject
     on QueryBuilder<FileServerModel, FileServerModel, QFilterCondition> {}
 
-extension FileServerModelQueryLinks
-    on QueryBuilder<FileServerModel, FileServerModel, QFilterCondition> {}
-
 extension FileServerModelQuerySortBy
     on QueryBuilder<FileServerModel, FileServerModel, QSortBy> {
-  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy>
-      sortByAccessKey() {
+  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy> sortById() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'accessKey', Sort.asc);
+      return query.addSortBy(0);
     });
   }
 
-  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy>
-      sortByAccessKeyDesc() {
+  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy> sortByIdDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'accessKey', Sort.desc);
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy>
-      sortByBucketName() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'bucketName', Sort.asc);
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy>
-      sortByBucketNameDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'bucketName', Sort.desc);
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy> sortByName() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'name', Sort.asc);
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy>
-      sortByNameDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'name', Sort.desc);
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy>
-      sortBySecretKey() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'secretKey', Sort.asc);
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy>
-      sortBySecretKeyDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'secretKey', Sort.desc);
+      return query.addSortBy(0, sort: Sort.desc);
     });
   }
 
   QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy> sortByType() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'type', Sort.asc);
+      return query.addSortBy(1);
     });
   }
 
   QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy>
       sortByTypeDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'type', Sort.desc);
+      return query.addSortBy(1, sort: Sort.desc);
     });
   }
 
-  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy> sortByUrl() {
+  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy> sortByName(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'url', Sort.asc);
+      return query.addSortBy(
+        2,
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy> sortByUrlDesc() {
+  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy> sortByNameDesc(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'url', Sort.desc);
+      return query.addSortBy(
+        2,
+        sort: Sort.desc,
+        caseSensitive: caseSensitive,
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy> sortByUrl(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(
+        3,
+        caseSensitive: caseSensitive,
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy> sortByUrlDesc(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(
+        3,
+        sort: Sort.desc,
+        caseSensitive: caseSensitive,
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy> sortByAccessKey(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(
+        4,
+        caseSensitive: caseSensitive,
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy>
+      sortByAccessKeyDesc({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(
+        4,
+        sort: Sort.desc,
+        caseSensitive: caseSensitive,
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy> sortBySecretKey(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(
+        5,
+        caseSensitive: caseSensitive,
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy>
+      sortBySecretKeyDesc({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(
+        5,
+        sort: Sort.desc,
+        caseSensitive: caseSensitive,
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy> sortByBucketName(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(
+        6,
+        caseSensitive: caseSensitive,
+      );
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy>
+      sortByBucketNameDesc({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(
+        6,
+        sort: Sort.desc,
+        caseSensitive: caseSensitive,
+      );
     });
   }
 }
 
 extension FileServerModelQuerySortThenBy
     on QueryBuilder<FileServerModel, FileServerModel, QSortThenBy> {
-  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy>
-      thenByAccessKey() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'accessKey', Sort.asc);
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy>
-      thenByAccessKeyDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'accessKey', Sort.desc);
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy>
-      thenByBucketName() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'bucketName', Sort.asc);
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy>
-      thenByBucketNameDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'bucketName', Sort.desc);
-    });
-  }
-
   QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'id', Sort.asc);
+      return query.addSortBy(0);
     });
   }
 
   QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy> thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'id', Sort.desc);
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy> thenByName() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'name', Sort.asc);
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy>
-      thenByNameDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'name', Sort.desc);
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy>
-      thenBySecretKey() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'secretKey', Sort.asc);
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy>
-      thenBySecretKeyDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'secretKey', Sort.desc);
+      return query.addSortBy(0, sort: Sort.desc);
     });
   }
 
   QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy> thenByType() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'type', Sort.asc);
+      return query.addSortBy(1);
     });
   }
 
   QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy>
       thenByTypeDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'type', Sort.desc);
+      return query.addSortBy(1, sort: Sort.desc);
     });
   }
 
-  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy> thenByUrl() {
+  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy> thenByName(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'url', Sort.asc);
+      return query.addSortBy(2, caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy> thenByUrlDesc() {
+  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy> thenByNameDesc(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'url', Sort.desc);
+      return query.addSortBy(2, sort: Sort.desc, caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy> thenByUrl(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(3, caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy> thenByUrlDesc(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(3, sort: Sort.desc, caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy> thenByAccessKey(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(4, caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy>
+      thenByAccessKeyDesc({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(4, sort: Sort.desc, caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy> thenBySecretKey(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(5, caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy>
+      thenBySecretKeyDesc({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(5, sort: Sort.desc, caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy> thenByBucketName(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(6, caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterSortBy>
+      thenByBucketNameDesc({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(6, sort: Sort.desc, caseSensitive: caseSensitive);
     });
   }
 }
 
 extension FileServerModelQueryWhereDistinct
     on QueryBuilder<FileServerModel, FileServerModel, QDistinct> {
-  QueryBuilder<FileServerModel, FileServerModel, QDistinct> distinctByAccessKey(
-      {bool caseSensitive = true}) {
+  QueryBuilder<FileServerModel, FileServerModel, QAfterDistinct>
+      distinctByType() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'accessKey', caseSensitive: caseSensitive);
+      return query.addDistinctBy(1);
     });
   }
 
-  QueryBuilder<FileServerModel, FileServerModel, QDistinct>
+  QueryBuilder<FileServerModel, FileServerModel, QAfterDistinct> distinctByName(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(2, caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterDistinct> distinctByUrl(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(3, caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterDistinct>
+      distinctByAccessKey({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(4, caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterDistinct>
+      distinctBySecretKey({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(5, caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<FileServerModel, FileServerModel, QAfterDistinct>
       distinctByBucketName({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'bucketName', caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QDistinct> distinctByName(
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'name', caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QDistinct> distinctBySecretKey(
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'secretKey', caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QDistinct> distinctByType() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'type');
-    });
-  }
-
-  QueryBuilder<FileServerModel, FileServerModel, QDistinct> distinctByUrl(
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'url', caseSensitive: caseSensitive);
+      return query.addDistinctBy(6, caseSensitive: caseSensitive);
     });
   }
 }
 
-extension FileServerModelQueryProperty
-    on QueryBuilder<FileServerModel, FileServerModel, QQueryProperty> {
-  QueryBuilder<FileServerModel, int, QQueryOperations> idProperty() {
+extension FileServerModelQueryProperty1
+    on QueryBuilder<FileServerModel, FileServerModel, QProperty> {
+  QueryBuilder<FileServerModel, int, QAfterProperty> idProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'id');
+      return query.addProperty(0);
     });
   }
 
-  QueryBuilder<FileServerModel, String, QQueryOperations> accessKeyProperty() {
+  QueryBuilder<FileServerModel, FileServerType, QAfterProperty> typeProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'accessKey');
+      return query.addProperty(1);
     });
   }
 
-  QueryBuilder<FileServerModel, String, QQueryOperations> bucketNameProperty() {
+  QueryBuilder<FileServerModel, String, QAfterProperty> nameProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'bucketName');
+      return query.addProperty(2);
     });
   }
 
-  QueryBuilder<FileServerModel, String, QQueryOperations> nameProperty() {
+  QueryBuilder<FileServerModel, String, QAfterProperty> urlProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'name');
+      return query.addProperty(3);
     });
   }
 
-  QueryBuilder<FileServerModel, String, QQueryOperations> secretKeyProperty() {
+  QueryBuilder<FileServerModel, String, QAfterProperty> accessKeyProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'secretKey');
+      return query.addProperty(4);
     });
   }
 
-  QueryBuilder<FileServerModel, FileServerType, QQueryOperations>
+  QueryBuilder<FileServerModel, String, QAfterProperty> secretKeyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(5);
+    });
+  }
+
+  QueryBuilder<FileServerModel, String, QAfterProperty> bucketNameProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(6);
+    });
+  }
+}
+
+extension FileServerModelQueryProperty2<R>
+    on QueryBuilder<FileServerModel, R, QAfterProperty> {
+  QueryBuilder<FileServerModel, (R, int), QAfterProperty> idProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(0);
+    });
+  }
+
+  QueryBuilder<FileServerModel, (R, FileServerType), QAfterProperty>
       typeProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'type');
+      return query.addProperty(1);
     });
   }
 
-  QueryBuilder<FileServerModel, String, QQueryOperations> urlProperty() {
+  QueryBuilder<FileServerModel, (R, String), QAfterProperty> nameProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'url');
+      return query.addProperty(2);
+    });
+  }
+
+  QueryBuilder<FileServerModel, (R, String), QAfterProperty> urlProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(3);
+    });
+  }
+
+  QueryBuilder<FileServerModel, (R, String), QAfterProperty>
+      accessKeyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(4);
+    });
+  }
+
+  QueryBuilder<FileServerModel, (R, String), QAfterProperty>
+      secretKeyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(5);
+    });
+  }
+
+  QueryBuilder<FileServerModel, (R, String), QAfterProperty>
+      bucketNameProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(6);
+    });
+  }
+}
+
+extension FileServerModelQueryProperty3<R1, R2>
+    on QueryBuilder<FileServerModel, (R1, R2), QAfterProperty> {
+  QueryBuilder<FileServerModel, (R1, R2, int), QOperations> idProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(0);
+    });
+  }
+
+  QueryBuilder<FileServerModel, (R1, R2, FileServerType), QOperations>
+      typeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(1);
+    });
+  }
+
+  QueryBuilder<FileServerModel, (R1, R2, String), QOperations> nameProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(2);
+    });
+  }
+
+  QueryBuilder<FileServerModel, (R1, R2, String), QOperations> urlProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(3);
+    });
+  }
+
+  QueryBuilder<FileServerModel, (R1, R2, String), QOperations>
+      accessKeyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(4);
+    });
+  }
+
+  QueryBuilder<FileServerModel, (R1, R2, String), QOperations>
+      secretKeyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(5);
+    });
+  }
+
+  QueryBuilder<FileServerModel, (R1, R2, String), QOperations>
+      bucketNameProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(6);
     });
   }
 }

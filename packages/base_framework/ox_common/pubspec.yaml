@@ -3,6 +3,7 @@ description: 0xChat common.
 version: 0.0.1
 author:
 homepage:
+publish_to: none
 
 environment:
   sdk: ">=3.0.5 <4.0.0"
@@ -13,7 +14,11 @@ dependencies:
     sdk: flutter
 
   build_runner: ^2.4.9
-  isar_generator: ^3.1.0+1
+  isar:
+    git:
+      url: https://github.com/isar-community/isar.git
+      path: packages/isar
+      ref: 4.0.3
 
   # third
   shared_preferences: ^2.0.5

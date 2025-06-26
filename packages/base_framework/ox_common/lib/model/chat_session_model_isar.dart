@@ -1,15 +1,14 @@
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_common/model/chat_type.dart';
-import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:isar/isar.dart';
 
 part 'chat_session_model_isar.g.dart';
 
 @collection
 class ChatSessionModelISAR {
-  Id id = Isar.autoIncrement;
+  late int id;
 
-  @Index(unique: true, replace: true)
+  @Index(unique: true)
   String chatId;
 
   String? chatName;
