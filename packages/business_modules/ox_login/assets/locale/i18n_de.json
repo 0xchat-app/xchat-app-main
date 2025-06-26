@@ -37,5 +37,8 @@
   "str_login_with_qrcode_hint": "Melden Sie sich mit einem QR-Code bei 0xchat an",
   "str_login_with_qrcode_description": "1 Öffnen Sie 0xchat auf Ihrem Telefon\n2 Gehen Sie zu Hinzufügen > Scannen\n3 Richten Sie Ihr Telefon auf diesen Bildschirm, um die Anmeldung zu bestätigen",
   "str_login_with_account": "Mit Konto anmelden",
-  "str_login_with_copy_url": "URL kopieren"
+  "str_login_with_copy_url": "URL kopieren",
+  "wait_link_service": "Warten auf Verbindung zum Dienst oder prüfen Sie, ob die Signierer-App eine Authentifizierung anfordert!",
+  "generate_new_key": "Neuen Schlüssel generieren",
+  "login_with_aegis": "Mit Aegis anmelden"
 }

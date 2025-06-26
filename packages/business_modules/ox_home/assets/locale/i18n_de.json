@@ -1,6 +1,15 @@
 {
-  "Home": "Startseite",
-  "Contact": "Kontakt",
+  "Home": "Chats",
+  "Contact": "Kontakte",
   "Discover": "Entdecken",
-  "Me": "Ich"
+  "Me": "Ich",
+  "join_or_create_circle_now": "Kreis jetzt hinzufügen oder erstellen",
+  "unlock_advanced_model": "und private Chats mit Ihren Freunden und Familie starten!",
+  "join_circle": "Kreis hinzufügen",
+  "add_circle": "Kreis hinzufügen",
+  "new_paid_circle": "Neuer bezahlter Kreis 💎",
+  "join_circle_title": "Kreis hinzufügen",
+  "join_circle_description": "Um einen Kreis hinzuzufügen, geben Sie eine Relais-Adresse oder einen gültigen Einladungslink ein.\nZum Beispiel: wss://groups.nostr.com",
+  "join_circle_input_label": "Link",
+  "add": "Hinzufügen"
 }
