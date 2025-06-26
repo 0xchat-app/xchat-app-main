@@ -9,6 +9,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   fc_native_video_thumbnail
   file_selector_windows
   flutter_inappwebview_windows
+  isar_flutter_libs
   local_auth_windows
   permission_handler_windows
   rive_common

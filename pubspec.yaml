@@ -89,6 +89,11 @@ dependency_overrides:
     path: packages/nostr-dart
   nostr_mls_package:
     path: packages/nostr-mls-package
+  isar:
+    git:
+      url: https://github.com/isar-community/isar.git
+      path: packages/isar
+      ref: 4.0.3
 
 
 # For information on the generic Dart part of this file, see the

@@ -14,10 +14,10 @@ dependencies:
     sdk: flutter
 
   build_runner: ^2.4.9
-  isar:
+  isar_flutter_libs:
     git:
       url: https://github.com/isar-community/isar.git
-      path: packages/isar
+      path: packages/isar_flutter_libs
       ref: 4.0.3
 
   # third
@@ -102,11 +102,12 @@ dependencies:
 #    git:
 #      url: https://github.com/wkuangji/0xchat-core
 
-#dependency_overrides:
-#    pull_to_refresh:
-#      git:
-#        url: https://github.com/miquelbeltran/flutter_pulltorefresh
-#        ref: master
+dependency_overrides:
+  isar:
+    git:
+      url: https://github.com/isar-community/isar.git
+      path: packages/isar
+      ref: 4.0.3
 
 
 
