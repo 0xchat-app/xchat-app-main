@@ -5,7 +5,7 @@ import '../message.dart';
 import '../user.dart' show User;
 import 'partial_file.dart';
 
-part 'file_message.g.dart';
+// part 'file_message.g.dart'; // TODO: Restore when json_serializable generation is available
 
 /// A class that represents file message.
 @JsonSerializable()
@@ -60,8 +60,8 @@ abstract class FileMessage extends Message {
   }) = _FileMessage;
 
   /// Creates a file message from a map (decoded JSON).
-  factory FileMessage.fromJson(Map<String, dynamic> json) =>
-      _$FileMessageFromJson(json);
+  factory FileMessage.fromJson(Map<String, dynamic> _json) =>
+      throw UnimplementedError('JSON deserialization temporarily disabled');
 
   /// Creates a full file message from a partial one.
   factory FileMessage.fromPartial({
@@ -165,7 +165,7 @@ abstract class FileMessage extends Message {
 
   /// Converts a file message to the map representation, encodable to JSON.
   @override
-  Map<String, dynamic> toJson() => _$FileMessageToJson(this);
+  Map<String, dynamic> toJson() => throw UnimplementedError('JSON serialization temporarily disabled');
 }
 
 /// A utility class to enable better copyWith.

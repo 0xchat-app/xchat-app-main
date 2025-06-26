@@ -7,7 +7,7 @@ import '../message.dart';
 import '../user.dart' show User;
 import 'partial_custom.dart';
 
-part 'custom_message.g.dart';
+// part 'custom_message.g.dart'; // TODO: Restore when json_serializable generation is available
 
 /// A class that represents custom message. Use [metadata] to store anything
 /// you want.
@@ -62,8 +62,8 @@ abstract class CustomMessage extends Message {
   final bool viewWithoutBubble;
 
   /// Creates a custom message from a map (decoded JSON).
-  factory CustomMessage.fromJson(Map<String, dynamic> json) =>
-      _$CustomMessageFromJson(json);
+  factory CustomMessage.fromJson(Map<String, dynamic> _json) =>
+      throw UnimplementedError('JSON deserialization temporarily disabled');
 
   /// Creates a full custom message from a partial one.
   factory CustomMessage.fromPartial({
@@ -147,7 +147,7 @@ abstract class CustomMessage extends Message {
   /// Converts a custom message to the map representation,
   /// encodable to JSON.
   @override
-  Map<String, dynamic> toJson() => _$CustomMessageToJson(this);
+  Map<String, dynamic> toJson() => throw UnimplementedError('JSON serialization temporarily disabled');
 }
 
 /// A utility class to enable better copyWith.

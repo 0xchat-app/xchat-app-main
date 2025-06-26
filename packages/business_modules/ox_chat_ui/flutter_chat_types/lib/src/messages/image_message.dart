@@ -5,7 +5,7 @@ import '../message.dart';
 import '../user.dart' show User;
 import 'partial_image.dart';
 
-part 'image_message.g.dart';
+// part 'image_message.g.dart'; // TODO: Restore when json_serializable generation is available
 
 /// A class that represents image message.
 @JsonSerializable()
@@ -70,8 +70,8 @@ abstract class ImageMessage extends Message {
   }) = _ImageMessage;
 
   /// Creates an image message from a map (decoded JSON).
-  factory ImageMessage.fromJson(Map<String, dynamic> json) =>
-      _$ImageMessageFromJson(json);
+  factory ImageMessage.fromJson(Map<String, dynamic> _json) =>
+      throw UnimplementedError('JSON deserialization temporarily disabled');
 
   /// Creates a full image message from a partial one.
   factory ImageMessage.fromPartial({
@@ -177,7 +177,7 @@ abstract class ImageMessage extends Message {
 
   /// Converts an image message to the map representation, encodable to JSON.
   @override
-  Map<String, dynamic> toJson() => _$ImageMessageToJson(this);
+  Map<String, dynamic> toJson() => throw UnimplementedError('JSON serialization temporarily disabled');
 }
 
 /// A utility class to enable better copyWith.

@@ -7,7 +7,7 @@ import '../message.dart';
 import '../user.dart' show User;
 import 'partial_audio.dart';
 
-part 'audio_message.g.dart';
+// part 'audio_message.g.dart'; // TODO: Restore when json_serializable generation is available
 
 /// A class that represents audio message.
 @JsonSerializable()
@@ -76,8 +76,8 @@ abstract class AudioMessage extends Message {
   }) = _AudioMessage;
 
   /// Creates an audio message from a map (decoded JSON).
-  factory AudioMessage.fromJson(Map<String, dynamic> json) =>
-      _$AudioMessageFromJson(json);
+  factory AudioMessage.fromJson(Map<String, dynamic> _json) =>
+      throw UnimplementedError('JSON deserialization temporarily disabled');
 
   /// Creates a full audio message from a partial one.
   factory AudioMessage.fromPartial({
@@ -198,7 +198,7 @@ abstract class AudioMessage extends Message {
 
   /// Converts an audio message to the map representation, encodable to JSON.
   @override
-  Map<String, dynamic> toJson() => _$AudioMessageToJson(this);
+  Map<String, dynamic> toJson() => throw UnimplementedError('JSON serialization temporarily disabled');
 }
 
 /// A utility class to enable better copyWith.

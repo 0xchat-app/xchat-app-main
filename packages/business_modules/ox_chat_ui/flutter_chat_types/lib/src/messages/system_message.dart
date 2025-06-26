@@ -4,7 +4,7 @@ import 'package:meta/meta.dart';
 import '../message.dart';
 import '../user.dart' show User;
 
-part 'system_message.g.dart';
+// part 'system_message.g.dart'; // TODO: Restore when json_serializable generation is available
 
 /// A class that represents a system message (anything around chat management). Use [metadata] to store anything
 /// you want.
@@ -53,8 +53,8 @@ abstract class SystemMessage extends Message {
   }) = _SystemMessage;
 
   /// Creates a custom message from a map (decoded JSON).
-  factory SystemMessage.fromJson(Map<String, dynamic> json) =>
-      _$SystemMessageFromJson(json);
+  factory SystemMessage.fromJson(Map<String, dynamic> _json) =>
+      throw UnimplementedError('JSON deserialization temporarily disabled');
 
   /// System message content (could be text or translation key).
   final String text;
@@ -105,7 +105,7 @@ abstract class SystemMessage extends Message {
   /// Converts a custom message to the map representation,
   /// encodable to JSON.
   @override
-  Map<String, dynamic> toJson() => _$SystemMessageToJson(this);
+  Map<String, dynamic> toJson() => throw UnimplementedError('JSON serialization temporarily disabled');
 }
 
 /// A utility class to enable better copyWith.

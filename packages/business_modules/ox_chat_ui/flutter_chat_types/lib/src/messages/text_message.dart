@@ -6,7 +6,7 @@ import '../message.dart';
 import '../user.dart' show User;
 import 'partial_text.dart';
 
-part 'text_message.g.dart';
+// part 'text_message.g.dart'; // TODO: Restore when json_serializable generation is available
 
 /// A class that represents text message.
 @JsonSerializable()
@@ -56,8 +56,8 @@ abstract class TextMessage extends Message {
   }) = _TextMessage;
 
   /// Creates a text message from a map (decoded JSON).
-  factory TextMessage.fromJson(Map<String, dynamic> json) =>
-      _$TextMessageFromJson(json);
+  factory TextMessage.fromJson(Map<String, dynamic> _json) =>
+      throw UnimplementedError('JSON deserialization temporarily disabled');
 
   /// Creates a full text message from a partial one.
   factory TextMessage.fromPartial({
@@ -144,7 +144,7 @@ abstract class TextMessage extends Message {
 
   /// Converts a text message to the map representation, encodable to JSON.
   @override
-  Map<String, dynamic> toJson() => _$TextMessageToJson(this);
+  Map<String, dynamic> toJson() => throw UnimplementedError('JSON serialization temporarily disabled');
 }
 
 /// A utility class to enable better copyWith.

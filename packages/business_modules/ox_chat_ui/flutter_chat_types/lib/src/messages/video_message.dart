@@ -5,7 +5,7 @@ import '../message.dart';
 import '../user.dart' show User;
 import 'partial_video.dart';
 
-part 'video_message.g.dart';
+// part 'video_message.g.dart'; // TODO: Restore when json_serializable generation is available
 
 /// A class that represents video message.
 @JsonSerializable()
@@ -70,8 +70,8 @@ abstract class VideoMessage extends Message {
   }) = _VideoMessage;
 
   /// Creates a video message from a map (decoded JSON).
-  factory VideoMessage.fromJson(Map<String, dynamic> json) =>
-      _$VideoMessageFromJson(json);
+  factory VideoMessage.fromJson(Map<String, dynamic> _json) =>
+      throw UnimplementedError('JSON deserialization temporarily disabled');
 
   /// Creates a full video message from a partial one.
   factory VideoMessage.fromPartial({
@@ -181,7 +181,7 @@ abstract class VideoMessage extends Message {
 
   /// Converts an video message to the map representation, encodable to JSON.
   @override
-  Map<String, dynamic> toJson() => _$VideoMessageToJson(this);
+  Map<String, dynamic> toJson() => throw UnimplementedError('JSON serialization temporarily disabled');
 }
 
 /// A utility class to enable better copyWith.

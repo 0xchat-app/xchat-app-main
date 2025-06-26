@@ -4,7 +4,7 @@ import 'package:meta/meta.dart';
 import '../message.dart';
 import '../user.dart' show User;
 
-part 'unsupported_message.g.dart';
+// part 'unsupported_message.g.dart'; // TODO: Restore when json_serializable generation is available
 
 /// A class that represents unsupported message. Used for backwards
 /// compatibility. If chat's end user doesn't update to a new version
@@ -53,8 +53,8 @@ abstract class UnsupportedMessage extends Message {
   }) = _UnsupportedMessage;
 
   /// Creates an unsupported message from a map (decoded JSON).
-  factory UnsupportedMessage.fromJson(Map<String, dynamic> json) =>
-      _$UnsupportedMessageFromJson(json);
+  factory UnsupportedMessage.fromJson(Map<String, dynamic> _json) =>
+      throw UnimplementedError('JSON deserialization temporarily disabled');
 
   /// Equatable props.
   @override
@@ -97,7 +97,7 @@ abstract class UnsupportedMessage extends Message {
   /// Converts an unsupported message to the map representation,
   /// encodable to JSON.
   @override
-  Map<String, dynamic> toJson() => _$UnsupportedMessageToJson(this);
+  Map<String, dynamic> toJson() => throw UnimplementedError('JSON serialization temporarily disabled');
 }
 
 /// A utility class to enable better copyWith.
