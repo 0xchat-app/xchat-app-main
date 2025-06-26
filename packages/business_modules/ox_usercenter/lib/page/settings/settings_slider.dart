@@ -94,10 +94,10 @@ class SettingSliderState extends State<SettingSlider> {
       //   ),
       // ]),
       SectionListViewItem(data: [
-        LabelItemModel(
-          icon: ListViewIcon(iconName: 'icon_setting_notification.png', package: 'ox_usercenter'),
-          title: 'Notifications',
-        ),
+        // LabelItemModel(
+        //   icon: ListViewIcon(iconName: 'icon_setting_notification.png', package: 'ox_usercenter'),
+        //   title: 'Notifications',
+        // ),
         LabelItemModel(
           icon: ListViewIcon(iconName: 'icon_setting_theme.png', package: 'ox_usercenter'),
           title: 'Theme',
