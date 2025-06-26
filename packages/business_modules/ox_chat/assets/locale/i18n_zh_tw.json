@@ -70,7 +70,7 @@
   "str_secret_center_hint": "• 使用端到端加密（NIP-44）\n• 防止元數據洩露（NIP-59）\n• 確保前向保密（NIP-101）\n• 在其他設備上不可恢復\n• 截屏檢測\n• 訊息只會發送到您或對方指定的中繼：",
   "str_other_rejected": "已拒絕",
   "str_other_expired": "已過期",
-  "str_waiting_other_join": "等待${username}加入...",
+  "str_waiting_other_join": "等待$username加入...",
   "str_reject_secret_chat": "拒絕",
   "str_john_secret_chat": "加入密聊",
   "str_video_call": "視頻通話",
