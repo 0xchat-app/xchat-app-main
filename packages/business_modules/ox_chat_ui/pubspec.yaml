@@ -9,7 +9,7 @@ repository: https://github.com/flyerhq/flutter_chat_ui
 publish_to: none
 
 environment:
-  sdk: ">=2.18.0 <3.0.0"
+  sdk: ">=3.4.0 <4.0.0"
   flutter: ">=2.0.0"
 
 dependencies:
@@ -43,9 +43,9 @@ dependencies:
 
 dev_dependencies:
 #  dart_code_metrics: ^4.21.3
+  build_runner: ^2.4.9
   flutter_test:
     sdk: flutter
-  build_runner: ^2.0.6
   json_serializable: ^6.5.4
 
 flutter:

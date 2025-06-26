@@ -7,7 +7,7 @@ homepage:
 publish_to: 'none'
 
 environment:
-  sdk: ">=2.19.3 <3.0.0"
+  sdk: ">=3.4.0 <4.0.0"
   flutter: ">=2.5.0"
 
 dependencies:
