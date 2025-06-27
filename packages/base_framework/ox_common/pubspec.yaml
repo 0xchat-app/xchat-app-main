@@ -6,19 +6,27 @@ homepage:
 publish_to: none
 
 environment:
-  sdk: ">=3.0.5 <4.0.0"
+  sdk: ">=3.4.0 <4.0.0"
   flutter: ">=3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
-  build_runner: ^2.4.9
+  # Isar database - Required for code generation (build_runner)
+  # Even though isar_flutter_libs already includes isar as a dependency,
+  # we need to explicitly declare it here to enable the generator functionality
+  # for creating .g.dart files. DO NOT REMOVE this dependency.
+  isar:
+    git:
+      url: https://github.com/wcat7/isar.git
+      path: packages/isar
+      ref: 4.0.3-fix
   isar_flutter_libs:
     git:
-      url: https://github.com/isar-community/isar.git
+      url: https://github.com/wcat7/isar.git
       path: packages/isar_flutter_libs
-      ref: 4.0.3
+      ref: 4.0.3-fix
 
   # third
   shared_preferences: ^2.0.5
@@ -102,20 +110,13 @@ dependencies:
 #    git:
 #      url: https://github.com/wkuangji/0xchat-core
 
-dependency_overrides:
-  isar:
-    git:
-      url: https://github.com/isar-community/isar.git
-      path: packages/isar
-      ref: 4.0.3
-
-
 
 dev_dependencies:
+  build_runner: ^2.4.10
   flutter_test:
     sdk: flutter
-  build_runner: ^2.0.6
   json_serializable: ^6.5.4
+  watcher: ^1.1.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
