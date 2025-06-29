@@ -41,10 +41,9 @@ class OXCommon extends OXFlutterModule {
 
   @override
   List<IsarGeneratedSchema> get isarDBSchemes => [
-    // TODO: Enable when isar_generator is available
-    // ChatSessionModelISARSchema,
-    // CircleConfigISARSchema,
-    // FileServerModelSchema,
+    ChatSessionModelISARSchema,
+    CircleConfigISARSchema,
+    FileServerModelSchema,
   ];
 
   @override

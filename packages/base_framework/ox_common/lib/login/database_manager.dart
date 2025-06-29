@@ -38,6 +38,8 @@ class DatabaseUtils {
         schemas: AccountSchemas.schemas,
         directory: accountDir,
         name: 'account_$pubkey',
+        engine: IsarEngine.sqlite,
+        encryptionKey: pubkey,
       );
 
       debugPrint('Account database initialized for $pubkey with own Isar instance');

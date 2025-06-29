@@ -203,20 +203,21 @@ class AccountHelper {
 
   /// Convert AccountModel to list of AccountDataISAR entries
   static List<AccountDataISAR> toAccountDataList(AccountModel account) {
+    final db = account.db;
     final result = <AccountDataISAR>[
-      AccountDataISAR.createString(keyPubkey, account.pubkey),
-      AccountDataISAR.createInt(keyLoginType, account.loginType.value),
-      AccountDataISAR.createString(keyEncryptedPrivKey, account.encryptedPrivKey),
-      AccountDataISAR.createString(keyDefaultPassword, account.defaultPassword),
+      AccountDataISAR.createString(keyPubkey, account.pubkey)..id = db.accountDataISARs.autoIncrement(),
+      AccountDataISAR.createInt(keyLoginType, account.loginType.value)..id = db.accountDataISARs.autoIncrement(),
+      AccountDataISAR.createString(keyEncryptedPrivKey, account.encryptedPrivKey)..id = db.accountDataISARs.autoIncrement(),
+      AccountDataISAR.createString(keyDefaultPassword, account.defaultPassword)..id = db.accountDataISARs.autoIncrement(),
       AccountDataISAR.createString(keyCircles, 
-        jsonEncode(account.circles.map((c) => c.toJson()).toList())),
-      AccountDataISAR.createInt(keyCreatedAt, account.createdAt),
-      AccountDataISAR.createInt(keyLastLoginAt, account.lastLoginAt),
-      AccountDataISAR.createString(keyNostrConnectUri, account.nostrConnectUri),
+        jsonEncode(account.circles.map((c) => c.toJson()).toList()))..id = db.accountDataISARs.autoIncrement(),
+      AccountDataISAR.createInt(keyCreatedAt, account.createdAt)..id = db.accountDataISARs.autoIncrement(),
+      AccountDataISAR.createInt(keyLastLoginAt, account.lastLoginAt)..id = db.accountDataISARs.autoIncrement(),
+      AccountDataISAR.createString(keyNostrConnectUri, account.nostrConnectUri)..id = db.accountDataISARs.autoIncrement(),
     ];
   
     if (account.lastLoginCircleId != null) {
-      result.add(AccountDataISAR.createString(keyLastLoginCircleId, account.lastLoginCircleId!));
+      result.add(AccountDataISAR.createString(keyLastLoginCircleId, account.lastLoginCircleId!)..id = db.accountDataISARs.autoIncrement());
     }
     
     return result;
@@ -290,9 +291,10 @@ class AccountHelper {
   }
 
   /// Save AccountModel to database
-  static Future<void> _saveAccount(Isar accountDb, AccountModel account) async {
+  static Future<void> _saveAccount(AccountModel account) async {
+    final db = account.db;
     final accountDataList = toAccountDataList(account);
-    await accountDb.writeAsync((accountDb) {
+    await db.writeAsync((accountDb) {
       accountDb.accountDataISARs.putAll(accountDataList);
     });
   }
@@ -333,6 +335,6 @@ extension AccountHelperEx on AccountModel {
   }
 
   Future saveToDB() {
-    return AccountHelper._saveAccount(db, this);
+    return AccountHelper._saveAccount(this);
   }
 }

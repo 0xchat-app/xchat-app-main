@@ -203,7 +203,7 @@ class _AccountKeyLoginPageState extends State<AccountKeyLoginPage> with LoginMan
         errorMessage = Localized.text('ox_login.private_key_regular_failed');
         break;
       case LoginFailureType.errorEnvironment:
-        errorMessage = Localized.text('ox_login.private_key_regular_failed');
+        errorMessage = 'Environment error: ${failure.message}';
         break;
       case LoginFailureType.accountDbFailed:
         errorMessage = 'Failed to initialize account database';
