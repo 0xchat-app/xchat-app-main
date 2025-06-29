@@ -35,6 +35,7 @@ import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_module_service/ox_module_service.dart';
+import 'package:ox_common/business_interface/ox_usercenter/interface.dart';
 
 
 import 'contact_create_secret_chat.dart';
@@ -424,8 +425,7 @@ class _ContactUserOptionWidgetState extends State<ContactUserOptionWidget> with 
       linkQrCodeWidget = GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: () {
-          OXModuleService.invoke('ox_chat', 'showMyIdCardDialog',
-              [context], {#otherUser: userDB});
+          OXUserCenterInterface.pushQRCodeDisplayPage(context, otherUser: userDB);
         },
         child: CommonImage(
           iconName: 'icon_qrcode.png',

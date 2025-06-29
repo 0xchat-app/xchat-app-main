@@ -2,6 +2,8 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:ox_common/business_interface/ox_usercenter/interface.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/ox_common.dart';
 import 'package:ox_common/utils/adapt.dart';
@@ -60,7 +62,7 @@ class CommonScanPageState extends State<CommonScanPage> with SingleTickerProvide
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return CLScaffold(
       body: Stack(
         fit: StackFit.expand,
         children: [
@@ -71,7 +73,6 @@ class CommonScanPageState extends State<CommonScanPage> with SingleTickerProvide
           ),
           Positioned(
               width: MediaQuery.of(context).size.width,
-              top: MediaQueryData.fromView(window).padding.top,
               child: Container(
                 height: Adapt.px(56),
                 margin: EdgeInsets.only(left: Adapt.px(12), right: Adapt.px(12)),
@@ -138,7 +139,7 @@ class CommonScanPageState extends State<CommonScanPage> with SingleTickerProvide
                       ),
                     ),
                     onTap: () {
-                      OXModuleService.invoke('ox_chat', 'showMyIdCardDialog', [context]);
+                      OXUserCenterInterface.pushQRCodeDisplayPage(context);
                     },
                   )),
                   Container(
@@ -227,6 +228,8 @@ class CommonScanPageState extends State<CommonScanPage> with SingleTickerProvide
         showGif: false,
         compressSize: 5120,
       );
+      if (res.isEmpty) return;
+
       _imgFile = (res[0].path == null) ? null : File(res[0].path ?? '');
     } else {
       CommonToast.instance.show(context, Localized.text('ox_common.str_grant_permission_photo_hint'));

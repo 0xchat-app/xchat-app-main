@@ -27,9 +27,11 @@ class QRCodeDisplayPage extends StatefulWidget {
   const QRCodeDisplayPage({
     super.key,
     this.previousPageTitle,
+    this.otherUser,
   });
 
   final String? previousPageTitle;
+  final UserDBISAR? otherUser;
 
   @override
   State<QRCodeDisplayPage> createState() => _QRCodeDisplayPageState();
@@ -54,11 +56,18 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
   @override
   void initState() {
     super.initState();
-    userNotifier = Account.sharedInstance.me!;
+    userNotifier = widget.otherUser ?? Account.sharedInstance.me!;
     userName = userNotifier.name ?? userNotifier.shortEncodedPubkey;
     
     // Generate QR code data with Nostr protocol
-    final relayList = Account.sharedInstance.getMyGeneralRelayList().map((e) => e.url).take(5).toList();
+    List<String> relayList;
+    if (widget.otherUser != null) {
+      // For other users, use empty relay list or their known relays
+      relayList = [];
+    } else {
+      // For current user, use their relay list
+      relayList = Account.sharedInstance.getMyGeneralRelayList().map((e) => e.url).take(5).toList();
+    }
     final nostrValue = Account.encodeProfile(
       userNotifier.pubKey, 
       relayList,
@@ -85,7 +94,9 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
   Widget build(BuildContext context) {
     return CLScaffold(
       appBar: CLAppBar(
-        title: Localized.text('ox_usercenter.my_qr_code'),
+        title: widget.otherUser != null 
+            ? Localized.text('ox_usercenter.user_qr_code')
+            : Localized.text('ox_usercenter.my_qr_code'),
         previousPageTitle: widget.previousPageTitle,
       ),
       isSectionListPage: true,

@@ -156,6 +156,7 @@ class OXChat extends OXFlutterModule {
     return null;
   }
 
+  @Deprecated('Use OXUserCenterInterface.pushQRCodeDisplayPage instead')
   void _showMyIdCardDialog(BuildContext context,{UserDBISAR? otherUser}) {
     showDialog(
         context: context,

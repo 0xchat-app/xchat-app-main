@@ -6,12 +6,16 @@ import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
+import 'package:ox_common/utils/scan_utils.dart';
 import 'package:ox_common/widgets/avatar.dart';
+
 import 'package:ox_common/widgets/common_loading.dart';
+import 'package:ox_common/widgets/common_scan_page.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:lpinyin/lpinyin.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'chat_message_page.dart';
 import 'select_group_members_page.dart';
@@ -334,8 +338,39 @@ class _CLNewMessagePageState extends State<CLNewMessagePage>
     }).toList();
   }
 
-  void _onScanQRCode() {
-
+  void _onScanQRCode() async {
+    // Check camera permission first
+    if (await Permission.camera.request().isGranted) {
+      // Navigate to scan page and get result
+      String? result = await OXNavigator.pushPage(
+        context, 
+        (context) => CommonScanPage(),
+      );
+      
+      if (result != null && result.isNotEmpty) {
+        // Use ScanUtils to analyze the scanned result
+        // This will automatically handle npubkey and navigate to user detail page
+        await ScanUtils.analysis(context, result);
+      }
+    } else {
+      // Show permission dialog if camera permission is denied
+      CLAlertDialog.show<bool>(
+        context: context,
+        content: Localized.text('ox_common.str_permission_camera_hint'),
+        actions: [
+          CLAlertAction.cancel(),
+          CLAlertAction<bool>(
+            label: Localized.text('ox_common.str_go_to_settings'),
+            value: true,
+            isDefaultAction: true,
+          ),
+        ],
+      ).then((result) {
+        if (result == true) {
+          openAppSettings();
+        }
+      });
+    }
   }
 
   void _onNewGroup() {
