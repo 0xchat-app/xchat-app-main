@@ -411,24 +411,22 @@ extension LoginManagerCircle on LoginManager {
   /// Switch to specified circle
   ///
   /// [circle] Target circle
-  Future<bool> switchToCircle(Circle circle) async {
+  Future<LoginFailure?> switchToCircle(Circle circle) async {
     final currentState = this.currentState;
     final account = currentState.account;
     if (account == null) {
-      _notifyCircleChangeFailed(const LoginFailure(
+      return LoginFailure(
         type: LoginFailureType.errorEnvironment,
         message: 'No account logged in',
-      ));
-      return false;
+      );
     }
 
     if (!account.circles.contains(circle)) {
-      _notifyCircleChangeFailed(LoginFailure(
+      return LoginFailure(
         type: LoginFailureType.errorEnvironment,
         message: 'Circle not found in account',
         circleId: circle.id,
-      ));
-      return false;
+      );
     }
 
     if (currentState.hasCircle) {
@@ -436,31 +434,29 @@ extension LoginManagerCircle on LoginManager {
     }
 
     if (!await _loginToCircle(circle, currentState)) {
-      _notifyCircleChangeFailed(LoginFailure(
+      return LoginFailure(
         type: LoginFailureType.circleDbFailed,
         message: 'Login circle failed',
         circleId: circle.id,
-      ));
-      return false;
+      );
     }
 
-    return true;
+    return null;
   }
 
   /// Join circle
   ///
   /// [relayUrl] Circle's relay address
-  Future<bool> joinCircle(String relayUrl) async {
+  Future<LoginFailure?> joinCircle(String relayUrl) async {
     try {
       final currentState = this.currentState;
 
       final account = currentState.account;
       if (account == null) {
-        _notifyCircleChangeFailed(const LoginFailure(
+        return const LoginFailure(
           type: LoginFailureType.errorEnvironment,
           message: 'No account logged in',
-        ));
-        return false;
+        );
       }
 
       // Generate circle ID from relay URL (simplified for now)
@@ -481,11 +477,10 @@ extension LoginManagerCircle on LoginManager {
       );
 
       if (!await _loginToCircle(newCircle, currentState)) {
-        _notifyCircleChangeFailed(LoginFailure(
-            type: LoginFailureType.circleDbFailed,
-            message: 'Failed to initialize circle database',
-        ));
-        return false;
+        return LoginFailure(
+          type: LoginFailureType.circleDbFailed,
+          message: 'Failed to initialize circle database',
+        );
       }
 
       // Add circle to account's circle list
@@ -507,14 +502,14 @@ extension LoginManagerCircle on LoginManager {
         observer.onCircleChanged(newCircle);
       }
 
-      return true;
+      return null;
 
-    } catch (e) {
-      _notifyCircleChangeFailed(LoginFailure(
+    } catch (e, stack) {
+      print('zhw======4=====>$e, $stack');
+      return LoginFailure(
         type: LoginFailureType.circleDbFailed,
         message: 'Failed to join circle: $e',
-      ));
-      return false;
+      );
     }
   }
 
@@ -687,7 +682,8 @@ extension LoginManagerCircle on LoginManager {
       }
 
       return true;
-    } catch (e) {
+    } catch (e, stack) {
+      print('zhw=================>$e, $stack');
       _notifyCircleChangeFailed(LoginFailure(
         type: LoginFailureType.circleDbFailed,
         message: 'Failed to login to circle: $e',
@@ -734,6 +730,7 @@ extension LoginManagerCircle on LoginManager {
 
   /// Notify circle change failure
   void _notifyCircleChangeFailed(LoginFailure failure) {
+    print('zhw=======_notifyCircleChangeFailed========>${failure.message}, ${StackTrace.current}');
     for (final observer in _observers) {
       observer.onCircleChangeFailed(failure);
     }

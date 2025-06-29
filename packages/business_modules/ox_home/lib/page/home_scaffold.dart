@@ -10,6 +10,8 @@ import 'package:ox_common/login/login_models.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
+import 'package:ox_common/widgets/common_loading.dart';
+import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 
 import 'home_header_components.dart';
@@ -175,8 +177,7 @@ class _HomeScaffoldState extends State<HomeScaffold> {
         }
         
         // Try to join circle through LoginManager
-        final success = await LoginManager.instance.joinCircle(relayUrl);
-        return success;
+        return await LoginManager.instance.joinCircle(relayUrl) == null;
       },
     );
   }
@@ -231,8 +232,20 @@ class _HomeScaffoldState extends State<HomeScaffold> {
   void _paidOnTap() {
   }
 
-  void _onCircleSelected(CircleItem newSelected) {
-    selectedCircle$.value = newSelected;
+  void _onCircleSelected(CircleItem newSelected) async {
+    final circles = (LoginManager.instance.currentState.account?.circles ?? []);
+    final targetCircle = circles.where((e) => e.id == newSelected.id).firstOrNull;
+    if (targetCircle == null) return;
+
+    OXLoading.show();
+    final failure = await LoginManager.instance.switchToCircle(targetCircle);
+    OXLoading.dismiss();
+
+    if (failure == null) {
+      selectedCircle$.value = newSelected;
+    } else {
+      CommonToast.instance.show(context, failure.message);
+    }
   }
 }
 
