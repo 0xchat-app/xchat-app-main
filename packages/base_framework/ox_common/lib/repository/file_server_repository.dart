@@ -16,6 +16,9 @@ class FileServerRepository {
   Future<int> create(FileServerModel server) async {
     try {
       await isar.writeAsync((isar) {
+        if (server.id == 0) {
+          server.id = isar.fileServerModels.autoIncrement();
+        }
         isar.fileServerModels.put(server);
       });
       return server.id;

@@ -131,6 +131,12 @@ class ChatSessionModel extends DBObject {
       chatSessionModelsISAR.add(ChatSessionModelISAR.fromMap(chatSessionModel.toMap()));
     }
     await DBISAR.sharedInstance.isar.writeAsync((isar) {
+      // Assign auto-increment IDs for new entries
+      for (var sessionModel in chatSessionModelsISAR) {
+        if (sessionModel.id == 0) {
+          sessionModel.id = isar.chatSessionModelISARs.autoIncrement();
+        }
+      }
       isar.chatSessionModelISARs.putAll(chatSessionModelsISAR);
     });
   }

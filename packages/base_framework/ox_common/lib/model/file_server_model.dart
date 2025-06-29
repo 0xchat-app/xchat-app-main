@@ -19,7 +19,7 @@ class FileServerModel {
     this.bucketName = '',
   });
 
-  late int id;
+  int id = 0;
 
   // @enumerated // TODO: Enable when isar_generator is available
   FileServerType type;

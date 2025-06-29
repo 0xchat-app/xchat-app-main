@@ -11,7 +11,7 @@ part 'circle_config_models.g.dart';
 /// own independent set of configurations.
 @collection
 class CircleConfigISAR {
-  late int id;
+  int id = 0;
 
   /// Belongs to which circle – pubkey or uuid defined by business layer.
   late String circleId;
@@ -171,6 +171,12 @@ class CircleConfigHelper {
   static Future<void> saveConfig(
       Isar circleDb, String circleId, CircleConfigModel config) async {
     final dataList = toConfigDataList(circleId, config);
+    // Assign auto-increment IDs for new entries
+    for (var data in dataList) {
+      if (data.id == 0) {
+        data.id = circleDb.circleConfigISARs.autoIncrement();
+      }
+    }
     await circleDb.writeAsync((circleDb) {
       circleDb.circleConfigISARs.putAll(dataList);
     });

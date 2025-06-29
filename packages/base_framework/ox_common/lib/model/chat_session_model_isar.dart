@@ -6,7 +6,7 @@ part 'chat_session_model_isar.g.dart';
 
 @collection
 class ChatSessionModelISAR {
-  late int id;
+  int id = 0;
 
   @Index(unique: true)
   String chatId;

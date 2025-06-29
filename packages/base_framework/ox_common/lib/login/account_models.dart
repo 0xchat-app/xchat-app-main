@@ -15,7 +15,7 @@ part 'account_models.g.dart';
 /// Examples: pubkey, createdAt, lastLoginAt, themeMode, language, fontSize, etc.
 @collection
 class AccountDataISAR {
-  late int id;
+  int id = 0;
 
   @Index(unique: true)
   String keyName;
@@ -303,9 +303,11 @@ class AccountHelper {
   static Future<void> updateLastLoginTime(Isar accountDb, String pubkey) async {
     final now = DateTime.now().millisecondsSinceEpoch;
     await accountDb.writeAsync((accountDb) {
-      accountDb.accountDataISARs.put(
-        AccountDataISAR.createInt(keyLastLoginAt, now),
-      );
+      final loginTimeData = AccountDataISAR.createInt(keyLastLoginAt, now);
+      if (loginTimeData.id == 0) {
+        loginTimeData.id = accountDb.accountDataISARs.autoIncrement();
+      }
+      accountDb.accountDataISARs.put(loginTimeData);
     });
   }
 }
