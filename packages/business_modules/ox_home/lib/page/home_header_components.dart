@@ -60,7 +60,7 @@ class HomeHeaderComponents {
         return Row(
           children: [
             _buildAvatar(),
-            Expanded(child: _buildUserName()),
+            Expanded(child: _buildCircleName()),
           ],
         );
       }
@@ -104,38 +104,38 @@ class HomeHeaderComponents {
     );
   }
 
-  Widget _buildUserName() {
-    return GestureDetector(
-      onTap: circles.isNotEmpty ? nameOnTap : null,
-      child: Row(
-        children: [
-          Flexible(
-            child: ValueListenableBuilder(
-              valueListenable: user.name$,
-              builder: (_, name, __) {
-                return CLText.titleLarge(
-                  name,
+  Widget _buildCircleName() {
+    return ValueListenableBuilder(
+      valueListenable: selectedCircle$,
+      builder: (_, selectedCircle, __) {
+        return GestureDetector(
+          onTap: circles.isNotEmpty ? nameOnTap : null,
+          child: Row(
+            children: [
+              Flexible(
+                child: CLText.titleLarge(
+                  selectedCircle?.name ?? '',
                   maxLines: 1,
-                );
-              },
-            ),
+                ),
+              ),
+              if (circles.isNotEmpty)
+                ValueListenableBuilder(
+                  valueListenable: isShowExtendBody$,
+                  builder: (context, isShowExtendBody, _) {
+                    return AnimatedRotation(
+                      turns: isShowExtendBody ? 0.5 : 0,
+                      duration: const Duration(milliseconds: 300),
+                      child: Icon(
+                        Icons.arrow_drop_down,
+                        color: ColorToken.onSurface.of(context),
+                      ),
+                    );
+                  }
+                ),
+            ],
           ),
-          if (circles.isNotEmpty)
-            ValueListenableBuilder(
-              valueListenable: isShowExtendBody$,
-              builder: (context, isShowExtendBody, _) {
-                return AnimatedRotation(
-                  turns: isShowExtendBody ? 0.5 : 0,
-                  duration: const Duration(milliseconds: 300),
-                  child: Icon(
-                    Icons.arrow_drop_down,
-                    color: ColorToken.onSurface.of(context),
-                  ),
-                );
-              }
-            ),
-        ],
-      ),
+        );
+      }
     );
   }
 
