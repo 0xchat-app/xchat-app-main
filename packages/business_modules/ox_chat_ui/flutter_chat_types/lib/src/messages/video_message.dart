@@ -187,6 +187,7 @@ abstract class VideoMessage extends Message {
 /// A utility class to enable better copyWith.
 class _VideoMessage extends VideoMessage {
 
+  @override
   bool get viewWithoutBubble => !hasReactions;
 
   const _VideoMessage({

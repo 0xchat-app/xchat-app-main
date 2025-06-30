@@ -83,7 +83,7 @@ class OXDialogRoute<T extends Object?> extends PopupRoute<T> {
           ),
           child: child);
     } // Some default transition
-    return _transitionBuilder!(context, animation, secondaryAnimation, child);
+    return _transitionBuilder(context, animation, secondaryAnimation, child);
   }
 
   @override
@@ -141,12 +141,6 @@ class OXMaterialPageRoute<T> extends PageRoute<T> {
   ) {
     final Widget result = builder(context);
     assert(() {
-      if (result == null) {
-        throw FlutterError(
-          'The builder for route "${settings.name}" returned null.\n'
-          'Route builders must never return null.'
-        );
-      }
       return true;
     }());
     return Semantics(

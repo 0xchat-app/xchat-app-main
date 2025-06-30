@@ -1,7 +1,6 @@
 import 'package:ox_cache_manager/ox_cache_manager.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/network/network_general.dart';
-import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_network/network_manager.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_common/const/common_constant.dart';

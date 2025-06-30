@@ -32,7 +32,7 @@ abstract class SystemMessage extends Message {
     super.zapsInfoList,
   }) : super(type: type ?? MessageType.system);
 
-  factory SystemMessage({
+  const factory SystemMessage({
     required User author,
     required int createdAt,
     required String id,
@@ -111,6 +111,7 @@ abstract class SystemMessage extends Message {
 /// A utility class to enable better copyWith.
 class _SystemMessage extends SystemMessage {
 
+  @override
   bool get viewWithoutBubble => true;
 
   const _SystemMessage({

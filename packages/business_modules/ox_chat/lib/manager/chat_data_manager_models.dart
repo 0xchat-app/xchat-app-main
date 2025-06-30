@@ -4,7 +4,6 @@ import 'package:chatcore/chat-core.dart';
 import 'package:ox_chat/utils/chat_log_utils.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'package:ox_common/model/chat_type.dart';
-import 'package:ox_common/utils/ox_userinfo_manager.dart';
 
 class ChatTypeMessageLoaderParams {
   ChatTypeMessageLoaderParams({

@@ -1,7 +1,5 @@
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
-import 'package:ox_theme/ox_theme.dart';
 
 /// iOS Router Style
 class SlideLeftToRightRoute<T> extends PageRoute<T> with CupertinoRouteTransitionMixin {

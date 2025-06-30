@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> {
     
     final currentPubkey = loginState.account?.pubkey ?? '';
     final bool? localIsLoginAmber = await OXCacheManager.defaultOXCacheManager
-        .getForeverData('${currentPubkey}${StorageKeyTool.KEY_IS_LOGIN_AMBER}');
+        .getForeverData('$currentPubkey${StorageKeyTool.KEY_IS_LOGIN_AMBER}');
     
     if (localIsLoginAmber != null && localIsLoginAmber) {
       bool isInstalled = await CoreMethodChannel.isInstalledAmber();

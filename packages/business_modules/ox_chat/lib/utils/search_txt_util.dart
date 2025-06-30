@@ -4,7 +4,6 @@ import 'package:ox_chat/model/group_ui_model.dart';
 import 'package:ox_chat/model/search_chat_model.dart';
 import 'package:ox_common/log_util.dart';
 import 'package:ox_common/model/chat_type.dart';
-import 'package:ox_common/utils/ox_userinfo_manager.dart';
 
 ///Title: search_txt_util
 ///Description: TODO(Fill in by oneself)

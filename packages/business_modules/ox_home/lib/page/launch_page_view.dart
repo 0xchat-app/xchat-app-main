@@ -4,10 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
-import 'package:ox_module_service/ox_module_service.dart';
 import 'package:rive/rive.dart';
-import 'package:ox_common/utils/adapt.dart';
-import 'package:ox_theme/ox_theme.dart';
 import 'package:ox_home/page/home_page.dart';
 
 class LaunchPageView extends StatefulWidget {

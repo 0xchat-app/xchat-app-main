@@ -1,9 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:ox_common/component.dart';
-import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/mixin/common_state_view_mixin.dart';
-import 'package:ox_common/model/chat_session_model_isar.dart';
-import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/scan_utils.dart';
@@ -17,7 +14,6 @@ import 'package:chatcore/chat-core.dart';
 import 'package:lpinyin/lpinyin.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import 'chat_message_page.dart';
 import 'select_group_members_page.dart';
 import '../../utils/chat_session_utils.dart';
 

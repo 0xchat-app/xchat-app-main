@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/adapt.dart';
-import 'package:ox_common/utils/widget_tool.dart';
 
 class BannerItem {
   BannerItem({

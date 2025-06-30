@@ -50,8 +50,6 @@ import 'package:ox_chat/utils/widget_tool.dart';
 import 'package:ox_chat/widget/report_dialog.dart';
 import 'package:ox_common/business_interface/ox_chat/custom_message_type.dart';
 import 'package:ox_common/business_interface/ox_calling/interface.dart';
-import 'package:ox_common/business_interface/ox_usercenter/interface.dart';
-import 'package:ox_common/business_interface/ox_usercenter/zaps_detail_model.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/permission_utils.dart';
@@ -66,9 +64,7 @@ import 'package:nostr_core_dart/nostr.dart';
 import 'package:path/path.dart' as Path;
 import 'package:flutter_chat_types/src/message.dart' as UIMessage;
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:ox_common/component.dart';
 import 'package:ox_usercenter/page/settings/file_server_page.dart';
-import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/utils/file_server_helper.dart';
 
 import '../../manager/chat_data_manager_models.dart';

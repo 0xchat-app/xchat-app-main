@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:nostr_core_dart/nostr.dart';
-import 'package:ox_common/log_util.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/theme_color.dart';

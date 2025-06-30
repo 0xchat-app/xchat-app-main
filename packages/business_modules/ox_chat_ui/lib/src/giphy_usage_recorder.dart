@@ -1,10 +1,9 @@
 import 'dart:convert';
 
+import 'package:chatcore/chat-core.dart';
 import 'package:ox_cache_manager/ox_cache_manager.dart';
-import 'package:ox_common/utils/ox_userinfo_manager.dart';
 
 import '../ox_chat_ui.dart';
-import 'package:chatcore/chat-core.dart';
 
 class GiphyUsageRecorder {
 

@@ -4,8 +4,6 @@ import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/scheme/scheme_helper.dart';
 import 'package:ox_common/utils/custom_uri_helper.dart';
 import 'package:ox_common/utils/scan_utils.dart';
-import 'package:ox_home/page/home_page.dart';
-import 'package:ox_home/page/launch_page_view.dart';
 import 'package:ox_module_service/ox_module_service.dart';
 
 class OxChatHome extends OXFlutterModule {

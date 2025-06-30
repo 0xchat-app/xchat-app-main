@@ -59,6 +59,7 @@ abstract class CustomMessage extends Message {
     required bool viewWithoutBubble,
   }) = _CustomMessage;
 
+  @override
   final bool viewWithoutBubble;
 
   /// Creates a custom message from a map (decoded JSON).

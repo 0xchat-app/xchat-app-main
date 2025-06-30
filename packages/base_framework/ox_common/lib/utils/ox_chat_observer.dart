@@ -1,6 +1,5 @@
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
-import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/utils/storage_key_tool.dart';
 import 'package:ox_common/utils/user_config_tool.dart';
 

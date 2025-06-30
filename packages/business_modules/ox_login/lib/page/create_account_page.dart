@@ -12,7 +12,6 @@ import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_common/login/login_manager.dart';
 
 // component
-import 'package:ox_common/component.dart';
 
 // plugin
 import 'package:chatcore/chat-core.dart';

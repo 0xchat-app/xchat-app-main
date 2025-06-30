@@ -12,7 +12,6 @@ import '../input/input_face_page.dart';
 import 'giphy_grid_view.dart';
 import 'giphy_search_bar.dart';
 import 'giphy_search_page.dart';
-import 'giphy_tab_bar.dart';
 
 extension GiphyCategoryTab on GiphyCategory {
   String get label {

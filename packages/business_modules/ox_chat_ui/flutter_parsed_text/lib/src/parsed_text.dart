@@ -98,9 +98,9 @@ class ParsedText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Seperate each word and create a new Array
-    String newString = text;
+    final newString = text;
 
-    Map<String, MatchText> _mapping = Map<String, MatchText>();
+    final _mapping = Map<String, MatchText>();
 
     parse.forEach((e) {
       if (e.type == ParsedType.EMAIL) {
@@ -116,7 +116,7 @@ class ParsedText extends StatelessWidget {
 
     final pattern = '(${_mapping.keys.toList().join('|')})';
 
-    List<InlineSpan> widgets = [];
+    final widgets = <InlineSpan>[];
 
     newString.splitMapJoin(
       RegExp(
@@ -139,15 +139,13 @@ class ParsedText extends StatelessWidget {
                 unicode: regexOptions.unicode,
               );
               return reg.hasMatch(matchText);
-            }, orElse: () {
-              return '';
-            })];
+            }, orElse: () => '')];
 
         InlineSpan widget;
 
         if (mapping != null) {
           if (mapping.renderText != null) {
-            Map<String, String> result =
+            final result =
                 mapping.renderText!(str: matchText, pattern: pattern);
 
             widget = TextSpan(
@@ -164,7 +162,7 @@ class ParsedText extends StatelessWidget {
                 text: matchText, pattern: mapping.pattern!);
           } else {
             widget = TextSpan(
-              text: "$matchText",
+              text: '$matchText',
               style: mapping.style != null ? mapping.style : style,
               recognizer: TapGestureRecognizer()
                 ..onTap = () => mapping.onTap!(matchText),
@@ -172,7 +170,7 @@ class ParsedText extends StatelessWidget {
           }
         } else {
           widget = TextSpan(
-            text: "$matchText",
+            text: '$matchText',
             style: this.style,
           );
         }

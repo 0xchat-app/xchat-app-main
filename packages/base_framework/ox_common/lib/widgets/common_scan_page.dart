@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:ox_common/business_interface/ox_usercenter/interface.dart';
@@ -14,7 +13,6 @@ import 'package:ox_common/utils/string_utils.dart';
 import 'package:ox_common/utils/theme_color.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
-import 'package:ox_module_service/ox_module_service.dart';
 import 'package:flutter_zxing/flutter_zxing.dart';
 import 'common_image.dart';
 import 'package:device_info_plus/device_info_plus.dart';

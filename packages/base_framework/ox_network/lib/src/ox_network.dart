@@ -210,7 +210,7 @@ class OXNetwork {
       LogUtil.log(key:'NetWork Request ==>>', content:'url: $url');
       // LogUtil.log(key:'NetWork Request ==>>', content:'data: $data');
       // LogUtil.log(key:'NetWork Request ==>>', content:'response: $response');
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       if (_showLoading) Navigator.pop(context);
       NetworkError error = handleError(e);
       if (_showError) CommonToast.instance.show(context, error.message);
@@ -349,7 +349,7 @@ class OXNetwork {
       response = await _dio.request(url, data: formData, options: _option, onSendProgress: (int count, int data) {
         progressCallback!(count, data);
       });
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       if (_showLoading) Navigator.pop(context);
       NetworkError error = handleError(e);
       if (_showError) CommonToast.instance.show(context, error.message);
@@ -371,7 +371,7 @@ class OXNetwork {
   }
 
   // Request error handling
-  static NetworkError handleError(DioError error) {
+  static NetworkError handleError(DioException error) {
     String message = 'unknow error';
     num errorCode = 999999;
     if (error.response != null) {
@@ -405,7 +405,7 @@ class OXNetwork {
       });
 
       return result;
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       return e.response;
     }
   }

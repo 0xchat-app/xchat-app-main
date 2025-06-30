@@ -1,7 +1,7 @@
+import 'package:chatcore/chat-core.dart';
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
-import 'package:chatcore/chat-core.dart';
 
 /// All possible roles user can have.
 enum Role { admin, agent, moderator, user }

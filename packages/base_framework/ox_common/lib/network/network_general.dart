@@ -11,7 +11,6 @@ import 'package:ox_common/network/network_interceptor.dart';
 import 'package:ox_common/utils/encrypt_utils.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_localizable/ox_localizable.dart';
@@ -271,7 +270,7 @@ extension General on OXNetwork {
 
       if (_showLoading) OXLoading.dismiss();
       return result;
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       if (_showError)
         CommonToast.instance
             .show(context, Localized.text('ox_common.download_fail'));

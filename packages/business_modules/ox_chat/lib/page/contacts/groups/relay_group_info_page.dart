@@ -12,7 +12,6 @@ import 'package:ox_chat/utils/group_share_utils.dart';
 import 'package:ox_chat/utils/widget_tool.dart';
 import 'package:ox_chat/widget/chat_history_for_new_members_selector_dialog.dart';
 import 'package:ox_chat/widget/group_create_selector_dialog.dart';
-import 'package:ox_common/log_util.dart';
 import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';

@@ -2,8 +2,6 @@ import 'package:flutter/widgets.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/adapt.dart';
 
-import '../text.dart';
-import 'list_view_model.dart';
 
 class SectionListViewItem {
   SectionListViewItem({

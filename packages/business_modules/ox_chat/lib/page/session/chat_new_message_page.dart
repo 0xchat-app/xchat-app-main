@@ -3,7 +3,6 @@ import 'package:ox_chat/model/community_menu_option_model.dart';
 import 'package:ox_chat/page/session/unified_search_page.dart';
 import 'package:ox_chat/utils/widget_tool.dart';
 import 'package:ox_chat/widget/contact.dart';
-import 'package:ox_common/log_util.dart';
 import 'package:ox_common/mixin/common_state_view_mixin.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';

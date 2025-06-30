@@ -5,8 +5,6 @@ import 'package:ox_common/component.dart';
 import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
-import 'package:ox_common/widgets/avatar.dart';
-import 'package:ox_common/widgets/smart_group_avatar.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 

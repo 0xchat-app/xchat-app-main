@@ -1,6 +1,5 @@
 import 'package:isar/isar.dart';
 import 'dart:collection';
-import 'package:flutter/foundation.dart';
 
 part 'circle_config_models.g.dart';
 

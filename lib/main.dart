@@ -15,7 +15,6 @@ import 'package:ox_common/utils/error_utils.dart';
 import 'package:ox_common/utils/font_size_notifier.dart';
 import 'package:ox_common/utils/storage_key_tool.dart';
 import 'package:ox_common/utils/user_config_tool.dart';
-import 'package:ox_module_service/ox_module_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ox_common/event_bus.dart';
 import 'package:ox_common/log_util.dart';

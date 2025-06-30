@@ -183,6 +183,7 @@ abstract class ImageMessage extends Message {
 /// A utility class to enable better copyWith.
 class _ImageMessage extends ImageMessage {
 
+  @override
   bool get viewWithoutBubble => !hasReactions;
 
   const _ImageMessage({

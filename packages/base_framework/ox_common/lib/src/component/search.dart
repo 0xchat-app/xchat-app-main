@@ -101,7 +101,7 @@ class _CLSearchState extends State<CLSearch> {
       child: SearchBar(
         controller: widget.controller,
         focusNode: _focusNode,
-        elevation: const MaterialStatePropertyAll<double>(0.0),
+        elevation: const WidgetStatePropertyAll<double>(0.0),
         leading: Padding(
           padding: EdgeInsets.only(
             left: 12.px,

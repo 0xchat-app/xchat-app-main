@@ -77,7 +77,7 @@ class OXActionDialog extends StatelessWidget {
   final Color textColor;
 
   double get maxHeight {
-    if (_maxHeight != null && _maxHeight! > 0) return _maxHeight!;
+    if (_maxHeight != null && _maxHeight > 0) return _maxHeight;
     if (maxRow != null && maxRow! > 0) return maxRow! * actionHeight;
     return double.infinity;
   }
