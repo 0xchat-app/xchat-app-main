@@ -21,7 +21,7 @@ class FileServerModel {
 
   int id = 0;
 
-  // @enumerated // TODO: Enable when isar_generator is available
+  @enumValue
   FileServerType type;
 
   /// Display name / custom name

@@ -504,8 +504,7 @@ extension LoginManagerCircle on LoginManager {
 
       return null;
 
-    } catch (e, stack) {
-      print('zhw======4=====>$e, $stack');
+    } catch (e) {
       return LoginFailure(
         type: LoginFailureType.circleDbFailed,
         message: 'Failed to join circle: $e',
@@ -682,8 +681,7 @@ extension LoginManagerCircle on LoginManager {
       }
 
       return true;
-    } catch (e, stack) {
-      print('zhw=================>$e, $stack');
+    } catch (e) {
       _notifyCircleChangeFailed(LoginFailure(
         type: LoginFailureType.circleDbFailed,
         message: 'Failed to login to circle: $e',
@@ -730,7 +728,6 @@ extension LoginManagerCircle on LoginManager {
 
   /// Notify circle change failure
   void _notifyCircleChangeFailed(LoginFailure failure) {
-    print('zhw=======_notifyCircleChangeFailed========>${failure.message}, ${StackTrace.current}');
     for (final observer in _observers) {
       observer.onCircleChangeFailed(failure);
     }
