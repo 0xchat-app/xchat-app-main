@@ -1,4 +1,4 @@
-
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
@@ -6,6 +6,7 @@ import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_localizable/ox_localizable.dart';
+import 'package:ox_common/utils/ping_utils.dart';
 
 class CircleItem {
   CircleItem({
@@ -33,7 +34,9 @@ class HomeHeaderComponents {
     this.paidOnTap,
     required this.isShowExtendBody$,
     required this.extendBodyDuration,
-  });
+  }) {
+    _initializeLatencyMeasurement();
+  }
 
   /// List of circle items for the sub-bar
   final List<CircleItem> circles;
@@ -51,6 +54,61 @@ class HomeHeaderComponents {
   LoginUserNotifier user = LoginUserNotifier.instance;
   ValueNotifier<bool> isShowExtendBody$;
   Duration extendBodyDuration;
+
+  // Cache for measured latency of relay URLs
+  final Map<String, ValueNotifier<String>> _latencyCache = {};
+  Timer? _latencyTimer;
+  Duration _measurementInterval = const Duration(minutes: 1);
+
+  void _startMeasureLatency(String url) {
+    if (_latencyCache.containsKey(url)) return;
+    final notifier = ValueNotifier<String>('--');
+    _latencyCache[url] = notifier;
+
+    // initial measure
+    _measureLatency(url);
+  }
+
+  void _measureLatency(String url) async {
+    final host = Uri.parse(url).host.isNotEmpty
+        ? Uri.parse(url).host
+        : url.replaceAll(RegExp(r'^(wss?:\/\/)?'), '').split('/').first;
+
+    final latency = await PingUtils.ping(host);
+    final notifier = _latencyCache[url]!;
+    notifier.value = latency != null ? '$latency' : '--';
+  }
+
+  void _initializeLatencyMeasurement() {
+    // Listen to list expand/collapse status and adjust interval.
+    isShowExtendBody$.addListener(_updateTimerInterval);
+    // When selected circle changes, trigger immediate measure.
+    selectedCircle$.addListener(() {
+      final current = selectedCircle$.value;
+      if (current != null) {
+        _startMeasureLatency(current.relayUrl);
+      }
+    });
+    _updateTimerInterval();
+  }
+
+  void _updateTimerInterval() {
+    final desired = isShowExtendBody$.value
+        ? const Duration(seconds: 5)
+        : const Duration(minutes: 1);
+
+    if (_measurementInterval == desired && _latencyTimer != null) return;
+
+    _measurementInterval = desired;
+    _latencyTimer?.cancel();
+    _latencyTimer = Timer.periodic(_measurementInterval, (_) => _measureAll());
+  }
+
+  void _measureAll() {
+    final circle = selectedCircle$.value;
+    if (circle == null) return;
+    _measureLatency(circle.relayUrl);
+  }
 
   AppBar buildAppBar(BuildContext ctx) => AppBar(
     leadingWidth: 280.px,
@@ -170,19 +228,34 @@ class HomeHeaderComponents {
 
   ListViewItem _circleItemListTileMapper(CircleItem item, CircleItem? selectedCircle) {
     final selected = item.id == selectedCircle?.id;
+
+    // Ensure notifier exists
+    final latency$ = _latencyCache.putIfAbsent(item.relayUrl, () => ValueNotifier<String>('--'));
+
+    // Only measure latency for selected circle
+    if (selected) {
+      _startMeasureLatency(item.relayUrl);
+    }
+
     return CustomItemModel(
       leading: CircleAvatar(
         child: Text(item.name[0]),
       ),
       titleWidget: CLText(item.name),
-      subtitleWidget: Text.rich(
-        TextSpan(
-          children: [
-            if (selected)
-              const TextSpan(text: '--ms · '),
-            TextSpan(text: item.relayUrl),
-          ],
-        ),
+      subtitleWidget: ValueListenableBuilder(
+        valueListenable: latency$,
+        builder: (_, latencyStr, __) {
+          final msText = latencyStr;
+          return Text.rich(
+            TextSpan(
+              children: [
+                if (selected)
+                  TextSpan(text: '$msText ms · '),
+                TextSpan(text: item.relayUrl),
+              ],
+            ),
+          );
+        },
       ),
       trailing: CLRadio(
         value: item.id,
