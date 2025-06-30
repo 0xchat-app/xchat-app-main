@@ -9,7 +9,6 @@ import 'add_file_server_page.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'dart:async';
-import 'package:isar/isar.dart';
 
 import 'package:ox_common/model/file_server_model.dart';
 
@@ -45,13 +44,37 @@ class _FileServerPageState extends State<FileServerPage> {
   @override
   void initState() {
     super.initState();
-    _repo = FileServerRepository(DBISAR.sharedInstance.isar);
 
+    prepareData();
     _loadInitialSelection();
+    addListener();
+  }
+  
+  void prepareData() {
+    _repo = FileServerRepository(DBISAR.sharedInstance.isar);
+    final fileServers = _repo.fetch();
+    _servers$.value = fileServers;
 
+    final selectedFileServerUrl = LoginManager.instance.currentCircle?.selectedFileServerUrl;
+    if (selectedFileServerUrl != null && selectedFileServerUrl.isNotEmpty) {
+      _selected$.value = fileServers.where(
+              (e) => e.url == selectedFileServerUrl
+      ).firstOrNull?.id;
+    }
+  }
+
+  void _loadInitialSelection() {
+    final circle = LoginManager.instance.currentCircle;
+    if (circle == null) return;
+    if (circle.selectedFileServerUrl.isNotEmpty) {
+      _pendingSelectedUrl = circle.selectedFileServerUrl;
+    }
+  }
+
+  void addListener() {
     // Listen list changes
     _repoSub = _repo.watchAll().listen((event) {
-      if (!mounted) return; // 防止页面释放后仍尝试更新已释放的 ValueNotifier
+      if (!mounted) return;
 
       _servers$.safeUpdate(event);
 
@@ -67,14 +90,14 @@ class _FileServerPageState extends State<FileServerPage> {
         matched ??= event.isNotEmpty ? event.first : null;
 
         if (matched != null) {
-          _selected$.value = matched.id;
+          _selected$.safeUpdate(matched.id);
         }
         _pendingSelectedUrl = null;
       }
 
       // If current selection has been removed, select the first available one.
       if (_selected$.value != null && !event.any((e) => e.id == _selected$.value)) {
-        _selected$.value = event.isNotEmpty ? event.first.id : null;
+        _selected$.safeUpdate(event.isNotEmpty ? event.first.id : null);
       }
     });
 
@@ -83,10 +106,10 @@ class _FileServerPageState extends State<FileServerPage> {
       final id = _selected$.value;
       final circle = LoginManager.instance.currentCircle;
       if (circle == null || id == null) return;
-      
+
       final servers = _servers$.value;
       final selectedServer = servers.where((e) => e.id == id).firstOrNull;
-      
+
       if (selectedServer != null) {
         circle.updateSelectedFileServerUrl(selectedServer.url);
       }
@@ -216,21 +239,13 @@ class _FileServerPageState extends State<FileServerPage> {
 
     if (newServer != null) {
       // Ensure the server is selected and synced to LoginManager
-      _selected$.value = newServer.id;
+      _selected$.safeUpdate(newServer.id);
       
       // Immediately sync to LoginManager to avoid timing issues
       final circle = LoginManager.instance.currentCircle;
       if (circle != null) {
         await circle.updateSelectedFileServerUrl(newServer.url);
       }
-    }
-  }
-
-  Future<void> _loadInitialSelection() async {
-    final circle = LoginManager.instance.currentCircle;
-    if (circle == null) return;
-    if (circle.selectedFileServerUrl.isNotEmpty) {
-      _pendingSelectedUrl = circle.selectedFileServerUrl;
     }
   }
 

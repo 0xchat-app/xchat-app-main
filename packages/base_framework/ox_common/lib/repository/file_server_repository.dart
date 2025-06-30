@@ -8,6 +8,10 @@ class FileServerRepository {
 
   final Isar isar;
 
+  List<FileServerModel> fetch() {
+    return isar.fileServerModels.where().findAll();
+  }
+
   /// Stream list of servers ordered by id.
   Stream<List<FileServerModel>> watchAll() {
     return isar.fileServerModels.where().watch(fireImmediately: true);
