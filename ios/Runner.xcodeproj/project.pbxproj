@@ -29,7 +29,6 @@
 		CF8DE51426733D7300EF6C1B /* OXCFlutterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF8DE51326733D7300EF6C1B /* OXCFlutterViewController.m */; };
 		CF8DE80D2678B80500EF6C1B /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CF8DE80C2678B80500EF6C1B /* Launch Screen.storyboard */; };
 		CFB7624826A2B819002D9005 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFB7624A26A2B819002D9005 /* InfoPlist.strings */; };
-		CFBB1E1628A62DE9007A3C88 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFBB1E1528A62DE9007A3C88 /* StoreKit.framework */; };
 		F1A1C819CE2FAD83498F6FE5 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B1CB4F3D472658B95EB84A6 /* Pods_Runner.framework */; };
 /* End PBXBuildFile section */
 
@@ -110,7 +109,6 @@
 		CF8DE80C2678B80500EF6C1B /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		CFB7624926A2B819002D9005 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		CFB7624B26A2B87E002D9005 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
-		CFBB1E1528A62DE9007A3C88 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		F26D78235B00D342A73282FF /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -126,7 +124,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFBB1E1628A62DE9007A3C88 /* StoreKit.framework in Frameworks */,
 				C5ED612427D884810008C42E /* libc++.tbd in Frameworks */,
 				F1A1C819CE2FAD83498F6FE5 /* Pods_Runner.framework in Frameworks */,
 			);
@@ -150,7 +147,6 @@
 		781F208865943DE6D7C26887 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CFBB1E1528A62DE9007A3C88 /* StoreKit.framework */,
 				C5ED612327D884810008C42E /* libc++.tbd */,
 				3B1CB4F3D472658B95EB84A6 /* Pods_Runner.framework */,
 			);
@@ -560,9 +556,9 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = OxChatShareExtension/OxChatShareExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 7MUBT596W9;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -578,7 +574,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.zhw.IAPProduct.ShareExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.0xchat.lite.app.ShareExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -600,9 +596,9 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = OxChatShareExtension/OxChatShareExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 7MUBT596W9;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -618,7 +614,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.zhw.IAPProduct.ShareExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.0xchat.lite.app.ShareExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -689,9 +685,9 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = 7MUBT596W9;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -722,7 +718,7 @@
 					"$(inherited)",
 					"-ObjC",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.zhw.IAPProduct;
+				PRODUCT_BUNDLE_IDENTIFIER = com.0xchat.lite.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -943,9 +939,9 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = 7MUBT596W9;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -976,7 +972,7 @@
 					"$(inherited)",
 					"-ObjC",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.zhw.IAPProduct;
+				PRODUCT_BUNDLE_IDENTIFIER = com.0xchat.lite.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
