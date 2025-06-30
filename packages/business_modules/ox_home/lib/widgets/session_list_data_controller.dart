@@ -190,9 +190,8 @@ extension SessionDCInterface on SessionListDataController {
     if (chatId.isEmpty) return;
 
     final isar = DBISAR.sharedInstance.isar;
-    int count = 0;
-    await isar.writeAsync((isar) {
-      count = isar.chatSessionModelISARs
+    int count = await isar.writeAsync((isar) {
+      return isar.chatSessionModelISARs
           .where()
           .chatIdEqualTo(chatId)
           .deleteAll();
