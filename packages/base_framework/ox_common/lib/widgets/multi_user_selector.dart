@@ -135,7 +135,10 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
           child: _buildSelectedUsersList(),
         ),
       ),
-      padding: EdgeInsets.all(16.px),
+      padding: EdgeInsets.symmetric(
+        vertical:  16.px,
+        horizontal: CLLayout.horizontalPadding,
+      ),
       placeholder: Localized.text('ox_chat.search'),
       onChanged: (value) => _onSearchChanged(),
     );

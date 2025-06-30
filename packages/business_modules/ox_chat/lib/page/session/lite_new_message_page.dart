@@ -136,7 +136,10 @@ class _CLNewMessagePageState extends State<CLNewMessagePage>
 
   Widget _buildSearchBar() {
     return CLSearch(
-      padding: EdgeInsets.all(16.px),
+      padding: EdgeInsets.symmetric(
+        vertical: 16.px,
+        horizontal: CLLayout.horizontalPadding,
+      ),
       controller: _searchController,
       focusNode: _searchFocusNode,
       placeholder: Localized.text('ox_chat.search'),
