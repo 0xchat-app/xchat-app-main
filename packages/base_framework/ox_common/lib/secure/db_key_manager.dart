@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:ox_common/log_util.dart';
 
 /// DBKeyManager
 ///
@@ -21,6 +22,7 @@ class DBKeyManager {
     try {
       final stored = await _secureStorage.read(key: _storageKey);
       if (stored != null && stored.isNotEmpty) {
+        LogUtil.d('[DB] key: $stored');
         return stored;
       }
     } on PlatformException {
@@ -31,6 +33,7 @@ class DBKeyManager {
     final bytes = List<int>.generate(32, (_) => random.nextInt(256));
     final encoded = base64Encode(bytes);
     await _secureStorage.write(key: _storageKey, value: encoded);
+    LogUtil.d('[DB] key: $encoded');
     return encoded;
   }
 } 
