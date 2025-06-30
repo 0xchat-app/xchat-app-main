@@ -4,6 +4,7 @@ import 'package:chatcore/chat-core.dart';
 import 'account_file_utils.dart';
 import 'login_models.dart';
 import 'account_models.dart';
+import '../secure/db_key_manager.dart';
 
 /// Database utilities for handling account and circle databases
 /// 
@@ -34,12 +35,13 @@ class DatabaseUtils {
       final accountDir = accountDbPath.substring(0, accountDbPath.lastIndexOf('/'));
 
       // Create own Isar instance with account schemas
+      final String encKey = await DBKeyManager.getKey();
       final accountIsar = await Isar.openAsync(
         schemas: AccountSchemas.schemas,
         directory: accountDir,
         name: 'account_$pubkey',
         engine: IsarEngine.sqlite,
-        encryptionKey: pubkey,
+        encryptionKey: encKey,
       );
 
       debugPrint('Account database initialized for $pubkey with own Isar instance');
@@ -66,10 +68,12 @@ class DatabaseUtils {
       }
 
       final circleFolder = await AccountPathUtils.getCircleFolderPath(pubkey, circle.id);
+      final String encKey = await DBKeyManager.getKey();
       await DBISAR.sharedInstance.open(
         pubkey,
         circleId: circle.id,
         dbPath: circleFolder,
+        encryptionKey: encKey,
       );
       
       debugPrint('Circle database initialized for ${circle.id}');
