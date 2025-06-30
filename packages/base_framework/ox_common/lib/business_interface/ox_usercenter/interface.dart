@@ -27,4 +27,17 @@ class OXUserCenterInterface {
       },
     );
   }
+
+  static Future<T?>? pushAvatarDisplayPage<T>(BuildContext context, {String? avatarUrl, bool showEditButton = false, String? heroTag}) {
+    return OXModuleService.pushPage<T>(
+      context,
+      moduleName,
+      'AvatarDisplayPage',
+      {
+        'avatarUrl': avatarUrl,
+        'showEditButton': showEditButton,
+        'heroTag': heroTag,
+      },
+    );
+  }
 }

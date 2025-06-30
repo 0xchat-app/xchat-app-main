@@ -1,20 +1,12 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/navigator/navigator.dart';
-import 'package:ox_common/upload/file_type.dart';
-import 'package:ox_common/upload/upload_utils.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/avatar.dart';
-import 'package:ox_common/widgets/common_loading.dart';
-import 'package:ox_common/widgets/common_toast.dart';
-
-import '../../widget/select_asset_dialog.dart';
-import 'avatar_preview_page.dart';
+import 'avatar_display_page.dart';
 import 'bio_settings_page.dart';
 import 'nickname_settings_page.dart';
 import 'qr_code_display_page.dart';
@@ -92,10 +84,13 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
         ValueListenableBuilder(
           valueListenable: userNotifier.avatarUrl$,
           builder: (context, avatarUrl, _) {
-            return OXUserAvatar(
-              imageUrl: avatarUrl,
-              size: 80.px,
-              onTap: editPhotoOnTap,
+            return Hero(
+              tag: 'profile_avatar_hero',
+              child: OXUserAvatar(
+                imageUrl: avatarUrl,
+                size: 80.px,
+                onTap: editPhotoOnTap,
+              ),
             );
           },
         ).setPaddingOnly(top: 8.px),
@@ -113,22 +108,16 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
   }
 
   void editPhotoOnTap() async {
-    final result = await OXNavigator.pushPage(context, (context) =>
-      AvatarPreviewPage(
-        userDB: Account.sharedInstance.me,
-      ),
+    // Use the new avatar display page with static open method
+    await AvatarDisplayPage.open(
+      context,
+      heroTag: 'profile_avatar_hero',
+      avatarUrl: Account.sharedInstance.me?.picture,
+      showEditButton: true,
     );
-
-    Map? selectAssetDialog = result as Map?;
-    if(selectAssetDialog == null) return;
-
-    SelectAssetAction action = selectAssetDialog['action'];
-    File? imgFile = selectAssetDialog['result'];
-    if (action == SelectAssetAction.Remove) {
-      updateUserAvatar(null);
-    } else if (imgFile != null) {
-      updateUserAvatar(imgFile);
-    }
+    
+    // The page handles avatar updates internally, so we just refresh the UI
+    setState(() {});
   }
 
   void nickNameOnTap() {
@@ -137,45 +126,6 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
 
   void bioOnTap() {
     OXNavigator.pushPage(context, (_) => BioSettingsPage());
-  }
-
-  void updateUserAvatar(File? avatarFile) async {
-    String avatarUrl = '';
-    final user = Account.sharedInstance.me;
-
-    if (user == null) {
-      CommonToast.instance.show(context, 'Current user info is null.');
-      return;
-    }
-
-    OXLoading.show();
-
-    if (avatarFile != null) {
-      UploadResult result  = await UploadUtils.uploadFile(
-        fileType: FileType.image,
-        file: avatarFile,
-        filename: 'avatar_${userNotifier.encodedPubkey$.value}_${DateTime.now().millisecondsSinceEpoch}.png',
-      );
-      if (!result.isSuccess || result.url.isEmpty) {
-        await OXLoading.dismiss();
-        String errorMsg = result.errorMsg ?? 'unknown';
-        CommonToast.instance.show(context, 'Upload Failed: $errorMsg.');
-        return;
-      }
-
-      avatarUrl = result.url;
-    }
-
-    user.picture = avatarUrl;
-
-    final newUser = await Account.sharedInstance.updateProfile(user);
-    await OXLoading.dismiss();
-    if (newUser == null) {
-      CommonToast.instance.show(context, 'Update Avatar Failed.');
-    } else {
-      CommonToast.instance.show(context, 'Update Avatar Success.');
-      LoginUserNotifier.instance.avatarUrl$.value = avatarUrl;
-    }
   }
 
   void showMyQRCode() {

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:ox_common/business_interface/ox_usercenter/interface.dart';
@@ -6,6 +7,7 @@ import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_module_service/ox_module_service.dart';
 import 'package:ox_usercenter/model/request_verify_dns.dart';
 import 'package:ox_usercenter/page/settings/avatar_preview_page.dart';
+import 'package:ox_usercenter/page/settings/avatar_display_page.dart';
 import 'package:ox_usercenter/page/settings/qr_code_display_page.dart';
 import 'package:ox_usercenter/page/set_up/relay_detail_page.dart';
 import 'package:ox_usercenter/page/set_up/relays_for_login_page.dart';
@@ -38,6 +40,11 @@ class OXUserCenter extends OXFlutterModule {
       case 'AvatarPreviewPage':
         UserDBISAR? userDB = params?['userDB'];
         return OXNavigator.pushPage(context, (context) => AvatarPreviewPage(userDB: userDB),);
+      case 'AvatarDisplayPage':
+        String? avatarUrl = params?['avatarUrl'];
+        bool showEditButton = params?['showEditButton'] ?? false;
+        String? heroTag = params?['heroTag'];
+        return OXNavigator.pushPage(context, (context) => AvatarDisplayPage(avatarUrl: avatarUrl, showEditButton: showEditButton, heroTag: heroTag),);
       case 'QRCodeDisplayPage':
         String? previousPageTitle = params?['previousPageTitle'];
         UserDBISAR? otherUser = params?['otherUser'];
