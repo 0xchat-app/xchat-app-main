@@ -10,6 +10,7 @@ class CLScaffold extends StatelessWidget {
     this.appBar,
     required this.body,
     bool? extendBody,
+    this.backgroundColor,
     this.resizeToAvoidBottomInset = true,
     this.isSectionListPage = false,
   }) : extendBody = extendBody ?? appBar == null;
@@ -17,6 +18,7 @@ class CLScaffold extends StatelessWidget {
   final CLAppBar? appBar;
   final Widget body;
   final bool extendBody;
+  final Color? backgroundColor;
   final bool resizeToAvoidBottomInset;
 
   final bool isSectionListPage;
@@ -27,16 +29,21 @@ class CLScaffold extends StatelessWidget {
     if (PlatformStyle.isUseMaterial) {
       return Scaffold(
         appBar: appBar?.buildMaterialAppBar(context),
+        backgroundColor: backgroundColor,
         body: safeBody,
         resizeToAvoidBottomInset: resizeToAvoidBottomInset,
       );
     } else {
       return CupertinoPageScaffold(
         navigationBar: appBar?.buildCupertinoAppBar(context),
-        backgroundColor: isSectionListPage ? CupertinoColors.systemGroupedBackground : null,
+        backgroundColor: backgroundColor ?? defaultCupertinoPageBgColor,
         resizeToAvoidBottomInset: resizeToAvoidBottomInset,
         child: safeBody,
       );
     }
+  }
+
+  Color? get defaultCupertinoPageBgColor {
+    return isSectionListPage ? CupertinoColors.systemGroupedBackground : null;
   }
 }

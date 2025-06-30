@@ -217,6 +217,7 @@ class CLButton {
   }
 
   static Widget icon({
+    IconData? icon,
     String iconName = '',
     String package = '',
     Widget? child,
@@ -235,6 +236,7 @@ class CLButton {
         : iconSize / 2;
     color ??= IconTheme.of(OXNavigator.navigatorKey.currentContext!).color;
     child ??= CLIcon(
+      icon: icon,
       iconName: iconName,
       size: iconSize,
       color: color,
