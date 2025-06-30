@@ -27,9 +27,9 @@ class FileServerPage extends StatefulWidget {
 
 class _FileServerPageState extends State<FileServerPage> {
   final ValueNotifier<List<FileServerModel>> _servers$ =
-      ValueNotifier<List<FileServerModel>>([]);
-  // Holds selected server id.
-  final ValueNotifier<int?> _selected$ = ValueNotifier(null);
+  ValueNotifier<List<FileServerModel>>([]);
+  // Holds selected server relay URL.
+  final ValueNotifier<String?> _selected$ = ValueNotifier(null);
   bool _isEditing = false;
   late final FileServerRepository _repo;
 
@@ -49,7 +49,7 @@ class _FileServerPageState extends State<FileServerPage> {
     _loadInitialSelection();
     addListener();
   }
-  
+
   void prepareData() {
     _repo = FileServerRepository(DBISAR.sharedInstance.isar);
     final fileServers = _repo.fetch();
@@ -57,9 +57,7 @@ class _FileServerPageState extends State<FileServerPage> {
 
     final selectedFileServerUrl = LoginManager.instance.currentCircle?.selectedFileServerUrl;
     if (selectedFileServerUrl != null && selectedFileServerUrl.isNotEmpty) {
-      _selected$.value = fileServers.where(
-              (e) => e.url == selectedFileServerUrl
-      ).firstOrNull?.id;
+      _selected$.value = selectedFileServerUrl;
     }
   }
 
@@ -73,46 +71,50 @@ class _FileServerPageState extends State<FileServerPage> {
 
   void addListener() {
     // Listen list changes
-    _repoSub = _repo.watchAll().listen((event) {
+    _repoSub = _repo.watchAll().listen((servers) {
+
       if (!mounted) return;
 
-      _servers$.safeUpdate(event);
+      _servers$.safeUpdate(servers);
 
       // Apply pending selection from circle config once list is available.
       if (_pendingSelectedUrl != null) {
         FileServerModel? matched;
-        for (final fs in event) {
+        for (final fs in servers) {
           if (fs.url == _pendingSelectedUrl) {
             matched = fs;
             break;
           }
         }
-        matched ??= event.isNotEmpty ? event.first : null;
+        matched ??= servers.isNotEmpty ? servers.first : null;
 
         if (matched != null) {
-          _selected$.safeUpdate(matched.id);
+          _selected$.safeUpdate(matched.url);
         }
         _pendingSelectedUrl = null;
       }
 
       // If current selection has been removed, select the first available one.
-      if (_selected$.value != null && !event.any((e) => e.id == _selected$.value)) {
-        _selected$.safeUpdate(event.isNotEmpty ? event.first.id : null);
+      final selectedUrl = _selected$.value;
+      final isSelected = servers.any((e) => e.url == selectedUrl);
+      if (selectedUrl != null && !isSelected) {
+        _selected$.safeUpdate(servers.isNotEmpty ? servers.first.url : null);
       }
     });
 
     // Listen to selection changes and persist into circle config.
     _selected$.addListener(() {
-      final id = _selected$.value;
+      final selectedUrl = _selected$.value;
       final circle = LoginManager.instance.currentCircle;
-      if (circle == null || id == null) return;
+      if (circle == null) return;
 
-      final servers = _servers$.value;
-      final selectedServer = servers.where((e) => e.id == id).firstOrNull;
-
-      if (selectedServer != null) {
-        circle.updateSelectedFileServerUrl(selectedServer.url);
+      // When url is null, clear selection.
+      if (selectedUrl == null || selectedUrl.isEmpty) {
+        circle.updateSelectedFileServerUrl('');
+        return;
       }
+
+      circle.updateSelectedFileServerUrl(selectedUrl);
     });
   }
 
@@ -160,18 +162,26 @@ class _FileServerPageState extends State<FileServerPage> {
         return CLSectionListView(
           items: [
             SectionListViewItem(
-              data: list.map((item) => SelectedItemModel<int?>(
+              data: list.map((item) => SelectedItemModel<String?>(
                 title: item.name,
                 subtitle: item.url,
-                value: item.id,
+                value: item.url,
                 selected$: _selected$,
               )).toList(),
               isEditing: _isEditing,
               onDelete: (item) async {
-                final idToDelete = (item as SelectedItemModel).value as int?;
-                if (idToDelete != null) {
-                  await _repo.delete(idToDelete);
-                }
+                final urlToDelete = (item as SelectedItemModel).value;
+                if (urlToDelete is! String) return;
+
+                final servers = [..._servers$.value];
+                final target = servers.where((e) => e.url == urlToDelete).firstOrNull;
+                if (target == null || target.id <= 0) return;
+
+                _repo.delete(target.id);
+
+                // Update UI immediately
+                servers.removeWhere((e) => e.url == urlToDelete);
+                _servers$.safeUpdate(servers);
               },
             ),
           ],
@@ -239,8 +249,13 @@ class _FileServerPageState extends State<FileServerPage> {
 
     if (newServer != null) {
       // Ensure the server is selected and synced to LoginManager
-      _selected$.safeUpdate(newServer.id);
-      
+      _selected$.safeUpdate(newServer.url);
+
+      // Immediately update list for UI so user can see without waiting stream.
+      if (!_servers$.value.any((e) => e.id == newServer.id)) {
+        _servers$.safeUpdate([..._servers$.value, newServer]);
+      }
+
       // Immediately sync to LoginManager to avoid timing issues
       final circle = LoginManager.instance.currentCircle;
       if (circle != null) {
