@@ -7,7 +7,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 
-import com.oxchat.nostr.R;
+import com.oxchat.lite.R;
 
 public class VoiceCallService extends Service {
     private static final String CHANNEL_ID = "VoiceCallServiceChannel";

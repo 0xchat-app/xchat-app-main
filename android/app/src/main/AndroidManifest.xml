@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.oxchat.nostr">
+    package="com.oxchat.lite">
     <uses-permission android:name="com.android.vending.BILLING" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 <!--    <uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
@@ -62,7 +62,7 @@
         android:required="false" />
 
     <application
-        android:name=".OXApplication"
+        android:name="com.oxchat.nostr.OXApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ox_logo_launcher"
         android:label="@string/main_app_name"
@@ -81,7 +81,7 @@
             android:value="2" />
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.oxchat.nostr.MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:launchMode="singleTop"
             android:exported="true"
@@ -129,7 +129,7 @@
         </activity>
 
         <activity
-            android:name=".MultiEngineActivity"
+            android:name="com.oxchat.nostr.MultiEngineActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:theme="@style/transparentTheme"
@@ -145,14 +145,6 @@
             android:name="flutterEmbedding"
             android:value="2" />
 
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@mipmap/ic_notification" />
-
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="@string/default_notification_channel_id" />
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -163,7 +155,7 @@
                 android:resource="@xml/external_storage_root" />
         </provider>
 
-        <service android:name=".VoiceCallService"
+        <service android:name="com.oxchat.nostr.VoiceCallService"
             android:foregroundServiceType="mediaPlayback"/>
 
     </application>
