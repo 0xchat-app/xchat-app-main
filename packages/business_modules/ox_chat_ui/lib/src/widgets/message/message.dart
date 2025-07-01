@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:ox_common/component.dart';
@@ -312,33 +311,31 @@ class MessageState extends State<Message> {
   Widget _buildMessageBubbleView() {
     final user = InheritedUser.of(context).user;
     final currentUserIsAuthor = user.id == widget.message.author.id;
-    final messageBorderRadius =
-        InheritedChatTheme.of(context).theme.messageBorderRadius;
+    // Use 20 for main rounded corners and 8 for the previously straight corner
+    final double bigRadius = 20;
+    final double smallRadius = 8;
+
     final borderRadius = widget.bubbleRtlAlignment == BubbleRtlAlignment.left
         ? BorderRadiusDirectional.only(
-      bottomEnd: Radius.circular(
-        !currentUserIsAuthor || widget.roundBorder ? messageBorderRadius : 0,
-      ),
-      bottomStart: Radius.circular(
-        currentUserIsAuthor || widget.roundBorder ? messageBorderRadius : 0,
-      ),
-      topEnd: Radius.circular(messageBorderRadius),
-      topStart: Radius.circular(messageBorderRadius),
-    )
+            bottomEnd: Radius.circular(
+              !currentUserIsAuthor || widget.roundBorder ? bigRadius : smallRadius,
+            ),
+            bottomStart: Radius.circular(
+              currentUserIsAuthor || widget.roundBorder ? bigRadius : smallRadius,
+            ),
+            topEnd: Radius.circular(bigRadius),
+            topStart: Radius.circular(bigRadius),
+          )
         : BorderRadius.only(
-      bottomLeft: Radius.circular(
-        currentUserIsAuthor ? messageBorderRadius : 0,
-      ),
-      bottomRight: Radius.circular(
-        currentUserIsAuthor ? 0 : messageBorderRadius,
-      ),
-      topLeft: Radius.circular(
-        messageBorderRadius,
-      ),
-      topRight: Radius.circular(
-        messageBorderRadius,
-      ),
-    );
+            bottomLeft: Radius.circular(
+              currentUserIsAuthor ? bigRadius : smallRadius,
+            ),
+            bottomRight: Radius.circular(
+              currentUserIsAuthor ? smallRadius : bigRadius,
+            ),
+            topLeft: Radius.circular(bigRadius),
+            topRight: Radius.circular(bigRadius),
+          );
     final enlargeEmojis =
         widget.emojiEnlargementBehavior != EmojiEnlargementBehavior.never &&
             widget.message is types.TextMessage &&

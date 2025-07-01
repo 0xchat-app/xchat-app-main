@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
@@ -12,13 +11,13 @@ import 'package:ox_localizable/ox_localizable.dart';
 import '../../models/giphy_image.dart';
 import '../../models/input_clear_mode.dart';
 import '../../models/send_button_visibility_mode.dart';
-import '../giphy/giphy_picker.dart';
 import '../state/inherited_chat_theme.dart';
 import 'attachment_button.dart';
 import 'input_more_page.dart';
 import 'input_text_field_controller.dart';
 import 'input_voice_page.dart';
 import 'send_button.dart';
+import 'input_face_page.dart';
 
 
 /// A class that represents bottom bar widget with a text field, attachment and
@@ -194,14 +193,7 @@ class InputState extends State<Input>{
     if (inputType == InputType.inputTypeMore) {
       contentWidget = InputMorePage(items: widget.items,);
     } else if (inputType == InputType.inputTypeEmoji) {
-      contentWidget = GiphyPicker(
-        onSelected: (value) {
-          if (widget.onGifSend != null) {
-            widget.onGifSend!(value);
-          }
-        },
-        textController: _textController,
-      );
+      contentWidget = InputFacePage(textController: _textController);
     } else if (inputType == InputType.inputTypeVoice) {
       contentWidget = InputVoicePage(
         onPressed: (_path, duration) {

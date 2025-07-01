@@ -355,6 +355,10 @@ class TextMessageText extends StatelessWidget {
       textWidthBasis: TextWidthBasis.longestLine,
       textScaler: MediaQuery.of(context).textScaler,
       onSecondaryTap: onSecondaryTap,
+      strutStyle: StrutStyle.fromTextStyle(
+        bodyTextStyle,
+        leadingDistribution: TextLeadingDistribution.even,
+      ),
     );
   }
 }

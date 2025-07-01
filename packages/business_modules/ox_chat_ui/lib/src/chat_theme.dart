@@ -342,7 +342,7 @@ class DefaultChatTheme extends ChatTheme {
       fontWeight: FontWeight.w400,
       height: 1.5,
     ),
-    super.messageBorderRadius = 16,
+    super.messageBorderRadius = 20,
     super.messageInsetsHorizontal = 20,
     super.messageInsetsVertical = 9,
     super.primaryColor = primary,
