@@ -140,6 +140,7 @@ class _CLSearchState extends State<CLSearch> {
       child: CupertinoSearchTextField(
         controller: widget.controller,
         prefixIcon: widget.prefixIcon,
+        prefixInsets: EdgeInsets.only(left: 12),
         focusNode: _focusNode,
         onChanged: (newText) {
           _onTextChange(newText);
