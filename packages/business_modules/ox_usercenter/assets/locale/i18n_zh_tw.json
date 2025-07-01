@@ -55,6 +55,8 @@
   "theme_color_dart": "黑夜",
   "theme_color_light": "白天",
   "version": "版本",
+  "circle_settings": "圈子設置",
+  "text_size": "文字大小",
   "sign_out": "登出",
   "delete_account": "刪除帳號",
   "warn_title": "警告",

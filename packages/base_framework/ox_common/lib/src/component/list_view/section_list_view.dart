@@ -38,7 +38,7 @@ class CLSectionListView extends StatelessWidget {
     // Add sections
     for (int i = 0; i < items.length; i++) {
       final item = items[i];
-      widgets.add(buildItemWidget(item));
+      widgets.add(buildItemWidget(item, context));
       
       // Add section separator (except for the last section)
       if (i < items.length - 1) {
@@ -50,7 +50,7 @@ class CLSectionListView extends StatelessWidget {
     if (footer != null) {
       widgets.add(footer!);
     }
-    
+
     return ListView.separated(
       controller: controller,
       shrinkWrap: shrinkWrap,
@@ -70,7 +70,7 @@ class CLSectionListView extends StatelessWidget {
     }
   }
 
-  Widget buildItemWidget(SectionListViewItem model) {
+  Widget buildItemWidget(SectionListViewItem model, BuildContext context) {
     final headerWidget = model.headerWidget;
 
     if (PlatformStyle.isUseMaterial) {
@@ -97,8 +97,26 @@ class CLSectionListView extends StatelessWidget {
       return CupertinoListSection.insetGrouped(
         header: headerWidget,
         hasLeading: listView.hasLeading,
+        separatorColor: kSystemSeparator.resolveFrom(context),
         children: listView.asCupertinoSectionChildren(false),
       );
     }
   }
 }
+
+/// System separator dynamic color (matches iOS 17 runtime values)
+const CupertinoDynamicColor kSystemSeparator = CupertinoDynamicColor(
+  debugLabel: 'systemSeparator',
+
+  // ---------- Light mode ----------
+  color:                     Color.fromRGBO(60, 60, 67, 0.29),   // default
+  highContrastColor:         Color.fromRGBO(60, 60, 67, 0.36),   // high-contrast
+  elevatedColor:             Color.fromRGBO(60, 60, 67, 0.65),   // blurred / floating
+  highContrastElevatedColor: Color.fromRGBO(60, 60, 67, 0.36),   // same as high-contrast
+
+  // ---------- Dark mode ----------
+  darkColor:                     Color.fromRGBO(84, 84, 88, 0.60),
+  darkHighContrastColor:         Color.fromRGBO(84, 84, 88, 0.75),
+  darkElevatedColor:             Color.fromRGBO(84, 84, 88, 0.80),
+  darkHighContrastElevatedColor: Color.fromRGBO(84, 84, 88, 0.75), // same as high-contrast
+);

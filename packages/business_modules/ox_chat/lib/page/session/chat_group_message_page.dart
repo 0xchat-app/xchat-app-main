@@ -63,7 +63,8 @@ class _ChatGroupMessagePageState extends State<ChatGroupMessagePage> {
       builder: (context, group, child) {
         String showName = group?.name ?? '';
         UserDBISAR? otherUser;
-        if (group?.isDirectMessage == true) {
+        final isSingleChat = group?.isDirectMessage == true;
+        if (isSingleChat) {
           otherUser = Account.sharedInstance.userCache[group?.otherPubkey]?.value;
           showName = otherUser?.getUserShowName() ?? '';
         }
@@ -73,7 +74,7 @@ class _ChatGroupMessagePageState extends State<ChatGroupMessagePage> {
           actions: [
             Container(
               alignment: Alignment.center,
-              child: group?.isDirectMessage == true
+              child: isSingleChat
                   ? OXUserAvatar(
                       chatId: session.chatId,
                       user: otherUser,
@@ -99,6 +100,7 @@ class _ChatGroupMessagePageState extends State<ChatGroupMessagePage> {
             ),
           ],
           bottomHintParam: bottomHintParam,
+          showUserNames: !isSingleChat,
         );
       },
     );

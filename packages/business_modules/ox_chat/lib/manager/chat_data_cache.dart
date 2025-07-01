@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:ox_chat/manager/chat_draft_manager.dart';
@@ -165,8 +164,6 @@ class ChatDataCache with OXChatObserver, LoginManagerObserver {
 }
 
 extension CommonChatSessionEx on ChatSessionModelISAR {
-  bool get showUserNames => chatType != 0;
-
   /// Integer value for [MessageDBISAR.chatType].
   /// Returns `null` if the [chatType] does not match any known chat type.
   int? get coreChatType {

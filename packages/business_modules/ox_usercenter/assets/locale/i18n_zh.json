@@ -55,6 +55,8 @@
   "theme_color_dart": "黑夜",
   "theme_color_light": "白天",
   "version": "版本",
+  "circle_settings": "圈子设置",
+  "text_size": "文字大小",
   "sign_out": "登出",
   "delete_account": "删除账号",
   "warn_title": "警告",
@@ -268,6 +270,5 @@
   "storage_permission_denied": "存储权限被拒绝",
   "qr_code_saved": "二维码已保存到相册",
   "save_failed": "保存失败",
-  "share_coming_soon": "分享功能即将推出",
-  "circle_settings": "圈子设置"
+  "share_coming_soon": "分享功能即将推出"
 }

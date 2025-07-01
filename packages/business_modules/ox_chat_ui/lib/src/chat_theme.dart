@@ -304,13 +304,13 @@ class DefaultChatTheme extends ChatTheme {
     super.attachmentButtonMargin,
     super.backgroundColor = neutral7,
     super.dateDividerMargin = const EdgeInsets.only(
-      bottom: 32,
-      top: 16,
+      bottom: 12,
+      top: 12,
     ),
     super.dateDividerTextStyle = const TextStyle(
       color: neutral2,
       fontSize: 12,
-      fontWeight: FontWeight.w800,
+      fontWeight: FontWeight.w400,
       height: 1.333,
     ),
     super.deliveredIcon,
@@ -420,7 +420,7 @@ class DefaultChatTheme extends ChatTheme {
       textStyle: TextStyle(
         color: neutral2,
         fontSize: 12,
-        fontWeight: FontWeight.w800,
+        fontWeight: FontWeight.w400,
         height: 1.333,
       ),
     ),
@@ -456,7 +456,7 @@ class DefaultChatTheme extends ChatTheme {
     ),
     super.userNameTextStyle = const TextStyle(
       fontSize: 12,
-      fontWeight: FontWeight.w800,
+      fontWeight: FontWeight.w400,
       height: 1.333,
     ),
   });
@@ -473,13 +473,13 @@ class DarkChatTheme extends ChatTheme {
     super.attachmentButtonMargin,
     super.backgroundColor = dark,
     super.dateDividerMargin = const EdgeInsets.only(
-      bottom: 32,
-      top: 16,
+      bottom: 12,
+      top: 12,
     ),
     super.dateDividerTextStyle = const TextStyle(
       color: neutral7,
       fontSize: 12,
-      fontWeight: FontWeight.w800,
+      fontWeight: FontWeight.w400,
       height: 1.333,
     ),
     super.deliveredIcon,
@@ -589,7 +589,7 @@ class DarkChatTheme extends ChatTheme {
       textStyle: TextStyle(
         color: neutral7,
         fontSize: 12,
-        fontWeight: FontWeight.w800,
+        fontWeight: FontWeight.w400,
         height: 1.333,
       ),
     ),
@@ -625,7 +625,7 @@ class DarkChatTheme extends ChatTheme {
     ),
     super.userNameTextStyle = const TextStyle(
       fontSize: 12,
-      fontWeight: FontWeight.w800,
+      fontWeight: FontWeight.w400,
       height: 1.333,
     ),
   });

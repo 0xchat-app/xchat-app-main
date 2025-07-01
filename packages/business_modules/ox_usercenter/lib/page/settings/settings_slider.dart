@@ -72,12 +72,12 @@ class SettingSliderState extends State<SettingSlider> {
         // ),
         LabelItemModel(
           icon: ListViewIcon(iconName: 'icon_setting_security.png', package: 'ox_usercenter'),
-          title: 'Keys',
+          title: Localized.text('ox_usercenter.keys'),
           onTap: keysItemOnTap,
         ),
         LabelItemModel(
           icon: ListViewIcon(iconName: 'icon_setting_circles.png', package: 'ox_usercenter'),
-          title: 'Circle Settings',
+          title: Localized.text('ox_usercenter.circle_settings'),
           onTap: circleItemOnTap,
         ),
       ]),
@@ -99,19 +99,19 @@ class SettingSliderState extends State<SettingSlider> {
         // ),
         LabelItemModel(
           icon: ListViewIcon(iconName: 'icon_setting_theme.png', package: 'ox_usercenter'),
-          title: 'Theme',
+          title: Localized.text('ox_usercenter.theme'),
           value$: themeItemNty,
           onTap: themeItemOnTap,
         ),
         LabelItemModel(
           icon: ListViewIcon(iconName: 'icon_setting_lang.png', package: 'ox_usercenter'),
-          title: 'Language',
+          title: Localized.text('ox_usercenter.language'),
           value$: languageItemNty,
           onTap: languageItemOnTap,
         ),
         LabelItemModel(
           icon: ListViewIcon(iconName: 'icon_setting_textsize.png', package: 'ox_usercenter'),
-          title: 'Text Size',
+          title: Localized.text('ox_usercenter.text_size'),
           value$: ValueNotifier('20'),
           onTap: textSizeItemOnTap,
         ),
@@ -122,7 +122,7 @@ class SettingSliderState extends State<SettingSlider> {
         // ),
         LabelItemModel(
           icon: ListViewIcon(iconName: 'icon_setting_version.png', package: 'ox_usercenter'),
-          title: 'Version',
+          title: Localized.text('ox_usercenter.version'),
           value$: ValueNotifier('1.00'),
         ),
       ]),

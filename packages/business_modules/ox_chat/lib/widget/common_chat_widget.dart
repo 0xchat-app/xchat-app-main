@@ -30,6 +30,7 @@ class CommonChatWidget extends StatefulWidget {
     required this.handler,
     this.title,
     this.actions = const [],
+    this.showUserNames = false,
     this.customTopWidget,
     this.customCenterWidget,
     this.customBottomWidget,
@@ -42,6 +43,7 @@ class CommonChatWidget extends StatefulWidget {
 
   dynamic title;
   final List<Widget> actions;
+  final bool showUserNames;
 
   // Custom
 
@@ -236,7 +238,7 @@ class CommonChatWidgetState extends State<CommonChatWidget> {
             onMessageTap: handler.messagePressHandler,
             onPreviewDataFetched: _handlePreviewDataFetched,
             onSendPressed: (msg) => handler.sendTextMessage(context, msg.text),
-            showUserNames: handler.session.showUserNames,
+            showUserNames: widget.showUserNames,
             //Group chat display nickname
             user: handler.author,
             useTopSafeAreaInset: true,

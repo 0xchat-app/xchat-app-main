@@ -154,9 +154,11 @@ class _ParallaxPage extends StatelessWidget {
           padding: padding,
           child: Column(
             children: [
-              Transform.translate(
-                offset: Offset(delta * width * 0.1 * offsetScale, 0),
-                child: item.image,
+              Expanded(
+                child: Transform.translate(
+                  offset: Offset(delta * width * 0.1 * offsetScale, 0),
+                  child: item.image,
+                ),
               ),
               Transform.translate(
                 offset: Offset(delta * width * 0.4 * offsetScale, 0),

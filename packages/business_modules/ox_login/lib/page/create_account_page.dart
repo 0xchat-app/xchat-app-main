@@ -203,7 +203,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> with LoginManager
       valueListenable: _hasAcceptedTerms$,
       builder: (context, hasAccepted, child) {
         return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             CLCheckbox(
               value: hasAccepted,
