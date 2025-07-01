@@ -1,4 +1,3 @@
-
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -58,14 +57,15 @@ const String _keyThemeStyle = "themeSetting";
 
 class ThemeManager {
 
+
   Map<Brightness, Map<String, dynamic>> themeColors = {};
-  ThemeStyle themeStyle = ThemeStyle.dark;
+  ThemeStyle themeStyle = defaultThemeStyle;
   Map<String, String> cache = {};
   List<VoidCallback> onThemeChangedCallbackList = [];
-  //Default night mode
-  final ThemeStyle defaultThemeStyle = ThemeStyle.dark;
+  // Default theme follows system so that the first launch adopts current system mode
+  static ThemeStyle defaultThemeStyle = ThemeStyle.system;
 
-  final ValueNotifier<ThemeStyle> styleNty = ValueNotifier(ThemeStyle.dark);
+  final ValueNotifier<ThemeStyle> styleNty = ValueNotifier(defaultThemeStyle);
 
   //Read color value
   static Color colors(String colorKey,{ThemeStyle? themeStyle,isCommonColor = false}) {
@@ -178,7 +178,7 @@ class ThemeManager {
   static Future<Null> init() async {
     String currentStyle = await OXCacheManager.defaultOXCacheManager.getForeverData(
       _keyThemeStyle,
-      defaultValue: themeManager.defaultThemeStyle.value,
+      defaultValue: defaultThemeStyle.value,
     ) as String;
     if(currentStyle.isEmpty){
       currentStyle = ui.window.platformBrightness.name;
