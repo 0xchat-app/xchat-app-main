@@ -16,7 +16,7 @@ class OXCLaunchCoordinator: NSObject {
     
     func start(window: UIWindow) {
         registeFlutterPlugin(window: window)
-        registeNotification()
+//        registeNotification()
     }
     
     func registeFlutterPlugin(window: UIWindow) {
