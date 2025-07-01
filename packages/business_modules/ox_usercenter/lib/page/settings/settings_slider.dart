@@ -1,4 +1,3 @@
-
 import 'package:flutter/widgets.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
@@ -12,6 +11,7 @@ import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_theme/ox_theme.dart';
 import 'package:ox_usercenter/page/settings/language_settings_page.dart';
 import 'package:ox_usercenter/page/settings/theme_settings_page.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import 'keys_page.dart';
 import 'circle_detail_page.dart';
@@ -31,6 +31,7 @@ class SettingSliderState extends State<SettingSlider> {
 
   late ValueNotifier themeItemNty;
   late ValueNotifier languageItemNty;
+  late ValueNotifier versionItemNty;
 
   late LoginUserNotifier userNotifier;
   late List<SectionListViewItem> pageData;
@@ -56,6 +57,8 @@ class SettingSliderState extends State<SettingSlider> {
   void prepareNotifier() {
     themeItemNty = themeManager.styleNty.map((style) => style.text);
     languageItemNty = Localized.localized.localeTypeNty.map((type) => type.languageText);
+    versionItemNty = ValueNotifier<String>('');
+    _loadAppVersion();
   }
 
   void prepareLiteData() {
@@ -123,7 +126,7 @@ class SettingSliderState extends State<SettingSlider> {
         LabelItemModel(
           icon: ListViewIcon(iconName: 'icon_setting_version.png', package: 'ox_usercenter'),
           title: Localized.text('ox_usercenter.version'),
-          value$: ValueNotifier('1.00'),
+          value$: versionItemNty,
         ),
       ]),
     ];
@@ -221,5 +224,18 @@ class SettingSliderState extends State<SettingSlider> {
 
   void textSizeItemOnTap() {
     OXNavigator.pushPage(context, (_) => FontSizeSettingsPage(previousPageTitle: title,));
+  }
+
+  /// Load the application version and build number then update [versionItemNty].
+  void _loadAppVersion() async {
+    try {
+      final packageInfo = await PackageInfo.fromPlatform();
+      final String version = packageInfo.version;
+      final String buildNumber = packageInfo.buildNumber;
+      versionItemNty.value = '$version+$buildNumber';
+    } catch (_) {
+      // Fallback in case of error
+      versionItemNty.value = '';
+    }
   }
 }
