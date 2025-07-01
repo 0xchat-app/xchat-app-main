@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
@@ -6,7 +5,7 @@ import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_localizable/ox_localizable.dart';
-import 'package:ox_common/utils/ping_utils.dart';
+import 'package:ox_common/utils/relay_latency_handler.dart';
 
 class CircleItem {
   CircleItem({
@@ -35,7 +34,8 @@ class HomeHeaderComponents {
     required this.isShowExtendBody$,
     required this.extendBodyDuration,
   }) {
-    _initializeLatencyMeasurement();
+    _latencyHandler = RelayLatencyHandler(isExpanded$: isShowExtendBody$);
+    _setupLatency();
   }
 
   /// List of circle items for the sub-bar
@@ -55,59 +55,16 @@ class HomeHeaderComponents {
   ValueNotifier<bool> isShowExtendBody$;
   Duration extendBodyDuration;
 
-  // Cache for measured latency of relay URLs
-  final Map<String, ValueNotifier<String>> _latencyCache = {};
-  Timer? _latencyTimer;
-  Duration _measurementInterval = const Duration(minutes: 1);
+  late final RelayLatencyHandler _latencyHandler;
 
-  void _startMeasureLatency(String url) {
-    if (_latencyCache.containsKey(url)) return;
-    final notifier = ValueNotifier<String>('--');
-    _latencyCache[url] = notifier;
-
-    // initial measure
-    _measureLatency(url);
-  }
-
-  void _measureLatency(String url) async {
-    final host = Uri.parse(url).host.isNotEmpty
-        ? Uri.parse(url).host
-        : url.replaceAll(RegExp(r'^(wss?:\/\/)?'), '').split('/').first;
-
-    final latency = await PingUtils.ping(host);
-    final notifier = _latencyCache[url]!;
-    notifier.value = latency != null ? '$latency' : '--';
-  }
-
-  void _initializeLatencyMeasurement() {
-    // Listen to list expand/collapse status and adjust interval.
-    isShowExtendBody$.addListener(_updateTimerInterval);
-    // When selected circle changes, trigger immediate measure.
+  void _setupLatency() {
     selectedCircle$.addListener(() {
-      final current = selectedCircle$.value;
-      if (current != null) {
-        _startMeasureLatency(current.relayUrl);
-      }
+      final url = selectedCircle$.value?.relayUrl;
+      if (url != null) _latencyHandler.switchRelay(url);
     });
-    _updateTimerInterval();
-  }
 
-  void _updateTimerInterval() {
-    final desired = isShowExtendBody$.value
-        ? const Duration(seconds: 5)
-        : const Duration(minutes: 1);
-
-    if (_measurementInterval == desired && _latencyTimer != null) return;
-
-    _measurementInterval = desired;
-    _latencyTimer?.cancel();
-    _latencyTimer = Timer.periodic(_measurementInterval, (_) => _measureAll());
-  }
-
-  void _measureAll() {
-    final circle = selectedCircle$.value;
-    if (circle == null) return;
-    _measureLatency(circle.relayUrl);
+    final initUrl = selectedCircle$.value?.relayUrl;
+    if (initUrl != null) _latencyHandler.switchRelay(initUrl);
   }
 
   AppBar buildAppBar(BuildContext ctx) => AppBar(
@@ -124,13 +81,13 @@ class HomeHeaderComponents {
       }
     ),
     actions: [
-      if (PlatformStyle.isUseMaterial)
-        CLButton.icon(
-          iconName: 'icon_common_search.png',
-          package: 'ox_common',
-          iconSize: 24.px,
-          onTap: onSearchTap,
-        ),
+      // if (PlatformStyle.isUseMaterial)
+      //   CLButton.icon(
+      //     iconName: 'icon_common_search.png',
+      //     package: 'ox_common',
+      //     iconSize: 24.px,
+      //     onTap: onSearchTap,
+      //   ),
       CLButton.icon(
         iconName: PlatformStyle.isUseMaterial
             ? 'icon_common_add.png'
@@ -229,13 +186,7 @@ class HomeHeaderComponents {
   ListViewItem _circleItemListTileMapper(CircleItem item, CircleItem? selectedCircle) {
     final selected = item.id == selectedCircle?.id;
 
-    // Ensure notifier exists
-    final latency$ = _latencyCache.putIfAbsent(item.relayUrl, () => ValueNotifier<String>('--'));
-
-    // Only measure latency for selected circle
-    if (selected) {
-      _startMeasureLatency(item.relayUrl);
-    }
+    final latency$ = _latencyHandler.getLatencyNotifier(item.relayUrl);
 
     return CustomItemModel(
       leading: CircleAvatar(
@@ -245,12 +196,17 @@ class HomeHeaderComponents {
       subtitleWidget: ValueListenableBuilder(
         valueListenable: latency$,
         builder: (_, latencyStr, __) {
-          final msText = latencyStr;
+          final latencyInt = int.tryParse(latencyStr) ?? -1;
+          final latencyColor = RelayLatencyHandler.latencyColor(latencyInt);
+
+          final latencyDisplay = latencyInt > 0 ? '${latencyInt}ms' : '--';
+          final TextStyle? latencyStyle = latencyInt > 0 ? TextStyle(color: latencyColor) : null;
+
           return Text.rich(
             TextSpan(
               children: [
                 if (selected)
-                  TextSpan(text: '$msText ms · '),
+                  TextSpan(text: '$latencyDisplay · ', style: latencyStyle),
                 TextSpan(text: item.relayUrl),
               ],
             ),
