@@ -1,6 +1,9 @@
+import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:keyboard_height_plugin/keyboard_height_plugin.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/platform_utils.dart';
@@ -13,11 +16,11 @@ import '../../models/input_clear_mode.dart';
 import '../../models/send_button_visibility_mode.dart';
 import '../state/inherited_chat_theme.dart';
 import 'attachment_button.dart';
+import 'input_face_page.dart';
 import 'input_more_page.dart';
 import 'input_text_field_controller.dart';
 import 'input_voice_page.dart';
 import 'send_button.dart';
-import 'input_face_page.dart';
 
 
 /// A class that represents bottom bar widget with a text field, attachment and
@@ -83,7 +86,7 @@ class Input extends StatefulWidget {
 }
 
 /// [Input] widget state.
-class InputState extends State<Input>{
+class InputState extends State<Input> {
 
   double get _itemSpacing => 8.px;
   double get iconSize => 24.pxWithTextScale;
@@ -116,10 +119,14 @@ class InputState extends State<Input>{
   bool _sendButtonVisible = false;
   late TextEditingController _textController;
 
+  final _keyboardHeightPlugin = KeyboardHeightPlugin();
+
   Curve get animationCurves => Curves.ease;
   Duration get animationDuration => Duration(milliseconds: 200);
 
-  void dissMissMoreView(){
+  double _pluginKeyboardHeight = 0.0;
+
+  void dismissMoreView(){
     changeInputType(InputType.inputTypeDefault);
   }
 
@@ -136,7 +143,6 @@ class InputState extends State<Input>{
   void dispose() {
     _inputFocusNode.dispose();
     _textController.dispose();
-    // WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
@@ -145,30 +151,28 @@ class InputState extends State<Input>{
     super.initState();
     _inputFocusNode.addListener(() {
       if (_inputFocusNode.hasFocus) {
-        //Gain focus
-        final textFieldHasFocus = widget.textFieldHasFocus;
-        if (textFieldHasFocus != null) {
-          textFieldHasFocus();
-        }
-
-        // Prevents inexplicable 'moreview' not put away bug
-        changeInputType(InputType.inputTypeText);
-      } else {
-        // _inputFocusNode.unfocus();
+        widget.textFieldHasFocus?.call();
       }
     });
-    // WidgetsBinding.instance.addObserver(this);
     _textController =
         widget.options.textEditingController ?? InputTextFieldController();
     _handleSendButtonVisibilityModeChange();
     widget.onFocusNodeInitialized?.call(_inputFocusNode);
+    _keyboardHeightPlugin.onKeyboardHeightChanged((height) {
+      if (!mounted) return;
+      if (height < 1) return;
+
+      if (_pluginKeyboardHeight != height) _pluginKeyboardHeight = height;
+
+      // Change input type to text mode after keyboard height is detected
+      // This prevents UI flickering that occurs when changing input type
+      // before keyboard height is available
+      changeInputType(InputType.inputTypeText);
+    });
   }
 
   @override
-  Widget build(BuildContext context) {
-    final keyboardHeight = getKeyboardHeight();
-    final safeBottomHeight = getSafeBottomHeight();
-    return Container(
+  Widget build(BuildContext context) => Container(
       decoration: BoxDecoration(
         color: ColorToken.surfaceContainer.of(context),
         borderRadius: BorderRadius.circular(12),
@@ -178,54 +182,53 @@ class InputState extends State<Input>{
         children: [
           defaultInputWidget(),
           widget.inputBottomView ?? SizedBox(),
-          getMyMoreView(),
-          Container(
-            height: keyboardHeight + safeBottomHeight,
-            alignment: Alignment.topCenter,
-          ),
+          _buildBottomPanel(),
         ],
       ),
     );
-  }
 
-  Widget getMyMoreView() {
-    Widget? contentWidget;
-    if (inputType == InputType.inputTypeMore) {
-      contentWidget = InputMorePage(items: widget.items,);
-    } else if (inputType == InputType.inputTypeEmoji) {
-      contentWidget = InputFacePage(textController: _textController);
-    } else if (inputType == InputType.inputTypeVoice) {
-      contentWidget = InputVoicePage(
-        onPressed: (_path, duration) {
-          if (widget.onVoiceSend != null) {
-            widget.onVoiceSend?.call(_path, duration);
-          }
-        },
-        onCancel: () { },
-      );
-    }
-
-    var height = 0.0;
+  // Calculate height of custom panels (emoji / more / voice)
+  double _getCustomPanelHeight() {
     switch (inputType) {
       case InputType.inputTypeEmoji:
-        height = 360;
-        break ;
+        return 360;
       case InputType.inputTypeMore:
-        height = 202;
-        break ;
       case InputType.inputTypeVoice:
-        height = 202;
-        break ;
+        return 202;
+      case InputType.inputTypeText:
+        return max(_pluginKeyboardHeight, 0);
       default:
-        break ;
+        return 0;
     }
+  }
 
+  // Build the custom panel widget corresponding to current InputType
+  Widget? _getCustomPanelWidget() {
+    if (inputType == InputType.inputTypeMore) {
+      return InputMorePage(items: widget.items);
+    } else if (inputType == InputType.inputTypeEmoji) {
+      return InputFacePage(textController: _textController);
+    } else if (inputType == InputType.inputTypeVoice) {
+      return InputVoicePage(
+        onPressed: (_path, duration) {
+          widget.onVoiceSend?.call(_path, duration);
+        },
+        onCancel: () {},
+      );
+    }
+    return null;
+  }
+
+  // Unified bottom panel: takes the max height between keyboard and custom panel
+  Widget _buildBottomPanel() {
+    final panelHeight = _getCustomPanelHeight();
+    final customPanelWidget = _getCustomPanelWidget();
     return AnimatedContainer(
       duration: animationDuration,
       curve: animationCurves,
-      height: height,
+      height: panelHeight + safeBottomHeight,
       alignment: Alignment.topCenter,
-      child: contentWidget,
+      child: customPanelWidget,
     );
   }
 
@@ -298,7 +301,7 @@ class InputState extends State<Input>{
       isLoading: widget.isAttachmentUploading ?? false,
       size: iconButtonSize,
       iconSize: iconSize,
-      onPressed: (){
+      onPressed: () {
         changeInputType(InputType.inputTypeVoice);
       },
     );
@@ -331,9 +334,8 @@ class InputState extends State<Input>{
         maxLines: 10,
         minLines: 1,
         onChanged: widget.options.onTextChanged,
-        onTap: (){
+        onTap: () {
           widget.options.onTextFieldTap;
-          changeInputType(InputType.inputTypeText);
         },
         style: textStyle.copyWith(
           color: textColor,
@@ -399,21 +401,10 @@ class InputState extends State<Input>{
     );
   }
 
-  double getKeyboardHeight() {
-    final bottomInset = View.of(context).viewInsets.bottom;
-    final devicePixelRatio = View.of(context).devicePixelRatio;
-    double keyboardHeight;
-    if (devicePixelRatio == 0) {
-      keyboardHeight = 0;
-    } else {
-      keyboardHeight = bottomInset / devicePixelRatio;
-    }
-    return keyboardHeight;
-  }
+  double get safeBottomHeight {
+    if (inputType == InputType.inputTypeText) return 0.0;
 
-  double getSafeBottomHeight() {
-    final bottomPadding = MediaQuery.of(context).padding.bottom;
-    return bottomPadding;
+    return MediaQuery.of(context).viewPadding.bottom;
   }
 
   void _handleSendButtonVisibilityModeChange() {

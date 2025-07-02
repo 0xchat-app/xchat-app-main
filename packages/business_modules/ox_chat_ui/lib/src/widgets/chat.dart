@@ -809,7 +809,7 @@ class ChatState extends State<Chat> {
   }
 
   void inputUnFocus() {
-    _inputKey.currentState?.dissMissMoreView();
+    _inputKey.currentState?.dismissMoreView();
     FocusManager.instance.primaryFocus?.unfocus();
   }
 }

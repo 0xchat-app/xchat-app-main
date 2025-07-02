@@ -60,6 +60,7 @@ class _InputMorePageState extends State<InputMorePage> {
   Widget build(BuildContext context) {
     final data = items.chunk(crossCount);
     return ListView.separated(
+      physics: const NeverScrollableScrollPhysics(),
       padding: EdgeInsets.symmetric(
         horizontal: 26.px,
         vertical: 12.px,
