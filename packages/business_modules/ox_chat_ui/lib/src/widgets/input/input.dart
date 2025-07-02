@@ -153,6 +153,10 @@ class InputState extends State<Input> {
     _inputFocusNode.addListener(() {
       if (_inputFocusNode.hasFocus) {
         widget.textFieldHasFocus?.call();
+      } else {
+        if (inputType == InputType.inputTypeText) {
+          changeInputType(InputType.inputTypeDefault);
+        }
       }
     });
     _textController =
