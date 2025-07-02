@@ -65,7 +65,7 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
                 SectionListViewItem(
                   data: [
                     _buildPubkeyItem(),
-                    _buildNIP05Item(),
+                    // _buildNIP05Item(),
                     _buildBioItem(),
                   ],
                 ),
