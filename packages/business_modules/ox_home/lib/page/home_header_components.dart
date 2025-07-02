@@ -33,8 +33,9 @@ class HomeHeaderComponents {
     this.paidOnTap,
     required this.isShowExtendBody$,
     required this.extendBodyDuration,
+    required RelayLatencyHandler latencyHandler,
   }) {
-    _latencyHandler = RelayLatencyHandler(isExpanded$: isShowExtendBody$);
+    _latencyHandler = latencyHandler;
     _setupLatency();
   }
 

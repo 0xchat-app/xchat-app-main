@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_chat/page/session/chat_message_page.dart';
@@ -17,6 +16,7 @@ import 'home_header_components.dart';
 import '../widgets/session_list_widget.dart';
 import '../widgets/session_view_model.dart';
 import '../widgets/circle_empty_widget.dart';
+import 'package:ox_common/utils/relay_latency_handler.dart';
 
 class HomeScaffold extends StatefulWidget {
   const HomeScaffold({
@@ -33,9 +33,17 @@ class _HomeScaffoldState extends State<HomeScaffold> {
   final ValueNotifier<CircleItem?> selectedCircle$ = ValueNotifier(null);
   final ValueNotifier<bool> isShowExtendBody$ = ValueNotifier(false);
 
+  late final RelayLatencyHandler _latencyHandler;
+
   Duration get extendBodyDuration => const Duration(milliseconds: 200);
 
   bool isFirstJoin = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _latencyHandler = RelayLatencyHandler(isExpanded$: isShowExtendBody$);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +63,7 @@ class _HomeScaffoldState extends State<HomeScaffold> {
           joinOnTap: _handleJoinCircle,
           paidOnTap: _paidOnTap,
           isShowExtendBody$: isShowExtendBody$,
+          latencyHandler: _latencyHandler,
           extendBodyDuration: extendBodyDuration,
         );
 
@@ -245,6 +254,12 @@ class _HomeScaffoldState extends State<HomeScaffold> {
     } else {
       CommonToast.instance.show(context, failure.message);
     }
+  }
+
+  @override
+  void dispose() {
+    _latencyHandler.dispose();
+    super.dispose();
   }
 }
 
