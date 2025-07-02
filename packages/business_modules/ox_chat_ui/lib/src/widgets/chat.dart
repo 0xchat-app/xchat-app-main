@@ -493,7 +493,7 @@ class ChatState extends State<Chat> {
           child: Stack(
             children: [
               Container(
-                color: ThemeColor.color200,
+                color: ColorToken.surface.of(context),
                 child: Column(
                   children: [
                     if (widget.customTopWidget != null)
