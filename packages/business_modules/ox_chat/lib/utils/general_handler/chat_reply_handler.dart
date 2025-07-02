@@ -31,5 +31,8 @@ class ChatReplyHandler {
   }
 
   Widget buildReplyMessageWidget() =>
-      ReplyMessageWidget(replyMessageNotifier, deleteCallback: () => updateReplyMessage(null),);
+      ReplyMessageWidget(
+        replyMessageNotifier,
+        deleteCallback: () => updateReplyMessage(null),
+      );
 }

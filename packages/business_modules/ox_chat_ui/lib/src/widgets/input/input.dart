@@ -93,6 +93,7 @@ class InputState extends State<Input> {
   double get iconButtonSize => 40.pxWithTextScale;
   double get containerHeight => 88.px;
   double get inputContainerHeight => 56.px;
+  double get containerHorPadding => 16.px;
 
   InputType inputType = InputType.inputTypeDefault;
   late final _inputFocusNode = FocusNode(
@@ -180,12 +181,20 @@ class InputState extends State<Input> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          buildInputExtensionWidget(),
           defaultInputWidget(),
-          widget.inputBottomView ?? SizedBox(),
           _buildBottomPanel(),
         ],
       ),
     );
+
+  Widget buildInputExtensionWidget() => Padding(
+    padding: EdgeInsets.only(
+      left: containerHorPadding,
+      right: containerHorPadding,
+    ),
+    child: widget.inputBottomView,
+  );
 
   // Calculate height of custom panels (emoji / more / voice)
   double _getCustomPanelHeight() {
@@ -271,7 +280,7 @@ class InputState extends State<Input> {
                       padding: EdgeInsets.symmetric(vertical: 12.px),
                       alignment: Alignment.center,
                       child: _buildInputTextField(),
-                    ).setPaddingOnly(left: 12.px),
+                    ).setPaddingOnly(left: 20.px),
                   ),
                   AnimatedCrossFade(
                     duration: const Duration(milliseconds: 200),
@@ -280,15 +289,14 @@ class InputState extends State<Input> {
                     crossFadeState: _sendButtonVisible
                         ? CrossFadeState.showFirst
                         : CrossFadeState.showSecond,
-                  ).setPadding(
-                    EdgeInsets.symmetric(
-                      vertical: 8.px,
-                      horizontal: generalHorizontal,
-                    ),
+                  ).setPaddingOnly(
+                    right: generalHorizontal,
+                    top: iconButtonVertical,
+                    bottom: iconButtonVertical,
                   ),
                 ],
               ),
-            ).setPaddingOnly(right: 16.px),
+            ).setPaddingOnly(right: containerHorPadding),
           ),
         ],
       ),

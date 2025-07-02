@@ -1,8 +1,7 @@
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_common/utils/adapt.dart';
-import 'package:ox_common/utils/theme_color.dart';
-import 'package:ox_common/widgets/common_image.dart';
+import 'package:ox_common/component.dart';
 
 class ReplyMessageWidget extends StatelessWidget {
 
@@ -21,38 +20,58 @@ class ReplyMessageWidget extends StatelessWidget {
         if (displayContent == null) {
           return SizedBox();
         }
+
+        final textColor = ColorToken.onSurface.of(context).withValues(alpha: 0.5);
         return Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(Adapt.px(12)),
-            color: ThemeColor.color190,
+            borderRadius: BorderRadius.circular(12.px),
+            // Use surfaceContainer with opacity for background
+            color: ColorToken.surfaceContainerHigh.of(context),
+            // Add a subtle border using onSurfaceVariant
+            border: Border.all(
+              color: ColorToken.surfaceContainer.of(context),
+              width: 0.5,
+            ),
           ),
-          margin: EdgeInsets.only(bottom: Adapt.px(10)),
-          padding: EdgeInsets.symmetric(horizontal: Adapt.px(12), vertical: Adapt.px(4)),
+          margin: EdgeInsets.only(
+            top: 16.px,
+          ),
+          padding: EdgeInsets.symmetric(
+            vertical: 8.px,
+          ),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              SizedBox(width: 10.px,),
+              // Reply content
               Expanded(
-                child: Text(
-                  displayContent,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: ThemeColor.color120,
-                    fontSize: 12,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CLText.bodyMedium(
+                      displayContent,
+                      customColor: textColor,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ),
               ),
+              // Delete button
               if (deleteCallback != null)
                 GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  child: CommonImage(
-                    iconName: 'icon_clearbutton.png',
-                    fit: BoxFit.fill,
-                    width: Adapt.px(20),
-                    height: Adapt.px(20),
+                  onTap: deleteCallback,
+                  behavior: HitTestBehavior.opaque,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10.px,
+                    ),
+                    child: CLIcon(
+                      icon: CupertinoIcons.xmark_circle_fill,
+                      size: 20.px,
+                      color: textColor,
+                    ),
                   ),
-                  onTap: () {
-                    deleteCallback?.call();
-                  },
                 ),
             ],
           ),
