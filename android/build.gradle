@@ -46,13 +46,6 @@ subprojects {
                         jvmTarget = javaVersion.toString()
                     }
                 }
-                signingConfigs {
-                    release {
-                        v1SigningEnabled true
-                        v2SigningEnabled true
-                        v3SigningEnabled true
-                    }
-                }
             }
         }
         configurations.all {
