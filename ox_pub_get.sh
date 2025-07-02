@@ -49,35 +49,87 @@ while getopts ':m:n:l:h' opt; do
 done
 
 # ------------------------- Helper functions ---------------------------------
+log_stage() {
+  echo "🚀 [STAGE] $1"
+  echo "=================================="
+}
+
+log_step() {
+  echo "📋 [STEP] $1"
+}
+
+log_success() {
+  echo "✅ [SUCCESS] $1"
+}
+
+log_skip() {
+  echo "⏭️  [SKIP] $1"
+}
+
 checkout_branch() {
   local dir=$1
   local branch=$2
-  echo "\n--- Checkout $(basename "$dir") => $branch ---"
+  local repo_name=$(basename "$dir")
+  
+  log_step "Checking out $repo_name to branch: $branch"
+  
   if [[ ! -d "$dir/.git" ]]; then
-    echo "Directory $dir is not a git repo, skipping."
+    log_skip "Directory $dir is not a git repo"
     return
   fi
-  git -C "$dir" fetch --all --tags
-  git -C "$dir" checkout "$branch"
-  git -C "$dir" pull --ff-only || true
+  
+  # Fetch latest changes
+  echo "  Fetching latest changes..."
+  git -C "$dir" fetch --all --tags --prune
+  
+  # Check current branch
+  local current_branch=$(git -C "$dir" branch --show-current)
+  if [[ "$current_branch" == "$branch" ]]; then
+    echo "  Already on target branch, pulling latest changes..."
+    git -C "$dir" pull --ff-only
+  else
+    echo "  Switching from $current_branch to $branch..."
+    git -C "$dir" checkout "$branch"
+    git -C "$dir" pull --ff-only
+  fi
+  
+  # Show current commit info
+  local commit_hash=$(git -C "$dir" rev-parse --short HEAD)
+  local commit_msg=$(git -C "$dir" log -1 --pretty=format:"%s")
+  echo "  Current commit: $commit_hash - $commit_msg"
+  
+  log_success "$repo_name updated to latest $branch"
 }
 
 run_pub_get() {
   local dir=$1
-  echo "Running flutter pub get in $dir"
+  local repo_name=$(basename "$dir")
+  
+  log_step "Running flutter pub get in $repo_name"
+  
+  if [[ ! -f "$dir/pubspec.yaml" ]]; then
+    log_skip "$repo_name has no pubspec.yaml"
+    return
+  fi
+  
   (cd "$dir" && flutter pub get)
+  log_success "flutter pub get completed for $repo_name"
 }
 
-# ------------------------- Checkout branches --------------------------------
+# ------------------------- Main execution -----------------------------------
+log_stage "Starting 0xChat Lite dependency setup"
+
+log_stage "Step 1: Updating repository branches"
 checkout_branch "$main_path" "$main_branch"
 checkout_branch "$core_path" "$core_branch"
 checkout_branch "$nostr_dart_path" "$nostr_branch"
 checkout_branch "$nostr_mls_path" "$mls_branch"
 
-# ------------------------- Run flutter pub get ------------------------------
+log_stage "Step 2: Installing Flutter dependencies"
 run_pub_get "$main_path"
 run_pub_get "$core_path"
 run_pub_get "$nostr_dart_path"
 run_pub_get "$nostr_mls_path"
 
-echo "\n✔ All done."
+log_stage "All done"
+echo "🎉 Successfully completed all setup tasks!"
