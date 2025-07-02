@@ -48,7 +48,7 @@ class _TextScaleSliderState extends State<TextScaleSlider> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CLText.bodyLarge('Text Size',),
-              CLText.bodyLarge('${TextScaler.linear(_currentValue).scale(14.sp).round()}',),
+              CLText.bodyLarge(getFormattedTextSize(_currentValue),),
             ],
           ).setPadding(EdgeInsets.symmetric(horizontal: 16.px)),
           SfSlider(

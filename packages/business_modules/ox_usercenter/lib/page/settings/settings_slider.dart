@@ -6,6 +6,7 @@ import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/string_utils.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/utils/extension.dart';
+import 'package:ox_common/utils/font_size_notifier.dart';
 import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_theme/ox_theme.dart';
@@ -32,6 +33,7 @@ class SettingSliderState extends State<SettingSlider> {
   late ValueNotifier themeItemNty;
   late ValueNotifier languageItemNty;
   late ValueNotifier versionItemNty;
+  late ValueNotifier textSizeItemNty;
 
   late LoginUserNotifier userNotifier;
   late List<SectionListViewItem> pageData;
@@ -58,6 +60,7 @@ class SettingSliderState extends State<SettingSlider> {
     themeItemNty = themeManager.styleNty.map((style) => style.text);
     languageItemNty = Localized.localized.localeTypeNty.map((type) => type.languageText);
     versionItemNty = ValueNotifier<String>('');
+    textSizeItemNty = textScaleFactorNotifier.map((scale) => getFormattedTextSize(scale));
     _loadAppVersion();
   }
 
@@ -115,7 +118,7 @@ class SettingSliderState extends State<SettingSlider> {
         LabelItemModel(
           icon: ListViewIcon(iconName: 'icon_setting_textsize.png', package: 'ox_usercenter'),
           title: Localized.text('ox_usercenter.text_size'),
-          value$: ValueNotifier('20'),
+          value$: textSizeItemNty,
           onTap: textSizeItemOnTap,
         ),
         // LabelItemModel(
