@@ -188,7 +188,7 @@ abstract class VideoMessage extends Message {
 class _VideoMessage extends VideoMessage {
 
   @override
-  bool get viewWithoutBubble => !hasReactions;
+  bool get viewWithoutBubble => false;
 
   const _VideoMessage({
     required super.author,

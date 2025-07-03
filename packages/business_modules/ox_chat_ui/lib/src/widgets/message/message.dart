@@ -406,9 +406,6 @@ class MessageState extends State<Message> {
     Widget bubble;
 
     var useBubbleBg = !widget.message.viewWithoutBubble;
-    if (enlargeEmojis) {
-      useBubbleBg = widget.message.hasReactions;
-    }
 
     if (widget.bubbleBuilder != null) {
       bubble = widget.bubbleBuilder!(
@@ -426,7 +423,7 @@ class MessageState extends State<Message> {
         ) : null,
         child: ClipRRect(
           borderRadius: borderRadius,
-          child: _messageBuilder(context, useBubbleBg),
+          child: _messageBuilder(context),
         ),
       );
     }
@@ -473,7 +470,7 @@ class MessageState extends State<Message> {
         ?? MessageStatus(size: statusSize, status: widget.message.status),
   );
 
-  Widget _messageBuilder(BuildContext context, [bool addReaction = false]) {
+  Widget _messageBuilder(BuildContext context) {
     Widget messageContentWidget;
     switch (widget.message.type) {
       case types.MessageType.audio:
@@ -494,7 +491,6 @@ class MessageState extends State<Message> {
         messageContentWidget = widget.uiConfig.customMessageBuilder?.call(
           message: customMessage,
           messageWidth: contentMaxWidth,
-          reactionWidget: _reactionViewBuilder(),
         ) ?? const SizedBox();
         break ;
       case types.MessageType.file:
@@ -559,26 +555,8 @@ class MessageState extends State<Message> {
       child: messageContentWidget,
     );
 
-    if (addReaction) {
-      messageContentWidget = _reactionWrapper(messageContentWidget);
-    }
-
     return messageContentWidget;
   }
-
-  Widget _reactionWrapper(Widget content) => Column(
-    mainAxisSize: MainAxisSize.min,
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      content,
-      _reactionViewBuilder(),
-    ],
-  );
-
-  Widget _reactionViewBuilder() => widget.uiConfig.reactionViewBuilder?.call(
-    widget.message,
-    messageWidth: contentMaxWidth,
-  ) ?? const SizedBox();
 
   void flash() {
     setState(() {

@@ -1,7 +1,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-import 'package:ox_chat/manager/chat_data_cache.dart';
 import 'package:ox_chat/manager/chat_draft_manager.dart';
 import 'package:ox_chat/manager/chat_message_builder.dart';
 import 'package:ox_chat/manager/chat_message_helper.dart';
@@ -186,11 +185,9 @@ class CommonChatWidgetState extends State<CommonChatWidget> {
               customMessageBuilder: ({
                 required types.CustomMessage message,
                 required int messageWidth,
-                required Widget reactionWidget,
               }) => ChatMessageBuilder.buildCustomMessage(
                 message: message,
                 messageWidth: messageWidth,
-                reactionWidget: reactionWidget,
                 receiverPubkey: handler.otherUser?.pubKey,
                 messageUpdateCallback: (newMessage) {
                   dataController.updateMessage(newMessage);
@@ -203,12 +200,6 @@ class CommonChatWidgetState extends State<CommonChatWidget> {
                     onTap: (message) async {
                       scrollToMessage(message?.id);
                     },
-                  ),
-              reactionViewBuilder: (types.Message message, {required int messageWidth}) =>
-                  ChatMessageBuilder.buildReactionsView(
-                    message,
-                    messageWidth: messageWidth,
-                    itemOnTap: (reaction) => handler.reactionPressHandler(context, message, reaction),
                   ),
               codeBlockBuilder: ChatMessageBuilder.buildCodeBlockWidget,
               moreButtonBuilder: ChatMessageBuilder.moreButtonBuilder,

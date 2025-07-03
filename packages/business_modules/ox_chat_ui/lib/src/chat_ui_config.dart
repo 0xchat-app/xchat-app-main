@@ -20,7 +20,6 @@ class ChatUIConfig {
   final Widget Function({
     required types.CustomMessage message,
     required int messageWidth,
-    required Widget reactionWidget,
   })? customMessageBuilder;
 
   /// Create a widget that pops up when long pressing on a message
@@ -56,8 +55,6 @@ class ChatUIConfig {
 
   final Widget Function(types.Message, {required int messageWidth})? repliedMessageBuilder;
 
-  final Widget Function(types.Message, {required int messageWidth})? reactionViewBuilder;
-
   /// Constructor: all fields are optional. The user can provide only what they need.
   const ChatUIConfig({
     this.nameBuilder,
@@ -68,6 +65,5 @@ class ChatUIConfig {
     this.codeBlockBuilder,
     this.moreButtonBuilder,
     this.repliedMessageBuilder,
-    this.reactionViewBuilder,
   });
 }

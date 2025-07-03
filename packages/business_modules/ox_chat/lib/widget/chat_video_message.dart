@@ -12,14 +12,12 @@ class ChatVideoMessage extends StatefulWidget {
   ChatVideoMessage({
     required this.message,
     required this.messageWidth,
-    required this.reactionWidget,
     required this.receiverPubkey,
     this.messageUpdateCallback,
   });
 
   final types.CustomMessage message;
   final int messageWidth;
-  final Widget reactionWidget;
   final String? receiverPubkey;
   final Function(types.Message newMessage)? messageUpdateCallback;
 

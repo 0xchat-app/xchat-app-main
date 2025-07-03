@@ -1,15 +1,12 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:ox_chat/model/constant.dart';
 import 'package:ox_chat/utils/custom_message_utils.dart';
 import 'package:ox_chat/utils/general_handler/chat_general_handler.dart';
-import 'package:ox_chat/widget/reaction_input_widget.dart';
 import 'package:ox_chat_ui/ox_chat_ui.dart';
 import 'package:ox_common/business_interface/ox_chat/custom_message_type.dart';
 import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_common/utils/adapt.dart';
-import 'package:ox_common/utils/list_extension.dart';
 import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/utils/theme_color.dart';
 import 'package:ox_common/utils/widget_tool.dart';
@@ -60,8 +57,6 @@ class MessageLongPressWidgetState extends State<MessageLongPressWidget> {
   List<ItemModel> menuList = [];
 
   final maxCountOfRow = 5;
-
-  bool onlyShowEmoji = false;
 
   @override
   void initState() {
@@ -117,53 +112,24 @@ class MessageLongPressWidgetState extends State<MessageLongPressWidget> {
         ),
         constraints: BoxConstraints(
           maxWidth: maxWidth,
-          maxHeight: 300.px,
-          minHeight: 131.px,
         ),
         color: ThemeColor.color180,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ReactionInputWidget(
-                expandedOnChange: (isExpended) => setState(() {
-                  onlyShowEmoji = isExpended;
-                }),
-                reactionOnTap: (emojiEntry) {
-                  widget.handler.reactionPressHandler(
-                    widget.pageContext,
-                    widget.message,
-                    types.Reaction(content: emojiEntry.emoji)
-                  );
-                  widget.controller.hideMenu();
-                },
-              ),
-              if (!onlyShowEmoji)
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    buildSeparator(),
-                    buildMenuItemGrid(),
-                  ],
-                ),
-            ],
-          ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            buildMenuItemGrid(),
+          ],
         ),
       ),
     );
   }
-
-  Widget buildSeparator() => Divider(height: 1, color: ThemeColor.color160,)
-      .setPadding(EdgeInsets.symmetric(vertical: 12.px));
 
   Widget buildMenuItemGrid() {
     return Wrap(
       runSpacing: 16.px,
       children: menuList
           .map((item) => buildMenuItem(item))
-          .toList()
-          .insertEveryN(maxCountOfRow, buildSeparator()),
+          .toList(),
     );
   }
 

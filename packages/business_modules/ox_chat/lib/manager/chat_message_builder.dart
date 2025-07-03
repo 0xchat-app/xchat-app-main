@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:chatcore/chat-core.dart';
@@ -8,7 +7,6 @@ import 'package:ox_chat/widget/chat_video_message.dart';
 import 'package:ox_chat/widget/chat_image_preview_widget.dart';
 import 'package:ox_common/business_interface/ox_chat/call_message_type.dart';
 import 'package:ox_common/business_interface/ox_chat/custom_message_type.dart';
-import 'package:ox_common/business_interface/ox_chat/utils.dart';
 import 'package:ox_common/business_interface/ox_chat/interface.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/navigator/navigator.dart';
@@ -27,7 +25,6 @@ import 'package:ox_common/widgets/common_network_image.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 
 part 'chat_message_builder_custom.dart';
-part 'chat_message_builder_reaction.dart';
 
 class ChatMessageBuilder {
   static Widget bubbleWrapper({
@@ -76,17 +73,6 @@ class ChatMessageBuilder {
           ),
         ),
       ),
-    );
-  }
-
-  static Widget buildReactionsView(types.Message message, {
-    required int messageWidth,
-    Function(types.Reaction reaction)? itemOnTap,
-  }) {
-    return ChatMessageBuilderReactionEx.buildReactionsView(
-      message,
-      messageWidth: messageWidth,
-      itemOnTap: itemOnTap,
     );
   }
 
@@ -224,7 +210,6 @@ class ChatMessageBuilder {
   static Widget buildCustomMessage({
     required types.CustomMessage message,
     required int messageWidth,
-    required Widget reactionWidget,
     String? receiverPubkey,
     Function(types.Message newMessage)? messageUpdateCallback,
   }) {
@@ -233,21 +218,21 @@ class ChatMessageBuilder {
 
     switch (type) {
       // case CustomMessageType.zaps:
-      //   return ChatMessageBuilderCustomEx._buildZapsMessage(message, reactionWidget, isMe);
+      //   return ChatMessageBuilderCustomEx._buildZapsMessage(message, isMe);
       // case CustomMessageType.call:
       //   return ChatMessageBuilderCustomEx._buildCallMessage(message, isMe);
       case CustomMessageType.template:
-        return ChatMessageBuilderCustomEx._buildTemplateMessage(message, reactionWidget, isMe);
+        return ChatMessageBuilderCustomEx._buildTemplateMessage(message, isMe);
       case CustomMessageType.note:
-        return ChatMessageBuilderCustomEx._buildNoteMessage(message, reactionWidget, isMe);
+        return ChatMessageBuilderCustomEx._buildNoteMessage(message, isMe);
       // case CustomMessageType.ecash:
-      //   return ChatMessageBuilderCustomEx._buildEcashMessage(message, reactionWidget, isMe);
+      //   return ChatMessageBuilderCustomEx._buildEcashMessage(message, isMe);
       // case CustomMessageType.ecashV2:
-      //   return ChatMessageBuilderCustomEx._buildEcashV2Message(message, reactionWidget, isMe);
+      //   return ChatMessageBuilderCustomEx._buildEcashV2Message(message, isMe);
       case CustomMessageType.imageSending:
-        return ChatMessageBuilderCustomEx._buildImageSendingMessage(message, messageWidth, reactionWidget, receiverPubkey, isMe);
+        return ChatMessageBuilderCustomEx._buildImageSendingMessage(message, messageWidth, receiverPubkey, isMe);
       case CustomMessageType.video:
-        return ChatMessageBuilderCustomEx._buildVideoMessage(message, messageWidth, reactionWidget, receiverPubkey, isMe, messageUpdateCallback);
+        return ChatMessageBuilderCustomEx._buildVideoMessage(message, messageWidth, receiverPubkey, isMe, messageUpdateCallback);
       default:
         return SizedBox();
     }

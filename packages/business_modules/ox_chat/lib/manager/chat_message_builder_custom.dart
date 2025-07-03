@@ -59,7 +59,7 @@ extension ChatMessageBuilderCustomEx on ChatMessageBuilder {
         horizontal: 10.px,
       ),
       margin: EdgeInsets.only(
-        bottom: message.hasReactions ? 10.px : 0,
+        bottom: 0,
       ),
       child: Column(
         children: [
@@ -137,7 +137,7 @@ extension ChatMessageBuilderCustomEx on ChatMessageBuilder {
     );
   }
 
-  static Widget _buildTemplateMessage(types.CustomMessage message, Widget reactionWidget, bool isMe) {
+  static Widget _buildTemplateMessage(types.CustomMessage message, bool isMe) {
     final title = TemplateMessageEx(message).title;
     final content = TemplateMessageEx(message).content;
     final icon = TemplateMessageEx(message).icon;
@@ -201,13 +201,12 @@ extension ChatMessageBuilderCustomEx on ChatMessageBuilder {
               ),
             ],
           ).setPadding(EdgeInsets.all(10.px)),
-          reactionWidget,
         ],
       ),
     );
   }
 
-  static Widget _buildNoteMessage(types.CustomMessage message, Widget reactionWidget, bool isMe) {
+  static Widget _buildNoteMessage(types.CustomMessage message, bool isMe) {
     final title = NoteMessageEx(message).authorName;
     final authorIcon = NoteMessageEx(message).authorIcon;
     final dns = NoteMessageEx(message).authorDNS;
@@ -303,7 +302,6 @@ extension ChatMessageBuilderCustomEx on ChatMessageBuilder {
               ),
             ],
           ).setPadding(EdgeInsets.only(top: 2.px, left: 10.px, right: 10.px, bottom: 10.px)),
-          reactionWidget,
         ],
       ),
     );
@@ -312,7 +310,6 @@ extension ChatMessageBuilderCustomEx on ChatMessageBuilder {
   static Widget _buildImageSendingMessage(
     types.CustomMessage message,
     int messageWidth,
-    Widget reactionWidget,
     String? receiverPubkey,
     bool isMe,
   ) {
@@ -336,7 +333,7 @@ extension ChatMessageBuilderCustomEx on ChatMessageBuilder {
       } catch (_) { }
     }
 
-    Widget widget = Hero(
+    return Hero(
       tag: message.id,
       child: ChatImagePreviewWidget(
         uri: uri,
@@ -348,58 +345,20 @@ extension ChatMessageBuilderCustomEx on ChatMessageBuilder {
         decryptNonce: encryptedNonce,
       ),
     );
-
-    if (message.hasReactions) {
-      widget = ChatMessageBuilder.bubbleWrapper(
-        isMe: isMe,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.all(10.px),
-              child: widget,
-            ),
-            reactionWidget,
-          ],
-        ),
-      );
-    }
-
-    return widget;
   }
 
   static Widget _buildVideoMessage(
     types.CustomMessage message,
     int messageWidth,
-    Widget reactionWidget,
     String? receiverPubkey,
     bool isMe,
     Function(types.Message newMessage)? messageUpdateCallback,
   ) {
-
-    Widget widget = ChatVideoMessage(
+    return ChatVideoMessage(
       message: message,
       messageWidth: messageWidth,
-      reactionWidget: reactionWidget,
       receiverPubkey: receiverPubkey,
       messageUpdateCallback: messageUpdateCallback,
     );
-
-    if (message.hasReactions) {
-      widget = ChatMessageBuilder.bubbleWrapper(
-        isMe: isMe,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.all(10.px),
-              child: widget,
-            ),
-            reactionWidget,
-          ],
-        ),
-      );
-    }
-    return widget;
   }
 }

@@ -184,7 +184,7 @@ abstract class ImageMessage extends Message {
 class _ImageMessage extends ImageMessage {
 
   @override
-  bool get viewWithoutBubble => !hasReactions;
+  bool get viewWithoutBubble => false;
 
   const _ImageMessage({
     required super.author,
