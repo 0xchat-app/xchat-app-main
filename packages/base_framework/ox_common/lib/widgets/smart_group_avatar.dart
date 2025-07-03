@@ -93,7 +93,6 @@ class _SmartGroupAvatarState extends State<SmartGroupAvatar> {
       final newMemberPubkeys = members.map((user) => user.pubKey).toList();
       final newAvatarUrls = members
           .map((user) => user.picture ?? '')
-          .where((url) => url.isNotEmpty)
           .take(widget.maxDisplayMembers)
           .toList();
 

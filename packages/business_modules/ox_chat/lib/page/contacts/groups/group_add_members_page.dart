@@ -54,59 +54,6 @@ class _GroupAddMembersPageState extends State<GroupAddMembersPage> {
     )).toList();
   }
 
-  void _onSelectionChanged(List<SelectableUser> selectedUsers) {
-    setState(() {
-      _selectedUsers = selectedUsers;
-    });
-  }
-
-  String _getUserDisplayName(UserDBISAR user) {
-    final name = user.name ?? '';
-    final nickName = user.nickName ?? '';
-
-    if (name.isNotEmpty && nickName.isNotEmpty) {
-      return '$name($nickName)';
-    } else if (name.isNotEmpty) {
-      return name;
-    } else if (nickName.isNotEmpty) {
-      return nickName;
-    }
-    return 'Unknown';
-  }
-
-  Future<void> _addSelectedMembers() async {
-    if (_selectedUsers.isEmpty) {
-      CommonToast.instance.show(context, Localized.text('ox_chat.create_group_select_toast'));
-      return;
-    }
-
-    await OXLoading.show();
-    
-    try {
-      final memberPubkeys = _selectedUsers.map((user) => user.id).toList();
-      final result = await Groups.sharedInstance.addMembersToPrivateGroup(
-        widget.groupInfo.privateGroupId,
-        memberPubkeys,
-      );
-
-      await OXLoading.dismiss();
-
-      if (result != null) {
-        // Trigger notifier update
-        final notifier = Groups.sharedInstance.getPrivateGroupNotifier(widget.groupInfo.privateGroupId);
-        notifier.value = result;
-        
-        CommonToast.instance.show(context, Localized.text('ox_chat.add_member_success_tips'));
-        OXNavigator.pop(context, true);
-      } else {
-        CommonToast.instance.show(context, Localized.text('ox_chat.add_member_fail_tips'));
-      }
-    } catch (e) {
-      await OXLoading.dismiss();
-      CommonToast.instance.show(context, 'Failed to add members: $e');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<SelectableUser>>(
@@ -200,5 +147,58 @@ class _GroupAddMembersPageState extends State<GroupAddMembersPage> {
         );
       },
     );
+  }
+
+  void _onSelectionChanged(List<SelectableUser> selectedUsers) {
+    setState(() {
+      _selectedUsers = selectedUsers;
+    });
+  }
+
+  String _getUserDisplayName(UserDBISAR user) {
+    final name = user.name ?? '';
+    final nickName = user.nickName ?? '';
+
+    if (name.isNotEmpty && nickName.isNotEmpty) {
+      return '$name($nickName)';
+    } else if (name.isNotEmpty) {
+      return name;
+    } else if (nickName.isNotEmpty) {
+      return nickName;
+    }
+    return 'Unknown';
+  }
+
+  Future<void> _addSelectedMembers() async {
+    if (_selectedUsers.isEmpty) {
+      CommonToast.instance.show(context, Localized.text('ox_chat.create_group_select_toast'));
+      return;
+    }
+
+    await OXLoading.show();
+
+    try {
+      final memberPubkeys = _selectedUsers.map((user) => user.id).toList();
+      final result = await Groups.sharedInstance.addMembersToPrivateGroup(
+        widget.groupInfo.privateGroupId,
+        memberPubkeys,
+      );
+
+      await OXLoading.dismiss();
+
+      if (result != null) {
+        // Trigger notifier update
+        final notifier = Groups.sharedInstance.getPrivateGroupNotifier(widget.groupInfo.privateGroupId);
+        notifier.value = result;
+
+        CommonToast.instance.show(context, Localized.text('ox_chat.add_member_success_tips'));
+        OXNavigator.pop(context, true);
+      } else {
+        CommonToast.instance.show(context, Localized.text('ox_chat.add_member_fail_tips'));
+      }
+    } catch (e) {
+      await OXLoading.dismiss();
+      CommonToast.instance.show(context, 'Failed to add members: $e');
+    }
   }
 } 

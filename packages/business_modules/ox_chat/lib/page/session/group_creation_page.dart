@@ -263,9 +263,7 @@ class _GroupCreationPageState extends State<GroupCreationPage> {
       }
 
       // Close all previous pages and navigate to group chat
-      OXNavigator.pop(context); // Close group creation page
-      OXNavigator.pop(context); // Close member selection page
-      OXNavigator.pop(context); // Close new message page
+      OXNavigator.popToRoot(context);
 
       // Navigate to group chat page
       ChatMessagePage.open(
