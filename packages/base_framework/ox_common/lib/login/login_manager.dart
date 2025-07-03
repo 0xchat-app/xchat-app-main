@@ -698,7 +698,10 @@ extension LoginManagerCircle on LoginManager {
       switch (loginType) {
         case LoginType.nesc:
         // Use private key login
-          final privateKey = account.getPrivateKey();
+          final privateKey = AccountHelperEx.getPrivateKey(
+            account.encryptedPrivKey,
+            account.defaultPassword,
+          );
           return Account.sharedInstance.loginWithPriKey(privateKey);
 
         case LoginType.androidSigner:

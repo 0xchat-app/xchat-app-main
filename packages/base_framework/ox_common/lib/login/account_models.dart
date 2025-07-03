@@ -314,19 +314,39 @@ class AccountHelper {
 
 extension AccountHelperEx on AccountModel {
 
-  String getPrivateKey() {
+  static String getPrivateKey(String encryptedPrivKey, String password) {
     final encryptedBytes = hex.decode(encryptedPrivKey);
-    final decryptedBytes = decryptPrivateKey(Uint8List.fromList(encryptedBytes), defaultPassword);
+    final decryptedBytes = decryptPrivateKey(
+      Uint8List.fromList(encryptedBytes),
+      password,
+    );
     return hex.encode(decryptedBytes);
+  }
+
+  // Static method to run in isolate for private key decryption
+  static Future<String> _decodeAndEncodePrivkey(Map<String, String> params) async {
+    try {
+      final encryptedPrivKey = params['encryptedPrivKey']!;
+      final password = params['password']!;
+      final privkey = getPrivateKey(encryptedPrivKey, password);
+      return Nip19.encodePrivkey(privkey);
+    } catch (e) {
+      print('Error in isolate decoding private key: $e');
+      return '';
+    }
   }
 
   String getEncodedPubkey() {
     return Nip19.encodePubkey(pubkey);
   }
 
-  String getEncodedPrivkey() {
-    final privkey = getPrivateKey();
-    return Nip19.encodePrivkey(privkey);
+  Future<String> getEncodedPrivkey() async {
+    // Use compute to run the expensive decryption operation in isolate
+    final params = {
+      'encryptedPrivKey': encryptedPrivKey,
+      'password': defaultPassword,
+    };
+    return await compute(_decodeAndEncodePrivkey, params);
   }
 
   void updateLastLoginCircle(String? circleId) {

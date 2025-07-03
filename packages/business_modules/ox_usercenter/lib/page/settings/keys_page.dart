@@ -23,21 +23,37 @@ class KeysPage extends StatefulWidget {
   }
 
 }
-enum KeyType { PublicKey, PrivateKey }
-class _KeysPageState extends State<KeysPage>{
+
+class _KeysPageState extends State<KeysPage> {
 
   ValueNotifier<bool> isShowPriv$ = ValueNotifier(false);
-
-  String encodedPubkey = '';
-  String encodedPrivkey = '';
+  ValueNotifier<bool> isLoading$ = ValueNotifier(true);
+  ValueNotifier<String> encodedPubkey$ = ValueNotifier('');
+  ValueNotifier<String> encodedPrivkey$ = ValueNotifier('');
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      prepareData();
+    });
+  }
 
-    final account = LoginManager.instance.currentState.account;
-    encodedPubkey = account?.getEncodedPubkey() ?? '';
-    encodedPrivkey = account?.getEncodedPrivkey() ?? '';
+  Future prepareData() async {
+    try {
+      final account = LoginManager.instance.currentState.account;
+      if (account == null) return;
+      
+      final pubkey = account.getEncodedPubkey();
+      encodedPubkey$.value = pubkey;
+      
+      final privkey = await account.getEncodedPrivkey();
+      encodedPrivkey$.value = privkey;
+      isLoading$.value = false;
+    } catch (e) {
+      print('Error loading keys: $e');
+      isLoading$.value = false;
+    }
   }
 
   @override
@@ -56,63 +72,95 @@ class _KeysPageState extends State<KeysPage>{
     return ValueListenableBuilder(
       valueListenable: isShowPriv$,
       builder: (context, isShowPriv, _) {
-        return CLSectionListView(
-          items: [
-            SectionListViewItem(
-              data: [
-                CustomItemModel(
-                  title: Localized.text('ox_login.public_key'),
-                  subtitleWidget: CLText(
-                    encodedPubkey,
-                    maxLines: 2,
-                  ),
-                  trailing: Icon(
-                    Icons.copy_rounded,
-                    color: ColorToken.onSecondaryContainer.of(context),
-                  ),
-                  onTap: pubkeyItemOnTap,
-                ),
-                CustomItemModel(
-                  title: Localized.text('ox_login.private_key'),
-                  subtitleWidget: CLText(
-                    isShowPriv ? encodedPrivkey
-                        : List.filled(encodedPrivkey.length, '*').join(),
-                    maxLines: 2,
-                  ),
-                  trailing: Icon(
-                    Icons.copy_rounded,
-                    color: ColorToken.onSecondaryContainer.of(context),
-                  ),
-                  onTap: privkeyItemOnTap,
-                ),
-              ],
-            ),
-          ],
-          footer: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.px, vertical: 16.px),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                buildShowButton(),
-                buildLogoutButton(),
-              ],
-            ),
-          ),
+        return ValueListenableBuilder(
+          valueListenable: isLoading$,
+          builder: (context, isLoading, _) {
+            return ValueListenableBuilder(
+              valueListenable: encodedPubkey$,
+              builder: (context, encodedPubkey, _) {
+                return ValueListenableBuilder(
+                  valueListenable: encodedPrivkey$,
+                  builder: (context, encodedPrivkey, _) {
+                    return CLSectionListView(
+                      items: [
+                        SectionListViewItem(
+                          data: [
+                            CustomItemModel(
+                              title: Localized.text('ox_login.public_key'),
+                              subtitleWidget: CLText(
+                                encodedPubkey.isNotEmpty ? encodedPubkey : 'Loading...',
+                                maxLines: 2,
+                              ),
+                              trailing: encodedPubkey.isNotEmpty ? Icon(
+                                Icons.copy_rounded,
+                                color: ColorToken.onSecondaryContainer.of(context),
+                              ) : SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              ),
+                              onTap: encodedPubkey.isNotEmpty ? pubkeyItemOnTap : null,
+                            ),
+                            CustomItemModel(
+                              title: Localized.text('ox_login.private_key'),
+                              subtitleWidget: isLoading 
+                                ? CLText('Loading...', maxLines: 2)
+                                : CLText(
+                                    isShowPriv ? encodedPrivkey
+                                        : List.filled(encodedPrivkey.length, '*').join(),
+                                    maxLines: 2,
+                                  ),
+                              trailing: isLoading 
+                                ? SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(strokeWidth: 2),
+                                  )
+                                : Icon(
+                                    Icons.copy_rounded,
+                                    color: ColorToken.onSecondaryContainer.of(context),
+                                  ),
+                              onTap: !isLoading ? privkeyItemOnTap : null,
+                            ),
+                          ],
+                        ),
+                      ],
+                      footer: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.px, vertical: 16.px),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            buildShowButton(),
+                            buildLogoutButton(),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            );
+          },
         );
       },
     );
   }
 
   Widget buildShowButton() {
-    return CLButton.tonal(
-      height: 48,
-      padding: EdgeInsets.symmetric(
-        horizontal: 12.px,
-        vertical: 12.px,
-      ),
-      expanded: true,
-      text: 'Show Private Key',
-      onTap: () => isShowPriv$.value = true,
+    return ValueListenableBuilder(
+      valueListenable: isLoading$,
+      builder: (context, isLoading, _) {
+        return CLButton.tonal(
+          height: 48,
+          padding: EdgeInsets.symmetric(
+            horizontal: 12.px,
+            vertical: 12.px,
+          ),
+          expanded: true,
+          text: 'Show Private Key',
+          onTap: isLoading ? null : () => isShowPriv$.value = true,
+        );
+      },
     );
   }
 
@@ -154,14 +202,14 @@ class _KeysPageState extends State<KeysPage>{
   void pubkeyItemOnTap () async {
     await TookKit.copyKey(
       context,
-      encodedPubkey,
+      encodedPubkey$.value,
     );
   }
 
   void privkeyItemOnTap() async {
     await TookKit.copyKey(
       context,
-      encodedPrivkey,
+      encodedPrivkey$.value,
     );
   }
 }
