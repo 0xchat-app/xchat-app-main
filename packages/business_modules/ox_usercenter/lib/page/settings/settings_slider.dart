@@ -47,6 +47,7 @@ class SettingSliderState extends State<SettingSlider> {
     languageItemNty.addListener(() {
       // Update label notifier when language changed.
       themeItemNty.value = themeManager.themeStyle.text;
+      prepareLiteData();
     });
   }
 
@@ -133,6 +134,12 @@ class SettingSliderState extends State<SettingSlider> {
         ),
       ]),
     ];
+  }
+
+  @override
+  void dispose() {
+    languageItemNty.dispose();
+    super.dispose();
   }
 
   @override
