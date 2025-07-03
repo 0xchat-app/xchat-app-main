@@ -1,6 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:ox_theme/ox_theme.dart';
 
+/// @deprecated This class is deprecated. Please use [ColorToken] instead.
+/// 
+/// [ColorToken] provides a more modern and type-safe approach to color management
+/// with better support for Material Design 3 and Cupertino themes.
+/// 
+/// Example migration:
+/// - Old: `ThemeColor.primary`
+/// - New: `ColorToken.primary.of(context)`
+/// 
+/// For more information, see the [ColorToken] enum in `lib/src/component/color_token.dart`
+@Deprecated('Use ColorToken instead. This class will be removed in a future version.')
 class ThemeColor {
   static Color get dark01 => ThemeManager.colors('ox_common.dark01');
   static Color get dark02 => ThemeManager.colors('ox_common.dark02');
