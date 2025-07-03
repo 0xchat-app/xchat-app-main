@@ -44,6 +44,7 @@ class CustomPopupMenu extends StatefulWidget {
     required this.menuBuilder,
     required this.pressType,
     this.controller,
+    this.widgetKey,
     this.arrowColor = const Color(0xFF4C4C4C),
     this.showArrow = true,
     this.barrierColor = Colors.black12,
@@ -67,6 +68,7 @@ class CustomPopupMenu extends StatefulWidget {
   final Widget Function() menuBuilder;
   final PreferredPosition? position;
   final void Function(bool)? menuOnChange;
+  final GlobalKey? widgetKey;
 
   /// Pass tap event to the widgets below the mask.
   /// It only works when [barrierColor] is transparent.
@@ -174,7 +176,7 @@ class _CustomPopupMenuState extends State<CustomPopupMenu> {
                 fadeBegin: 0.0,
                 fadeEnd: 1.0,
                 maintainState: true,
-                child:  Container(
+                child: Container(
                   color: widget.barrierColor,
                   child: menu,
                 ),
@@ -215,7 +217,7 @@ class _CustomPopupMenuState extends State<CustomPopupMenu> {
     _controller?.addListener(_updateView);
     WidgetsBinding.instance.addPostFrameCallback((call) {
       if (mounted) {
-        _childBox = context.findRenderObject() as RenderBox?;
+        _childBox = widget.widgetKey?.currentContext?.findRenderObject() as RenderBox?;
         _parentBox =
             Overlay.of(context).context.findRenderObject() as RenderBox?;
       }

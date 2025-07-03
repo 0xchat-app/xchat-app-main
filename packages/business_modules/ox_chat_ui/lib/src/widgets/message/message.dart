@@ -172,6 +172,7 @@ class Message extends StatefulWidget {
 class MessageState extends State<Message> {
 
   final CustomPopupMenuController _popController = CustomPopupMenuController();
+  final GlobalKey _bubbleKey = GlobalKey();
 
   double get horizontalPadding => 12.px;
   double get avatarPadding => 8.px;
@@ -345,10 +346,11 @@ class MessageState extends State<Message> {
             );
     final bubbleWithPopupMenu = CustomPopupMenu(
       controller: _popController,
+      widgetKey: _bubbleKey,
       arrowColor: const Color(0xFF2A2A2A),
       menuBuilder: _buildLongPressMenu,
       pressType: PressType.longPress,
-      horizontalMargin: 0,
+      horizontalMargin: horizontalPadding,
       verticalMargin: 0,
       child: _bubbleBuilder(
         context,
@@ -408,13 +410,18 @@ class MessageState extends State<Message> {
     var useBubbleBg = !widget.message.viewWithoutBubble;
 
     if (widget.bubbleBuilder != null) {
-      bubble = widget.bubbleBuilder!(
+      final customBubble = widget.bubbleBuilder!(
         _messageBuilder(context),
         message: widget.message,
         nextMessageInGroup: widget.roundBorder,
       );
+      bubble = Container(
+        key: _bubbleKey,
+        child: customBubble,
+      );
     } else {
       bubble = Container(
+        key: _bubbleKey,
         decoration: useBubbleBg ? BoxDecoration(
           borderRadius: borderRadius,
           color: currentUserIsAuthor
