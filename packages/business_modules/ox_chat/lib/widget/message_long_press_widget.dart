@@ -32,12 +32,14 @@ class MessageLongPressWidget extends StatefulWidget {
   final types.Message message;
   final CustomPopupMenuController controller;
   final ChatGeneralHandler handler;
+  final Color? backgroundColor;
 
   MessageLongPressWidget({
     required this.pageContext,
     required this.message,
     required this.controller,
     required this.handler,
+    this.backgroundColor,
   });
 
   @override
@@ -113,7 +115,17 @@ class MessageLongPressWidgetState extends State<MessageLongPressWidget> {
         constraints: BoxConstraints(
           maxWidth: maxWidth,
         ),
-        color: ThemeColor.color180,
+        decoration: BoxDecoration(
+          color: widget.backgroundColor ?? const Color(0xFF2A2A2A),
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -149,13 +161,13 @@ class MessageLongPressWidgetState extends State<MessageLongPressWidget> {
             CommonImage(
               iconName: item.icon.path,
               size: _Layout.menuIconSize,
-              color: ThemeColor.color0,
+              color: Colors.white,
               package: item.icon.package,
             ),
             Text(
               item.title,
               style: TextStyle(
-                color: ThemeColor.color0,
+                color: Colors.white,
                 fontSize: 12.sp,
               ),
               maxLines: 1,

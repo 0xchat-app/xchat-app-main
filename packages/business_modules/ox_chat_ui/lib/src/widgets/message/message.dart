@@ -345,10 +345,10 @@ class MessageState extends State<Message> {
             );
     final bubbleWithPopupMenu = CustomPopupMenu(
       controller: _popController,
-      arrowColor: ThemeColor.color180,
+      arrowColor: const Color(0xFF2A2A2A),
       menuBuilder: _buildLongPressMenu,
       pressType: PressType.longPress,
-      horizontalMargin: horizontalPadding,
+      horizontalMargin: 0,
       verticalMargin: 0,
       child: _bubbleBuilder(
         context,

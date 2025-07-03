@@ -1,5 +1,7 @@
 export 'src/layout/layout_constant.dart';
 
+export 'src/animation/animation.dart';
+
 export 'src/component/color_token.dart';
 export 'src/component/platform_style.dart';
 export 'src/component/theme_data.dart';

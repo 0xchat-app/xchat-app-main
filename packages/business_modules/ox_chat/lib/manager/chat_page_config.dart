@@ -30,8 +30,12 @@ class ChatPageConfig {
       message: message,
       controller: controller,
       handler: handler,
+      backgroundColor: longPressMenuBackgroundColor,
     );
   }
+
+  /// Background color for long press menu
+  Color? get longPressMenuBackgroundColor => const Color(0xFF2A2A2A);
 
   ImageGalleryOptions get imageGalleryOptions =>
       ImageGalleryOptions(

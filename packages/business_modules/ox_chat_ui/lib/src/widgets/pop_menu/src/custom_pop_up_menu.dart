@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/took_kit.dart';
 
+import 'package:ox_common/component.dart';
 import 'platform/platform.dart';
 
 enum PressType {
@@ -81,8 +82,22 @@ class _CustomPopupMenuState extends State<CustomPopupMenu> {
   OverlayEntry? _overlayEntry;
   CustomPopupMenuController? _controller;
   bool _canResponse = true;
+  final _isMenuVisible$ = ValueNotifier(false);
+  Duration get showAnimateDur => const Duration(milliseconds: 150);
 
-  void _showMenu() {
+  void _showMenu() async {
+    prepareOverlayEntryIfNeeded();
+    if (_overlayEntry != null) {
+      Overlay.of(context).insert(_overlayEntry!);
+      // Start animation after menu is inserted
+      await Future.delayed(Duration(milliseconds: 50));
+      _isMenuVisible$.value = true;
+    }
+  }
+
+  void prepareOverlayEntryIfNeeded() {
+    if (_overlayEntry != null) return;
+
     final Widget arrow = ClipPath(
       clipper: _ArrowClipper(),
       child: Container(
@@ -91,7 +106,6 @@ class _CustomPopupMenuState extends State<CustomPopupMenu> {
         color: widget.arrowColor,
       ),
     );
-
     _overlayEntry = OverlayEntry(
       builder: (context) {
         final Widget menu = Center(
@@ -123,16 +137,8 @@ class _CustomPopupMenuState extends State<CustomPopupMenu> {
                     ),
                   ),
                 LayoutId(
-                  id: _MenuLayoutId.content,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Material(
-                        color: Colors.transparent,
-                        child: widget.menuBuilder(),
-                      ),
-                    ],
-                  ),
+                    id: _MenuLayoutId.content,
+                    child: widget.menuBuilder()
                 ),
               ],
             ),
@@ -157,27 +163,39 @@ class _CustomPopupMenuState extends State<CustomPopupMenu> {
             Future.delayed(Duration(milliseconds: 300))
                 .then((_) => _canResponse = true);
           },
-          child: widget.barrierColor == Colors.transparent
-              ? menu
-              : Container(
+          child: ValueListenableBuilder(
+            valueListenable: _isMenuVisible$,
+            builder: (context, isMenuVisible, _) {
+              return AnimatedVisibility(
+                visible: isMenuVisible,
+                duration: showAnimateDur,
+                scaleBegin: 1.0,
+                scaleEnd: 1.0,
+                fadeBegin: 0.0,
+                fadeEnd: 1.0,
+                maintainState: true,
+                child:  Container(
                   color: widget.barrierColor,
                   child: menu,
                 ),
+              );
+            },
+          ),
         );
       },
     );
-    WidgetsBinding.instance.waitUntilFirstFrameRasterized.then((_) {
-      if (_overlayEntry != null) {
-        Overlay.of(context).insert(_overlayEntry!);
-      }
-    });
   }
 
   void _hideMenu() {
-    if (_overlayEntry != null) {
-      _overlayEntry?.remove();
-      _overlayEntry = null;
-    }
+    _isMenuVisible$.value = false;
+
+    // Delay removal to allow hide animation to complete
+    Future.delayed(showAnimateDur, () {
+      if (_overlayEntry != null) {
+        _overlayEntry?.remove();
+        _overlayEntry = null;
+      }
+    });
   }
 
   void _updateView() {
@@ -206,8 +224,8 @@ class _CustomPopupMenuState extends State<CustomPopupMenu> {
 
   @override
   void dispose() {
-    _hideMenu();
     _controller?.removeListener(_updateView);
+    _hideMenu();
     super.dispose();
   }
 
