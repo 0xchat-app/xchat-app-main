@@ -96,8 +96,7 @@ class _ChatListState extends State<ChatList>
     ..duration = Duration.zero
     ..forward();
 
-  bool _indicatorOnScrollStatus = false;
-  bool _isShowBeforePageLoading = false;
+  final _isShowBeforePageLoading$ = ValueNotifier(false);
   bool _isBeforePageLoading = false;
   bool _isShowAfterPageLoading = false;
   bool _isAfterPageLoading = false;
@@ -148,7 +147,6 @@ class _ChatListState extends State<ChatList>
       NotificationListener<ScrollNotification>(
         onNotification: (notification) {
           updateBottomFlag(notification);
-          updateIndicatorStatus(notification);
           updateScrollingFlag(notification);
           loadingBeforeMessageIfNeeded(notification);
           loadingAfterMessageIfNeeded(notification);
@@ -162,19 +160,6 @@ class _ChatListState extends State<ChatList>
           slivers: [
             if (widget.bottomWidget != null)
               SliverToBoxAdapter(child: widget.bottomWidget),
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              sliver: SliverToBoxAdapter(
-                child: widget.typingIndicatorOptions?.customTypingIndicator ??
-                    TypingIndicator(
-                      bubbleAlignment: widget.bubbleRtlAlignment,
-                      options: widget.typingIndicatorOptions!,
-                      showIndicator: (widget
-                              .typingIndicatorOptions!.typingUsers.isNotEmpty &&
-                          !_indicatorOnScrollStatus),
-                    ),
-              ),
-            ),
             buildStagingListView(),
             buildBodyListView(),
             SliverPadding(
@@ -333,17 +318,22 @@ class _ChatListState extends State<ChatList>
       child: SizedBox(
         height: 16,
         width: 16,
-        child: _isShowBeforePageLoading
-            ? CircularProgressIndicator(
-          backgroundColor: Colors.transparent,
-          strokeWidth: 1.5,
-          valueColor: AlwaysStoppedAnimation<Color>(
-            InheritedChatTheme.of(context)
-                .theme
-                .primaryColor,
-          ),
-        )
-            : null,
+        child: ValueListenableBuilder(
+          valueListenable: _isShowBeforePageLoading$,
+          builder: (_, _isShowBeforePageLoading, __,) {
+            if (!_isShowBeforePageLoading) return SizedBox.shrink();
+
+            return CircularProgressIndicator(
+              backgroundColor: Colors.transparent,
+              strokeWidth: 1.5,
+              valueColor: AlwaysStoppedAnimation<Color>(
+                InheritedChatTheme.of(context)
+                    .theme
+                    .primaryColor,
+              ),
+            );
+          },
+        ),
       ),
     );
 
@@ -385,19 +375,6 @@ class _ChatListState extends State<ChatList>
     _isAtBottom = notification.metrics.pixels < bottomThreshold;
   }
 
-  void updateIndicatorStatus(ScrollNotification notification) {
-    if (notification.metrics.pixels > 10.0 && !_indicatorOnScrollStatus) {
-      setState(() {
-        _indicatorOnScrollStatus = !_indicatorOnScrollStatus;
-      });
-    } else if (notification.metrics.pixels == 0.0 &&
-        _indicatorOnScrollStatus) {
-      setState(() {
-        _indicatorOnScrollStatus = !_indicatorOnScrollStatus;
-      });
-    }
-  }
-
   void updateScrollingFlag(ScrollNotification notification) {
     if (notification is ScrollStartNotification) {
       _isScrolling = true;
@@ -415,10 +392,8 @@ class _ChatListState extends State<ChatList>
     if (!isTryLoading) return ;
 
     final tryShowNextPageLoading = () {
-      if (!_isShowBeforePageLoading) {
-        setState(() {
-          _isShowBeforePageLoading = true;
-        });
+      if (!_isShowBeforePageLoading$.value) {
+        _isShowBeforePageLoading$.value = true;
       }
     };
 
@@ -428,10 +403,8 @@ class _ChatListState extends State<ChatList>
       _isBeforePageLoading = true;
 
       widget.onEndReached?.call().whenComplete(() {
-        setState(() {
-          _isShowBeforePageLoading = false;
-          _isBeforePageLoading = false;
-        });
+        _isShowBeforePageLoading$.value = false;
+        _isBeforePageLoading = false;
       });
     };
 
@@ -449,9 +422,7 @@ class _ChatListState extends State<ChatList>
 
     final tryShowNextPageLoading = () {
       if (!_isShowAfterPageLoading) {
-        setState(() {
-          _isShowAfterPageLoading = true;
-        });
+        _isShowAfterPageLoading = true;
       }
     };
 
@@ -461,10 +432,8 @@ class _ChatListState extends State<ChatList>
       _isAfterPageLoading = true;
 
       widget.onHeadReached?.call().whenComplete(() {
-        setState(() {
-          _isShowAfterPageLoading = false;
-          _isAfterPageLoading = false;
-        });
+        _isShowAfterPageLoading = false;
+        _isAfterPageLoading = false;
       });
     };
 
