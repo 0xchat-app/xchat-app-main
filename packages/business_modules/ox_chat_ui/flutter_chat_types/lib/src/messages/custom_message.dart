@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
@@ -35,6 +34,7 @@ abstract class CustomMessage extends Message {
     super.reactions,
     super.zapsInfoList,
     required this.viewWithoutBubble,
+    super.isMe,
   }) : super(type: type ?? MessageType.custom);
 
   const factory CustomMessage({
@@ -57,6 +57,7 @@ abstract class CustomMessage extends Message {
     List<Reaction> reactions,
     List<ZapsInfo> zapsInfoList,
     required bool viewWithoutBubble,
+    bool isMe,
   }) = _CustomMessage;
 
   @override
@@ -96,6 +97,7 @@ abstract class CustomMessage extends Message {
         updatedAt: updatedAt,
         expiration: expiration,
         viewWithoutBubble: viewWithoutBubble,
+        isMe: false,
       );
 
   @override
@@ -143,6 +145,7 @@ abstract class CustomMessage extends Message {
     int? expiration,
     List<Reaction>? reactions,
     List<ZapsInfo>? zapsInfoList,
+    bool? isMe,
   });
 
   /// Converts a custom message to the map representation,
@@ -173,6 +176,7 @@ class _CustomMessage extends CustomMessage {
     super.reactions,
     super.zapsInfoList,
     required super.viewWithoutBubble,
+    super.isMe,
   }) : super._();
 
   @override
@@ -196,6 +200,7 @@ class _CustomMessage extends CustomMessage {
     List<Reaction>? reactions,
     List<ZapsInfo>? zapsInfoList,
     bool? viewWithoutBubble,
+    bool? isMe,
   }) =>
       _CustomMessage(
         author: author ?? this.author,
@@ -219,6 +224,7 @@ class _CustomMessage extends CustomMessage {
         updatedAt: updatedAt == _Unset ? this.updatedAt : updatedAt as int?,
         expiration: expiration ?? this.expiration,
         viewWithoutBubble: viewWithoutBubble ?? this.viewWithoutBubble,
+        isMe: isMe ?? this.isMe,
         reactions: reactions ?? this.reactions,
         zapsInfoList: zapsInfoList ?? this.zapsInfoList,
       );

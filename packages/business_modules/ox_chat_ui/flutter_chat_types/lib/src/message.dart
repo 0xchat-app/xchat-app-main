@@ -77,6 +77,7 @@ abstract class Message extends Equatable {
     this.expiration,
     this.reactions = const [],
     this.zapsInfoList = const [],
+    this.isMe = false,
   }) : _id = id;
 
   /// Creates a particular message from a map (decoded JSON).
@@ -161,6 +162,8 @@ abstract class Message extends Equatable {
 
   bool get viewWithoutBubble => false;
 
+  /// Whether this message is sent by the current user
+  final bool isMe;
 
   /// Creates a copy of the message with an updated data.
   Message copyWith({
@@ -182,6 +185,7 @@ abstract class Message extends Equatable {
     int? expiration,
     List<Reaction>? reactions,
     List<ZapsInfo>? zapsInfoList,
+    bool? isMe,
   });
 
   /// Converts a particular message to the map representation, serializable to JSON.
@@ -208,5 +212,6 @@ abstract class Message extends Equatable {
       'zaps: $zapsInfoList, '
       'decryptKey: $decryptKey, '
       'decryptNonce: $decryptNonce, '
+      'isMe: $isMe, '
       '}';
 }

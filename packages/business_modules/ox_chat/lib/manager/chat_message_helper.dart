@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -413,6 +412,7 @@ class ChatMessageHelper {
     final zapsInfoList = await _getZapsInfo(zapsInfoIds);
 
     final messageFactory = await _getMessageFactory(messageType);
+    final isMe = OXUserInfoManager.sharedInstance.isCurrentUser(authorPubkey);
     final uiMessage = messageFactory.createMessage(
       author: author,
       timestamp: createTime,
@@ -431,6 +431,7 @@ class ChatMessageHelper {
       expiration: expiration,
       reactions: reactions,
       zapsInfoList: zapsInfoList,
+      isMe: isMe,
     );
 
     logger?.print(

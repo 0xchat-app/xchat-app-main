@@ -32,6 +32,7 @@ abstract class TextMessage extends Message {
     super.expiration,
     super.reactions,
     super.zapsInfoList,
+    super.isMe,
   }) : super(type: type ?? MessageType.text);
 
   const factory TextMessage({
@@ -53,6 +54,7 @@ abstract class TextMessage extends Message {
     int? expiration,
     List<Reaction> reactions,
     List<ZapsInfo> zapsInfoList,
+    bool isMe,
   }) = _TextMessage;
 
   /// Creates a text message from a map (decoded JSON).
@@ -87,6 +89,7 @@ abstract class TextMessage extends Message {
         type: MessageType.text,
         updatedAt: updatedAt,
         expiration: expiration,
+        isMe: false,
       );
 
   /// See [PreviewData].
@@ -140,6 +143,7 @@ abstract class TextMessage extends Message {
     int? expiration,
     List<Reaction>? reactions,
     List<ZapsInfo>? zapsInfoList,
+    bool? isMe,
   });
 
   /// Converts a text message to the map representation, encodable to JSON.
@@ -168,6 +172,7 @@ class _TextMessage extends TextMessage {
     super.expiration,
     super.reactions,
     super.zapsInfoList,
+    super.isMe,
   }) : super._();
 
   @override
@@ -181,10 +186,10 @@ class _TextMessage extends TextMessage {
     dynamic remoteId = _Unset,
     dynamic repliedMessage = _Unset,
     String? repliedMessageId,
-    dynamic roomId,
+    String? roomId,
     dynamic showStatus = _Unset,
-    dynamic status = _Unset,
     String? text,
+    dynamic status = _Unset,
     dynamic updatedAt = _Unset,
     EncryptionType? fileEncryptionType,
     String? decryptKey,
@@ -192,32 +197,27 @@ class _TextMessage extends TextMessage {
     int? expiration,
     List<Reaction>? reactions,
     List<ZapsInfo>? zapsInfoList,
+    bool? isMe,
   }) =>
       _TextMessage(
         author: author ?? this.author,
         createdAt: createdAt ?? this.createdAt,
         id: id ?? this.id,
         sourceKey: sourceKey ?? this.sourceKey,
-        metadata: metadata == _Unset
-            ? this.metadata
-            : metadata as Map<String, dynamic>?,
-        previewData: previewData == _Unset
-            ? this.previewData
-            : previewData as PreviewData?,
+        metadata: metadata == _Unset ? this.metadata : metadata as Map<String, dynamic>?,
+        previewData: previewData == _Unset ? this.previewData : previewData as PreviewData?,
         remoteId: remoteId == _Unset ? this.remoteId : remoteId as String?,
-        repliedMessage: repliedMessage == _Unset
-            ? this.repliedMessage
-            : repliedMessage as Message?,
+        repliedMessage: repliedMessage == _Unset ? this.repliedMessage : repliedMessage as Message?,
         repliedMessageId: repliedMessageId ?? this.repliedMessageId,
-        roomId: roomId == _Unset ? this.roomId : roomId as String?,
-        showStatus:
-            showStatus == _Unset ? this.showStatus : showStatus as bool?,
-        status: status == _Unset ? this.status : status as Status?,
+        roomId: roomId ?? this.roomId,
+        showStatus: showStatus == _Unset ? this.showStatus : showStatus as bool?,
         text: text ?? this.text,
+        status: status == _Unset ? this.status : status as Status?,
         updatedAt: updatedAt == _Unset ? this.updatedAt : updatedAt as int?,
         expiration: expiration ?? this.expiration,
         reactions: reactions ?? this.reactions,
         zapsInfoList: zapsInfoList ?? this.zapsInfoList,
+        isMe: isMe ?? this.isMe,
       );
 }
 

@@ -28,6 +28,7 @@ abstract class MessageFactory {
     int? expiration,
     List<types.Reaction> reactions = const [],
     List<types.ZapsInfo> zapsInfoList = const [],
+    bool isMe = false,
   });
 }
 
@@ -50,6 +51,7 @@ class TextMessageFactory implements MessageFactory {
     int? expiration,
     List<types.Reaction> reactions = const [],
     List<types.ZapsInfo> zapsInfoList = const [],
+    bool isMe = false,
   }) {
     final text = content;
     PreviewData? previewDataEntry;
@@ -73,6 +75,7 @@ class TextMessageFactory implements MessageFactory {
       expiration: expiration,
       reactions: reactions,
       zapsInfoList: zapsInfoList,
+      isMe: isMe,
     );
   }
 }
@@ -96,6 +99,7 @@ class ImageMessageFactory implements MessageFactory {
     int? expiration,
     List<types.Reaction> reactions = const [],
     List<types.ZapsInfo> zapsInfoList = const [],
+    bool isMe = false,
   }) {
     final uri = content;
     if (uri.isEmpty) {
@@ -120,6 +124,7 @@ class ImageMessageFactory implements MessageFactory {
       expiration: expiration,
       reactions: reactions,
       zapsInfoList: zapsInfoList,
+      isMe: isMe,
     );
   }
 }
@@ -143,6 +148,7 @@ class AudioMessageFactory implements MessageFactory {
     int? expiration,
     List<types.Reaction> reactions = const [],
     List<types.ZapsInfo> zapsInfoList = const [],
+    bool isMe = false,
   }) {
     final uri = content;
     if (uri.isEmpty) {
@@ -168,6 +174,7 @@ class AudioMessageFactory implements MessageFactory {
       expiration: expiration,
       reactions: reactions,
       zapsInfoList: zapsInfoList,
+      isMe: isMe,
     );
   }
 }
@@ -191,6 +198,7 @@ class VideoMessageFactory implements MessageFactory {
     int? expiration,
     List<types.Reaction> reactions = const [],
     List<types.ZapsInfo> zapsInfoList = const [],
+    bool isMe = false,
   }) {
     final uri = content;
     final snapshotUrl =
@@ -198,28 +206,33 @@ class VideoMessageFactory implements MessageFactory {
     if (uri.isEmpty) {
       return null;
     }
-    return types.VideoMessage(
-      name: '$remoteId.mp4',
-      size: 60,
-      uri: snapshotUrl,
-      metadata: {
-        "videoUrl": uri,
-      },
+    return types.CustomMessage(
       author: author,
       createdAt: timestamp,
       id: remoteId ?? messageId ?? '',
       sourceKey: sourceKey,
-      roomId: roomId,
       remoteId: remoteId,
-      status: status,
+      roomId: roomId,
       repliedMessage: repliedMessage,
       repliedMessageId: repliedMessageId,
-      fileEncryptionType: fileEncryptionType,
+      metadata: CustomMessageEx.videoMetaData(
+        fileId: '',
+        snapshotPath: '',
+        videoPath: '',
+        url: uri,
+        width: null,
+        height: null,
+        encryptedKey: decryptKey,
+        encryptedNonce: decryptNonce,
+      ),
+      type: types.MessageType.custom,
       decryptKey: decryptKey,
       decryptNonce: decryptNonce,
       expiration: expiration,
       reactions: reactions,
       zapsInfoList: zapsInfoList,
+      viewWithoutBubble: true,
+      isMe: isMe,
     );
   }
 }
@@ -343,13 +356,13 @@ class SystemMessageFactory implements MessageFactory {
     int? expiration,
     List<types.Reaction> reactions = const [],
     List<types.ZapsInfo> zapsInfoList = const [],
+    bool isMe = false,
   }) {
     var text = content;
     final key = text;
     if (key.isNotEmpty) {
       text = Localized.text(key, useOrigin: true);
       if (key == 'ox_chat.screen_record_hint_message' || key == 'ox_chat.screenshot_hint_message') {
-        final isMe = OXUserInfoManager.sharedInstance.isCurrentUser(author.id);
         final name =
             isMe ? Localized.text('ox_common.you') : (author.sourceObject?.getUserShowName() ?? '');
         text = text.replaceAll(r'${user}', name);
@@ -366,6 +379,7 @@ class SystemMessageFactory implements MessageFactory {
       expiration: expiration,
       reactions: reactions,
       zapsInfoList: zapsInfoList,
+      isMe: isMe,
     );
   }
 }
@@ -404,6 +418,7 @@ class CustomMessageFactory implements MessageFactory {
     int? expiration,
     List<types.Reaction> reactions = const [],
     List<types.ZapsInfo> zapsInfoList = const [],
+    bool isMe = false,
   }) {
     final contentString = content;
     if (contentString.isEmpty) return null;
@@ -457,6 +472,7 @@ class CustomMessageFactory implements MessageFactory {
           status: status,
           reactions: reactions,
           zapsInfoList: zapsInfoList,
+          isMe: isMe,
         );
 
       case CustomMessageType.note:
@@ -487,6 +503,7 @@ class CustomMessageFactory implements MessageFactory {
           status: status,
           reactions: reactions,
           zapsInfoList: zapsInfoList,
+          isMe: isMe,
         );
 
       // case CustomMessageType.ecash:
@@ -576,6 +593,7 @@ class CustomMessageFactory implements MessageFactory {
           height: height,
           encryptedKey: encryptedKey,
           encryptedNonce: encryptedNonce,
+          isMe: isMe,
         );
 
       case CustomMessageType.video:
@@ -606,6 +624,7 @@ class CustomMessageFactory implements MessageFactory {
           height: height,
           encryptedKey: encryptedKey,
           encryptedNonce: encryptedNonce,
+          isMe: isMe,
         );
     }
   }
@@ -663,6 +682,7 @@ class CustomMessageFactory implements MessageFactory {
     required String content,
     required String icon,
     required String link,
+    bool isMe = false,
   }) {
     return types.CustomMessage(
       author: author,
@@ -683,6 +703,7 @@ class CustomMessageFactory implements MessageFactory {
       reactions: reactions,
       zapsInfoList: zapsInfoList,
       viewWithoutBubble: true,
+      isMe: isMe,
     );
   }
 
@@ -705,6 +726,7 @@ class CustomMessageFactory implements MessageFactory {
     required String note,
     required String image,
     required String link,
+    bool isMe = false,
   }) {
     return types.CustomMessage(
       author: author,
@@ -729,6 +751,7 @@ class CustomMessageFactory implements MessageFactory {
       reactions: reactions,
       zapsInfoList: zapsInfoList,
       viewWithoutBubble: true,
+      isMe: isMe,
     );
   }
 
@@ -790,6 +813,7 @@ class CustomMessageFactory implements MessageFactory {
     required int? height,
     required String? encryptedKey,
     required String? encryptedNonce,
+    bool isMe = false,
   }) {
     return types.CustomMessage(
       author: author,
@@ -815,6 +839,7 @@ class CustomMessageFactory implements MessageFactory {
       reactions: reactions,
       zapsInfoList: zapsInfoList,
       viewWithoutBubble: true,
+      isMe: isMe,
     );
   }
 
@@ -837,6 +862,7 @@ class CustomMessageFactory implements MessageFactory {
     int? height,
     String? encryptedKey,
     String? encryptedNonce,
+    bool isMe = false,
   }) {
     return types.CustomMessage(
       author: author,
@@ -863,6 +889,7 @@ class CustomMessageFactory implements MessageFactory {
       reactions: reactions,
       zapsInfoList: zapsInfoList,
       viewWithoutBubble: true,
+      isMe: isMe,
     );
   }
 }

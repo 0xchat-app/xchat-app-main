@@ -41,6 +41,7 @@ abstract class AudioMessage extends Message {
     super.expiration,
     super.reactions,
     super.zapsInfoList,
+    super.isMe,
   }) : super(
     type: type ?? MessageType.audio,
     fileEncryptionType: fileEncryptionType ?? EncryptionType.none,
@@ -73,6 +74,7 @@ abstract class AudioMessage extends Message {
     int? expiration,
     List<Reaction> reactions,
     List<ZapsInfo> zapsInfoList,
+    bool isMe,
   }) = _AudioMessage;
 
   /// Creates an audio message from a map (decoded JSON).
@@ -119,6 +121,7 @@ abstract class AudioMessage extends Message {
         expiration: expiration,
         reactions: reactions ?? [],
         zapsInfoList: zapsInfoList ?? [],
+        isMe: false,
       );
 
   /// The length of the audio.
@@ -194,6 +197,7 @@ abstract class AudioMessage extends Message {
     int? expiration,
     List<Reaction>? reactions,
     List<ZapsInfo>? zapsInfoList,
+    bool? isMe,
   });
 
   /// Converts an audio message to the map representation, encodable to JSON.
@@ -230,6 +234,7 @@ class _AudioMessage extends AudioMessage {
     super.expiration,
     super.reactions,
     super.zapsInfoList,
+    super.isMe,
   }) : super._();
 
   @override
@@ -259,6 +264,7 @@ class _AudioMessage extends AudioMessage {
     int? expiration,
     List<Reaction>? reactions,
     List<ZapsInfo>? zapsInfoList,
+    bool? isMe,
   }) =>
       _AudioMessage(
         author: author ?? this.author,
@@ -292,6 +298,7 @@ class _AudioMessage extends AudioMessage {
         expiration: expiration ?? this.expiration,
         reactions: reactions ?? this.reactions,
         zapsInfoList: zapsInfoList ?? this.zapsInfoList,
+        isMe: isMe ?? this.isMe,
       );
 }
 

@@ -34,6 +34,7 @@ abstract class FileMessage extends Message {
     super.expiration,
     super.reactions,
     super.zapsInfoList,
+    super.isMe,
   }) : super(type: type ?? MessageType.file);
 
   const factory FileMessage({
@@ -57,6 +58,7 @@ abstract class FileMessage extends Message {
     int? expiration,
     List<Reaction> reactions,
     List<ZapsInfo> zapsInfoList,
+    bool isMe,
   }) = _FileMessage;
 
   /// Creates a file message from a map (decoded JSON).
@@ -95,6 +97,7 @@ abstract class FileMessage extends Message {
         updatedAt: updatedAt,
         uri: partialFile.uri,
         expiration: expiration,
+        isMe: false,
       );
 
   /// Specify whether the message content is currently being loaded.
@@ -134,6 +137,7 @@ abstract class FileMessage extends Message {
         updatedAt,
         uri,
         expiration,
+        isMe,
       ];
 
   @override
@@ -161,6 +165,7 @@ abstract class FileMessage extends Message {
     int? expiration,
     List<Reaction>? reactions,
     List<ZapsInfo>? zapsInfoList,
+    bool? isMe,
   });
 
   /// Converts a file message to the map representation, encodable to JSON.
@@ -192,6 +197,7 @@ class _FileMessage extends FileMessage {
     super.expiration,
     super.reactions,
     super.zapsInfoList,
+    super.isMe,
   }) : super._();
 
   @override
@@ -221,6 +227,7 @@ class _FileMessage extends FileMessage {
     int? expiration,
     List<Reaction>? reactions,
     List<ZapsInfo>? zapsInfoList,
+    bool? isMe,
   }) =>
       _FileMessage(
         author: author ?? this.author,
@@ -248,6 +255,7 @@ class _FileMessage extends FileMessage {
         expiration: expiration ?? this.expiration,
         reactions: reactions ?? this.reactions,
         zapsInfoList: zapsInfoList ?? this.zapsInfoList,
+        isMe: isMe ?? this.isMe,
       );
 }
 

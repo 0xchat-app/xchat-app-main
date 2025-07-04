@@ -37,6 +37,7 @@ abstract class VideoMessage extends Message {
     super.expiration,
     super.reactions,
     super.zapsInfoList,
+    super.isMe,
   }) : super(
     type: type ?? MessageType.video,
     fileEncryptionType: fileEncryptionType ?? EncryptionType.none,
@@ -67,6 +68,7 @@ abstract class VideoMessage extends Message {
     int? expiration,
     List<Reaction> reactions,
     List<ZapsInfo> zapsInfoList,
+    bool isMe,
   }) = _VideoMessage;
 
   /// Creates a video message from a map (decoded JSON).
@@ -108,6 +110,7 @@ abstract class VideoMessage extends Message {
         width: partialVideo.width,
         fileEncryptionType: fileEncryptionType,
         expiration: expiration,
+        isMe: false,
       );
 
   /// Video height in pixels.
@@ -150,6 +153,7 @@ abstract class VideoMessage extends Message {
         width,
         fileEncryptionType,
         expiration,
+        isMe,
       ];
 
   @override
@@ -177,6 +181,7 @@ abstract class VideoMessage extends Message {
     int? expiration,
     List<Reaction>? reactions,
     List<ZapsInfo>? zapsInfoList,
+    bool? isMe,
   });
 
   /// Converts an video message to the map representation, encodable to JSON.
@@ -215,6 +220,7 @@ class _VideoMessage extends VideoMessage {
     super.expiration,
     super.reactions,
     super.zapsInfoList,
+    super.isMe,
   }) : super._();
 
   @override
@@ -242,6 +248,7 @@ class _VideoMessage extends VideoMessage {
     int? expiration,
     List<Reaction>? reactions,
     List<ZapsInfo>? zapsInfoList,
+    dynamic isMe = _Unset,
   }) =>
       _VideoMessage(
         author: author ?? this.author,
@@ -272,6 +279,7 @@ class _VideoMessage extends VideoMessage {
         expiration: expiration ?? this.expiration,
         reactions: reactions ?? this.reactions,
         zapsInfoList: zapsInfoList ?? this.zapsInfoList,
+        isMe: isMe == _Unset ? this.isMe : isMe as bool,
       );
 }
 

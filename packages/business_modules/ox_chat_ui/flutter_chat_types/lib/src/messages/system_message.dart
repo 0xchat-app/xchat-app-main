@@ -30,6 +30,7 @@ abstract class SystemMessage extends Message {
     super.expiration,
     super.reactions,
     super.zapsInfoList,
+    super.isMe,
   }) : super(type: type ?? MessageType.system);
 
   const factory SystemMessage({
@@ -50,6 +51,7 @@ abstract class SystemMessage extends Message {
     int? expiration,
     List<Reaction> reactions,
     List<ZapsInfo> zapsInfoList,
+    bool isMe,
   }) = _SystemMessage;
 
   /// Creates a custom message from a map (decoded JSON).
@@ -100,6 +102,7 @@ abstract class SystemMessage extends Message {
     int? expiration,
     List<Reaction>? reactions,
     List<ZapsInfo>? zapsInfoList,
+    bool? isMe,
   });
 
   /// Converts a custom message to the map representation,
@@ -132,6 +135,7 @@ class _SystemMessage extends SystemMessage {
     super.expiration,
     super.reactions,
     super.zapsInfoList,
+    super.isMe,
   }) : super._();
 
   @override
@@ -155,6 +159,7 @@ class _SystemMessage extends SystemMessage {
     int? expiration,
     List<Reaction>? reactions,
     List<ZapsInfo>? zapsInfoList,
+    dynamic isMe = _Unset,
   }) =>
       _SystemMessage(
         author: author ?? this.author,
@@ -178,6 +183,7 @@ class _SystemMessage extends SystemMessage {
         expiration: expiration ?? this.expiration,
         reactions: reactions ?? this.reactions,
         zapsInfoList: zapsInfoList ?? this.zapsInfoList,
+        isMe: isMe == _Unset ? this.isMe : isMe as bool,
       );
 }
 

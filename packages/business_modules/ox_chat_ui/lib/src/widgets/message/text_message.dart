@@ -108,10 +108,10 @@ class TextMessage extends StatelessWidget {
       {String? text}
   ) {
     final theme = InheritedChatTheme.of(context).theme;
-    final linkDescriptionTextStyle = user.id == message.author.id
+    final linkDescriptionTextStyle = message.isMe
         ? theme.sentMessageBodyTextStyle
         : theme.receivedMessageBodyTextStyle;
-    final linkTitleTextStyle = user.id == message.author.id
+    final linkTitleTextStyle = message.isMe
         ? theme.sentMessageBodyTextStyle
         : theme.receivedMessageBodyTextStyle;
 
@@ -148,7 +148,7 @@ class TextMessage extends StatelessWidget {
     bool enlargeEmojis,
   ) {
     final theme = InheritedChatTheme.of(context).theme;
-    final isMessageSender = user.id == message.author.id;
+    final isMessageSender = message.isMe;
     final bodyLinkTextStyle = isMessageSender
         ? InheritedChatTheme.of(context).theme.sentMessageBodyLinkTextStyle
         : InheritedChatTheme.of(context).theme.receivedMessageBodyLinkTextStyle;

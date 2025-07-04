@@ -37,6 +37,7 @@ abstract class ImageMessage extends Message {
     super.expiration,
     super.reactions,
     super.zapsInfoList,
+    super.isMe,
   }) : super(
     type: type ?? MessageType.image,
     fileEncryptionType: fileEncryptionType ?? EncryptionType.none,
@@ -67,6 +68,7 @@ abstract class ImageMessage extends Message {
     int? expiration,
     List<Reaction> reactions,
     List<ZapsInfo> zapsInfoList,
+    bool isMe,
   }) = _ImageMessage;
 
   /// Creates an image message from a map (decoded JSON).
@@ -106,6 +108,7 @@ abstract class ImageMessage extends Message {
         width: partialImage.width,
         fileEncryptionType: fileEncryptionType,
         expiration: expiration,
+        isMe: false,
       );
 
   /// Image height in pixels.
@@ -146,6 +149,7 @@ abstract class ImageMessage extends Message {
         width,
         fileEncryptionType,
         expiration,
+        isMe,
       ];
 
   @override
@@ -173,6 +177,7 @@ abstract class ImageMessage extends Message {
     int? expiration,
     List<Reaction>? reactions,
     List<ZapsInfo>? zapsInfoList,
+    bool? isMe,
   });
 
   /// Converts an image message to the map representation, encodable to JSON.
@@ -211,6 +216,7 @@ class _ImageMessage extends ImageMessage {
     super.expiration,
     super.reactions,
     super.zapsInfoList,
+    super.isMe,
   }) : super._();
 
   @override
@@ -238,6 +244,7 @@ class _ImageMessage extends ImageMessage {
     int? expiration,
     List<Reaction>? reactions,
     List<ZapsInfo>? zapsInfoList,
+    dynamic isMe = _Unset,
   }) =>
       _ImageMessage(
         author: author ?? this.author,
@@ -267,6 +274,7 @@ class _ImageMessage extends ImageMessage {
         expiration: expiration ?? this.expiration,
         reactions: reactions ?? this.reactions,
         zapsInfoList: zapsInfoList ?? this.zapsInfoList,
+        isMe: isMe == _Unset ? this.isMe : isMe as bool,
       );
 }
 

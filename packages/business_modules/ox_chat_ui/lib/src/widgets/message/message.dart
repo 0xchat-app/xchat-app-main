@@ -200,7 +200,7 @@ class MessageState extends State<Message> {
   Widget build(BuildContext context) {
     final query = MediaQuery.of(context);
     final user = InheritedUser.of(context).user;
-    final currentUserIsAuthor = user.id == widget.message.author.id;
+    final currentUserIsAuthor = widget.message.isMe;
 
     AlignmentGeometry? alignment;
     if (widget.bubbleRtlAlignment == BubbleRtlAlignment.left) {
@@ -283,7 +283,7 @@ class MessageState extends State<Message> {
   // avatar & name & message
   Widget _buildMessageContentView() {
     final user = InheritedUser.of(context).user;
-    final currentUserIsAuthor = user.id == widget.message.author.id;
+    final currentUserIsAuthor = widget.message.isMe;
     final avatarBuilder = widget.uiConfig.avatarBuilder;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -311,7 +311,7 @@ class MessageState extends State<Message> {
   // name & message
   Widget _buildMessageBubbleView() {
     final user = InheritedUser.of(context).user;
-    final currentUserIsAuthor = user.id == widget.message.author.id;
+    final currentUserIsAuthor = widget.message.isMe;
     // Use 20 for main rounded corners and 8 for the previously straight corner
     final double bigRadius = 20;
     final double smallRadius = 8;

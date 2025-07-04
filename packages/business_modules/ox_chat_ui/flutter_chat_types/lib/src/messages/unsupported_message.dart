@@ -92,6 +92,7 @@ abstract class UnsupportedMessage extends Message {
     int? expiration,
     List<Reaction>? reactions,
     List<ZapsInfo>? zapsInfoList,
+    bool? isMe,
   });
 
   /// Converts an unsupported message to the map representation,
@@ -145,6 +146,7 @@ class _UnsupportedMessage extends UnsupportedMessage {
     int? expiration,
     List<Reaction>? reactions,
     List<ZapsInfo>? zapsInfoList,
+    bool? isMe,
   }) =>
       _UnsupportedMessage(
         author: author ?? this.author,

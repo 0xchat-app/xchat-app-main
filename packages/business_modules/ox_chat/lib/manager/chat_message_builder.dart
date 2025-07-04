@@ -213,7 +213,7 @@ class ChatMessageBuilder {
     String? receiverPubkey,
     Function(types.Message newMessage)? messageUpdateCallback,
   }) {
-    final isMe = Account.sharedInstance.me?.pubKey == message.author.id;
+    final isMe = message.isMe;
     final type = message.customType;
 
     switch (type) {
