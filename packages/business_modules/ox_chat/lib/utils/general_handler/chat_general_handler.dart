@@ -236,6 +236,7 @@ class ChatGeneralHandler {
   void dispose() {
     dataController.dispose();
     highlightMessageHandler.dispose();
+    inputController.dispose();
   }
 }
 

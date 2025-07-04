@@ -28,26 +28,19 @@ class ContactUserInfoPage extends StatefulWidget {
 }
 
 class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
-  late UserDBISAR userDB;
-
-  String get userName => userDB.name ?? userDB.shortEncodedPubkey;
-  String get userBio => userDB.about ?? '';
-  String get userPubkey => userDB.encodedPubkey;
-  String get userNip05 => userDB.dns ?? '';
+  late ValueNotifier<UserDBISAR> user$;
 
   @override
   void initState() {
     super.initState();
-    _initData();
+    prepareData();
   }
 
-  void _initData() {
-    userDB = widget.user ?? Account.sharedInstance.userCache[widget.pubkey]?.value ??
-        UserDBISAR(pubKey: widget.pubkey!);
-    setState(() {});
+  void prepareData() {
+    final pubkey = widget.user?.pubKey ?? widget.pubkey ?? '';
+    user$ = Account.sharedInstance.getUserNotifier(pubkey);
+    Account.sharedInstance.reloadProfileFromRelay(pubkey);
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -56,36 +49,42 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
         title: Localized.text('ox_chat.user_detail'),
       ),
       isSectionListPage: true,
-      body: Column(
-        children: [
-          Expanded(
-            child: CLSectionListView(
-              header: _buildHeaderWidget(),
-              items: [
-                SectionListViewItem(
-                  data: [
-                    _buildPubkeyItem(),
-                    // _buildNIP05Item(),
-                    _buildBioItem(),
+      body: ValueListenableBuilder(
+        valueListenable: user$,
+        builder: (context, user, _) {
+          return Column(
+            children: [
+              Expanded(
+                child: CLSectionListView(
+                  header: _buildHeaderWidget(user),
+                  items: [
+                    SectionListViewItem(
+                      data: [
+                        _buildPubkeyItem(user),
+                        // _buildNIP05Item(),
+                        _buildBioItem(user),
+                      ],
+                    ),
                   ],
                 ),
-              ],
-            ),
-          ),
-          Visibility(
-            visible: widget.chatId == null,
-            child: _buildBottomButton(),
-          ),
-        ],
+              ),
+              Visibility(
+                visible: widget.chatId == null,
+                child: _buildBottomButton(),
+              ),
+            ],
+          );
+        }
       ),
     );
   }
 
-  Widget _buildHeaderWidget() {
+  Widget _buildHeaderWidget(UserDBISAR user) {
+    final userName = user.name ?? user.shortEncodedPubkey;
     return Column(
       children: [
         OXUserAvatar(
-          user: userDB,
+          user: user,
           size: 80.px,
         ).setPaddingOnly(top: 8.px),
         SizedBox(height: 12.px),
@@ -100,21 +99,8 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
     );
   }
 
-  LabelItemModel _buildNIP05Item() {
-    return LabelItemModel(
-      icon: ListViewIcon(
-        iconName: 'icon_setting_nickname.png',
-        package: 'ox_usercenter',
-      ),
-      title: Localized.text('ox_chat.nip05'),
-      isCupertinoAutoTrailing: false,
-      maxLines: 1,
-      value$: ValueNotifier(userNip05),
-      onTap: () => _copyToClipboard(userNip05, Localized.text('ox_chat.nip05')),
-    );
-  }
-
-  LabelItemModel _buildPubkeyItem() {
+  LabelItemModel _buildPubkeyItem(UserDBISAR user) {
+    final userPubkey = user.encodedPubkey;
     return LabelItemModel(
       icon: ListViewIcon.data(Icons.key),
       title: Localized.text('ox_chat.public_key'),
@@ -125,7 +111,8 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
     );
   }
 
-  LabelItemModel _buildBioItem() {
+  LabelItemModel _buildBioItem(UserDBISAR user) {
+    final userBio = user.about ?? '';
     return LabelItemModel(
       icon: ListViewIcon(
         iconName: 'icon_setting_bio.png',
@@ -165,7 +152,7 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
   void _sendMessage() async {
     await ChatSessionUtils.createSecretChatWithConfirmation(
       context: context,
-      user: userDB,
+      user: user$.value,
       isPushWithReplace: true,
     );
   }

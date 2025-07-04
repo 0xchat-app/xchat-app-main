@@ -143,7 +143,9 @@ class InputState extends State<Input> {
   @override
   void dispose() {
     _inputFocusNode.dispose();
-    _textController.dispose();
+    if (_textController != widget.options.textEditingController) {
+      _textController.dispose();
+    }
     super.dispose();
   }
 

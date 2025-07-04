@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:ox_chat/widget/common_chat_widget.dart';
 import 'package:ox_chat_ui/ox_chat_ui.dart';
 import 'package:ox_chat/utils/general_handler/chat_general_handler.dart';
-import 'package:ox_chat/utils/chat_log_utils.dart';
 import 'package:ox_common/business_interface/ox_chat/utils.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/widgets/avatar.dart';
@@ -29,45 +28,37 @@ class ChatGroupMessagePage extends StatefulWidget {
 }
 
 class _ChatGroupMessagePageState extends State<ChatGroupMessagePage> {
-  GroupDBISAR? group;
-  late ValueNotifier<GroupDBISAR?> _groupNotifier;
+  late ValueNotifier<GroupDBISAR> group$;
   ChatGeneralHandler get handler => widget.handler;
   ChatSessionModelISAR get session => handler.session;
-  String get groupId => group?.privateGroupId ?? session.groupId ?? '';
-
-  ChatHintParam? bottomHintParam;
+  String get groupId => group$.value.privateGroupId;
 
   @override
   void initState() {
-    setupGroup();
     super.initState();
-
     prepareData();
   }
 
-  void setupGroup() {
+  void prepareData() {
     final groupId = session.groupId;
     if (groupId == null) return;
-    group = Groups.sharedInstance.groups[groupId]?.value;
-    _groupNotifier = Groups.sharedInstance.getPrivateGroupNotifier(groupId);
-  }
-
-  void prepareData() {
-    _updateChatStatus();
+    group$ = Groups.sharedInstance.getPrivateGroupNotifier(groupId);
   }
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<GroupDBISAR?>(
-      valueListenable: _groupNotifier,
+    return ValueListenableBuilder(
+      valueListenable: group$,
       builder: (context, group, child) {
-        String showName = group?.name ?? '';
+        String showName = group.name;
         UserDBISAR? otherUser;
-        final isSingleChat = group?.isDirectMessage == true;
+        final isSingleChat = group.isDirectMessage == true;
         if (isSingleChat) {
-          otherUser = Account.sharedInstance.userCache[group?.otherPubkey]?.value;
+          otherUser = Account.sharedInstance.userCache[group.otherPubkey]?.value;
           showName = otherUser?.getUserShowName() ?? '';
         }
+
+        final bottomHintParam = getHintParam(group);
         return CommonChatWidget(
           handler: handler,
           title: showName,
@@ -91,7 +82,7 @@ class _ChatGroupMessagePageState extends State<ChatGroupMessagePage> {
                       isClickable: true,
                       onTap: () async {
                         await OXModuleService.pushPage(context, 'ox_chat', 'GroupInfoPage', {
-                          'groupId': group?.privateGroupId ?? '',
+                          'groupId': group.privateGroupId,
                         });
                         if (!mounted) return;
                         setState(() {});
@@ -106,33 +97,21 @@ class _ChatGroupMessagePageState extends State<ChatGroupMessagePage> {
     );
   }
 
-  void _updateChatStatus() {
-    if (!Groups.sharedInstance.checkInGroup(groupId)) {
-      bottomHintParam = ChatHintParam(
+  ChatHintParam? getHintParam(GroupDBISAR group) {
+    final myPubkey = handler.author.id;
+    if (group.members?.contains(myPubkey) != true) {
+      return ChatHintParam(
         Localized.text('ox_chat_ui.not_in_group'),
         (){}
       );
-      return;
     } else if (!Groups.sharedInstance.checkInMyGroupList(groupId)) {
-      bottomHintParam = ChatHintParam(
+      return ChatHintParam(
         Localized.text('ox_chat_ui.group_join'),
         onJoinGroupTap,
       );
-      return;
     }
 
-    final userDB = Account.sharedInstance.me;
-
-    if (groupId.isEmpty || userDB == null) {
-      ChatLogUtils.error(
-        className: 'ChatGroupMessagePage',
-        funcName: '_initializeChatStatus',
-        message: 'groupId: $groupId, userDB: $userDB',
-      );
-      return;
-    }
-
-    bottomHintParam = null;
+    return null;
   }
 
   Future onJoinGroupTap() async {
@@ -142,9 +121,6 @@ class _ChatGroupMessagePageState extends State<ChatGroupMessagePage> {
     await OXLoading.dismiss();
     if (okEvent.status) {
       OXChatBinding.sharedInstance.groupsUpdatedCallBack();
-      setState(() {
-        _updateChatStatus();
-      });
     } else {
       CommonToast.instance.show(context, okEvent.message);
     }
@@ -154,9 +130,9 @@ class _ChatGroupMessagePageState extends State<ChatGroupMessagePage> {
     OXModuleService.invoke('ox_chat', 'groupSharePage', [
       context
     ], {
-      Symbol('groupPic'): group?.picture ?? '',
+      Symbol('groupPic'): group$.value.picture ?? '',
       Symbol('groupName'): groupId,
-      Symbol('groupOwner'): group?.owner ?? '',
+      Symbol('groupOwner'): group$.value.owner,
       Symbol('groupId'): groupId,
       Symbol('inviterPubKey'): '',
     });
