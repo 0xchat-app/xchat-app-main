@@ -53,7 +53,6 @@ class MessageDataController with OXChatObserver {
   Future get messageLoading => messageLoadingCompleter?.future ?? Future.value();
 
   void dispose() {
-    removeMessageReactionsListener();
     OXChatBinding.sharedInstance.removeObserver(this);
   }
 
@@ -418,7 +417,6 @@ extension MessageDataControllerPrivate on MessageDataController {
 
   void _notifyUpdateMessages() {
     messageValueNotifier.value = [..._messages];
-    updateMessageReactionsListener();
   }
 
   Future _receiveMessageHandler(MessageDBISAR message) async {
@@ -598,25 +596,6 @@ extension MessageExtensionInfoEx on MessageDataController {
       final newMsg = message.copyWith(repliedMessage: repliedMessage);
       updateMessage(newMsg);
     }
-  }
-}
-
-extension ChatReactionsHandlerEx on MessageDataController {
-  void updateMessageReactionsListener() {
-    final coreChatType = chatTypeKey.coreChatType;
-    if (coreChatType == null) return ;
-
-    final actionSubscriptionId = _messages
-        .map((e) => e.remoteId)
-        .where((id) => id != null && id.isNotEmpty)
-        .toList()
-        .cast<String>()
-        .removeDuplicates();
-    Messages.sharedInstance.loadMessagesReactions(actionSubscriptionId, coreChatType);
-  }
-
-  void removeMessageReactionsListener() {
-    Messages.sharedInstance.closeMessagesActionsRequests();
   }
 }
 
