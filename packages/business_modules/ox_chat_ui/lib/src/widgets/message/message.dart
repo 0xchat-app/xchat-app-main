@@ -403,11 +403,18 @@ class MessageState extends State<Message> {
     return avatarBuilder(widget.message);
   }
 
-  Widget _bubbleBuilder(BuildContext context, BorderRadius borderRadius, bool currentUserIsAuthor, bool enlargeEmojis) {
-
+  Widget _bubbleBuilder(
+    BuildContext context,
+    BorderRadius borderRadius,
+    bool currentUserIsAuthor,
+    bool enlargeEmojis,
+  ) {
     Widget bubble;
 
     var useBubbleBg = !widget.message.viewWithoutBubble;
+    if (enlargeEmojis) {
+      useBubbleBg = false;
+    }
 
     if (widget.bubbleBuilder != null) {
       final customBubble = widget.bubbleBuilder!(
