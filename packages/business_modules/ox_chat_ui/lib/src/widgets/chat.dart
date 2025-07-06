@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:intl/intl.dart';
@@ -33,6 +32,24 @@ import 'state/inherited_l10n.dart';
 import 'state/inherited_user.dart';
 import 'typing_indicator.dart';
 import 'unread_header.dart';
+
+/// Controller for managing input height related UI refresh
+class InputHeightController {
+  final ValueNotifier<bool> _refreshNotifier = ValueNotifier<bool>(false);
+  
+  /// Get the notifier for listening to refresh events
+  ValueNotifier<bool> get notifier => _refreshNotifier;
+  
+  /// Trigger a rebuild of input height related widgets
+  void rebuild() {
+    _refreshNotifier.value = !_refreshNotifier.value;
+  }
+  
+  /// Dispose the controller
+  void dispose() {
+    _refreshNotifier.dispose();
+  }
+}
 
 class ChatHintParam {
   ChatHintParam(this.text, this.onTap);
@@ -127,6 +144,8 @@ class Chat extends StatefulWidget {
     this.isShowScrollToBottomButton = false,
     this.isShowScrollToBottomButtonUpdateCallback,
     this.replySwipeTriggerCallback,
+    this.inputHeightController,
+    this.onContentHeightChanged,
   });
 
   final ChatUIConfig uiConfig;
@@ -380,6 +399,12 @@ class Chat extends StatefulWidget {
   final Function(bool value)? isShowScrollToBottomButtonUpdateCallback;
 
   final Function(types.Message message)? replySwipeTriggerCallback;
+  
+  /// External input height controller for managing input height related UI refresh
+  final InputHeightController? inputHeightController;
+  
+  /// Callback when content height changes
+  final void Function(double contentHeight)? onContentHeightChanged;
 
   @override
   State<Chat> createState() => ChatState();
@@ -405,11 +430,17 @@ class ChatState extends State<Chat> {
   /// Key: [types.Message.id], Value: Message widget key
   final Map<String, GlobalKey<MessageState>> messageKeyMap = {};
 
+  /// Controller for managing input height related UI refresh
+  late final InputHeightController _inputHeightController;
+
   @override
   void initState() {
     super.initState();
 
     _scrollController = widget.scrollController ?? AutoScrollController();
+    
+    // Use external input height controller if provided, otherwise create a new one
+    _inputHeightController = widget.inputHeightController ?? InputHeightController();
 
     didUpdateWidget(widget);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -446,6 +477,10 @@ class ChatState extends State<Chat> {
   @override
   void dispose() {
     _scrollController.dispose();
+    // Only dispose if we created the controller internally
+    if (widget.inputHeightController == null) {
+      _inputHeightController.dispose();
+    }
     super.dispose();
   }
 
@@ -483,7 +518,6 @@ class ChatState extends State<Chat> {
     var scrollToAnchorMsgAction = null;
     if (anchorMsgId != null && anchorMsgId.isNotEmpty)
       scrollToAnchorMsgAction = () => scrollToMessage(anchorMsgId);
-    final mentionUserListBottom = _getInputViewHeight() + Adapt.px(16);
     return InheritedUser(
       user: widget.user,
       child: InheritedChatTheme(
@@ -564,19 +598,9 @@ class ChatState extends State<Chat> {
                 ),
               ),
               widget.customCenterWidget ?? SizedBox(),
-              if (widget.highlightMessageWidget != null)
-                Positioned(
-                  right: 12.px,
-                  bottom: mentionUserListBottom,
-                  child: widget.highlightMessageWidget!,
-                ),
-              if (widget.mentionUserListWidget != null && mentionUserListBottom != null)
-                Positioned(
-                  left: 12.px,
-                  right: 12.px,
-                  bottom: mentionUserListBottom,
-                  child: widget.mentionUserListWidget!,
-                ),
+              Positioned.fill(
+                child: _buildInputHeightRelatedWidgets(),
+              ),
             ],
           ),
         ),
@@ -596,6 +620,45 @@ class ChatState extends State<Chat> {
     } else {
       return null;
     }
+  }
+
+  /// Widget that encapsulates input height calculation and related positioned widgets
+  Widget _buildInputHeightRelatedWidgets() {
+    final hasHighlightMessageWidget = widget.highlightMessageWidget != null;
+    final hasMentionUserListBottom = widget.mentionUserListWidget != null;
+    if (!hasHighlightMessageWidget && !hasMentionUserListBottom) return SizedBox();
+    return FutureBuilder(
+      future: WidgetsBinding.instance.waitUntilFirstFrameRasterized,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) return SizedBox();
+        return ValueListenableBuilder<bool>(
+          valueListenable: _inputHeightController.notifier,
+          builder: (context, _, __) {
+            final mentionUserListBottom = _getInputViewHeight() + 16.px;
+            return Stack(
+              fit: StackFit.expand,
+              children: [
+                // Position highlight message widget
+                if (hasHighlightMessageWidget)
+                  Positioned(
+                    right: 12.px,
+                    bottom: mentionUserListBottom,
+                    child: widget.highlightMessageWidget!,
+                  ),
+                // Position mention user list widget
+                if (hasMentionUserListBottom)
+                  Positioned(
+                    left: 12.px,
+                    right: 12.px,
+                    bottom: mentionUserListBottom,
+                    child: widget.mentionUserListWidget!,
+                  ),
+              ],
+            );
+          },
+        );
+      }
+    );
   }
 
   Widget _buildBottomInputArea() {
@@ -634,9 +697,7 @@ class ChatState extends State<Chat> {
             inputBottomView: widget.inputBottomView,
             onFocusNodeInitialized: widget.onFocusNodeInitialized,
             onInsertedContent: widget.onInsertedContent,
-            customInputViewChanged: (_) {
-              setState(() {});
-            },
+            onContentHeightChanged: widget.onContentHeightChanged,
           ),
         ),
       ],
@@ -812,4 +873,7 @@ class ChatState extends State<Chat> {
     _inputKey.currentState?.dismissMoreView();
     FocusManager.instance.primaryFocus?.unfocus();
   }
+
+  /// Get the input height controller for external use
+  InputHeightController get inputHeightController => _inputHeightController;
 }

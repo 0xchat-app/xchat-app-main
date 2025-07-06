@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:ox_chat/manager/chat_draft_manager.dart';
@@ -15,6 +14,7 @@ import 'package:ox_common/component.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/chat_prompt_tone.dart';
+import 'package:ox_common/utils/extension.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
 import 'package:ox_common/utils/platform_utils.dart';
 import 'package:ox_common/utils/web_url_helper.dart';
@@ -69,11 +69,25 @@ class CommonChatWidgetState extends State<CommonChatWidget> {
   final AutoScrollController scrollController = AutoScrollController();
   Duration scrollDuration = const Duration(milliseconds: 100);
 
-  bool isShowScrollToBottomWidget = false;
+  // Use ValueNotifier to control scroll to bottom widget visibility
+  final ValueNotifier<bool> isShowScrollToBottomWidget$ = ValueNotifier<bool>(false);
+  
+  // Controller for managing input height related UI refresh
+  late final InputHeightController _inputHeightController;
 
   @override
   void initState() {
     super.initState();
+
+    // Initialize input height controller
+    _inputHeightController = InputHeightController();
+    
+    // Listen to reply message changes and rebuild input height
+    handler.replyHandler.replyMessageNotifier.addListener(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _inputHeightController.rebuild();
+      });
+    });
 
     tryInitDraft();
     tryInitReply();
@@ -123,6 +137,8 @@ class CommonChatWidgetState extends State<CommonChatWidget> {
     PromptToneManager.sharedInstance.isCurrencyChatPage = null;
     OXChatBinding.sharedInstance.msgIsReaded = null;
     ChatDraftManager.shared.updateSessionDraft(session.chatId);
+    isShowScrollToBottomWidget$.dispose();
+    _inputHeightController.dispose();
     handler.dispose();
 
     super.dispose();
@@ -161,6 +177,7 @@ class CommonChatWidgetState extends State<CommonChatWidget> {
         builder: (BuildContext context, messages, Widget? child) {
           return Chat(
             key: chatWidgetKey,
+            inputHeightController: _inputHeightController,
             uiConfig: ChatUIConfig(
               avatarBuilder: (message) => OXUserAvatar(
                 user: message.author.sourceObject,
@@ -252,17 +269,20 @@ class CommonChatWidgetState extends State<CommonChatWidget> {
               handler.inputFocusNode = focusNode;
               handler.replyHandler.inputFocusNode = focusNode;
             },
-            highlightMessageWidget: ChatHighlightMessageWidget(
-              handler: highlightMessageHandler,
-              anchorMessageOnTap: scrollToMessage,
-              scrollToBottomOnTap: scrollToNewestMessage,
-              showScrollToBottomItem: isShowScrollToBottomWidget,
+            highlightMessageWidget: ValueListenableBuilder<bool>(
+              valueListenable: isShowScrollToBottomWidget$,
+              builder: (context, showScrollToBottomItem, child) {
+                return ChatHighlightMessageWidget(
+                  handler: highlightMessageHandler,
+                  anchorMessageOnTap: scrollToMessage,
+                  scrollToBottomOnTap: scrollToNewestMessage,
+                  showScrollToBottomItem: showScrollToBottomItem,
+                );
+              },
             ),
             isShowScrollToBottomButton: dataController.hasMoreNewMessage,
             isShowScrollToBottomButtonUpdateCallback: (value) {
-              setState(() {
-                isShowScrollToBottomWidget = value || dataController.hasMoreNewMessage;
-              });
+              isShowScrollToBottomWidget$.value = value || dataController.hasMoreNewMessage;
             },
             mentionUserListWidget: handler.mentionHandler?.buildMentionUserList(),
             onAudioDataFetched: (message) async {
@@ -281,6 +301,10 @@ class CommonChatWidgetState extends State<CommonChatWidget> {
             },
             onInsertedContent: (KeyboardInsertedContent insertedContent) =>
                 handler.sendInsertedContentMessage(context, insertedContent),
+            onContentHeightChanged: (_) {
+              // Trigger refresh when content height changes
+              _inputHeightController.rebuild();
+            },
             textFieldHasFocus: () async {
               if (PlatformUtils.isMobile) {
                 scrollToNewestMessage();
@@ -380,10 +404,6 @@ class CommonChatWidgetState extends State<CommonChatWidget> {
       curve: Curves.easeInQuad,
     );
 
-    if (mounted) {
-      setState(() {
-        isShowScrollToBottomWidget = false;
-      });
-    }
+    isShowScrollToBottomWidget$.safeUpdate(false);
   }
 }

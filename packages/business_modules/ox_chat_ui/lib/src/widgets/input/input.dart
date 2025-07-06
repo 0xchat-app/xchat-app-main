@@ -41,7 +41,7 @@ class Input extends StatefulWidget {
     this.inputBottomView,
     this.onFocusNodeInitialized,
     this.onInsertedContent,
-    this.customInputViewChanged,
+    this.onContentHeightChanged,
   });
 
   final String? chatId;
@@ -77,9 +77,9 @@ class Input extends StatefulWidget {
   ///Send a inserted content
   final void Function(KeyboardInsertedContent insertedContent)? onInsertedContent;
 
-  final void Function(InputType inputType)? customInputViewChanged;
-
   final Widget? inputBottomView;
+
+  final void Function(double contentHeight)? onContentHeightChanged;
 
   @override
   State<Input> createState() => InputState();
@@ -137,6 +137,13 @@ class InputState extends State<Input> {
     if (widget.options.sendButtonVisibilityMode !=
         oldWidget.options.sendButtonVisibilityMode) {
       _handleSendButtonVisibilityModeChange();
+    }
+    
+    // Trigger content height changed callback when inputBottomView changes
+    if (widget.inputBottomView != oldWidget.inputBottomView) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _triggerContentHeightChanged();
+      });
     }
   }
 
@@ -243,6 +250,9 @@ class InputState extends State<Input> {
       curve: animationCurves,
       height: panelHeight + safeBottomHeight,
       alignment: Alignment.topCenter,
+      onEnd: () {
+        _triggerContentHeightChanged();
+      },
       child: customPanelWidget,
     );
   }
@@ -465,6 +475,12 @@ class InputState extends State<Input> {
         _inputFocusNode.unfocus();
       }
     });
+  }
+  
+  /// Trigger content height changed callback
+  void _triggerContentHeightChanged() {
+    final contentHeight = _getCustomPanelHeight() + safeBottomHeight;
+    widget.onContentHeightChanged?.call(contentHeight);
   }
 }
 
