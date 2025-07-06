@@ -346,7 +346,7 @@ class DefaultChatTheme extends ChatTheme {
     super.messageInsetsHorizontal = 20,
     super.messageInsetsVertical = 9,
     super.primaryColor = primary,
-    super.receivedEmojiMessageTextStyle = const TextStyle(fontSize: 40),
+    super.receivedEmojiMessageTextStyle = _BaseChatTheme.emojiMessageTextStyle,
     super.receivedMessageBodyBoldTextStyle,
     super.receivedMessageBodyCodeTextStyle,
     super.receivedMessageBodyLinkTextStyle,
@@ -380,7 +380,7 @@ class DefaultChatTheme extends ChatTheme {
     super.sendButtonIcon,
     super.sendButtonMargin,
     super.sendingIcon,
-    super.sentEmojiMessageTextStyle = const TextStyle(fontSize: 30),
+    super.sentEmojiMessageTextStyle = _BaseChatTheme.emojiMessageTextStyle,
     super.sentMessageBodyBoldTextStyle,
     super.sentMessageBodyCodeTextStyle,
     super.sentMessageBodyLinkTextStyle,
@@ -515,7 +515,7 @@ class DarkChatTheme extends ChatTheme {
     super.messageInsetsHorizontal = 20,
     super.messageInsetsVertical = 9,
     super.primaryColor = primary,
-    super.receivedEmojiMessageTextStyle = const TextStyle(fontSize: 30),
+    super.receivedEmojiMessageTextStyle = _BaseChatTheme.emojiMessageTextStyle,
     super.receivedMessageBodyBoldTextStyle,
     super.receivedMessageBodyCodeTextStyle,
     super.receivedMessageBodyLinkTextStyle,
@@ -549,7 +549,7 @@ class DarkChatTheme extends ChatTheme {
     super.sendButtonIcon,
     super.sendButtonMargin,
     super.sendingIcon,
-    super.sentEmojiMessageTextStyle = const TextStyle(fontSize: 40),
+    super.sentEmojiMessageTextStyle = _BaseChatTheme.emojiMessageTextStyle,
     super.sentMessageBodyBoldTextStyle,
     super.sentMessageBodyCodeTextStyle,
     super.sentMessageBodyLinkTextStyle,
@@ -629,4 +629,11 @@ class DarkChatTheme extends ChatTheme {
       height: 1.333,
     ),
   });
+}
+
+class _BaseChatTheme {
+  static const TextStyle emojiMessageTextStyle = const TextStyle(
+    fontSize: 30,
+    letterSpacing: 4,
+  );
 }

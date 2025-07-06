@@ -21,7 +21,7 @@ class ReplyMessageWidget extends StatelessWidget {
           return SizedBox();
         }
 
-        final textColor = ColorToken.onSurface.of(context).withValues(alpha: 0.5);
+        final textColor = ColorToken.onSecondaryContainer.of(context);
         return Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12.px),
@@ -29,7 +29,7 @@ class ReplyMessageWidget extends StatelessWidget {
             color: ColorToken.surfaceContainerHigh.of(context),
             // Add a subtle border using onSurfaceVariant
             border: Border.all(
-              color: ColorToken.surfaceContainer.of(context),
+              color: ColorToken.secondaryContainer.of(context),
               width: 0.5,
             ),
           ),
