@@ -165,7 +165,7 @@ class CommonChatWidgetState extends State<CommonChatWidget> {
               avatarBuilder: (message) => OXUserAvatar(
                 user: message.author.sourceObject,
                 size: 40.px,
-                isCircular: false,
+                isCircular: true,
                 isClickable: true,
                 onReturnFromNextPage: () {
                   setState(() { });
