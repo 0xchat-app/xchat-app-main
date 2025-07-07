@@ -135,7 +135,7 @@ class SettingSliderState extends State<SettingSlider> {
         ),
       ]),
       SectionListViewItem.button(
-        text: 'Logout',
+        text: Localized.text('ox_usercenter.Logout'),
         onTap: logoutItemOnTap,
         type: ButtonType.destructive,
       )
