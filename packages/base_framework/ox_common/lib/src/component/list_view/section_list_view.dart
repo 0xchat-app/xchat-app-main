@@ -143,6 +143,7 @@ class CLSectionListView extends StatelessWidget {
       
       return Container(
         margin: EdgeInsets.symmetric(
+          vertical: 14.px,
           horizontal: CLLayout.horizontalPadding,
         ),
         child: button,
@@ -151,15 +152,13 @@ class CLSectionListView extends StatelessWidget {
       // Cupertino design button section - use CupertinoButton for native tap feedback
       Color textColor;
       switch (buttonType) {
-        case ButtonType.primary:
-          textColor = ColorToken.primary.of(context);
-          break;
         case ButtonType.destructive:
           textColor = ColorToken.error.of(context);
           break;
+        case ButtonType.primary:
         case ButtonType.secondary:
         default:
-          textColor = ColorToken.onSurface.of(context);
+          textColor = ColorToken.primary.of(context);
           break;
       }
       
