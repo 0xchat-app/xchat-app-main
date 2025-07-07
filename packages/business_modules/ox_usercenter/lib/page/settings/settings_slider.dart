@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
@@ -133,6 +134,11 @@ class SettingSliderState extends State<SettingSlider> {
           value$: versionItemNty,
         ),
       ]),
+      SectionListViewItem.button(
+        text: 'Logout',
+        onTap: logoutItemOnTap,
+        type: ButtonType.destructive,
+      )
     ];
   }
 
@@ -234,6 +240,27 @@ class SettingSliderState extends State<SettingSlider> {
 
   void textSizeItemOnTap() {
     OXNavigator.pushPage(context, (_) => FontSizeSettingsPage(previousPageTitle: title,));
+  }
+
+  void logoutItemOnTap() async {
+    final shouldLogout = await CLAlertDialog.show<bool>(
+      context: context,
+      title: Localized.text('ox_usercenter.warn_title'),
+      content: Localized.text('ox_usercenter.sign_out_dialog_content'),
+      actions: [
+        CLAlertAction.cancel(),
+        CLAlertAction<bool>(
+          label: Localized.text('ox_usercenter.Logout'),
+          value: true,
+          isDestructiveAction: true,
+        ),
+      ],
+    );
+
+    if (shouldLogout == true) {
+      await LoginManager.instance.logout();
+      OXNavigator.popToRoot(context);
+    }
   }
 
   /// Load the application version and build number then update [versionItemNty].

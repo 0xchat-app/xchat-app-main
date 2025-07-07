@@ -131,7 +131,6 @@ class _KeysPageState extends State<KeysPage> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             buildShowButton(),
-                            buildLogoutButton(),
                           ],
                         ),
                       ),
@@ -161,41 +160,6 @@ class _KeysPageState extends State<KeysPage> {
           onTap: isLoading ? null : () => isShowPriv$.value = true,
         );
       },
-    );
-  }
-
-  Widget buildLogoutButton() {
-    return CLButton.text(
-      padding: EdgeInsets.symmetric(
-        horizontal: 12.px,
-        vertical: 12.px,
-      ),
-      color: ColorToken.error.of(context),
-      text: 'Logout',
-      onTap: () async {
-        final shouldLogout = await CLAlertDialog.show<bool>(
-          context: context,
-          title: Localized.text('ox_usercenter.warn_title'),
-          content: Localized.text('ox_usercenter.sign_out_dialog_content'),
-          actions: [
-            CLAlertAction.cancel(),
-            CLAlertAction<bool>(
-              label: Localized.text('ox_usercenter.Logout'),
-              value: true,
-              isDestructiveAction: true,
-            ),
-          ],
-        );
-        
-        if (shouldLogout == true) {
-          LoginManager.instance.logout();
-          if (PlatformStyle.isUseMaterial) {
-            OXNavigator.popToRoot(context);
-          } else {
-            CupertinoSheetRoute.popSheet(context);
-          }
-        }
-      }
     );
   }
 
