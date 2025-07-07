@@ -6,9 +6,9 @@ import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_module_service/ox_module_service.dart';
 
+import '../component.dart';
 import '../utils/date_utils.dart';
 import '../utils/theme_color.dart';
-import 'common_appbar.dart';
 import 'common_image.dart';
 import 'common_network_image.dart';
 
@@ -59,12 +59,9 @@ class CommonLongContentPageState extends State<CommonLongContentPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ThemeColor.color200,
-      appBar: CommonAppBar(
-        backgroundColor: ThemeColor.color200,
+    return CLScaffold(
+      appBar: CLAppBar(
         title: widget.title ?? '',
-        isClose: true,
       ),
       body: SingleChildScrollView(
         child: Container(
