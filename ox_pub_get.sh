@@ -66,6 +66,22 @@ log_skip() {
   echo "⏭️  [SKIP] $1"
 }
 
+log_error() {
+  echo "❌ [ERROR] $1"
+}
+
+# Check if directory is a git submodule
+is_git_submodule() {
+  local dir=$1
+  [[ -f "$dir/.git" ]] && grep -q "gitdir:" "$dir/.git"
+}
+
+# Check if directory is a git repository
+is_git_repo() {
+  local dir=$1
+  [[ -d "$dir/.git" ]] && ! is_git_submodule "$dir"
+}
+
 checkout_branch() {
   local dir=$1
   local branch=$2
@@ -73,24 +89,56 @@ checkout_branch() {
   
   log_step "Checking out $repo_name to branch: $branch"
   
-  if [[ ! -d "$dir/.git" ]]; then
-    log_skip "Directory $dir is not a git repo"
-    return
-  fi
-  
-  # Fetch latest changes
-  echo "  Fetching latest changes..."
-  git -C "$dir" fetch --all --tags --prune
-  
-  # Check current branch
-  local current_branch=$(git -C "$dir" branch --show-current)
-  if [[ "$current_branch" == "$branch" ]]; then
-    echo "  Already on target branch, pulling latest changes..."
-    git -C "$dir" pull --ff-only
+  if is_git_submodule "$dir"; then
+    echo "  $repo_name is a git submodule, updating..."
+    if ! git -C "$main_path" submodule update --remote --merge "$dir"; then
+      log_error "Failed to update submodule $repo_name"
+      exit 1
+    fi
+    
+    # Checkout specific branch in submodule
+    if ! git -C "$dir" checkout "$branch"; then
+      log_error "Failed to checkout branch '$branch' in submodule $repo_name"
+      exit 1
+    fi
+    
+    # Pull latest changes
+    if ! git -C "$dir" pull --ff-only; then
+      log_error "Failed to pull latest changes for submodule $repo_name"
+      exit 1
+    fi
+  elif is_git_repo "$dir"; then
+    echo "  $repo_name is a git repository, updating..."
+    
+    # Fetch latest changes
+    echo "  Fetching latest changes..."
+    if ! git -C "$dir" fetch --all --tags --prune; then
+      log_error "Failed to fetch latest changes for $repo_name"
+      exit 1
+    fi
+    
+    # Check current branch
+    local current_branch=$(git -C "$dir" branch --show-current)
+    if [[ "$current_branch" == "$branch" ]]; then
+      echo "  Already on target branch, pulling latest changes..."
+      if ! git -C "$dir" pull --ff-only; then
+        log_error "Failed to pull latest changes for $repo_name"
+        exit 1
+      fi
+    else
+      echo "  Switching from $current_branch to $branch..."
+      if ! git -C "$dir" checkout "$branch"; then
+        log_error "Failed to checkout branch '$branch' in $repo_name"
+        exit 1
+      fi
+      if ! git -C "$dir" pull --ff-only; then
+        log_error "Failed to pull latest changes for $repo_name"
+        exit 1
+      fi
+    fi
   else
-    echo "  Switching from $current_branch to $branch..."
-    git -C "$dir" checkout "$branch"
-    git -C "$dir" pull --ff-only
+    log_skip "Directory $dir is not a git repo or submodule"
+    return
   fi
   
   # Show current commit info
@@ -112,7 +160,11 @@ run_pub_get() {
     return
   fi
   
-  (cd "$dir" && flutter pub get)
+  if ! (cd "$dir" && flutter pub get); then
+    log_error "Failed to run flutter pub get in $repo_name"
+    exit 1
+  fi
+  
   log_success "flutter pub get completed for $repo_name"
 }
 
@@ -126,10 +178,8 @@ checkout_branch "$nostr_dart_path" "$nostr_branch"
 checkout_branch "$nostr_mls_path" "$mls_branch"
 
 log_stage "Step 2: Installing Flutter dependencies"
+# Only run flutter pub get in the main project
 run_pub_get "$main_path"
-run_pub_get "$core_path"
-run_pub_get "$nostr_dart_path"
-run_pub_get "$nostr_mls_path"
 
 log_stage "All done"
 echo "🎉 Successfully completed all setup tasks!"
