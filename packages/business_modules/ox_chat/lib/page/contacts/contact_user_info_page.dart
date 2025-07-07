@@ -8,6 +8,7 @@ import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
+import 'package:ox_common/login/login_manager.dart';
 import '../../utils/chat_session_utils.dart';
 
 class ContactUserInfoPage extends StatefulWidget {
@@ -52,6 +53,9 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
       body: ValueListenableBuilder(
         valueListenable: user$,
         builder: (context, user, _) {
+          // Check if the displayed user is the current user
+          final currentUserPubkey = LoginManager.instance.currentState.account?.pubkey;
+          final isCurrentUser = currentUserPubkey == user.pubKey;
           return Column(
             children: [
               Expanded(
@@ -69,7 +73,7 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
                 ),
               ),
               Visibility(
-                visible: widget.chatId == null,
+                visible: widget.chatId == null && !isCurrentUser,
                 child: _buildBottomButton(),
               ),
             ],
