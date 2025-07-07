@@ -267,7 +267,7 @@ class _GroupCreationPageState extends State<GroupCreationPage> {
 
       // Navigate to group chat page
       ChatMessagePage.open(
-        context: context,
+        context: OXNavigator.navigatorKey.currentContext,
         communityItem: ChatSessionModelISAR(
           chatId: groupDB.privateGroupId,
           groupId: groupDB.privateGroupId,
