@@ -217,18 +217,10 @@ class ChatMessageBuilder {
     final type = message.customType;
 
     switch (type) {
-      // case CustomMessageType.zaps:
-      //   return ChatMessageBuilderCustomEx._buildZapsMessage(message, isMe);
-      // case CustomMessageType.call:
-      //   return ChatMessageBuilderCustomEx._buildCallMessage(message, isMe);
       case CustomMessageType.template:
         return ChatMessageBuilderCustomEx._buildTemplateMessage(message, isMe);
       case CustomMessageType.note:
         return ChatMessageBuilderCustomEx._buildNoteMessage(message, isMe);
-      // case CustomMessageType.ecash:
-      //   return ChatMessageBuilderCustomEx._buildEcashMessage(message, isMe);
-      // case CustomMessageType.ecashV2:
-      //   return ChatMessageBuilderCustomEx._buildEcashV2Message(message, isMe);
       case CustomMessageType.imageSending:
         return ChatMessageBuilderCustomEx._buildImageSendingMessage(message, messageWidth, receiverPubkey, isMe);
       case CustomMessageType.video:
