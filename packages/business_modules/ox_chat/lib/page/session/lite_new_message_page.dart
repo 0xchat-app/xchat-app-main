@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 import 'package:ox_common/component.dart';
-import 'package:ox_common/mixin/common_state_view_mixin.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/scan_utils.dart';
@@ -26,8 +25,7 @@ class CLNewMessagePage extends StatefulWidget {
   }
 }
 
-class _CLNewMessagePageState extends State<CLNewMessagePage>
-    with CommonStateViewMixin {
+class _CLNewMessagePageState extends State<CLNewMessagePage> {
   
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();

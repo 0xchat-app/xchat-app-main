@@ -4,9 +4,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_common/log_util.dart';
 import 'package:ox_common/model/chat_session_model.dart';
-import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/chat_prompt_tone.dart';
-import 'package:ox_common/widgets/common_webview.dart';
 import 'package:ox_module_service/ox_module_service.dart';
 import 'package:isar/isar.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -122,21 +120,11 @@ class OXCommon extends OXFlutterModule {
   }
 
   void gotoWebView(BuildContext context, String url, bool? isPresentPage, bool? fullscreenDialog, bool? isLocalHtmlResource, Function(String)? calllBack) async {
-    if (isPresentPage == null) {
-      final Uri uri = Uri.parse(url);
-      try {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
-      } catch (e) {
-        print(e.toString() + 'Cannot open $url');
-      }
-    } else {
-      OXNavigator.pushPage(
-        context,
-        (context) => CommonWebView(url, title: '0xchat', urlCallback: calllBack, isLocalHtmlResource: isLocalHtmlResource),
-        fullscreenDialog: fullscreenDialog ?? true,
-        type: OXPushPageType.present,
-      );
+    final Uri uri = Uri.parse(url);
+    try {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      print(e.toString() + 'Cannot open $url');
     }
   }
-
 }

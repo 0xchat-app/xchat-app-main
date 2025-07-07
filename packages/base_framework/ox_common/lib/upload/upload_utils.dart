@@ -13,7 +13,6 @@ import 'package:ox_common/utils/aes_encrypt_utils.dart';
 import 'package:ox_common/utils/file_utils.dart';
 import 'package:ox_common/utils/file_server_helper.dart';
 import 'package:ox_common/utils/string_utils.dart';
-import 'package:ox_common/utils/uplod_aliyun_utils.dart';
 import 'package:ox_common/widgets/common_file_cache_manager.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:path_provider/path_provider.dart';
@@ -109,19 +108,6 @@ class UploadUtils {
     }
 
     return UploadResult.success(url, encryptedKey, encryptedNonce);
-  }
-
-  static UplodAliyunType convertFileTypeToUploadAliyunType(FileType fileType) {
-    switch (fileType) {
-      case FileType.image:
-        return UplodAliyunType.imageType;
-      case FileType.voice:
-        return UplodAliyunType.voiceType;
-      case FileType.video:
-        return UplodAliyunType.videoType;
-      case FileType.text:
-        return UplodAliyunType.logType;
-    }
   }
 }
 

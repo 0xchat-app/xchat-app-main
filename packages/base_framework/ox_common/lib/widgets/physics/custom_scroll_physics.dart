@@ -1,5 +1,0 @@
-
-enum ScrollSlideType{
-  slideLeftMax,
-  slideRightMax,
-}

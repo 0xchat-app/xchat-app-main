@@ -16,7 +16,6 @@ import 'package:ox_common/utils/font_size_notifier.dart';
 import 'package:ox_common/utils/storage_key_tool.dart';
 import 'package:ox_common/utils/user_config_tool.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ox_common/event_bus.dart';
 import 'package:ox_common/log_util.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
@@ -219,7 +218,6 @@ class MainState extends State<MainApp>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     LogUtil.log(key: 'didChangeAppLifecycleState', content: state.toString());
-    commonEventBus.fire(AppLifecycleStateEvent(state));
     switch (state) {
       case AppLifecycleState.resumed:
         PromptToneManager.sharedInstance.isAppPaused = false;

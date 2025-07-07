@@ -5,6 +5,7 @@ import 'package:chatcore/chat-core.dart';
 import 'package:ox_chat/utils/chat_session_utils.dart';
 import 'package:ox_chat/utils/general_handler/chat_general_handler.dart';
 import 'package:ox_chat/widget/share_item_info.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_common/navigator/navigator.dart';
@@ -13,7 +14,6 @@ import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
 import 'package:ox_common/utils/theme_color.dart';
 import 'package:ox_common/utils/web_url_helper.dart';
-import 'package:ox_common/widgets/common_appbar.dart';
 import 'package:ox_common/widgets/common_hint_dialog.dart';
 import 'package:ox_common/widgets/common_image.dart';
 import 'package:ox_common/utils/widget_tool.dart';
@@ -86,28 +86,11 @@ class _ChatChooseSharePageState extends State<ChatChooseSharePage> with ShareIte
     updateStateView(_groupMembersCache);
   }
 
-  String buildTitle() {
-    return '${Localized.text('ox_chat.select_chat')}';
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CommonAppBar(
-        title: buildTitle(),
-        // actions: [
-        //   IconButton(
-        //     splashColor: Colors.transparent,
-        //     highlightColor: Colors.transparent,
-        //     icon: CommonImage(
-        //       iconName: 'icon_done.png',
-        //       width: 24.px,
-        //       height: 24.px,
-        //       useTheme: true,
-        //     ),
-        //     onPressed: () {},
-        //   ),
-        // ],
+    return CLScaffold(
+      appBar: CLAppBar(
+        title: Localized.text('ox_chat.select_chat'),
       ),
       body: _buildBody(),
     );

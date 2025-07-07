@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:ox_chat/manager/chat_data_cache.dart';
 import 'package:ox_chat/manager/chat_message_helper.dart';
-import 'package:ox_chat/page/contacts/contact_user_choose_page.dart';
 import 'package:ox_chat/page/contacts/contact_user_info_page.dart';
 import 'package:ox_chat/page/contacts/groups/group_info_page.dart';
 import 'package:ox_chat/page/session/chat_choose_share_page.dart';
@@ -74,12 +73,6 @@ class OXChat extends OXFlutterModule {
             chatId: params?['chatId'],
           ),
         );
-      case 'chatUserChoosePage':
-        return OXNavigator.pushPage(
-          context,
-              (context) => ChatUserChoosePage(
-          ),
-        );
       case 'GroupInfoPage':
         return OXNavigator.pushPage(
           context,
@@ -87,10 +80,6 @@ class OXChat extends OXFlutterModule {
             groupId: params?['groupId'],
           ),
         );
-      case 'ChatChooseSharePage':
-        return OXNavigator.pushPage(context, (context) => ChatChooseSharePage(
-          msg: params?['url'] ?? '',
-        ));
       case 'ChatVideoPlayPage':
         return OXNavigator.pushPage(context, (context) => ChatVideoPlayPage(
           videoUrl: params?['videoUrl'] ?? '',

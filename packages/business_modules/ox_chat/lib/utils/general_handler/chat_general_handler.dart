@@ -28,11 +28,8 @@ import 'package:ox_common/utils/list_extension.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
 import 'package:ox_common/utils/platform_utils.dart';
 import 'package:ox_common/utils/string_utils.dart';
-import 'package:ox_common/utils/theme_color.dart';
 import 'package:ox_common/utils/custom_uri_helper.dart';
-import 'package:ox_common/utils/took_kit.dart';
 import 'package:ox_common/utils/video_data_manager.dart';
-import 'package:ox_common/widgets/common_action_dialog.dart';
 import 'package:ox_common/widgets/common_file_cache_manager.dart';
 import 'package:ox_common/widgets/common_image_gallery.dart';
 import 'package:ox_common/widgets/common_long_content_page.dart';
@@ -62,7 +59,6 @@ import 'package:ox_localizable/ox_localizable.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:nostr_core_dart/nostr.dart';
 import 'package:path/path.dart' as Path;
-import 'package:flutter_chat_types/src/message.dart' as UIMessage;
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:ox_usercenter/page/settings/file_server_page.dart';
 import 'package:ox_common/utils/file_server_helper.dart';
@@ -536,73 +532,12 @@ extension ChatMenuHandlerEx on ChatGeneralHandler {
       return;
     }
 
-    // Relay group && has delete permission
-    if (session.chatType == ChatType.chatRelayGroup) {
-      _showDeleteMode(context, message);
-      return ;
-    }
-
     // General
     _performDeleteAction(
       context: context,
       message: message,
       deleteAction: () => Messages.deleteMessageFromRelay(messageId, ''),
     );
-  }
-
-  void _showDeleteMode(BuildContext context, types.Message message) async {
-    final messageId = message.remoteId;
-    final groupId = session.groupId;
-    if (groupId == null || groupId.isEmpty) return ;
-    if (messageId == null || messageId.isEmpty) {
-      messageDeleteHandler(message);
-      return;
-    }
-
-    const forMeActionType = 0;
-    const forAllActionType = 1;
-    final result = await OXActionDialog.show(
-      context,
-      data: [
-        OXActionModel(
-          identify: forMeActionType,
-          text: 'delete_message_me_action_mode'.localized(),
-        ),
-        if (RelayGroup.sharedInstance.hasDeletePermission(groupId))
-          OXActionModel(
-            identify: forAllActionType,
-            text: 'delete_message_everyone_action_mode'.localized(),
-          ),
-      ],
-    );
-
-    if (result == null) return ;
-
-    final identify = result.identify;
-    switch (identify) {
-      case forMeActionType:
-        _performDeleteAction(
-          context: context,
-          message: message,
-          deleteAction: () async {
-            return RelayGroup.sharedInstance.deleteMessageFromLocal(messageId);
-          },
-        );
-        break;
-      case forAllActionType:
-        _performDeleteAction(
-          context: context,
-          message: message,
-          deleteAction: () async {
-            return RelayGroup.sharedInstance.deleteMessageFromRelay(
-              groupId,
-              messageId,
-              '',
-            );
-          },
-        );
-        break;
-    }
   }
 
   void _performDeleteAction({
@@ -719,25 +654,6 @@ extension ChatInputMoreHandlerEx on ChatGeneralHandler {
     )) return;
 
     _goToCamera(context);
-  }
-
-  Future callPressHandler(BuildContext context, UserDBISAR user) async {
-    OXActionModel? oxActionModel = await OXActionDialog.show(
-      context,
-      data: [
-        OXActionModel(identify: 0, text: 'str_video_call'.localized(), iconName: 'icon_call_video.png', package: 'ox_chat', isUseTheme:true),
-        OXActionModel(identify: 1, text: 'str_voice_call'.localized(), iconName: 'icon_call_voice.png', package: 'ox_chat', isUseTheme:true),
-      ],
-      backGroundColor: ThemeColor.color180,
-      separatorCancelColor: ThemeColor.color190,
-    );
-    if (oxActionModel != null) {
-      OXCallingInterface.pushCallingPage(
-        context,
-        user,
-        oxActionModel.identify == 1 ? CallMessageType.audio : CallMessageType.video,
-      );
-    }
   }
 
   Future<void> _goToPhoto(BuildContext context, int type) async {
