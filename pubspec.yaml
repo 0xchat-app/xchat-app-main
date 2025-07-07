@@ -30,9 +30,6 @@ dependencies:
   # third
   cupertino_icons: ^1.0.0
   encrypt: ^5.0.3
-  flutter_device_type: ^0.4.0
-  flutter_inappwebview: ^6.1.5
-  image_picker_android: ^0.8.12+21
   http_parser: 4.0.2
   # Isar database - Required for code generation (build_runner)
   # Even though isar_flutter_libs already includes isar as a dependency,
