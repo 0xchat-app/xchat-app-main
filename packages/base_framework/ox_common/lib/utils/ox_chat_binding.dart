@@ -104,18 +104,6 @@ class OXChatBinding {
 
   bool removeObserver(OXChatObserver observer) => _observers.remove(observer);
 
-  void createChannelSuccess(ChannelDBISAR channelDB) {
-    for (OXChatObserver observer in _observers) {
-      observer.didCreateChannel(channelDB);
-    }
-  }
-
-  void deleteChannel(ChannelDBISAR channelDB) {
-    for (OXChatObserver observer in _observers) {
-      observer.didDeleteChannel(channelDB);
-    }
-  }
-
   void contactUpdatedCallBack() {
     for (OXChatObserver observer in _observers) {
       observer.didContactUpdatedCallBack();
@@ -170,12 +158,6 @@ class OXChatBinding {
     }
   }
 
-  void channalMessageCallBack(MessageDBISAR messageDB) async {
-    for (OXChatObserver observer in _observers) {
-      observer.didChannalMessageCallBack(messageDB);
-    }
-  }
-
   void groupMessageCallBack(MessageDBISAR messageDB) async {
     for (OXChatObserver observer in _observers) {
       observer.didGroupMessageCallBack(messageDB);
@@ -185,18 +167,6 @@ class OXChatBinding {
   void messageDeleteCallback(List<MessageDBISAR> delMessages) {
     for (OXChatObserver observer in _observers) {
       observer.didMessageDeleteCallBack(delMessages);
-    }
-  }
-
-  void relayGroupJoinReqCallBack(JoinRequestDBISAR joinRequestDB) async {
-    for (OXChatObserver observer in _observers) {
-      observer.didRelayGroupJoinReqCallBack(joinRequestDB);
-    }
-  }
-
-  void relayGroupModerationCallBack(ModerationDBISAR moderationDB) async {
-    for (OXChatObserver observer in _observers) {
-      observer.didRelayGroupModerationCallBack(moderationDB);
     }
   }
 
@@ -213,91 +183,15 @@ class OXChatBinding {
     }
   }
 
-  Future<void> changeChatSessionTypeAll(String pubkey, bool isBecomeContact) async {
-    // //strangerSession to chatSession
-    // bool isChange = false;
-    // List<ChatSessionModelISAR> list = OXChatBinding.sharedInstance.sessionMap.values.toList();
-    // Set<ChatSessionModelISAR> changedSessions = {};
-    // await Future.forEach(list, (csModel) async {
-    //   if(csModel.chatType == ChatType.chatChannel || csModel.chatType == ChatType.chatGroup){
-    //     return;
-    //   }
-    //   isChange = true;
-    //   int? tempChatType = csModel.chatType;
-    //   if (isBecomeContact) {
-    //     if (csModel.chatType == ChatType.chatSecretStranger && (csModel.sender == pubkey || csModel.receiver == pubkey)) {
-    //       tempChatType = ChatType.chatSecret;
-    //       await updateChatSessionDB(csModel, tempChatType);
-    //       changedSessions.add(csModel);
-    //     } else if (csModel.chatType == ChatType.chatStranger && csModel.chatId == pubkey) {
-    //       tempChatType = ChatType.chatSingle;
-    //       await updateChatSessionDB(csModel, tempChatType);
-    //       changedSessions.add(csModel);
-    //     }
-    //   } else {
-    //     if (csModel.chatType == ChatType.chatSecret && (csModel.sender == pubkey || csModel.receiver == pubkey)) {
-    //       tempChatType = ChatType.chatSecretStranger;
-    //       await updateChatSessionDB(csModel, tempChatType);
-    //       changedSessions.add(csModel);
-    //     } else if (csModel.chatType == ChatType.chatSingle && csModel.chatId == pubkey) {
-    //       tempChatType = ChatType.chatStranger;
-    //       await updateChatSessionDB(csModel, tempChatType);
-    //       changedSessions.add(csModel);
-    //     }
-    //   }
-    // });
-    // if (isChange) {
-    //   _updateUnReadStrangerSessionCount();
-    //   sessionUpdate();
-    //   sessionInfoUpdate(changedSessions.toList());
-    // }
-  }
-
-  void noticeFriendRequest() {
-    for (OXChatObserver observer in _observers) {
-      observer.didSecretChatRequestCallBack();
-    }
-  }
-
-  void channelsUpdatedCallBack() {
-    for (OXChatObserver observer in _observers) {
-      observer.didChannelsUpdatedCallBack();
-    }
-  }
-
   void groupsUpdatedCallBack() {
     for (OXChatObserver observer in _observers) {
       observer.didGroupsUpdatedCallBack();
     }
   }
 
-  void relayGroupsUpdatedCallBack() {
-    for (OXChatObserver observer in _observers) {
-      observer.didRelayGroupsUpdatedCallBack();
-    }
-  }
-
   void sessionUpdate() {
     for (OXChatObserver observer in _observers) {
       observer.didSessionUpdate();
-    }
-  }
-
-  void sessionInfoUpdate(List<ChatSessionModelISAR> updatedSession) {
-    for (OXChatObserver observer in _observers) {
-      observer.didSessionInfoUpdate(updatedSession);
-    }
-  }
-
-  void noticePromptToneCallBack(MessageDBISAR message, int type) async {
-    for (OXChatObserver observer in _observers) {
-      observer.didPromptToneCallBack(message, type);
-    }
-  }
-
-  void zapRecordsCallBack(ZapRecordsDBISAR zapRecordsDB) {
-    for (OXChatObserver observer in _observers) {
-      observer.didZapRecordsCallBack(zapRecordsDB);
     }
   }
 
@@ -310,18 +204,6 @@ class OXChatBinding {
   void offlineSecretMessageFinishCallBack() {
     for (OXChatObserver observer in _observers) {
       observer.didOfflineSecretMessageFinishCallBack();
-    }
-  }
-
-  void offlineChannelMessageFinishCallBack() {
-    for (OXChatObserver observer in _observers) {
-      observer.didOfflineChannelMessageFinishCallBack();
-    }
-  }
-
-  void offlineGroupMessageFinishCallBack() {
-    for (OXChatObserver observer in _observers) {
-      observer.didOfflineGroupMessageFinishCallBack();
     }
   }
 }

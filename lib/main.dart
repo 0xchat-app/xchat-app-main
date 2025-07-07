@@ -21,7 +21,6 @@ import 'package:ox_common/log_util.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/ox_userinfo_manager.dart';
-import 'package:ox_common/utils/boot_config.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/ox_common.dart';
 import 'package:ox_common/utils/nip46_status_notifier.dart';
@@ -88,7 +87,6 @@ class MainState extends State<MainApp>
     if (LoginManager.instance.isLoginCircle) {
       notNetworInitWow();
     }
-    BootConfig.instance.batchUpdateUserBadges();
     timer = Timer.periodic(Duration(seconds: 5), (Timer t) {
       printMemoryUsage();
     });

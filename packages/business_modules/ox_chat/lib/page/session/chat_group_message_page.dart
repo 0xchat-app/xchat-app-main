@@ -125,25 +125,4 @@ class _ChatGroupMessagePageState extends State<ChatGroupMessagePage> {
       CommonToast.instance.show(context, okEvent.message);
     }
   }
-
-  Future onRequestGroupTap() async {
-    OXModuleService.invoke('ox_chat', 'groupSharePage', [
-      context
-    ], {
-      Symbol('groupPic'): group$.value.picture ?? '',
-      Symbol('groupName'): groupId,
-      Symbol('groupOwner'): group$.value.owner,
-      Symbol('groupId'): groupId,
-      Symbol('inviterPubKey'): '',
-    });
-    // await OXLoading.show();
-    // final OKEvent okEvent = await Groups.sharedInstance.requestGroup(groupId, group?.owner ?? '','');
-    //
-    // await OXLoading.dismiss();
-    // if (okEvent.status) {
-    //   CommonToast.instance.show(context, 'Request Sent!');
-    // } else {
-    //   CommonToast.instance.show(context, okEvent.message);
-    // }
-  }
 }

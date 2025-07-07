@@ -1,7 +1,5 @@
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
-import 'package:ox_common/utils/storage_key_tool.dart';
-import 'package:ox_common/utils/user_config_tool.dart';
 
 ///Title: ox_chat_observer
 ///Description: TODO(Fill in by oneself)
@@ -25,27 +23,13 @@ abstract mixin class OXChatObserver {
 
   void didContactUpdatedCallBack() {}
 
-  void didCreateChannel(ChannelDBISAR? channelDB) {}
-
-  void didDeleteChannel(ChannelDBISAR? channelDB) {}
-
-  void didChannalMessageCallBack(MessageDBISAR message) {}
-
   void didGroupMessageCallBack(MessageDBISAR message) {}
 
   void didMessageDeleteCallBack(List<MessageDBISAR> delMessages) {}
 
-  void didRelayGroupJoinReqCallBack(JoinRequestDBISAR joinRequestDB) {}
-
-  void didRelayGroupModerationCallBack(ModerationDBISAR moderationDB) {}
-
   void didMessageActionsCallBack(MessageDBISAR message) {}
 
-  void didChannelsUpdatedCallBack() {}
-
   void didGroupsUpdatedCallBack() {}
-
-  void didRelayGroupsUpdatedCallBack() {}
 
   void didSessionUpdate() {}
 
@@ -53,17 +37,8 @@ abstract mixin class OXChatObserver {
 
   void didSecretChatMessageCallBack(MessageDBISAR message) {}
 
-  void didPromptToneCallBack(MessageDBISAR message, int type) {}
-
-  void didZapRecordsCallBack(ZapRecordsDBISAR zapRecordsDB) {
-    final pubKey = Account.sharedInstance.me?.pubKey ?? '';
-    UserConfigTool.saveSetting(StorageSettingKey.KEY_ZAP_BADGE.name, true);
-  }
-
   void didOfflinePrivateMessageFinishCallBack() {}
   void didOfflineSecretMessageFinishCallBack() {}
-  void didOfflineChannelMessageFinishCallBack() {}
-  void didOfflineGroupMessageFinishCallBack() {}
 
   // Lite Feature
   void deleteSessionCallback(List<String> chatIds) {}

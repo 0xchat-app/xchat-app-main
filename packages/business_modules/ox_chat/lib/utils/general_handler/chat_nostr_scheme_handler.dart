@@ -101,32 +101,6 @@ class ChatNostrSchemeHandle {
     return jsonEncode(map);
   }
 
-  static String? relayGroupDBToMessageContent(RelayGroupDBISAR? groupDB) {
-    String link = CustomURIHelper.createModuleActionURI(
-      module: 'ox_chat',
-      action: 'groupSharePage',
-      params: {
-        'groupId': groupDB?.identifier ?? '',
-        'groupName': groupDB?.showName ?? '',
-        'groupPic': groupDB?.picture ?? '',
-        'groupOwner': groupDB?.author ?? '',
-        'groupTypeIndex': groupDB == null || !groupDB.closed
-            ? GroupType.openGroup.index
-            : GroupType.closeGroup.index,
-      },
-    );
-
-    Map<String, dynamic> map = {};
-    map['type'] = '3';
-    map['content'] = {
-      'title': '${groupDB?.showName}',
-      'content': '${groupDB?.about}',
-      'icon': '${groupDB?.picture}',
-      'link': link
-    };
-    return jsonEncode(map);
-  }
-
   static Future<String?> noteToMessageContent(NoteDBISAR? noteDB) async {
     if (noteDB == null) return null;
     UserDBISAR? userDB = await Account.sharedInstance.getUserInfo(noteDB.author);

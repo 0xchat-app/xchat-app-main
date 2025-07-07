@@ -89,14 +89,8 @@ class OXUserInfoManager {
     };
     Contacts.sharedInstance.privateChatMessageUpdateCallBack = messageUpdateCallBack;
     Contacts.sharedInstance.secretChatMessageUpdateCallBack = messageUpdateCallBack;
-    Channels.sharedInstance.channelMessageUpdateCallBack = messageUpdateCallBack;
     Groups.sharedInstance.groupMessageUpdateCallBack = messageUpdateCallBack;
-    RelayGroup.sharedInstance.groupMessageUpdateCallBack = messageUpdateCallBack;
 
-    Channels.sharedInstance.channelMessageCallBack = (MessageDBISAR messageDB) async {
-      OXChatBinding.sharedInstance.didReceiveMessageHandler(messageDB);
-      OXChatBinding.sharedInstance.channalMessageCallBack(messageDB);
-    };
     Groups.sharedInstance.groupMessageCallBack = (MessageDBISAR messageDB) async {
       OXChatBinding.sharedInstance.didReceiveMessageHandler(messageDB);
       OXChatBinding.sharedInstance.groupMessageCallBack(messageDB);
@@ -104,61 +98,18 @@ class OXUserInfoManager {
     Messages.sharedInstance.deleteCallBack = (List<MessageDBISAR> delMessages) {
       OXChatBinding.sharedInstance.messageDeleteCallback(delMessages);
     };
-    RelayGroup.sharedInstance.groupMessageCallBack = (MessageDBISAR messageDB) async {
-      OXChatBinding.sharedInstance.didReceiveMessageHandler(messageDB);
-      OXChatBinding.sharedInstance.groupMessageCallBack(messageDB);
-    };
-    RelayGroup.sharedInstance.joinRequestCallBack = (JoinRequestDBISAR joinRequestDB) async {
-      OXChatBinding.sharedInstance.relayGroupJoinReqCallBack(joinRequestDB);
-    };
-    RelayGroup.sharedInstance.offlineGroupMessageFinishCallBack = () async {
-      OXChatBinding.sharedInstance.offlineGroupMessageFinishCallBack();
-    };
     Contacts.sharedInstance.contactUpdatedCallBack = () {
       _fetchFinishHandler(_ContactType.contacts);
       OXChatBinding.sharedInstance.contactUpdatedCallBack();
     };
-    Channels.sharedInstance.myChannelsUpdatedCallBack = () async {
-      _fetchFinishHandler(_ContactType.channels);
-      OXChatBinding.sharedInstance.channelsUpdatedCallBack();
-    };
     Groups.sharedInstance.myGroupsUpdatedCallBack = () async {
       OXChatBinding.sharedInstance.groupsUpdatedCallBack();
-    };
-    RelayGroup.sharedInstance.myGroupsUpdatedCallBack = () async {
-      _fetchFinishHandler(_ContactType.relayGroups);
-      OXChatBinding.sharedInstance.relayGroupsUpdatedCallBack();
-    };
-    RelayGroup.sharedInstance.moderationCallBack = (ModerationDBISAR moderationDB) async {
-      OXChatBinding.sharedInstance.relayGroupsUpdatedCallBack();
     };
     Contacts.sharedInstance.offlinePrivateMessageFinishCallBack = () {
       OXChatBinding.sharedInstance.offlinePrivateMessageFinishCallBack();
     };
     Contacts.sharedInstance.offlineSecretMessageFinishCallBack = () {
       OXChatBinding.sharedInstance.offlineSecretMessageFinishCallBack();
-    };
-    Channels.sharedInstance.offlineChannelMessageFinishCallBack = () {
-      OXChatBinding.sharedInstance.offlineChannelMessageFinishCallBack();
-    };
-
-    Zaps.sharedInstance.zapRecordsCallBack = (ZapRecordsDBISAR zapRecordsDB) {
-      OXChatBinding.sharedInstance.zapRecordsCallBack(zapRecordsDB);
-    };
-    Moment.sharedInstance.newNotesCallBack = (List<NoteDBISAR> notes) {
-      OXMomentManager.sharedInstance.newNotesCallBackCallBack(notes);
-    };
-
-    Moment.sharedInstance.newNotificationCallBack = (List<NotificationDBISAR> notifications) {
-      OXMomentManager.sharedInstance.newNotificationCallBack(notifications);
-    };
-
-    Moment.sharedInstance.myZapNotificationCallBack = (List<NotificationDBISAR> notifications) {
-      OXMomentManager.sharedInstance.myZapNotificationCallBack(notifications);
-    };
-
-    RelayGroup.sharedInstance.noteCallBack = (NoteDBISAR notes) {
-      OXMomentManager.sharedInstance.groupsNoteCallBack(notes);
     };
 
     Messages.sharedInstance.actionsCallBack = (MessageDBISAR message) {

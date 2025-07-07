@@ -5,11 +5,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:ox_chat/manager/chat_data_cache.dart';
 import 'package:ox_chat/manager/chat_message_helper.dart';
-import 'package:ox_chat/model/option_model.dart';
 import 'package:ox_chat/page/contacts/contact_user_choose_page.dart';
 import 'package:ox_chat/page/contacts/contact_user_info_page.dart';
 import 'package:ox_chat/page/contacts/groups/group_info_page.dart';
-import 'package:ox_chat/page/contacts/groups/group_share_page.dart';
 import 'package:ox_chat/page/session/chat_choose_share_page.dart';
 import 'package:ox_chat/page/session/chat_message_page.dart';
 import 'package:ox_chat/page/session/chat_video_play_page.dart';
@@ -38,7 +36,6 @@ class OXChat extends OXFlutterModule {
 
   @override
   Map<String, Function> get interfaces => {
-    'groupSharePage': _jumpGroupSharePage,
     'sendSystemMsg': _sendSystemMsg,
     'contactUserInfoPage': _contactUserInfoPage,
     'groupInfoPage': _groupInfoPage,
@@ -102,15 +99,6 @@ class OXChat extends OXFlutterModule {
         );
     }
     return null;
-  }
-
-  void _jumpGroupSharePage(BuildContext? context,{required String groupPic, required String groupName, required String groupOwner, required String groupId, String? inviterPubKey, int? groupTypeIndex}){
-    GroupType groupType = GroupType.privateGroup;
-    groupTypeIndex ??= GroupType.privateGroup.index;
-    if (groupTypeIndex >= 0 && groupTypeIndex < GroupType.values.length) {
-      groupType = GroupType.values[groupTypeIndex];
-    }
-    OXNavigator.pushPage(context!, (context) => GroupSharePage(groupPic:groupPic,groupName:groupName,groupId: groupId,groupOwner:groupOwner,inviterPubKey:inviterPubKey, groupType: groupType));
   }
 
   void _contactUserInfoPage(BuildContext? context,{required String pubkey}){

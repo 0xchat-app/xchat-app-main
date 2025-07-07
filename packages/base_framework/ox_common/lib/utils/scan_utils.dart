@@ -147,21 +147,7 @@ extension ScanAnalysisHandlerEx on ScanUtils {
             });
           }
         }
-      } else if (kind == 39000){
-        // if (!await _tryHandleRelaysFromMap(data, context)) return true;
-        // Go to group page
-        final author = data['author'];
-        OXModuleService.invoke('ox_chat', 'groupSharePage', [
-          context
-        ], {
-          Symbol('groupPic'): '',
-          Symbol('groupName'): groupId,
-          Symbol('groupId'): '${relays[0]}\'$groupId',
-          Symbol('groupOwner'): author,
-          Symbol('groupTypeIndex'): 0, //default openGroup
-        });
       }
-
     },
   );
 
