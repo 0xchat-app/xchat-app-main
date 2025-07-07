@@ -1,6 +1,7 @@
 import 'package:diffutil_dart/diffutil.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/adapt.dart';
 
 import '../../ox_chat_ui.dart';
@@ -86,16 +87,7 @@ class ChatList extends StatefulWidget {
 }
 
 /// [ChatList] widget state.
-class _ChatListState extends State<ChatList>
-    with SingleTickerProviderStateMixin {
-  late final Animation<double> _animation = CurvedAnimation(
-    curve: Curves.easeOutQuad,
-    parent: _controller,
-  );
-  late final AnimationController _controller = AnimationController(vsync: this)
-    ..duration = Duration.zero
-    ..forward();
-
+class _ChatListState extends State<ChatList> {
   final _isShowBeforePageLoading$ = ValueNotifier(false);
   bool _isBeforePageLoading = false;
   bool _isShowAfterPageLoading = false;
@@ -138,7 +130,6 @@ class _ChatListState extends State<ChatList>
 
   @override
   void dispose() {
-    _controller.dispose();
     super.dispose();
   }
 
@@ -167,12 +158,8 @@ class _ChatListState extends State<ChatList>
                 bottom: 16,
               ),
               sliver: SliverToBoxAdapter(
-                child: SizeTransition(
-                  axisAlignment: 1,
-                  sizeFactor: _animation,
-                  child: Center(
-                    child: buildLoadingWidget(),
-                  ),
+                child: Center(
+                  child: buildLoadingWidget(),
                 ),
               ),
             ),
@@ -315,25 +302,14 @@ class _ChatListState extends State<ChatList>
       alignment: Alignment.center,
       height: 32,
       width: 32,
-      child: SizedBox(
-        height: 16,
-        width: 16,
-        child: ValueListenableBuilder(
-          valueListenable: _isShowBeforePageLoading$,
-          builder: (_, _isShowBeforePageLoading, __,) {
-            if (!_isShowBeforePageLoading) return SizedBox.shrink();
-
-            return CircularProgressIndicator(
-              backgroundColor: Colors.transparent,
-              strokeWidth: 1.5,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                InheritedChatTheme.of(context)
-                    .theme
-                    .primaryColor,
-              ),
-            );
-          },
-        ),
+      child: ValueListenableBuilder(
+        valueListenable: _isShowBeforePageLoading$,
+        builder: (_, _isShowBeforePageLoading, __,) {
+          if (!_isShowBeforePageLoading) return SizedBox.shrink();
+          return CLProgressIndicator.circular(
+            size: 24.px
+          );
+        },
       ),
     );
 
