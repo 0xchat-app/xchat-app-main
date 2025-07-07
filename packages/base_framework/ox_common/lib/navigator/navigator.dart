@@ -55,8 +55,9 @@ class OXNavigator extends Navigator {
     // Remove the current focus
     FocusScope.of(context).requestFocus(FocusNode());
 
-    if (canPop(context)) {
-      Navigator.of(context, rootNavigator: true).popUntil((Route<dynamic> route) {
+    final navigator = Navigator.of(context, rootNavigator: true);
+    if (navigator.canPop()) {
+      navigator.popUntil((Route<dynamic> route) {
         return route.isFirst;
       });
     }

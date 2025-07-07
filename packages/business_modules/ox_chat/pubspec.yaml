@@ -47,7 +47,6 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
-    - assets/theme/
     - assets/images/
     - assets/images/dark/
     - assets/images/light/
