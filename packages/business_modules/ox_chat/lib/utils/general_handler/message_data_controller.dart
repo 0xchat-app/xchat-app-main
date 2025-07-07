@@ -245,6 +245,10 @@ extension MessageDataControllerInterface on MessageDataController {
     return chatTypeKey == msg.chatTypeKey;
   }
 
+  bool isMentionInCurrentSession(String chatId, String messageId) {
+    return chatTypeKey.sessionId == chatId;
+  }
+
   Future<List<types.Message>> loadMoreMessage({
     required int loadMsgCount,
     bool isLoadOlderData = true,

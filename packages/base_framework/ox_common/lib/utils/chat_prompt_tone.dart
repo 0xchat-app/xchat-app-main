@@ -23,7 +23,7 @@ enum SoundTheme {
 }
 
 class PromptToneManager {
-  bool Function(MessageDBISAR msg)? isCurrencyChatPage;
+  bool Function(String chatId, String messageId)? isCurrencyChatPage;
   bool isAppPaused = false;
 
   static final PromptToneManager sharedInstance = PromptToneManager._internal();
