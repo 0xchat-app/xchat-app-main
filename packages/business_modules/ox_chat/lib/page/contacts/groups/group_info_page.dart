@@ -8,7 +8,6 @@ import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 
-import '../contact_group_list_page.dart';
 import '../contact_group_member_page.dart';
 import 'group_add_members_page.dart';
 import 'group_name_settings_page.dart';
@@ -190,7 +189,7 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
               );
             },
           ),
-          onTap: () => _groupMemberOptionFn(GroupListAction.view),
+          onTap: () => _groupMemberOptionFn(),
         ),
       ],
     );
@@ -299,7 +298,7 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
     );
   }
 
-  void _groupMemberOptionFn(GroupListAction action) async {
+  void _groupMemberOptionFn() async {
     if (!_isGroupMember) return;
     OXNavigator.pushPage(
       context, (context) => ContactGroupMemberPage(

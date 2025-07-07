@@ -50,35 +50,4 @@ class ErrorUtils{
     await file.writeAsString(errorLogs.join('\n') + '\n');
     LogUtil.e('John: ErrorUtils--path =${path}');
   }
-
-
-  static Future<void> sendLogs(BuildContext context, File logFile) async {
-    if (await logFile.exists()) {
-      String createEncryptKey = bytesToHex(AesEncryptUtils.secureRandom());
-      String fileName = logFile.path.substring(logFile.path.lastIndexOf('/') + 1);
-      try {
-        UploadResult result = await UploadUtils.uploadFile(
-          fileType: FileType.text,
-          file: logFile,
-          filename: fileName,
-          encryptedKey: createEncryptKey,
-        );
-        if (result.isSuccess && result.url.isNotEmpty) {
-          OXChatInterface.sendEncryptedFileMessage(
-            context,
-            url: result.url,
-            receiverPubkey: '7adb520c3ac7cb6dc8253508df0ce1d975da49fefda9b5c956744a049d230ace',
-            key: createEncryptKey,
-            title: 'Log File',
-            subtitle: fileName,
-          );
-          CommonToast.instance.show(context, Localized.text('ox_chat.sent_successfully'));
-        }
-      } catch (e) {
-        UploadResult result = UploadExceptionHandler.handleException(e);
-        CommonToast.instance.show(context, result.errorMsg ?? e.toString());
-      }
-
-    }
-  }
 }

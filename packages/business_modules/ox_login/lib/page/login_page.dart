@@ -18,7 +18,6 @@ import 'package:ox_localizable/ox_localizable.dart';
 // ox_login
 import 'package:ox_login/page/account_key_login_page.dart';
 import 'package:ox_login/page/create_account_page.dart';
-import 'package:ox_login/page/login_with_qrcode_page.dart';
 import 'package:ox_module_service/ox_module_service.dart';
 import 'package:rich_text_widget/rich_text_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -132,24 +131,6 @@ class _LoginPageState extends State<LoginPage> {
     expanded: true,
     text: Localized.text('ox_login.login_button'),
   );
-
-  Widget buildQrCodeLoginWidget() =>
-      GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onTap: _loginWithQRCode,
-        child: Container(
-          height: Adapt.px(48),
-          alignment: Alignment.center,
-          child: Text(
-            Localized.text('ox_login.str_login_with_qrcode'),
-            style: TextStyle(
-              color: ThemeColor.gradientMainStart,
-              fontWeight: FontWeight.bold,
-              fontSize: Adapt.px(16),
-            ),
-          ),
-        ),
-      );
 
   Widget buildPrivacyWidget() => Container(
     margin: EdgeInsets.symmetric(horizontal: 24.px),
@@ -298,10 +279,5 @@ class _LoginPageState extends State<LoginPage> {
 
   void _privacyPolicyWebView() {
     OXModuleService.invoke('ox_common', 'gotoWebView', [context, 'https://www.0xchat.com/protocols/0xchat_privacy_policy.html', null, null, null, null]);
-  }
-
-  void _loginWithQRCode() {
-    OXNavigator.pushPage(context, (context) => LoginWithQRCodePage(), fullscreenDialog: true,
-      type: OXPushPageType.present,);
   }
 }

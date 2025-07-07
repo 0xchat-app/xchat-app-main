@@ -24,15 +24,6 @@ class ChatNostrSchemeHandle {
         nostrScheme.startsWith('npub')) {
       final tempMap = Account.decodeProfile(nostrScheme);
       return await pubkeyToMessageContent(tempMap?['pubkey'], nostrScheme);
-    } else if (nostrScheme.startsWith('nostr:note') ||
-        nostrScheme.startsWith('nostr:nevent') ||
-        nostrScheme.startsWith('nevent') ||
-        nostrScheme.startsWith('nostr:naddr') ||
-        nostrScheme.startsWith('naddr') ||
-        nostrScheme.startsWith('note')) {
-      final tempMap = Channels.decodeChannel(nostrScheme);
-      return await eventIdToMessageContent(tempMap?['channelId'], nostrScheme,
-          tempMap?['relays'].cast<String>(), tempMap?['kind']);
     }
     return null;
   }
@@ -49,12 +40,6 @@ class ChatNostrSchemeHandle {
     return null;
   }
 
-  static Future<ChannelDBISAR> _loadChannelOnline(Channel channel) async {
-    ChannelDBISAR? channelDB = await Channels.sharedInstance
-        .updateChannelMetadataFromRelay(channel.owner, [channel.channelId]);
-    return channelDB ?? ChannelDBISAR(channelId: channel.channelId);
-  }
-
   static Future<String?> addressToMessageContent(
       String? d, String? pubkey, String nostrScheme) async {
     if (d == null || pubkey == null) return null;
@@ -67,64 +52,6 @@ class ChatNostrSchemeHandle {
               longFormContent, nostrScheme);
       }
     }
-    return null;
-  }
-
-  static Future<String?> eventIdToMessageContent(String? eventId,
-      String nostrScheme, List<String>? relays, int? kind) async {
-    if (eventId == null) return null;
-    Event? event;
-    if (kind == null) {
-      if (Channels.sharedInstance.channels.containsKey(eventId))
-        kind = 40;
-      else if (Moment.sharedInstance.notesCache.containsKey(eventId))
-        kind = 1;
-      else if (RelayGroup.sharedInstance.groups.containsKey(eventId))
-        kind = 39000;
-      else {
-        event = await Account.loadEvent(eventId, relays: relays);
-        kind = event?.kind;
-      }
-    }
-    if (kind == null) return null;
-    switch (kind) {
-      case 40:
-        if (Channels.sharedInstance.channels.containsKey(eventId)) {
-          return channelToMessageContent(
-              Channels.sharedInstance.channels[eventId]?.value);
-        } else if (event != null) {
-          Channel channel = Nip28.getChannelCreation(event);
-          ChannelDBISAR channelDB =
-              Channels.sharedInstance.getChannelDBFromChannel(channel);
-          return channelToMessageContent(channelDB);
-        }
-        break;
-      case 1:
-        NoteDBISAR? noteDB = await Moment.sharedInstance
-            .loadNoteWithNoteId(eventId, relays: relays);
-        if (noteDB != null) return await noteToMessageContent(noteDB);
-        break;
-      case 30023:
-        if (event != null) {
-          LongFormContent? longFormContent = Nip23.decode(event);
-          return await longFormContentToMessageContent(
-              longFormContent, nostrScheme);
-        }
-        break;
-      case 39000:
-        RelayGroupDBISAR? relayGroupDB;
-        if (RelayGroup.sharedInstance.groups.containsKey(eventId)) {
-           relayGroupDB =
-              RelayGroup.sharedInstance.groups[eventId]?.value;
-        }
-        if(relays != null && relays.isNotEmpty){
-          relayGroupDB = await RelayGroup.sharedInstance
-              .searchGroupsMetadataWithGroupID(eventId, relays.first);
-        }
-        if (relayGroupDB != null)
-          return relayGroupDBToMessageContent(relayGroupDB);
-        break;
-      }
     return null;
   }
 
@@ -151,24 +78,6 @@ class ChatNostrSchemeHandle {
       'title': '${userDB?.name}',
       'content': '${userDB?.about}',
       'icon': '${userDB?.picture}',
-      'link': link
-    };
-    return jsonEncode(map);
-  }
-
-  static String channelToMessageContent(ChannelDBISAR? channelDB) {
-    String link = CustomURIHelper.createModuleActionURI(
-        module: 'ox_chat',
-        action: 'contactChanneDetailsPage',
-        params: {'channelId': channelDB?.channelId ?? ''});
-    Map<String, dynamic> map = {};
-    String? name = channelDB?.name?.isEmpty == true ? channelDB?.shortChannelId : channelDB?.name;
-    String? about = channelDB?.about?.isEmpty == true ? channelDB?.shortChannelId : channelDB?.about;
-    map['type'] = '3';
-    map['content'] = {
-      'title': '${name ?? channelDB?.shortChannelId}',
-      'content': '${about ?? channelDB?.shortChannelId}',
-      'icon': '${channelDB?.picture}',
       'link': link
     };
     return jsonEncode(map);

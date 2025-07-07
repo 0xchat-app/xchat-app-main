@@ -9,30 +9,6 @@ class OXChatInterface {
 
   static const moduleName = 'ox_chat';
 
-  static bool sendEncryptedFileMessage(BuildContext? context, {
-    required String url,
-    required String receiverPubkey,
-    required String key,
-    String title = '',
-    String subtitle = '',
-  }) {
-    OXChatInterface.sendTemplateMessage(
-      context,
-      receiverPubkey: receiverPubkey,
-      title: title,
-      subTitle: subtitle,
-      link: CustomURIHelper.createModuleActionURI(
-        module: OXChatInterface.moduleName,
-        action: 'openWebviewForEncryptedFile',
-        params: {
-          'url': url,
-          'key': key,
-        },
-      ),
-    );
-    return true;
-  }
-
   static void sendTemplateMessage(
     BuildContext? context, {
       String receiverPubkey = '',
@@ -64,32 +40,6 @@ class OXChatInterface {
       [content],
     );
     return result;
-  }
-
-  static Future<List<UserDBISAR>?> pushUserSelectionPage({
-    required BuildContext context,
-    List<UserDBISAR>? userList,
-    String? title,
-    List<UserDBISAR>? defaultSelected,
-    List<UserDBISAR>? additionalUserList,
-    bool isMultiSelect = false,
-    bool allowFetchUserFromRelay = false,
-    bool Function(List<UserDBISAR> userList)? shouldPop,
-  }) async {
-    return OXModuleService.pushPage<List<UserDBISAR>?>(
-      context,
-      moduleName,
-      'UserSelectionPage',
-      {
-        'title': title,
-        'userList': userList,
-        'defaultSelected': defaultSelected,
-        'additionalUserList': additionalUserList,
-        'isMultiSelect': isMultiSelect,
-        'allowFetchUserFromRelay': allowFetchUserFromRelay,
-        'shouldPop': shouldPop,
-      },
-    );
   }
 
   static void addContact(BuildContext context) {
