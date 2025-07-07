@@ -189,7 +189,8 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
               );
             },
           ),
-          onTap: () => _groupMemberOptionFn(),
+          isCupertinoAutoTrailing: true,
+          onTap: () => _memberItemOnTap(),
         ),
       ],
     );
@@ -298,7 +299,7 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
     );
   }
 
-  void _groupMemberOptionFn() async {
+  void _memberItemOnTap() async {
     if (!_isGroupMember) return;
     OXNavigator.pushPage(
       context, (context) => ContactGroupMemberPage(
