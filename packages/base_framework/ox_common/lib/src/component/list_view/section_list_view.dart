@@ -1,11 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/widget_tool.dart';
-
-import '../platform_style.dart';
-import 'list_view.dart';
-import 'section_list_view_model.dart';
 
 class CLSectionListView extends StatelessWidget {
   final ScrollController? controller;
@@ -73,6 +70,12 @@ class CLSectionListView extends StatelessWidget {
   Widget buildItemWidget(SectionListViewItem model, BuildContext context) {
     final headerWidget = model.headerWidget;
 
+    // Handle button sections
+    if (model.isButtonSection) {
+      return _buildButtonSection(model, context);
+    }
+
+    // Handle regular list sections
     if (PlatformStyle.isUseMaterial) {
       final widgets = <Widget>[];
       if (headerWidget != null) {
@@ -99,6 +102,76 @@ class CLSectionListView extends StatelessWidget {
         hasLeading: listView.hasLeading,
         separatorColor: kSystemSeparator.resolveFrom(context),
         children: listView.asCupertinoSectionChildren(false),
+      );
+    }
+  }
+
+  Widget _buildButtonSection(SectionListViewItem model, BuildContext context) {
+    final buttonText = model.buttonText ?? '';
+    final buttonType = model.buttonType;
+    final buttonOnTap = model.buttonOnTap;
+
+    if (PlatformStyle.isUseMaterial) {
+      // Material design button section - use CLButton
+      Widget button;
+      
+      switch (buttonType) {
+        case ButtonType.primary:
+          button = CLButton.filled(
+            text: buttonText,
+            onTap: buttonOnTap,
+            expanded: true,
+          );
+          break;
+        case ButtonType.destructive:
+          button = CLButton.text(
+            text: buttonText,
+            color: ColorToken.error.of(context),
+            onTap: buttonOnTap,
+            expanded: true,
+          );
+          break;
+        case ButtonType.secondary:
+        default:
+          button = CLButton.tonal(
+            text: buttonText,
+            onTap: buttonOnTap,
+            expanded: true,
+          );
+          break;
+      }
+      
+      return Container(
+        margin: EdgeInsets.symmetric(
+          horizontal: CLLayout.horizontalPadding,
+        ),
+        child: button,
+      );
+    } else {
+      // Cupertino design button section - use CupertinoButton for native tap feedback
+      Color textColor;
+      switch (buttonType) {
+        case ButtonType.primary:
+          textColor = ColorToken.primary.of(context);
+          break;
+        case ButtonType.destructive:
+          textColor = ColorToken.error.of(context);
+          break;
+        case ButtonType.secondary:
+        default:
+          textColor = ColorToken.onSurface.of(context);
+          break;
+      }
+      
+      return CupertinoListSection.insetGrouped(
+        children: [
+          CLButton.text(
+            text: buttonText,
+            color: textColor,
+            onTap: buttonOnTap,
+            expanded: true,
+          )
+        ],
       );
     }
   }
