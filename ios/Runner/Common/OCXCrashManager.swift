@@ -22,11 +22,18 @@ class OCXCrashManager {
     private var crashCount = 0
     private let crashLimit = 5
     
+    // Simple switch to disable crash protection
+    private let isCrashProtectionEnabled = false
+    
     var continueCallback: (() -> Void)?
     
     var showCrashAlert: Bool {
         get {
-            crashCount > crashLimit
+            // Return false if crash protection is disabled
+            if !isCrashProtectionEnabled {
+                return false
+            }
+            return crashCount > crashLimit
         }
     }
     
@@ -42,6 +49,11 @@ class OCXCrashManager {
     private init() {}
     
     func appLaunched() {
+        // Skip crash protection logic if disabled
+        if !isCrashProtectionEnabled {
+            return
+        }
+        
         crashCount = UserDefaults.standard.integer(forKey: crashCountKey)
         crashCount += 1
         UserDefaults.standard.set(crashCount, forKey: crashCountKey)
@@ -54,6 +66,11 @@ class OCXCrashManager {
     }
     
     func showWarningDialog() {
+        // Skip showing warning dialog if crash protection is disabled
+        if !isCrashProtectionEnabled {
+            return
+        }
+        
         let alertController = UIAlertController(title: "Warning", message: "The app has crashed several times on startup. Please check for issues.", preferredStyle: .alert)
         
         let exportAction = UIAlertAction(title: "Export Data", style: .default) { _ in
