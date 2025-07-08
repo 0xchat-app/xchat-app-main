@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ox_common/component.dart';
-import 'package:rive/rive.dart';
 import 'package:ox_home/page/home_page.dart';
 
 class LaunchPageView extends StatefulWidget {
@@ -16,12 +15,6 @@ class LaunchPageView extends StatefulWidget {
 }
 
 class LaunchPageViewState extends State<LaunchPageView> {
-  final riveFileNames = 'Launcher';
-  final stateMachineNames = 'Button';
-  final riveInputs = 'Press';
-
-  late StateMachineController? riveControllers;
-  Artboard? riveArtboards;
 
   @override
   void initState() {

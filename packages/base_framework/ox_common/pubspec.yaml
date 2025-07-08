@@ -52,7 +52,6 @@ dependencies:
   flutter_sticky_header: ^0.7.0
   syncfusion_flutter_sliders: 29.1.38
   html: ^0.15.0
-  rive: ^0.13.20
   flutter_slidable: ^4.0.0
   device_info_plus: ^11.3.0
   image_gallery_saver_plus:
