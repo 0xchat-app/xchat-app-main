@@ -178,10 +178,11 @@ class InputState extends State<Input> {
 
       if (_pluginKeyboardHeight != height) _pluginKeyboardHeight = height;
 
-      // Change input type to text mode after keyboard height is detected
-      // This prevents UI flickering that occurs when changing input type
-      // before keyboard height is available
-      changeInputType(InputType.inputTypeText);
+      // Only change input type to text mode if this input field has focus
+      // This prevents the keyboard background from showing in other pages
+      if (_inputFocusNode.hasFocus) {
+        changeInputType(InputType.inputTypeText);
+      }
     });
   }
 
