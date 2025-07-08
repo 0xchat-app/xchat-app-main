@@ -26,7 +26,7 @@ class SessionListViewModel {
   bool get isMute => ChatSessionUtils.getChatMute(sessionModel);
 
   String get updateTime =>
-      OXDateUtils.convertTimeFormatString2(_raw.createTime * 1000,
+      OXDateUtils.convertTimeFormatString2(_raw.createTime,
           pattern: 'MM-dd');
 
   String get unreadCountText {

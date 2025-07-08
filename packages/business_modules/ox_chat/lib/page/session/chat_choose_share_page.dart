@@ -61,9 +61,7 @@ class _ChatChooseSharePageState extends State<ChatChooseSharePage> with ShareIte
   Future<void> _fetchListAsync() async {
     List<ChatSessionModelISAR> sessions = OXChatBinding.sharedInstance.sessionList;
     sessions.sort((session1, session2) {
-      var session2CreatedTime = session2.createTime;
-      var session1CreatedTime = session1.createTime;
-      return session2CreatedTime.compareTo(session1CreatedTime);
+      return session2.createTime.compareTo(session1.createTime);
     });
     ShareSearchGroup searchGroup =
         ShareSearchGroup(title: 'str_recent_chats'.localized(), type: ShareSearchType.recentChats, items: sessions);

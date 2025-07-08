@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:io';
 
@@ -427,10 +426,14 @@ extension MessageDataControllerPrivate on MessageDataController {
     if (chatTypeKey != message.chatTypeKey) return ;
 
     final firstMessageTime = _messages.firstOrNull?.createdAt;
-    if (_hasMoreNewMessage && firstMessageTime != null && message.createTime > (firstMessageTime ~/ 1000)) return ;
+    if (_hasMoreNewMessage && firstMessageTime != null) {
+      if (message.createTime * 1000 > firstMessageTime) return;
+    }
 
     final lastMessageTime = _messages.lastOrNull?.createdAt;
-    if (_hasMoreOldMessage && lastMessageTime != null && message.createTime < (lastMessageTime ~/ 1000)) return ;
+    if (_hasMoreOldMessage && lastMessageTime != null) {
+      if (message.createTime * 1000 < lastMessageTime) return;
+    }
 
     final uiMessage = await _addMessageWithMessageDB(message);
     if (uiMessage != null) {

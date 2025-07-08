@@ -141,7 +141,7 @@ extension ScanAnalysisHandlerEx on ScanUtils {
               'chatId': groupId,
               'chatName': channelDB.name,
               'chatType': ChatType.chatChannel,
-              'time': channelDB.createTime,
+              'time': channelDB.createTime * 1000,
               'avatar': channelDB.picture,
               'groupId': channelDB.channelId,
             });

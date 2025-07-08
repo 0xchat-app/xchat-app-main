@@ -1,4 +1,3 @@
-
 part of 'chat_message_builder.dart';
 
 extension ChatMessageBuilderCustomEx on ChatMessageBuilder {
@@ -107,6 +106,7 @@ extension ChatMessageBuilderCustomEx on ChatMessageBuilder {
     final authorIcon = NoteMessageEx(message).authorIcon;
     final dns = NoteMessageEx(message).authorDNS;
     final createTime = NoteMessageEx(message).createTime;
+    final createTimeInMs = createTime * 1000;
     final content = NoteMessageEx(message).note;
     final icon = NoteMessageEx(message).image;
     Widget iconWidget = SizedBox().setPadding(EdgeInsets.only(bottom: 10.px));
@@ -176,7 +176,7 @@ extension ChatMessageBuilderCustomEx on ChatMessageBuilder {
                 ),
                 Spacer(),
                 Text(
-                  OXDateUtils.convertTimeFormatString2(createTime * 1000,
+                  OXDateUtils.convertTimeFormatString2(createTimeInMs,
                       pattern: 'MM-dd'),
                   style: TextStyle(
                       fontSize: 14.sp,

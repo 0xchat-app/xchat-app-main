@@ -364,9 +364,12 @@ extension _ChatSessionModelISAREx on ChatSessionModelISAR {
     final sessionMessageTextBuilder =
         OXChatBinding.sharedInstance.sessionMessageTextBuilder;
     final text = sessionMessageTextBuilder?.call(message) ?? '';
-    createTime = message.createTime;
-    if (lastActivityTime < message.createTime) {
-      lastActivityTime = message.createTime;
+    
+    // Convert message createTime from seconds to milliseconds
+    final createTimeInMs = message.createTime * 1000;
+    createTime = createTimeInMs;
+    if (lastActivityTime < createTimeInMs) {
+      lastActivityTime = createTimeInMs;
     }
     content = text;
 
