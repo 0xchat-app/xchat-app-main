@@ -21,12 +21,6 @@
 @import ox_network;
 #endif
 
-#if __has_include(<ox_push/OXPushPlugin.h>)
-#import <ox_push/OXPushPlugin.h>
-#else
-@import ox_push;
-#endif
-
 static NSString *_kReloadChannelName = @"reload";
 
 @interface OXCFlutterEngineManager()
@@ -119,7 +113,6 @@ static NSString *_kReloadChannelName = @"reload";
 //    [ScanPlugin registerWithRegistrar:[_engine registrarForPlugin:@"ScanPlugin"]];
     [OXCCommonPlugin registerWithRegistrar:[_engine registrarForPlugin:@"OXCCommonPlugin"]];
     [OXNetworkPlugin registerWithRegistrar:[_engine registrarForPlugin:@"OXNetworkPlugin"]];
-    [OXPushPlugin registerWithRegistrar:[_engine registrarForPlugin:@"OXPushPlugin"]];
 }
 
 @end

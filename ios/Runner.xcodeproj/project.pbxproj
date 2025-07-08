@@ -706,7 +706,6 @@
 					"\"${PODS_ROOT}/Headers/Public/webview_flutter\"",
 					"\"${PODS_ROOT}/Headers/Public/ox_common\"",
 					"\"${PODS_ROOT}/Headers/Public/ox_network\"",
-					"\"${PODS_ROOT}/Headers/Public/ox_push\"",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -871,7 +870,6 @@
 					"\"${PODS_ROOT}/Headers/Public/webview_flutter\"",
 					"\"${PODS_ROOT}/Headers/Public/ox_common\"",
 					"\"${PODS_ROOT}/Headers/Public/ox_network\"",
-					"\"${PODS_ROOT}/Headers/Public/ox_push\"",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -908,7 +906,6 @@
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/ox_chat\"",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/ox_common\"",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/ox_network\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/ox_push\"",
 					/usr/lib/swift,
 					"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)/",
 					"$(SDKROOT)/usr/lib/swift",
@@ -960,7 +957,6 @@
 					"\"${PODS_ROOT}/Headers/Public/webview_flutter\"",
 					"\"${PODS_ROOT}/Headers/Public/ox_common\"",
 					"\"${PODS_ROOT}/Headers/Public/ox_network\"",
-					"\"${PODS_ROOT}/Headers/Public/ox_push\"",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
