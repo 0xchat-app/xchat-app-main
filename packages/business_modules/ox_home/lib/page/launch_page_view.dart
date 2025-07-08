@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ox_common/component.dart';
-import 'package:ox_common/login/login_manager.dart';
 import 'package:rive/rive.dart';
 import 'package:ox_home/page/home_page.dart';
 
@@ -28,16 +27,13 @@ class LaunchPageViewState extends State<LaunchPageView> {
   void initState() {
     super.initState();
 
-    // Try auto login with LoginManager
-    _tryAutoLogin().then((_) async {
-      // Navigate to HomePage regardless of login status
-      // HomePage will handle the login/not-login state internally
-      await WidgetsBinding.instance.waitUntilFirstFrameRasterized;
+    // Navigate to HomePage after first frame is rendered
+    // Auto login is now handled in AppInitializer.userInitializer()
+    WidgetsBinding.instance.waitUntilFirstFrameRasterized.then((_) {
       Navigator.of(context).pushReplacement(
           CustomRouteFadeIn(const HomePage())
       );
     });
-
 
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
   }
@@ -52,16 +48,6 @@ class LaunchPageViewState extends State<LaunchPageView> {
     return CLScaffold(
       body: Container(),
     );
-  }
-
-  /// Try auto login using LoginManager
-  Future<void> _tryAutoLogin() async {
-    try {
-      await LoginManager.instance.autoLogin();
-    } catch (e) {
-      debugPrint('Auto login failed: $e');
-      // Continue to HomePage, which will show login page if needed
-    }
   }
 }
 

@@ -1,10 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/log_util.dart';
 import 'package:ox_common/ox_common.dart';
 import 'package:ox_common/utils/theme_color.dart';
 import 'package:ox_home/page/launch_page_view.dart';
+
+import 'app_initializer.dart';
 
 ///Title: multi_route_utils
 ///Description: TODO(Fill in by oneself)
@@ -28,6 +31,13 @@ class MultiRouteUtils {
       }
       return pathWidget;
     } else {
+      // Check if app initialization was successful
+      if (!AppInitializer.shared.isInitialized) {
+        // Return white screen if initialization failed
+        return CLScaffold(
+          body: Container(),
+        );
+      }
       return LaunchPageView();
     }
   }

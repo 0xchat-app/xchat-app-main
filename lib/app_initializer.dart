@@ -9,6 +9,7 @@ import 'package:ox_common/component.dart';
 import 'package:ox_common/desktop/window_manager.dart';
 import 'package:ox_common/log_util.dart';
 import 'package:ox_common/ox_common.dart';
+import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/utils/error_utils.dart';
 import 'package:ox_common/utils/font_size_notifier.dart';
 import 'package:ox_common/utils/storage_key_tool.dart';
@@ -24,7 +25,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter_socks_proxy/socks_proxy.dart';
 import 'package:dart_ping_ios/dart_ping_ios.dart';
 import 'package:nostr_mls_package/nostr_mls_package.dart';
-
 import 'main.reflectable.dart';
 
 class OXErrorInfo {
@@ -36,6 +36,10 @@ class OXErrorInfo {
 class AppInitializer {
   static final AppInitializer shared = AppInitializer();
   List<OXErrorInfo> initializeErrors = [];
+  
+  // Track initialization status
+  bool _isInitialized = false;
+  bool get isInitialized => _isInitialized;
 
   OXWindowManager windowManager = OXWindowManager();
 
@@ -47,13 +51,16 @@ class AppInitializer {
           uiInitializer(),
           businessInitializer(),
         ]);
+        await userInitializer();
         if (kDebugMode) {
           getApplicationDocumentsDirectory().then((value) {
             LogUtil.d('[App start] Application Documents Path: $value');
           });
         }
+        _isInitialized = true;
       } catch (error, stack) {
         initializeErrors.add(OXErrorInfo(error, stack));
+        _isInitialized = false;
       }
     });
   }
@@ -75,6 +82,21 @@ class AppInitializer {
 
     ThemeManager.addOnThemeChangedCallback(onThemeStyleChange);
     DartPingIOS.register();
+  }
+
+  /// User-level initialization including auto login
+  Future userInitializer() async {
+    await _tryAutoLogin();
+  }
+
+  /// Try auto login using LoginManager
+  Future<void> _tryAutoLogin() async {
+    try {
+      await LoginManager.instance.autoLogin();
+    } catch (e) {
+      debugPrint('Auto login failed: $e');
+      // Continue to app, which will show login page if needed
+    }
   }
 
   Future uiInitializer() async {
