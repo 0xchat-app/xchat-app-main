@@ -42,7 +42,6 @@ abstract class OXFlutterModule {
     OXModuleService.registerFlutterModule(moduleName, this);
     await ThemeManager.registerTheme(moduleName, assetPath);
     await Localized.registerLocale(moduleName, assetPath);
-    DB.sharedInstance.schemes.addAll(dbSchemes);
     DBISAR.sharedInstance.schemas.addAll(isarDBSchemes);
   }
 
@@ -67,11 +66,6 @@ abstract class OXFlutterModule {
   /// Interface methods
   Map<String, Function> get _allInterfaces =>
       {"navigateToPage": navigateToPage}..addAll(interfaces);
-
-  @protected
-
-  /// External interface methods
-  List<Type> get dbSchemes => [];
 
   /// isar schemes
   List<IsarGeneratedSchema> get isarDBSchemes => [];
