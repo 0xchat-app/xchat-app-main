@@ -18,7 +18,6 @@ import 'package:ox_cache_manager/ox_cache_manager.dart';
 import 'package:ox_home/ox_home.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_login/ox_login.dart';
-import 'package:ox_push/push_lib.dart';
 import 'package:ox_theme/ox_theme.dart';
 import 'package:ox_usercenter/ox_usercenter.dart';
 import 'package:path_provider/path_provider.dart';
@@ -119,7 +118,6 @@ class AppInitializer {
       OXCommon().setup(),
       OXLogin().setup(),
       OXUserCenter().setup(),
-      OXPush().setup(),
       OXChat().setup(),
       OXChatUI().setup(),
       OxChatHome().setup(),

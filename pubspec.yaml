@@ -54,8 +54,6 @@ dependencies:
     path: packages/base_framework/ox_localizable
   ox_common:
     path: packages/base_framework/ox_common
-  ox_push:
-    path: packages/base_framework/ox_push
 
 
   # business framework
