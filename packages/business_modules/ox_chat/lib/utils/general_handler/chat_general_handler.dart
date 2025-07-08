@@ -759,6 +759,15 @@ extension ChatInputHandlerEx on ChatGeneralHandler {
     final isConfirm = await ChatSendImagePrepareDialog.show(context, imageFile);
     if (!isConfirm) return;
 
+    // Ensure file server is configured before proceeding.
+    if (!await FileServerHelper.ensureFileServerConfigured(
+      context,
+      onGoToSettings: () => OXNavigator.pushPage(
+        context,
+        (_) => FileServerPage(previousPageTitle: Localized.text('ox_common.back')),
+      ),
+    )) return;
+
     sendImageMessageWithFile(context, [imageFile]);
   }
 

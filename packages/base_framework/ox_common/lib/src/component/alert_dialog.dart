@@ -80,6 +80,43 @@ class CLAlertDialog {
     );
   }
 
+  /// Show alert dialog with custom widget content and return the [value] of the button tapped.
+  /// If dismissed by other ways, returns null.
+  static Future<T?> showWithWidget<T>({
+    required BuildContext context,
+    String? title,
+    required Widget content,
+    required List<CLAlertAction<T>> actions,
+    bool barrierDismissible = true,
+  }) {
+    final displayTitle = title ?? Localized.text('ox_common.alert');
+
+    if (PlatformStyle.isUseMaterial) {
+      return showDialog<T>(
+        context: context,
+        barrierDismissible: barrierDismissible,
+        builder: (ctx) => AlertDialog(
+          title: CLText(displayTitle),
+          content: content,
+          actions: _materialActions(ctx, actions),
+        ),
+      );
+    }
+
+    return showCupertinoDialog<T>(
+      context: context,
+      barrierDismissible: barrierDismissible,
+      builder: (ctx) => CupertinoAlertDialog(
+        title: CLText(displayTitle),
+        content: Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: content,
+        ),
+        actions: _cupertinoActions(ctx, actions),
+      ),
+    );
+  }
+
   /// Build Material buttons.
   static List<Widget> _materialActions<T>(
     BuildContext ctx,
