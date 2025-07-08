@@ -74,8 +74,28 @@ class SessionListDataController with OXChatObserver {
     } else {
       viewModel.sessionModel.updateWithMessage(message);
       viewModel.rebuild();
+      _updateSessionPosition(viewModel);
     }
 
+    ChatSessionModelISAR.saveChatSessionModelToDB(viewModel.sessionModel);
+  }
+
+  @override
+  void didChatMessageUpdateCallBack(MessageDBISAR message, String replacedMessageId) {
+    final chatType = message.chatType;
+    if (chatType == null) return;
+
+    final chatId = message.chatId;
+    if (chatId.isEmpty) return;
+
+    final viewModel = sessionCache[chatId];
+    if (viewModel == null) return;
+
+    // Update session with the new message
+    viewModel.sessionModel.updateWithMessage(message);
+    viewModel.rebuild();
+    _updateSessionPosition(viewModel);
+    
     ChatSessionModelISAR.saveChatSessionModelToDB(viewModel.sessionModel);
   }
 
@@ -172,9 +192,9 @@ extension SessionDCInterface on SessionListDataController {
         .where()
         .findAll();
     
-    // Filter out empty chatIds and sort by createTime descending
+    // Filter out empty chatIds and sort by lastActivityTime descending
     sessionList.removeWhere((session) => session.chatId.isEmpty);
-    sessionList.sort((a, b) => b.createTime.compareTo(a.createTime));
+    sessionList.sort((a, b) => b.lastActivityTime.compareTo(a.lastActivityTime));
 
     final viewModelData = <SessionListViewModel>[];
     for (var sessionModel in sessionList) {
@@ -220,6 +240,7 @@ extension SessionDCInterface on SessionListDataController {
     int? messageKind,
     bool? isMentioned,
     int? expiration,
+    int? lastActivityTime,
   }) async {
     if (chatId.isEmpty) return true;
 
@@ -238,8 +259,15 @@ extension SessionDCInterface on SessionListDataController {
     sessionModel.isMentioned = isMentioned ?? sessionModel.isMentioned;
     sessionModel.messageKind = messageKind ?? sessionModel.messageKind;
     sessionModel.expiration = expiration ?? sessionModel.expiration;
+    sessionModel.lastActivityTime = lastActivityTime ?? sessionModel.lastActivityTime;
 
     viewModel.rebuild();
+    
+    // Update session position if lastActivityTime changed
+    if (lastActivityTime != null) {
+      _updateSessionPosition(viewModel);
+    }
+    
     ChatSessionModelISAR.saveChatSessionModelToDB(sessionModel);
 
     return true;
@@ -261,7 +289,7 @@ extension _DataControllerEx on SessionListDataController {
     for (int index = 0; index < newList.length; index++) {
       final data = newList[index];
 
-      if (data.sessionModel.createTime < viewModel.sessionModel.createTime) {
+      if (data.sessionModel.lastActivityTime < viewModel.sessionModel.lastActivityTime) {
         flagIndex = index;
         break;
       }
@@ -282,6 +310,37 @@ extension _DataControllerEx on SessionListDataController {
     final newList = [...sessionList$.value];
     newList.remove(del);
     sessionList$.value = newList;
+  }
+
+  void _updateSessionPosition(SessionListViewModel viewModel) {
+    final chatId = viewModel.sessionModel.chatId;
+    if (chatId.isEmpty) return;
+
+    final newList = [...sessionList$.value];
+    final currentIndex = newList.indexOf(viewModel);
+    
+    if (currentIndex == -1) return;
+
+    // Remove the viewModel from its current position
+    newList.removeAt(currentIndex);
+    
+    // Find the correct position to insert based on lastActivityTime
+    int insertIndex = 0;
+    for (int i = 0; i < newList.length; i++) {
+      if (viewModel.sessionModel.lastActivityTime > newList[i].sessionModel.lastActivityTime) {
+        insertIndex = i;
+        break;
+      }
+      insertIndex = i + 1;
+    }
+    
+    // Insert at the correct position
+    newList.insert(insertIndex, viewModel);
+    
+    // Only update if the position actually changed
+    if (insertIndex != currentIndex) {
+      sessionList$.value = newList;
+    }
   }
 }
 
@@ -306,6 +365,9 @@ extension _ChatSessionModelISAREx on ChatSessionModelISAR {
         OXChatBinding.sharedInstance.sessionMessageTextBuilder;
     final text = sessionMessageTextBuilder?.call(message) ?? '';
     createTime = message.createTime;
+    if (lastActivityTime < message.createTime) {
+      lastActivityTime = message.createTime;
+    }
     content = text;
 
     if (!message.read) {

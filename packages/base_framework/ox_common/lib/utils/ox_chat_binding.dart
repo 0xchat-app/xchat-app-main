@@ -35,7 +35,8 @@ class OXChatBinding {
     String? replyMessageId,
     int? messageKind,
     bool? isMentioned,
-    int? expiration
+    int? expiration,
+    int? lastActivityTime,
   })? updateChatSessionFn;
 
   Future<bool> updateChatSession(String chatId, {
@@ -48,7 +49,8 @@ class OXChatBinding {
     String? replyMessageId,
     int? messageKind,
     bool? isMentioned,
-    int? expiration
+    int? expiration,
+    int? lastActivityTime,
   }) async => await updateChatSessionFn?.call(
     chatId,
     chatName: chatName,
@@ -61,6 +63,7 @@ class OXChatBinding {
     messageKind: messageKind,
     isMentioned: isMentioned,
     expiration: expiration,
+    lastActivityTime: lastActivityTime,
   ) ?? true;
 
   void addReactionMessage(String chatId, String messageId) {

@@ -27,6 +27,9 @@ class ChatSessionModelISAR {
   //last message timestamp
   int createTime;
 
+  //last activity timestamp
+  int lastActivityTime;
+
   // 0 Chat  1 Normal Group  2 Channel Group  3 Secret Chat 4 Stranger Chat  5 Stranger secret Chat 7 Relay Group Chat
   int chatType;
 
@@ -61,6 +64,7 @@ class ChatSessionModelISAR {
     this.content,
     this.unreadCount = 0,
     this.createTime = 0,
+    this.lastActivityTime = 0,
     this.chatType = 0,
     this.messageType = 'text',
     this.avatar,
@@ -84,7 +88,7 @@ class ChatSessionModelISAR {
 
   @override
   String toString() {
-    return 'ChatSessionModel{chatId: $chatId, chatName: $chatName, sender: $sender, receiver: $receiver, groupId: $groupId, content: $content, unreadCount: $unreadCount, createTime: $createTime, chatType: $chatType, messageType: $messageType, avatar: $avatar, alwaysTop: $alwaysTop, draft: $draft, messageKind: $messageKind, expiration: $expiration}';
+    return 'ChatSessionModel{chatId: $chatId, chatName: $chatName, sender: $sender, receiver: $receiver, groupId: $groupId, content: $content, unreadCount: $unreadCount, createTime: $createTime, lastActivityTime: $lastActivityTime, chatType: $chatType, messageType: $messageType, avatar: $avatar, alwaysTop: $alwaysTop, draft: $draft, messageKind: $messageKind, expiration: $expiration}';
   }
 
   @ignore
@@ -133,6 +137,7 @@ ChatSessionModelISAR _chatSessionModelFromMap(Map<String, dynamic> map) {
     content: map['content'],
     unreadCount: map['unreadCount'],
     createTime: map['createTime'],
+    lastActivityTime: map['lastActivityTime'],
     chatType: map['chatType'],
     messageType: map['messageType'],
     avatar: map['avatar'],

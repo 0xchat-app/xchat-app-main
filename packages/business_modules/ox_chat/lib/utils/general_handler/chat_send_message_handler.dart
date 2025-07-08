@@ -245,9 +245,37 @@ extension ChatMessageSendEx on ChatGeneralHandler {
       dataController.galleryCache.tryAddPreviewImage(message: message);
     }
 
+    // Update session position after sending message
+    _updateSessionAfterSendMessage(message);
+
     if (sendingType == ChatSendingType.remote) {
       // If the message is not sent within a short period of time, change the status to the sending state
       _setMessageSendingStatusIfNeeded(sendFinish, message);
+    }
+  }
+
+  void _updateSessionAfterSendMessage(types.Message message) {
+    // Get the session model and update its lastActivityTime
+    final sessionModel = OXChatBinding.sharedInstance.getSessionModel(session.chatId);
+    if (sessionModel != null) {
+      // Update session with the new message time
+      if (sessionModel.createTime < message.createdAt) {
+        sessionModel.createTime = message.createdAt;
+      }
+      if (sessionModel.lastActivityTime < message.createdAt) {
+        sessionModel.lastActivityTime = message.createdAt;
+      }
+      sessionModel.content = message.contentString();
+      
+      // Save to database
+      ChatSessionModelISAR.saveChatSessionModelToDB(sessionModel);
+      
+      // Trigger session list update through OXChatBinding
+      OXChatBinding.sharedInstance.updateChatSession(
+        session.chatId,
+        lastActivityTime: message.createdAt,
+        content: message.contentString(),
+      );
     }
   }
 
@@ -842,7 +870,7 @@ extension ChatMessageSendUtileEx on ChatGeneralHandler {
     String? encryptedNonce,
   }) async {
     final file = File(filePath);
-    final ext = Path.extension(filePath);
+    final ext = filePath.getFileExtension();
     final fileName = '$messageId$ext';
     return await UploadUtils.uploadFile(
         fileType: fileType, file: file, filename: fileName, encryptedKey: encryptedKey, encryptedNonce: encryptedNonce);
