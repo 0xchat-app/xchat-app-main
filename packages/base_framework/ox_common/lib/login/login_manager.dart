@@ -253,10 +253,7 @@ extension LoginManagerAccount on LoginManager {
     _userInfo$ = ValueNotifier<UserDBISAR?>(null);
 
     // Circle Logout
-    final circle = loginState.currentCircle;
-    if (circle != null) {
-      await Account.sharedInstance.logout();
-    }
+    await logoutCircle();
 
     final account = loginState.account;
     if (account != null) {
@@ -428,10 +425,7 @@ extension LoginManagerCircle on LoginManager {
       );
     }
 
-    final originCircle = currentState.currentCircle;
-    if (originCircle != null) {
-      await Account.sharedInstance.logout();
-    }
+    final originCircle = await logoutCircle();
 
     final success = await _loginToCircle(circle, currentState);
     if (!success) {
@@ -516,10 +510,19 @@ extension LoginManagerCircle on LoginManager {
     }
   }
 
-  /// Leave circle
+  Future<Circle?> logoutCircle() async {
+    final originCircle = currentState.currentCircle;
+    if (originCircle != null) {
+      await Account.sharedInstance.logout();
+    }
+    return originCircle;
+  }
+
+  /// Delete circle completely
   ///
-  /// [circleId] Circle ID to leave
-  Future<bool> leaveCircle(String circleId) async {
+  /// [circleId] Circle ID to delete
+  /// Returns true if deletion was successful, false otherwise
+  Future<bool> deleteCircle(String circleId) async {
     try {
       final currentState = this.currentState;
       final account = currentState.account;
@@ -531,9 +534,17 @@ extension LoginManagerCircle on LoginManager {
         return false;
       }
 
-      // Find circle
-      final leavingCircle = account.circles.where((c) => c.id == circleId).firstOrNull;
-      if (leavingCircle == null) {
+      if (circleId.isEmpty) {
+        _notifyCircleChangeFailed(LoginFailure(
+          type: LoginFailureType.errorEnvironment,
+          message: 'Circle ID cannot be empty',
+          circleId: circleId,
+        ));
+        return false;
+      }
+
+      final circleToDelete = account.circles.where((c) => c.id == circleId).firstOrNull;
+      if (circleToDelete == null) {
         _notifyCircleChangeFailed(LoginFailure(
           type: LoginFailureType.errorEnvironment,
           message: 'Circle not found',
@@ -542,39 +553,49 @@ extension LoginManagerCircle on LoginManager {
         return false;
       }
 
-      // Close DB if current
-      if (currentState.currentCircle?.id == circleId) {
-        await DatabaseUtils.closeCircleDatabase();
+      // Check if this is the current circle
+      final isCurrentCircle = currentState.currentCircle?.id == circleId;
+
+      final remainingCircles = account.circles.where((c) => c.id != circleId).toList();
+      
+      if (remainingCircles.isNotEmpty) {
+        final nextCircle = remainingCircles.first;
+        if (isCurrentCircle) {
+          final switchResult = await switchToCircle(nextCircle);
+          if (switchResult != null) {
+            _notifyCircleChangeFailed(switchResult);
+            return false;
+          }
+        }
+      } else {
+        await logoutCircle();
       }
 
-      // Remove circle from list
-      final updatedCircles = [...account.circles]..removeWhere((c) => c.id == circleId);
-
-      // Determine next circle (if current removed)
-      Circle? nextCircle = currentState.currentCircle;
-      if (nextCircle?.id == circleId) {
-        nextCircle = updatedCircles.isNotEmpty ? updatedCircles.first : null;
+      // Delete circle folder and all its contents directly
+      final deleteSuccess = await AccountPathUtils.deleteCircleFolder(
+        account.pubkey, 
+        circleId,
+      );
+      if (!deleteSuccess) {
+        return false;
       }
 
-      // Logout & Delete circle database files
-      await Account.sharedInstance.deletecircle(circleId);
+      // Remove circle from account's circle list and save
+      final updatedCircles = account.circles.where((c) => c.id != circleId).toList();
+      final updatedAccount = account.copyWith(circles: updatedCircles);
+      await updatedAccount.saveToDB();
 
-      _userInfo$ = ValueNotifier<UserDBISAR?>(null);
-
-      if (nextCircle != null) {
-        await _loginToCircle(nextCircle, currentState);
-      }
-
-      // Notify observers that there is no circle currently
-      for (final observer in _observers) {
-        observer.onCircleChanged(nextCircle);
-      }
+      // Update state with new account
+      final updatedState = this.currentState.copyWith(
+        account: updatedAccount,
+      );
+      _state$.value = updatedState;
 
       return true;
     } catch (e) {
       _notifyCircleChangeFailed(LoginFailure(
         type: LoginFailureType.circleDbFailed,
-        message: 'Failed to leave circle: $e',
+        message: 'Failed to delete circle: $e',
         circleId: circleId,
       ));
       return false;
@@ -652,7 +673,7 @@ extension LoginManagerCircle on LoginManager {
       // Build configuration for chat core initialization
       final config = ChatCoreInitConfig(
         pubkey: account.pubkey,
-        databasePath: await _getDatabasePath(account.pubkey, circle.id),
+        databasePath: await AccountPathUtils.getCircleFolderPath(account.pubkey, circle.id),
         encryptionPassword: await _getEncryptionPassword(account),
         circleId: circle.id,
         isLite: true,
@@ -794,11 +815,6 @@ extension LoginManagerDatabase on LoginManager {
     return await OXCacheManager.defaultOXCacheManager.getForeverData(
       LoginManager._keyLastPubkey,
     );
-  }
-
-  /// Get database path for circle
-  Future<String> _getDatabasePath(String pubkey, String circleId) async {
-    return await AccountPathUtils.getCircleFolderPath(pubkey, circleId);
   }
 
   /// Get encryption password from account

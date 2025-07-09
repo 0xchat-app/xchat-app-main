@@ -246,7 +246,7 @@
   "file_server_setting": "File server setting",
   "circle_description_placeholder": "No description provided.",
   "delete_circle_confirm_title": "Delete Circle",
-  "delete_circle_confirm_content": "Are you sure you want to delete this circle?",
+  "delete_circle_confirm_content": "This action will permanently delete this circle and cannot be undone. All your data within this circle, including chat messages and other related data, will be irreversibly lost.",
   "no_file_server": "No Server",
   "add_server": "Add Server",
   "edit": "Edit",

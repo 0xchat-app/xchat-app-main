@@ -104,7 +104,7 @@ class CircleDetailPage extends StatelessWidget {
     );
 
     if (confirmed == true) {
-      await LoginManager.instance.leaveCircle(circle.id);
+      await LoginManager.instance.deleteCircle(circle.id);
       OXNavigator.popToRoot(context);
     }
   }

@@ -161,6 +161,20 @@ class AccountPathUtils {
     }
   }
 
+  /// Delete circle folder and all its contents
+  static Future<bool> deleteCircleFolder(String pubkey, String circleId) async {
+    try {
+      final circlePath = await getCircleFolderPath(pubkey, circleId);
+      final dir = Directory(circlePath);
+      if (await dir.exists()) {
+        await dir.delete(recursive: true);
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   // ========== Utility Methods ==========
 
   /// List all files in account folder

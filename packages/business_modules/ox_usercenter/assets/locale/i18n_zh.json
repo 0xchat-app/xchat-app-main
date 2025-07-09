@@ -246,7 +246,7 @@
   "file_server_setting": "文件服务器设置",
   "circle_description_placeholder": "暂无描述",
   "delete_circle_confirm_title": "删除圈子",
-  "delete_circle_confirm_content": "确定要删除该圈子吗？",
+  "delete_circle_confirm_content": "此操作将永久删除该圈子且无法撤销。您在此圈子内的所有数据，包括聊天记录等相关数据，将不可恢复地丢失。",
   "no_file_server": "暂无服务器",
   "add_server": "添加服务器",
   "edit": "编辑",
