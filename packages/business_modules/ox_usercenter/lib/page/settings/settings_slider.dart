@@ -67,28 +67,39 @@ class SettingSliderState extends State<SettingSlider> {
   }
 
   void prepareLiteData() {
-    pageData = [
-      SectionListViewItem(data: [
-        CustomItemModel(
-          customWidgetBuilder: buildUserInfoWidget,
-        ),
-        // LabelItemModel(
-        //   style: ListViewItemStyle.theme,
-        //   icon: ListViewIcon(iconName: 'icon_setting_add.png', package: 'ox_usercenter'),
-        //   title: 'My Circles',
-        //   valueNty: ValueNotifier('Upgrade'),
-        // ),
-        LabelItemModel(
-          icon: ListViewIcon(iconName: 'icon_setting_security.png', package: 'ox_usercenter'),
-          title: Localized.text('ox_usercenter.keys'),
-          onTap: keysItemOnTap,
-        ),
+    final hasCircle = LoginManager.instance.currentCircle != null;
+    
+    // Build first section items
+    List<ListViewItem> firstSectionItems = [
+      CustomItemModel(
+        customWidgetBuilder: buildUserInfoWidget,
+      ),
+      // LabelItemModel(
+      //   style: ListViewItemStyle.theme,
+      //   icon: ListViewIcon(iconName: 'icon_setting_add.png', package: 'ox_usercenter'),
+      //   title: 'My Circles',
+      //   valueNty: ValueNotifier('Upgrade'),
+      // ),
+      LabelItemModel(
+        icon: ListViewIcon(iconName: 'icon_setting_security.png', package: 'ox_usercenter'),
+        title: Localized.text('ox_usercenter.keys'),
+        onTap: keysItemOnTap,
+      ),
+    ];
+    
+    // Only add circle settings when user has a circle
+    if (hasCircle) {
+      firstSectionItems.add(
         LabelItemModel(
           icon: ListViewIcon(iconName: 'icon_setting_circles.png', package: 'ox_usercenter'),
           title: Localized.text('ox_usercenter.circle_settings'),
           onTap: circleItemOnTap,
         ),
-      ]),
+      );
+    }
+    
+    pageData = [
+      SectionListViewItem(data: firstSectionItems),
       // SectionListViewItem(data: [
       //   LabelItemModel(
       //     icon: ListViewIcon(iconName: 'icon_setting_contact.png', package: 'ox_usercenter'),
@@ -158,88 +169,100 @@ class SettingSliderState extends State<SettingSlider> {
   }
 
   Widget buildBody() {
-    return CLSectionListView(
-      items: pageData,
+    return ValueListenableBuilder(
+      valueListenable: LoginManager.instance.state$,
+      builder: (context, loginState, _) {
+        // Rebuild data when circle state changes
+        prepareLiteData();
+        return CLSectionListView(
+          items: pageData,
+        );
+      },
     );
   }
 
   Widget buildUserInfoWidget(BuildContext context) {
-    final circle = LoginManager.instance.currentCircle;
-    final hasCircle = circle != null;
-    
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTap: profileItemOnTap,
-      child: Container(
-        height: 72.px,
-        margin: EdgeInsets.symmetric(vertical: 12.px),
-        child: Row(
-          children: [
-            // Avatar area
-            Container(
-              width: 60.px,
-              height: 60.px,
-              margin: EdgeInsets.symmetric(horizontal: CLLayout.horizontalPadding),
-              child: hasCircle
-                ? ValueListenableBuilder(
-                    valueListenable: userNotifier.avatarUrl$,
-                    builder: (context, avatarUrl, _) {
-                      return OXUserAvatar(
-                        imageUrl: avatarUrl,
-                        size: 60.px,
-                      );
-                    }
-                  )
-                : CircleAvatar(
-                    radius: 30.px,
-                    backgroundColor: ColorToken.surfaceContainer.of(context),
-                    child: Icon(
-                      CupertinoIcons.person,
-                      size: 30.px,
-                      color: ColorToken.onSurfaceVariant.of(context),
-                    ),
+    return ValueListenableBuilder(
+      valueListenable: LoginManager.instance.state$,
+      builder: (context, loginState, _) {
+        final circle = loginState.currentCircle;
+        final hasCircle = circle != null;
+        
+        return GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: profileItemOnTap,
+          child: Container(
+            height: 72.px,
+            margin: EdgeInsets.symmetric(vertical: 12.px),
+            child: Row(
+              children: [
+                // Avatar area
+                Container(
+                  width: 60.px,
+                  height: 60.px,
+                  margin: EdgeInsets.symmetric(horizontal: CLLayout.horizontalPadding),
+                  child: hasCircle
+                    ? ValueListenableBuilder(
+                        valueListenable: userNotifier.avatarUrl$,
+                        builder: (context, avatarUrl, _) {
+                          return OXUserAvatar(
+                            imageUrl: avatarUrl,
+                            size: 60.px,
+                          );
+                        }
+                      )
+                    : CircleAvatar(
+                        radius: 30.px,
+                        backgroundColor: ColorToken.surfaceContainer.of(context),
+                        child: Icon(
+                          CupertinoIcons.person,
+                          size: 30.px,
+                          color: ColorToken.onSurfaceVariant.of(context),
+                        ),
+                      ),
+                ),
+                // Content area
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: hasCircle
+                      ? [
+                          // Show actual user info when logged in circle
+                          ValueListenableBuilder(
+                            valueListenable: userNotifier.name$,
+                            builder: (context, name, _) {
+                              return CLText.bodyLarge(name);
+                            }
+                          ),
+                          ValueListenableBuilder(
+                            valueListenable: userNotifier.encodedPubkey$,
+                            builder: (context, encodedPubkey, _) {
+                              return CLText.bodyMedium(encodedPubkey.truncate(20));
+                            }
+                          ),
+                        ]
+                      : [
+                          // Show guide info when no circle
+                          CLText.bodyLarge(
+                            Localized.text('ox_usercenter.profile'),
+                          ),
+                          CLText.bodyMedium(
+                            Localized.text('ox_home.join_or_create_circle_now'),
+                          ),
+                        ],
                   ),
+                ),
+                // Trailing
+                Padding(
+                  padding: const EdgeInsets.only(right: 14),
+                  child: CLListTile.buildDefaultTrailing(profileItemOnTap),
+                ),
+              ],
             ),
-            // Content area
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: hasCircle
-                  ? [
-                      // Show actual user info when logged in circle
-                      ValueListenableBuilder(
-                        valueListenable: userNotifier.name$,
-                        builder: (context, name, _) {
-                          return CLText.bodyLarge(name);
-                        }
-                      ),
-                      ValueListenableBuilder(
-                        valueListenable: userNotifier.encodedPubkey$,
-                        builder: (context, encodedPubkey, _) {
-                          return CLText.bodyMedium(encodedPubkey.truncate(20));
-                        }
-                      ),
-                    ]
-                  : [
-                      // Show guide info when no circle
-                      CLText.bodyLarge(
-                        Localized.text('ox_usercenter.profile'),
-                      ),
-                      CLText.bodyMedium(
-                        Localized.text('ox_home.join_or_create_circle_now'),
-                      ),
-                    ],
-              ),
-            ),
-            // Trailing
-            Padding(
-              padding: const EdgeInsets.only(right: 14),
-              child: CLListTile.buildDefaultTrailing(profileItemOnTap),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
