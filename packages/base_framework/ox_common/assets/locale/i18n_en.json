@@ -149,5 +149,13 @@
   "network_unreachable": "Server not responding, please check address format or network status",
   "connection_timeout": "Connection timeout, please try again",
   "websocket_connection_failed": "Unable to connect to relay",
-  "connection_test_failed": "Connection test failed"
+  "connection_test_failed": "Connection test failed",
+  "network_warning_title": "Server Connection Issue",
+  "network_warning_message": "Unable to connect to the server at {relay}. The server may be offline or unreachable, but you can still try to join the circle. Do you want to continue?",
+  "continue_anyway": "Continue Anyway",
+  "user_cancelled_network_issues": "User cancelled due to network connectivity issues",
+  "invalid_relay_url_no_host": "Invalid relay URL: cannot extract host",
+  "unable_to_retrieve_relay_info": "Unable to retrieve relay information",
+  "invalid_relay_info_received": "Invalid relay information received",
+  "relay_info_validation_failed": "Relay info validation failed"
 }

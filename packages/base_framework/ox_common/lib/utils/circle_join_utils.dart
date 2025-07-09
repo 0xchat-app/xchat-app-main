@@ -46,9 +46,10 @@ class CircleJoinUtils {
             throw Localized.text('ox_common.invalid_url_format');
           }
           
-          // Step 2: Perform pre-flight checks
-          final checkResult = await _performPreflightChecks(relayUrl);
+          // Step 2: Perform weak pre-flight checks
+          final checkResult = await _performWeakPreflightChecks(context, relayUrl);
           if (!checkResult.isSuccess) {
+            // If user chose not to continue after seeing the warning, throw error to cancel
             throw checkResult.errorMessage;
           }
           
@@ -87,8 +88,86 @@ class CircleJoinUtils {
     
     // Check for common relay URL patterns
     return url.startsWith('wss://') || 
-           url.startsWith('ws://') || 
-           url.contains('.') && !url.contains(' ');
+           url.startsWith('ws://');
+  }
+
+  /// Perform weak pre-flight checks for a relay URL with user confirmation option
+  /// 
+  /// This method performs basic connectivity checks. If the checks fail, it shows
+  /// a confirmation dialog asking the user if they want to continue despite the
+  /// connectivity issues. This provides a better user experience by not blocking
+  /// the join operation entirely.
+  /// 
+  /// [context] BuildContext for showing dialogs
+  /// [relayUrl] The relay URL to check
+  /// 
+  /// Returns [_PreflightCheckResult] indicating whether to proceed (success) or cancel (failure)
+  static Future<_PreflightCheckResult> _performWeakPreflightChecks(BuildContext context, String relayUrl) async {
+    try {
+      debugPrint('CircleJoinUtils: Starting weak pre-flight checks for $relayUrl');
+      
+      // Perform basic connectivity check
+      final host = Uri.parse(relayUrl).host;
+      if (host.isEmpty) {
+        return _PreflightCheckResult.failure(Localized.text('ox_common.invalid_relay_url_no_host'));
+      }
+      
+      // Test network connectivity with shorter timeout for better UX
+      debugPrint('CircleJoinUtils: Testing connectivity to $host');
+      final pingLatency = await PingUtils.ping(host, count: 1);
+      
+      if (pingLatency == null || pingLatency <= 0) {
+        // Network connectivity failed - show confirmation dialog
+        final shouldContinue = await _showNetworkWarningDialog(context, relayUrl);
+        if (shouldContinue) {
+          debugPrint('CircleJoinUtils: User chose to continue despite network issues');
+          return const _PreflightCheckResult.success();
+                 } else {
+           debugPrint('CircleJoinUtils: User chose to cancel due to network issues');
+           return _PreflightCheckResult.failure(Localized.text('ox_common.user_cancelled_network_issues'));
+         }
+      }
+      
+      debugPrint('CircleJoinUtils: Basic connectivity check passed, latency: ${pingLatency}ms');
+      return const _PreflightCheckResult.success();
+      
+    } catch (e) {
+      debugPrint('CircleJoinUtils: Weak pre-flight check error: $e');
+      // Show warning dialog for any connectivity issues
+      final shouldContinue = await _showNetworkWarningDialog(context, relayUrl);
+      if (shouldContinue) {
+        return const _PreflightCheckResult.success();
+             } else {
+         return _PreflightCheckResult.failure(Localized.text('ox_common.user_cancelled_network_issues'));
+       }
+    }
+  }
+
+  /// Show network warning dialog when connectivity issues are detected
+  /// 
+  /// [context] BuildContext for showing dialogs
+  /// [relayUrl] The relay URL that failed connectivity check
+  /// 
+  /// Returns true if user chooses to continue, false if user cancels
+  static Future<bool> _showNetworkWarningDialog(BuildContext context, String relayUrl) async {
+    final shouldContinue = await CLAlertDialog.show<bool>(
+      context: context,
+      title: Localized.text('ox_common.network_warning_title'),
+      content: Localized.text('ox_common.network_warning_message').replaceFirst('{relay}', relayUrl),
+      actions: [
+        CLAlertAction<bool>(
+          label: Localized.text('ox_common.cancel'),
+          value: false,
+        ),
+        CLAlertAction<bool>(
+          label: Localized.text('ox_common.continue_anyway'),
+          value: true,
+          isDefaultAction: true,
+        ),
+      ],
+    );
+    
+    return shouldContinue ?? false;
   }
 
   /// Perform comprehensive pre-flight checks for a relay URL
@@ -107,7 +186,7 @@ class CircleJoinUtils {
       // Step 1: Test network connectivity via ping
       final host = Uri.parse(relayUrl).host;
       if (host.isEmpty) {
-        return const _PreflightCheckResult.failure('Invalid relay URL: cannot extract host');
+        return _PreflightCheckResult.failure(Localized.text('ox_common.invalid_relay_url_no_host'));
       }
       
       debugPrint('CircleJoinUtils: Testing connectivity to $host');
@@ -195,15 +274,15 @@ class CircleJoinUtils {
     try {
       final relayInfo = await Relays.getRelayDetails(relayUrl);
       if (relayInfo == null) {
-        return const _PreflightCheckResult.failure(
-          'Unable to retrieve relay information'
+        return _PreflightCheckResult.failure(
+          Localized.text('ox_common.unable_to_retrieve_relay_info')
         );
       }
       
       // Basic validation - relay should have some identifying information
       if (relayInfo.url.isEmpty) {
-        return const _PreflightCheckResult.failure(
-          'Invalid relay information received'
+        return _PreflightCheckResult.failure(
+          Localized.text('ox_common.invalid_relay_info_received')
         );
       }
       
@@ -212,7 +291,7 @@ class CircleJoinUtils {
     } catch (e) {
       // Non-critical failure - some relays might not have proper info endpoints
       return _PreflightCheckResult.failure(
-        'Relay info validation failed: $e'
+        '${Localized.text('ox_common.relay_info_validation_failed')}: $e'
       );
     }
   }
