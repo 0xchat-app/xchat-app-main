@@ -9,6 +9,8 @@ import 'database_manager.dart';
 import 'login_models.dart';
 import 'account_models.dart';
 import 'circle_config_models.dart';
+import 'account_file_utils.dart';
+import '../secure/db_key_manager.dart';
 
 class LoginUserNotifier {
   LoginUserNotifier._();
@@ -66,7 +68,6 @@ class LoginManager {
 
   // Persistence storage keys
   static const String _keyLastPubkey = 'login_manager_last_pubkey';
-  // _keyLastCircleId 已移除，现在使用 AccountModel.lastLoginCircleId 存储
 }
 
 /// Account management related methods
@@ -427,11 +428,16 @@ extension LoginManagerCircle on LoginManager {
       );
     }
 
-    if (currentState.hasCircle) {
-      await DatabaseUtils.closeCircleDatabase();
+    final originCircle = currentState.currentCircle;
+    if (originCircle != null) {
+      await Account.sharedInstance.logout();
     }
 
-    if (!await _loginToCircle(circle, currentState)) {
+    final success = await _loginToCircle(circle, currentState);
+    if (!success) {
+      if (originCircle != null) {
+        _loginToCircle(originCircle, currentState);
+      }
       return LoginFailure(
         type: LoginFailureType.circleDbFailed,
         message: 'Login circle failed',
@@ -474,30 +480,30 @@ extension LoginManagerCircle on LoginManager {
         relayUrl: relayUrl,
       );
 
-      if (!await _loginToCircle(newCircle, currentState)) {
-        return LoginFailure(
-          type: LoginFailureType.circleDbFailed,
-          message: 'Failed to initialize circle database',
-        );
-      }
-
       // Add circle to account's circle list
       final updatedCircles = [...account.circles, newCircle];
-
-      // Update account model in database FIRST
       final updatedAccount = account.copyWith(
         circles: updatedCircles,
       );
       await updatedAccount.saveToDB();
 
+      // Update state with new account (but not current circle yet)
       _state$.value = currentState.copyWith(
         account: updatedAccount,
-        currentCircle: newCircle,
       );
 
-      // Notify circle change success
-      for (final observer in _observers) {
-        observer.onCircleChanged(newCircle);
+      final switchResult = await switchToCircle(newCircle);
+      if (switchResult != null) {
+        // Switch failed, remove the circle from the list
+        final revertedCircles = [...account.circles]; // original circles
+        final revertedAccount = account.copyWith(
+          circles: revertedCircles,
+        );
+        await revertedAccount.saveToDB();
+        _state$.value = currentState.copyWith(
+          account: revertedAccount,
+        );
+        return switchResult;
       }
 
       return null;
@@ -551,22 +557,13 @@ extension LoginManagerCircle on LoginManager {
       }
 
       // Logout & Delete circle database files
-      await Account.sharedInstance.deletecircle(circleId, nextCircle?.id);
+      await Account.sharedInstance.deletecircle(circleId);
 
-      // Persist account update
-      final updatedAccount = account.copyWith(
-        circles: updatedCircles,
-        lastLoginCircleId: nextCircle?.id,
-      );
-
-      await updatedAccount.saveToDB();
-
-      // Update state
-      _state$.value = currentState.copyWith(
-        account: updatedAccount,
-        currentCircle: nextCircle,
-      );
       _userInfo$ = ValueNotifier<UserDBISAR?>(null);
+
+      if (nextCircle != null) {
+        await _loginToCircle(nextCircle, currentState);
+      }
 
       // Notify observers that there is no circle currently
       for (final observer in _observers) {
@@ -652,7 +649,12 @@ extension LoginManagerCircle on LoginManager {
         return false;
       }
 
-      await ChatCoreManager().initChatCore(
+      // Build configuration for chat core initialization
+      final config = ChatCoreInitConfig(
+        pubkey: account.pubkey,
+        databasePath: await _getDatabasePath(account.pubkey, circle.id),
+        encryptionPassword: await _getEncryptionPassword(account),
+        circleId: circle.id,
         isLite: true,
         circleRelay: circle.relayUrl,
         contactUpdatedCallBack: Contacts.sharedInstance.contactUpdatedCallBack,
@@ -660,6 +662,8 @@ extension LoginManagerCircle on LoginManager {
         groupsUpdatedCallBack: Groups.sharedInstance.myGroupsUpdatedCallBack,
         relayGroupsUpdatedCallBack: RelayGroup.sharedInstance.myGroupsUpdatedCallBack,
       );
+
+      await ChatCoreManager().initChatCoreWithConfig(config);
 
       // Login success
       account.updateLastLoginCircle(circle.id);
@@ -790,6 +794,17 @@ extension LoginManagerDatabase on LoginManager {
     return await OXCacheManager.defaultOXCacheManager.getForeverData(
       LoginManager._keyLastPubkey,
     );
+  }
+
+  /// Get database path for circle
+  Future<String> _getDatabasePath(String pubkey, String circleId) async {
+    return await AccountPathUtils.getCircleFolderPath(pubkey, circleId);
+  }
+
+  /// Get encryption password from account
+  Future<String> _getEncryptionPassword(AccountModel account) async {
+    // Use database encryption key from DBKeyManager
+    return await DBKeyManager.getKey();
   }
 }
 
