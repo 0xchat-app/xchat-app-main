@@ -10,6 +10,8 @@
   "about_hint_text": "Bitcoin Core Entwickler(Optional)",
   "bitcoin_lightning_tips": "Bitcoin Lightning Adresse",
   "bitcoin_lightning_tips_hint_text": "Lightning Adresse oder LNURL(Optional)",
+  "profile": "Profil",
+  "profile_circle_info_dialog": "Profilinformationen gehören zu einem Kreis. Sie müssen zuerst einem Kreis beitreten oder einen erstellen, um Ihr Profil anzuzeigen und zu bearbeiten.",
   "Profile picture": "Profilbild",
   "gallery": "Galerie",
   "camera": "Kamera",

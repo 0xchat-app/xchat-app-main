@@ -10,6 +10,8 @@
   "about_hint_text": "비트코인 코어 개발자(선택)",
   "bitcoin_lightning_tips": "비트코인 라이트닝 주소",
   "bitcoin_lightning_tips_hint_text": "라이트닝 주소 또는 LNURL(선택)",
+  "profile": "프로필",
+  "profile_circle_info_dialog": "프로필 정보는 서클에 속합니다. 프로필을 보고 편집하려면 먼저 서클에 참여하거나 서클을 만들어야 합니다.",
   "Profile picture": "프로필 사진",
   "gallery": "갤러리",
   "camera": "카메라",

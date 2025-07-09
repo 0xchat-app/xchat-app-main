@@ -10,6 +10,8 @@
   "about_hint_text": "比特幣核心開發(選填)",
   "bitcoin_lightning_tips": "比特幣閃電地址",
   "bitcoin_lightning_tips_hint_text": "閃電地址或LNURL(選填)",
+  "profile": "個人資料",
+  "profile_circle_info_dialog": "個人資料屬於圈子中的資訊，您需要先加入或建立一個圈子才能查看和編輯您的個人資料。",
   "Profile picture": "個人頭像",
   "gallery": "從手機相簿選擇",
   "camera": "相機",

@@ -283,6 +283,7 @@
   "no_circle": "サークルなし",
   "no_server": "サーバーなし",
   "profile": "プロフィール",
+  "profile_circle_info_dialog": "プロフィール情報はサークルに属しています。プロフィールを表示・編集するには、まずサークルに参加するかサークルを作成する必要があります。",
   "qr_code": "QRコード",
   "remove_circle": "サークルを削除",
   "remove_server": "サーバーを削除",

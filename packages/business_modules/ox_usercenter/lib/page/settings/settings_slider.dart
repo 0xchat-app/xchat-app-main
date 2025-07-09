@@ -1,11 +1,10 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/string_utils.dart';
-import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/utils/extension.dart';
 import 'package:ox_common/utils/font_size_notifier.dart';
 import 'package:ox_common/widgets/avatar.dart';
@@ -164,6 +163,9 @@ class SettingSliderState extends State<SettingSlider> {
   }
 
   Widget buildUserInfoWidget(BuildContext context) {
+    final circle = LoginManager.instance.currentCircle;
+    final hasCircle = circle != null;
+    
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: profileItemOnTap,
@@ -172,36 +174,64 @@ class SettingSliderState extends State<SettingSlider> {
         margin: EdgeInsets.symmetric(vertical: 12.px),
         child: Row(
           children: [
-            ValueListenableBuilder(
-              valueListenable: userNotifier.avatarUrl$,
-              builder: (context, avatarUrl, _) {
-                return OXUserAvatar(
-                  imageUrl: avatarUrl,
-                  size: 60.px,
-                ).setPadding(EdgeInsets.symmetric(horizontal: CLLayout.horizontalPadding));
-              }
+            // Avatar area
+            Container(
+              width: 60.px,
+              height: 60.px,
+              margin: EdgeInsets.symmetric(horizontal: CLLayout.horizontalPadding),
+              child: hasCircle
+                ? ValueListenableBuilder(
+                    valueListenable: userNotifier.avatarUrl$,
+                    builder: (context, avatarUrl, _) {
+                      return OXUserAvatar(
+                        imageUrl: avatarUrl,
+                        size: 60.px,
+                      );
+                    }
+                  )
+                : CircleAvatar(
+                    radius: 30.px,
+                    backgroundColor: ColorToken.surfaceContainer.of(context),
+                    child: Icon(
+                      CupertinoIcons.person,
+                      size: 30.px,
+                      color: ColorToken.onSurfaceVariant.of(context),
+                    ),
+                  ),
             ),
+            // Content area
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ValueListenableBuilder(
-                    valueListenable: userNotifier.name$,
-                    builder: (context, name, _) {
-                      return CLText.bodyLarge(name);
-                    }
-                  ),
-                  ValueListenableBuilder(
-                    valueListenable: userNotifier.encodedPubkey$,
-                    builder: (context, encodedPubkey, _) {
-                      return CLText.bodyMedium(encodedPubkey.truncate(20));
-                    }
-                  ),
-                ],
+                children: hasCircle
+                  ? [
+                      // Show actual user info when logged in circle
+                      ValueListenableBuilder(
+                        valueListenable: userNotifier.name$,
+                        builder: (context, name, _) {
+                          return CLText.bodyLarge(name);
+                        }
+                      ),
+                      ValueListenableBuilder(
+                        valueListenable: userNotifier.encodedPubkey$,
+                        builder: (context, encodedPubkey, _) {
+                          return CLText.bodyMedium(encodedPubkey.truncate(20));
+                        }
+                      ),
+                    ]
+                  : [
+                      // Show guide info when no circle
+                      CLText.bodyLarge(
+                        Localized.text('ox_usercenter.profile'),
+                      ),
+                      CLText.bodyMedium(
+                        Localized.text('ox_home.join_or_create_circle_now'),
+                      ),
+                    ],
               ),
             ),
-            // _kNotchedPadding = EdgeInsets.symmetric(horizontal: 14.0);
+            // Trailing
             Padding(
               padding: const EdgeInsets.only(right: 14),
               child: CLListTile.buildDefaultTrailing(profileItemOnTap),
@@ -227,7 +257,36 @@ class SettingSliderState extends State<SettingSlider> {
   }
 
   void profileItemOnTap() {
+    final circle = LoginManager.instance.currentCircle;
+    if (circle == null) {
+      // Show guide dialog when no circle
+      _showJoinCircleDialog();
+      return;
+    }
+    
     OXNavigator.pushPage(context, (_) => ProfileSettingsPage(previousPageTitle: title,));
+  }
+  
+  void _showJoinCircleDialog() async {
+    final shouldNavigate = await CLAlertDialog.show<bool>(
+      context: context,
+      title: Localized.text('ox_usercenter.profile'),
+      content: Localized.text('ox_usercenter.profile_circle_info_dialog'),
+      actions: [
+        CLAlertAction.cancel(),
+        CLAlertAction<bool>(
+          label: Localized.text('ox_home.join_circle'),
+          value: true,
+          isDefaultAction: true,
+        ),
+      ],
+    );
+
+    if (shouldNavigate == true) {
+      // Navigate to join circle page
+      // This would typically navigate to home page or circle join page
+      OXNavigator.popToRoot(context);
+    }
   }
 
   void themeItemOnTap() {

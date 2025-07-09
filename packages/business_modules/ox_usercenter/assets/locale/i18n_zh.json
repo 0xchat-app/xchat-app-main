@@ -10,6 +10,8 @@
   "about_hint_text": "比特币核心开发(选填)",
   "bitcoin_lightning_tips": "比特币闪电地址",
   "bitcoin_lightning_tips_hint_text": "闪电地址或LNURL(选填)",
+  "profile": "个人资料",
+  "profile_circle_info_dialog": "个人资料属于圈子中的信息，您需要先加入或创建一个圈子才能查看和编辑您的个人资料。",
   "Profile picture": "个人头像",
   "gallery": "从手机相册选择",
   "camera": "相机",

@@ -10,6 +10,8 @@
   "about_hint_text":"Sviluppatore Core di Bitcoin(Facoltativo)",
   "bitcoin_lightning_tips":"Indirizzo Bitcoin Lightning",
   "bitcoin_lightning_tips_hint_text":"Indirizzo Lighting o LNURL(Facoltativo)",
+  "profile": "Profilo",
+  "profile_circle_info_dialog": "Le informazioni del profilo appartengono a un cerchio. Devi prima unirti o creare un cerchio per visualizzare e modificare il tuo profilo.",
   "Profile picture":"Foto del profilo",
   "gallery":"Galleria",
   "camera":"Fotocamera",
