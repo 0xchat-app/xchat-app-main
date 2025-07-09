@@ -251,12 +251,10 @@ extension LoginManagerAccount on LoginManager {
     _state$.value = LoginState();
     _userInfo$ = ValueNotifier<UserDBISAR?>(null);
 
-    await Account.sharedInstance.logout();
-
-    // Close all opened databases
+    // Circle Logout
     final circle = loginState.currentCircle;
     if (circle != null) {
-      await DatabaseUtils.closeCircleDatabase;
+      await Account.sharedInstance.logout();
     }
 
     final account = loginState.account;
