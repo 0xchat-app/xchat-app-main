@@ -62,7 +62,7 @@ class PermissionUtils{
       } else if (status.isPermanentlyDenied) {
         await OXCommonHintDialog.show(context, content: Localized.text('ox_common.str_grant_permission_photo_hint'), actionList: [
           OXCommonHintAction(
-              text: () => Localized.text('ox_chat.str_go_to_settings'),
+              text: () => Localized.text('ox_common.str_go_to_settings'),
               onTap: () {
                 openAppSettings();
                 OXNavigator.pop(context);

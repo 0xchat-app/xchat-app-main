@@ -259,6 +259,7 @@
   "custom_name": "Custom Name",
   "server_already_exists": "The server already exists",
   "my_qr_code": "My QR Code",
+  "user_qr_code": "User QR Code",
   "scan_to_add_friend": "Scan to add as friend",
   "qr_style": "QR Style",
   "default": "Default",

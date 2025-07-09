@@ -259,6 +259,7 @@
   "custom_name": "自定义名称",
   "server_already_exists": "该服务器已存在",
   "my_qr_code": "我的二维码",
+  "user_qr_code": "用户二维码",
   "scan_to_add_friend": "扫一扫添加好友",
   "qr_style": "二维码样式",
   "default": "默认",

@@ -353,7 +353,7 @@ class _CommonImageGalleryState extends State<CommonImageGallery>
                             color: ThemeColor.color180,
                           ),
                           child: Text(
-                            Localized.text('ox_chat.scan_qr_code'),
+                            Localized.text('ox_common.scan_qr_code'),
                             style: new TextStyle(color: ThemeColor.gray02, fontSize: Adapt.px(16), fontWeight: FontWeight.normal),
                           ),
                         ),
@@ -375,7 +375,7 @@ class _CommonImageGalleryState extends State<CommonImageGallery>
                             color: ThemeColor.color180,
                           ),
                           child: Text(
-                            Localized.text('ox_chat.str_save_image'),
+                            Localized.text('ox_common.str_save_image'),
                             style: new TextStyle(
                                 color: ThemeColor.gray02,
                                 fontSize: 16.px,
@@ -560,9 +560,9 @@ class _CommonImageGalleryState extends State<CommonImageGallery>
     unawaited(OXLoading.dismiss());
 
     if (result != null) {
-      unawaited(CommonToast.instance.show(context, Localized.text('ox_chat.str_saved_to_album')));
-    } else {
-      unawaited(CommonToast.instance.show(context, Localized.text('ox_chat.str_save_failed')));
+              unawaited(CommonToast.instance.show(context, Localized.text('ox_common.str_saved_to_album')));
+      } else {
+        unawaited(CommonToast.instance.show(context, Localized.text('ox_common.str_save_failed')));
     }
   }
 

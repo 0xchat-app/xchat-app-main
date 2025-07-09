@@ -42,12 +42,12 @@ class FileServerHelper {
 
     final result = await CLAlertDialog.show<bool>(
       context: context,
-      title: Localized.text('ox_chat.require_file_server_title'),
-      content: Localized.text('ox_chat.require_file_server'),
+              title: Localized.text('ox_common.require_file_server_title'),
+        content: Localized.text('ox_common.require_file_server'),
       actions: [
         CLAlertAction.cancel(),
         CLAlertAction<bool>(
-          label: Localized.text('ox_chat.str_go_to_settings'),
+          label: Localized.text('ox_common.str_go_to_settings'),
           value: true,
           isDefaultAction: true,
         ),

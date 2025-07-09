@@ -140,7 +140,7 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
       ),
       controller: _searchController,
       focusNode: _searchFocusNode,
-      placeholder: Localized.text('ox_chat.search'),
+              placeholder: Localized.text('ox_common.search'),
       showClearButton: true,
       onSubmitted: _onSubmittedHandler,
     );
