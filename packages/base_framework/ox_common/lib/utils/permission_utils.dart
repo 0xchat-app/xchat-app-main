@@ -4,9 +4,8 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_common/business_interface/ox_chat/call_message_type.dart';
-import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/platform_utils.dart';
-import 'package:ox_common/widgets/common_hint_dialog.dart';
+import 'package:ox_common/component.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
@@ -60,14 +59,23 @@ class PermissionUtils{
       if (status.isGranted || status.isLimited) {
         permissionGranted = true;
       } else if (status.isPermanentlyDenied) {
-        await OXCommonHintDialog.show(context, content: Localized.text('ox_common.str_grant_permission_photo_hint'), actionList: [
-          OXCommonHintAction(
-              text: () => Localized.text('ox_common.str_go_to_settings'),
-              onTap: () {
-                openAppSettings();
-                OXNavigator.pop(context);
-              }),
-        ], isRowAction: true, showCancelButton: true,);
+        final result = await CLAlertDialog.show<bool>(
+          context: context,
+          title: Localized.text('ox_common.tips'),
+          content: Localized.text('ox_common.str_grant_permission_photo_hint'),
+          actions: [
+            CLAlertAction.cancel(),
+            CLAlertAction<bool>(
+              label: Localized.text('ox_common.str_go_to_settings'),
+              value: true,
+              isDefaultAction: true,
+            ),
+          ],
+        );
+        
+        if (result == true) {
+          await openAppSettings();
+        }
         permissionGranted = false;
       } else if (status.isDenied) {
         permissionGranted = false;
@@ -128,21 +136,23 @@ class PermissionUtils{
     || (mediaType == CallMessageType.video.text && statuses[Permission.camera]!.isGranted && statuses[Permission.microphone]!.isGranted)) {
       cmPermission = true;
     } else {
-      OXCommonHintDialog.show(context,
-          title: Localized.text('ox_common.tips'),
-          content: permissionFailedContent,
-          actionList: [
-            OXCommonHintAction.cancel(onTap: () {
-              OXNavigator.pop(context);
-            }),
-            OXCommonHintAction.sure(
-                text: Localized.text('ox_common.confirm'),
-                onTap: () async {
-                  await openAppSettings();
-                  OXNavigator.pop(context);
-                }),
-          ],
-          isRowAction: true);
+      final result = await CLAlertDialog.show<bool>(
+        context: context,
+        title: Localized.text('ox_common.tips'),
+        content: permissionFailedContent,
+        actions: [
+          CLAlertAction.cancel(),
+          CLAlertAction<bool>(
+            label: Localized.text('ox_common.confirm'),
+            value: true,
+            isDefaultAction: true,
+          ),
+        ],
+      );
+      
+      if (result == true) {
+        await openAppSettings();
+      }
       cmPermission = false;
     }
     return cmPermission;

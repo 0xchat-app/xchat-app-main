@@ -345,35 +345,30 @@ class _AvatarDisplayPageState extends State<AvatarDisplayPage>
     } else {
       storagePermission = await PermissionUtils.getPhotosPermission(context);
     }
-    
-    if (storagePermission) {
-      try {
-        if (PlatformUtils.isDesktop) {
-          List<Media>? list = await FileUtils.importClientFile(1);
-          if (list != null && list.isNotEmpty) {
-            imgFile = File(list[0].path ?? '');
-          }
-        } else {
-          final res = await ImagePickerUtils.pickerPaths(
-            galleryMode: GalleryMode.image,
-            selectCount: 1,
-            showGif: false,
-            compressSize: 2048,
-          );
-          if (res.isNotEmpty) {
-            imgFile = (res[0].path == null) ? null : File(res[0].path ?? '');
-          }
+
+    if (!storagePermission) return null;
+
+    try {
+      if (PlatformUtils.isDesktop) {
+        List<Media>? list = await FileUtils.importClientFile(1);
+        if (list != null && list.isNotEmpty) {
+          imgFile = File(list[0].path ?? '');
         }
-      } catch (e) {
-        CommonToast.instance.show(context, 'Failed to select image: $e');
+      } else {
+        final res = await ImagePickerUtils.pickerPaths(
+          galleryMode: GalleryMode.image,
+          selectCount: 1,
+          showGif: false,
+          compressSize: 2048,
+        );
+        if (res.isNotEmpty) {
+          imgFile = (res[0].path == null) ? null : File(res[0].path ?? '');
+        }
       }
-    } else {
-      CommonToast.instance.show(
-        context,
-        Localized.text('ox_common.str_grant_permission_photo_hint'),
-      );
+    } catch (e) {
+      CommonToast.instance.show(context, 'Failed to select image: $e');
     }
-    
+
     return imgFile;
   }
 

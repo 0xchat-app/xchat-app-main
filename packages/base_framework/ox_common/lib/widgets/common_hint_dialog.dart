@@ -28,6 +28,7 @@ enum OXHintActionStyle {
   red,
 }
 
+@Deprecated('Use CLAlertAction instead. This will be removed in a future version.')
 class OXCommonHintAction {
   OXCommonHintAction({required this.text, this.value = '', this.style = OXHintActionStyle.theme, this.onTap});
 
@@ -49,6 +50,7 @@ class OXCommonHintAction {
       );
 }
 
+@Deprecated('Use CLAlertDialog instead. This will be removed in a future version.')
 class OXCommonHintDialog extends StatelessWidget {
   OXCommonHintDialog({this.title, this.content, this.contentView, this.icon, this.bgImage, this.isRowAction = false, required this.actionList})
       : assert(content == null || contentView == null, 'content and contentView cannot be used together');

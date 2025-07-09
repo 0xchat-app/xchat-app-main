@@ -16,6 +16,7 @@ import 'package:ox_localizable/ox_localizable.dart';
 import 'package:flutter_zxing/flutter_zxing.dart';
 import 'common_image.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class CommonScanPage extends StatefulWidget {
   @override
@@ -230,7 +231,23 @@ class CommonScanPageState extends State<CommonScanPage> with SingleTickerProvide
 
       _imgFile = (res[0].path == null) ? null : File(res[0].path ?? '');
     } else {
-      CommonToast.instance.show(context, Localized.text('ox_common.str_grant_permission_photo_hint'));
+      final result = await CLAlertDialog.show<bool>(
+        context: context,
+        title: Localized.text('ox_common.tips'),
+        content: Localized.text('ox_common.str_grant_permission_photo_hint'),
+        actions: [
+          CLAlertAction.cancel(),
+          CLAlertAction<bool>(
+            label: Localized.text('ox_common.str_go_to_settings'),
+            value: true,
+            isDefaultAction: true,
+          ),
+        ],
+      );
+
+      if (result == true) {
+        await openAppSettings();
+      }
       return;
     }
     try {
