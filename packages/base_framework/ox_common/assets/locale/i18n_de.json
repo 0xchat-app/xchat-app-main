@@ -142,5 +142,9 @@
   "webview_more_send_to_chat": "An Chat senden",
   "str_select_push_app_title": "Push-App auswählen",
   "str_singer_app_verify_failed_hint": "Verifizierung der Signierer-App fehlgeschlagen",
+  "network_unreachable": "Netzwerk nicht erreichbar, bitte überprüfen Sie Ihre Verbindung",
+  "connection_timeout": "Verbindungszeit abgelaufen, bitte versuchen Sie es erneut",
+  "websocket_connection_failed": "Verbindung zum Relay nicht möglich",
+  "connection_test_failed": "Verbindungstest fehlgeschlagen",
   "camera": "Kamera"
 }

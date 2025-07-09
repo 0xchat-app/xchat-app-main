@@ -31,6 +31,8 @@ class OXNavigator extends Navigator {
     return Navigator.canPop(context);
   }
 
+  static BuildContext get rootContext => navigatorKey.currentContext!;
+
   @optionalTypeArgs
   static void pop<T extends Object?>(BuildContext? context, [T? result]) {
     context ??= navigatorKey.currentContext;

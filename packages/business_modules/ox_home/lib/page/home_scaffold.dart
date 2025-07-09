@@ -8,9 +8,9 @@ import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/login/login_models.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
+import 'package:ox_common/utils/circle_join_utils.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/widgets/common_toast.dart';
-import 'package:ox_localizable/ox_localizable.dart';
 
 import 'home_header_components.dart';
 import '../widgets/session_list_widget.dart';
@@ -171,37 +171,7 @@ class _HomeScaffoldState extends State<HomeScaffold> {
 
   void _handleJoinCircle() {
     debugPrint('HomeScaffold: Join Circle button tapped');
-    
-    CLDialog.showInputDialog(
-      context: context,
-      title: Localized.text('ox_home.join_circle_title'),
-      description: Localized.text('ox_home.join_circle_description'),
-      inputLabel: Localized.text('ox_home.join_circle_input_label'),
-      confirmText: Localized.text('ox_home.add'),
-      onConfirm: (relayUrl) async {
-        // Validate URL format
-        if (!_isValidRelayUrl(relayUrl)) {
-          throw Exception(Localized.text('ox_common.invalid_url_format'));
-        }
-        
-        // Try to join circle through LoginManager
-        return await LoginManager.instance.joinCircle(relayUrl) == null;
-      },
-    );
-  }
-
-  bool _isValidRelayUrl(String url) {
-    // Basic URL validation
-    if (url.isEmpty) return false;
-    
-    // Check if it's a valid URL or relay address
-    final uri = Uri.tryParse(url);
-    if (uri == null) return false;
-    
-    // Check for common relay URL patterns
-    return url.startsWith('wss://') || 
-           url.startsWith('ws://') || 
-           url.contains('.') && !url.contains(' ');
+    CircleJoinUtils.showJoinCircleDialog(context: context);
   }
 
   void _handleCreatePaidCircle() {

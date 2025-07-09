@@ -141,5 +141,9 @@
   "weekday": "平日",
   "webview_more_send_to_chat": "チャットに送信",
   "str_select_push_app_title": "プッシュアプリを選択",
-  "str_singer_app_verify_failed_hint": "署名アプリの検証に失敗しました"
+  "str_singer_app_verify_failed_hint": "署名アプリの検証に失敗しました",
+  "network_unreachable": "ネットワークに到達できません、接続を確認してください",
+  "connection_timeout": "接続がタイムアウトしました、再試行してください",
+  "websocket_connection_failed": "リレーに接続できません",
+  "connection_test_failed": "接続テストに失敗しました"
 }

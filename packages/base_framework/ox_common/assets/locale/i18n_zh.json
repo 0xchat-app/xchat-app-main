@@ -145,5 +145,9 @@
   "signer_signature": "签名已确认",
   "invalid_url_format": "无效的URL格式",
   "operation_failed": "操作失败",
-  "required": "必填"
+  "required": "必填",
+  "network_unreachable": "服务器无响应，请检查地址格式或网络状态",
+  "connection_timeout": "连接超时，请重试",
+  "websocket_connection_failed": "无法连接到中继服务器",
+  "connection_test_failed": "连接测试失败"
 }

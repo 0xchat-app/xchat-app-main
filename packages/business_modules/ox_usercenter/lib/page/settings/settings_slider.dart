@@ -4,6 +4,7 @@ import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
+import 'package:ox_common/utils/circle_join_utils.dart';
 import 'package:ox_common/utils/string_utils.dart';
 import 'package:ox_common/utils/extension.dart';
 import 'package:ox_common/utils/font_size_notifier.dart';
@@ -268,25 +269,7 @@ class SettingSliderState extends State<SettingSlider> {
   }
   
   void _showJoinCircleDialog() async {
-    final shouldNavigate = await CLAlertDialog.show<bool>(
-      context: context,
-      title: Localized.text('ox_usercenter.profile'),
-      content: Localized.text('ox_usercenter.profile_circle_info_dialog'),
-      actions: [
-        CLAlertAction.cancel(),
-        CLAlertAction<bool>(
-          label: Localized.text('ox_home.join_circle'),
-          value: true,
-          isDefaultAction: true,
-        ),
-      ],
-    );
-
-    if (shouldNavigate == true) {
-      // Navigate to join circle page
-      // This would typically navigate to home page or circle join page
-      OXNavigator.popToRoot(context);
-    }
+    await CircleJoinUtils.showJoinCircleGuideDialog(context: OXNavigator.rootContext);
   }
 
   void themeItemOnTap() {

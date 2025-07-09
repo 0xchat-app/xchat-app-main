@@ -145,5 +145,9 @@
   "str_singer_app_verify_failed_hint": "簽名驗證失敗，請重新登入",
   "str_succeed_hint": "成功",
   "str_uses_app": "使用應用程式 ${appname}",
-  "webview_more_send_to_chat": "傳送到聊天"
+  "webview_more_send_to_chat": "傳送到聊天",
+  "network_unreachable": "網路不可達，請檢查您的網路連接",
+  "connection_timeout": "連接超時，請重試",
+  "websocket_connection_failed": "無法連接到中繼服務器",
+  "connection_test_failed": "連接測試失敗"
 }

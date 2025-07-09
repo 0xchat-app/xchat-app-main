@@ -135,5 +135,9 @@
   "str_permission_photo_hint": "Por favor concede permiso para acceder a las fotos",
   "str_uses_app": "Usa la aplicación ${appname}",
   "weekend": "Fin de semana",
-  "weekday": "Día de semana"
+  "weekday": "Día de semana",
+  "network_unreachable": "Red no accesible, por favor verifica tu conexión",
+  "connection_timeout": "Tiempo de conexión agotado, por favor intenta de nuevo",
+  "websocket_connection_failed": "No se puede conectar al relay",
+  "connection_test_failed": "Prueba de conexión fallida"
 }
