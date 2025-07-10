@@ -3,6 +3,7 @@ import 'package:chatcore/chat-core.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
+import 'package:ox_common/login/login_models.dart';
 import 'package:ox_common/utils/ping_utils.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 
@@ -26,10 +27,12 @@ class CircleJoinUtils {
   /// performs pre-flight checks, and attempts to join the circle through LoginManager.
   /// 
   /// [context] BuildContext for showing dialogs
+  /// [circleType] Type of circle to join, defaults to relay
   /// 
   /// Returns Future<bool> indicating whether the operation was successful
   static Future<bool> showJoinCircleDialog({
     required BuildContext context,
+    CircleType circleType = CircleType.relay,
   }) async {
     debugPrint('CircleJoinUtils: Show join circle dialog');
     
@@ -54,7 +57,7 @@ class CircleJoinUtils {
           }
           
           // Step 3: Try to join circle through LoginManager
-          final failure = await LoginManager.instance.joinCircle(relayUrl);
+          final failure = await LoginManager.instance.joinCircle(relayUrl, type: circleType);
           if (failure != null) {
             throw failure.message;
           }

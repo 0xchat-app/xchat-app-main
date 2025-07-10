@@ -242,6 +242,7 @@
   "edit_profile": "Edit Profile",
   "delete_circle": "Delete Circle",
   "my_avatar_in_circle": "My profile in circle",
+  "circle_type": "Circle type",
   "relay_server": "Relay server",
   "file_server_setting": "File server setting",
   "circle_description_placeholder": "No description provided.",

@@ -445,7 +445,8 @@ extension LoginManagerCircle on LoginManager {
   /// Join circle
   ///
   /// [relayUrl] Circle's relay address
-  Future<LoginFailure?> joinCircle(String relayUrl) async {
+  /// [type] Circle type
+  Future<LoginFailure?> joinCircle(String relayUrl, {CircleType type = CircleType.relay}) async {
     try {
       final currentState = this.currentState;
 
@@ -472,6 +473,7 @@ extension LoginManagerCircle on LoginManager {
         id: circleId,
         name: _extractCircleName(relayUrl),
         relayUrl: relayUrl,
+        type: type,
       );
 
       // Add circle to account's circle list

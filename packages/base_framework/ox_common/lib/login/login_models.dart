@@ -11,6 +11,29 @@ enum LoginFailureType {
   circleDbFailed,
 }
 
+/// Circle type enumeration
+enum CircleType {
+  relay,
+}
+
+extension CircleTypeExtension on CircleType {
+  String get value {
+    switch (this) {
+      case CircleType.relay:
+        return 'relay';
+    }
+  }
+
+  static CircleType fromString(String value) {
+    switch (value) {
+      case 'relay':
+        return CircleType.relay;
+      default:
+        return CircleType.relay;
+    }
+  }
+}
+
 class _NoSet { const _NoSet(); }
 const _noSet = _NoSet();
 
@@ -36,11 +59,13 @@ class Circle {
     required this.id,
     required this.name,
     required this.relayUrl,
+    this.type = CircleType.relay,
   });
 
   final String id;
   final String name;
   final String relayUrl;
+  final CircleType type;
 
   /// Circle level configuration, loaded lazily after circle DB initialized.
   CircleConfigModel _config = CircleConfigModel();
@@ -51,12 +76,14 @@ class Circle {
     'id': id,
     'name': name,
     'relayUrl': relayUrl,
+    'type': type.value,
   };
 
   factory Circle.fromJson(Map<String, dynamic> json) => Circle(
     id: json['id'] as String,
     name: json['name'] as String,
     relayUrl: json['relayUrl'] as String,
+    type: CircleTypeExtension.fromString(json['type'] as String? ?? 'relay'),
   );
 
   @override
@@ -68,7 +95,7 @@ class Circle {
   int get hashCode => id.hashCode;
 
   @override
-  String toString() => 'Circle(id: $id, name: $name, relayUrl: $relayUrl)';
+  String toString() => 'Circle(id: $id, name: $name, relayUrl: $relayUrl, type: ${type.value})';
 
   //================ Circle Config Accessors ==================
 
