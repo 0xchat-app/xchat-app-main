@@ -159,5 +159,10 @@
   "invalid_relay_info_received": "接收到无效的中继信息",
   "relay_info_validation_failed": "中继信息验证失败",
   "input_cannot_be_empty": "输入不能为空",
-  "please_sign_in": "请登录"
+  "please_sign_in": "请登录",
+  "join_predefined_circle_title": "加入 {name} 圈子",
+  "join_predefined_circle_content": "您即将加入 \"{name}\" 圈子。\n\n类型：{type}\n{relayInfo}\n\n是否要继续？",
+  "relay_info": "中继：{url}",
+  "no_relay_required": "无需中继",
+  "circle_already_exists": "使用中继 {relay} 的圈子已存在"
 }

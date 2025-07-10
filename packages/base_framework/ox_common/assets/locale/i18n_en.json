@@ -159,5 +159,10 @@
   "invalid_relay_info_received": "Invalid relay information received",
   "relay_info_validation_failed": "Relay info validation failed",
   "input_cannot_be_empty": "Input cannot be empty",
-  "please_sign_in": "Please sign in"
+  "please_sign_in": "Please sign in",
+  "join_predefined_circle_title": "Join {name} Circle",
+  "join_predefined_circle_content": "You are about to join the \"{name}\" circle.\n\nType: {type}\n{relayInfo}\n\nDo you want to continue?",
+  "relay_info": "Relay: {url}",
+  "no_relay_required": "No relay required",
+  "circle_already_exists": "Circle with relay {relay} already exists"
 }
