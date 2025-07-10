@@ -559,8 +559,9 @@ extension LoginManagerCircle on LoginManager {
       final isCurrentCircle = currentState.currentCircle?.id == circleId;
 
       final remainingCircles = account.circles.where((c) => c.id != circleId).toList();
-      
-      if (remainingCircles.isNotEmpty) {
+
+      final isSwitch = remainingCircles.isNotEmpty;
+      if (isSwitch) {
         final nextCircle = remainingCircles.first;
         if (isCurrentCircle) {
           final switchResult = await switchToCircle(nextCircle);
@@ -587,9 +588,13 @@ extension LoginManagerCircle on LoginManager {
       final updatedAccount = account.copyWith(circles: updatedCircles);
       await updatedAccount.saveToDB();
 
-      // Update state with new account
+      // Update state
+      if (!isSwitch) {
+        _userInfo$ = ValueNotifier<UserDBISAR?>(null);
+      }
       final updatedState = this.currentState.copyWith(
         account: updatedAccount,
+        currentCircle: isSwitch ? this.currentState.currentCircle : null,
       );
       _state$.value = updatedState;
 
