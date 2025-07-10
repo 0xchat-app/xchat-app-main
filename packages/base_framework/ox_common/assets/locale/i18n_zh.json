@@ -157,5 +157,7 @@
   "invalid_relay_url_no_host": "无效的中继URL：无法提取主机地址",
   "unable_to_retrieve_relay_info": "无法获取中继信息",
   "invalid_relay_info_received": "接收到无效的中继信息",
-  "relay_info_validation_failed": "中继信息验证失败"
+  "relay_info_validation_failed": "中继信息验证失败",
+  "input_cannot_be_empty": "输入不能为空",
+  "please_sign_in": "请登录"
 }
