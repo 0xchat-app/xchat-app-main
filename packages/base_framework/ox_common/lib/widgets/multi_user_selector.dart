@@ -65,13 +65,25 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
   @override
   void initState() {
     super.initState();
+    prepareData();
+    _searchCtrl.addListener(_onSearchChanged);
+  }
+
+  void prepareData() {
     _allUsers = List.from(widget.users);
     for (final id in widget.initialSelectedIds) {
       final user = widget.users.firstWhere((u) => u.id == id, orElse: () => SelectableUser(id: id, displayName: id));
       _selected.add(user);
     }
     _groupUsers();
-    _searchCtrl.addListener(_onSearchChanged);
+  }
+
+  @override
+  void didUpdateWidget(covariant CLMultiUserSelector oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.users != oldWidget.users) {
+      prepareData();
+    }
   }
 
   @override

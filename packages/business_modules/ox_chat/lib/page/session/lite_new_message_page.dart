@@ -15,6 +15,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'select_group_members_page.dart';
 import '../../utils/chat_session_utils.dart';
+import '../../utils/chat_user_utils.dart';
 
 class CLNewMessagePage extends StatefulWidget {
   const CLNewMessagePage({super.key});
@@ -41,6 +42,9 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
   // True after user presses submit at least once for current query.
   bool _hasSubmitted = false;
 
+  // True when loading users from utility
+  bool _isLoadingUsers = true;
+
   // For tracking scroll-based background color changes
   final ValueNotifier<double> _scrollOffset = ValueNotifier(0.0);
 
@@ -62,14 +66,17 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
     super.dispose();
   }
 
-  void _loadData() {
-    // Collect all users from cache and exclude current account.
-    final myPubkey = Account.sharedInstance.me?.pubKey;
-    _allUsers = Account.sharedInstance.userCache.values
-        .map((e) => e.value)
-        .where((u) => myPubkey == null || u.pubKey != myPubkey)
-        .toList();
-    _groupUsers();
+  void _loadData() async {
+    try {
+      _allUsers = await ChatUserUtils.getAllUsers();
+      _groupUsers();
+    } catch (e) {
+      print('Error loading users: $e');
+    } finally {
+      setState(() {
+        _isLoadingUsers = false;
+      });
+    }
   }
 
   void _groupUsers() {
@@ -147,6 +154,10 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
   }
 
   Widget _buildUserList() {
+    if (_isLoadingUsers) {
+      return SizedBox.expand();
+    }
+
     return CLSectionListView(
       items: [
         menuSection(),

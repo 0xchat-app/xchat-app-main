@@ -6,6 +6,7 @@ import 'package:ox_localizable/ox_localizable.dart';
 import 'package:chatcore/chat-core.dart';
 
 import 'group_creation_page.dart';
+import '../../utils/chat_user_utils.dart';
 
 class SelectGroupMembersPage extends StatefulWidget {
   const SelectGroupMembersPage({super.key});
@@ -17,6 +18,7 @@ class SelectGroupMembersPage extends StatefulWidget {
 class _SelectGroupMembersPageState extends State<SelectGroupMembersPage> {
   List<SelectableUser> _users = [];
   List<SelectableUser> _selectedUsers = [];
+  bool _isLoadingUsers = true;
 
   @override
   void initState() {
@@ -24,22 +26,23 @@ class _SelectGroupMembersPageState extends State<SelectGroupMembersPage> {
     _loadUsers();
   }
 
-  void _loadUsers() {
-    // Get all users and exclude current user
-    final myPubkey = Account.sharedInstance.me?.pubKey;
-    final allUsers = Account.sharedInstance.userCache.values
-        .map((e) => e.value)
-        .where((u) => myPubkey == null || u.pubKey != myPubkey)
-        .toList();
+  void _loadUsers() async {
+    try {
+      final allUsers = await ChatUserUtils.getAllUsers();
 
-    // Convert to SelectableUser
-    _users = allUsers.map((user) => SelectableUser(
-      id: user.pubKey,
-      displayName: _getUserShowName(user),
-      avatarUrl: user.picture ?? '',
-    )).toList();
-
-    setState(() {});
+      // Convert to SelectableUser
+      _users = allUsers.map((user) => SelectableUser(
+        id: user.pubKey,
+        displayName: _getUserShowName(user),
+        avatarUrl: user.picture ?? '',
+      )).toList();
+    } catch (e) {
+      print('Error loading users: $e');
+    } finally {
+      setState(() {
+        _isLoadingUsers = false;
+      });
+    }
   }
 
   String _getUserShowName(UserDBISAR user) {
@@ -59,7 +62,7 @@ class _SelectGroupMembersPageState extends State<SelectGroupMembersPage> {
   @override
   Widget build(BuildContext context) {
     return CLMultiUserSelector(
-      users: _users,
+      users: _isLoadingUsers ? [] : _users,
       title: Localized.text('ox_chat.str_new_group'),
       onChanged: _onSelectionChanged,
       actions: [

@@ -693,10 +693,7 @@ extension LoginManagerCircle on LoginManager {
       );
       _userInfo$ = Account.sharedInstance.getUserNotifier(user.pubKey);
 
-      // Reload profile from relay and update settings (circle-level)
-      Account.sharedInstance.reloadProfileFromRelay(
-        account.pubkey,
-      );
+      _loginCircleSuccessHandler(account, circle);
 
       // Notify circle change success
       for (final observer in _observers) {
@@ -757,6 +754,13 @@ extension LoginManagerCircle on LoginManager {
     for (final observer in _observers) {
       observer.onCircleChangeFailed(failure);
     }
+  }
+
+  void _loginCircleSuccessHandler(AccountModel account, Circle circle) {
+    final pubkey = account.pubkey;
+
+    Account.sharedInstance.reloadProfileFromRelay(pubkey);
+    Account.sharedInstance.syncFollowingListFromRelay(pubkey, relay: circle.relayUrl);
   }
 }
 
