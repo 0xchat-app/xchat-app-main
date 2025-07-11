@@ -211,9 +211,22 @@ extension SessionDCInterface on SessionListDataController {
           .chatIdEqualTo(chatId)
           .deleteAll();
     });
+    deleteSessionMessage(viewModel);
     if (count > 0) {
       _removeViewModel(viewModel);
     }
+  }
+
+  Future deleteSessionMessage(SessionListViewModel viewModel) async {
+    final groupId = viewModel.sessionModel.groupId;
+    final chatType = viewModel.sessionModel.chatType;
+    if (groupId == null) return;
+    await DBISAR.sharedInstance.isar.writeAsync((isar) {
+      isar.messageDBISARs.where()
+          .groupIdEqualTo(groupId)
+          .chatTypeEqualTo(chatType)
+          .deleteAll();
+    });
   }
 
   Future<bool> updateChatSession(String chatId, {
