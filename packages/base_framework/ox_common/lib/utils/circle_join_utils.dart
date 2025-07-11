@@ -76,7 +76,7 @@ class CircleJoinUtils {
   /// Validate relay URL format
   /// 
   /// Checks if the provided URL is a valid relay URL format.
-  /// Accepts wss://, ws:// protocols and basic domain validation.
+  /// Accepts wss://, ws:// protocols, shortcuts, and bitchat mode.
   /// 
   /// [url] The URL string to validate
   /// 
@@ -85,13 +85,28 @@ class CircleJoinUtils {
     // Basic URL validation
     if (url.isEmpty) return false;
     
+    // Check for bitchat mode
+    if (Account.isBitchatMode(url)) {
+      return true;
+    }
+    
     // Check if it's a valid URL or relay address
     final uri = Uri.tryParse(url);
     if (uri == null) return false;
     
     // Check for common relay URL patterns
-    return url.startsWith('wss://') || 
-           url.startsWith('ws://');
+    if (url.startsWith('wss://') || url.startsWith('ws://')) {
+      return true;
+    }
+    
+    // Check if it's a valid shortcut
+    final shortcuts = Account.getRelayShortcuts();
+    final shortcut = url.toLowerCase().trim();
+    if (shortcuts.containsKey(shortcut)) {
+      return true;
+    }
+    
+    return false;
   }
 
   /// Perform weak pre-flight checks for a relay URL with user confirmation option
