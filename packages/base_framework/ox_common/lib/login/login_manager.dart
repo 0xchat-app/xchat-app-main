@@ -61,6 +61,13 @@ class LoginManager {
   Circle? get currentCircle => currentState.currentCircle;
   bool get isLoginCircle => currentCircle != null;
 
+  bool isMe(String id) {
+    if (currentCircle?.type == CircleType.bitchat) {
+      return BitchatService().cachedPeerID == id;
+    }
+    return currentState.account?.pubkey == id;
+  }
+
   // User info management for UI updates (separate from login state)
   ValueNotifier<UserDBISAR?> _userInfo$ = ValueNotifier<UserDBISAR?>(null);
 
@@ -804,13 +811,12 @@ extension LoginManagerCircle on LoginManager {
       // Initialize the service
       await bitchatService.initialize();
       debugPrint('BitchatService initialized successfully');
-      
+
       // Start broadcasting identity with user's pubkey and name
       final userInfo = Account.sharedInstance.me;
       final nickname = userInfo?.name ?? userInfo?.shortEncodedPubkey ?? 'Unknown';
-      
+
       await bitchatService.startBroadcasting(
-        peerID: account.pubkey,
         nickname: nickname,
       );
       bitchatService.setMessageCallback((message) {

@@ -6,6 +6,7 @@ import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
 import 'package:ox_common/utils/string_utils.dart';
+import 'package:uuid/uuid.dart';
 
 class ChatStrategyFactory {
   static ChatStrategy getStrategy(ChatSessionModelISAR session) {
@@ -17,9 +18,9 @@ class ChatStrategyFactory {
       case ChatType.chatSingle:
         return PrivateChatStrategy(session);
       case ChatType.bitchatChannel:
-        return RelayGroupChatStrategy(session);
+        return BitchatChannelStrategy(session);
       case ChatType.bitchatPrivate:
-        return RelayGroupChatStrategy(session);
+        return BitchatPrivateStrategy(session);
       default:
         ChatLogUtils.error(
           className: 'ChatSendMessageHelper',
@@ -330,6 +331,104 @@ class RelayGroupChatStrategy extends ChatStrategy {
           sessionId: params.sessionId,
         ))['messages'] ??
         <MessageDBISAR>[];
+  }
+}
+
+class BitchatChannelStrategy extends ChatStrategy {
+  final ChatSessionModelISAR session;
+
+  BitchatChannelStrategy(this.session);
+
+  @override
+  String get receiverId => session.chatId.orDefault(session.groupId ?? '');
+
+  @override
+  Future getSendMessageEvent({
+    required MessageType messageType,
+    required String contentString,
+    required String replyId,
+    EncryptedFile? encryptedFile,
+    String? source,
+  }) async {
+    return Event(
+      '',
+      '',
+      0,
+      0,
+      [],
+      '',
+      '',
+    );
+  }
+
+  @override
+  Future<OKEvent> doSendMessageAction({
+    required MessageType messageType,
+    required String contentString,
+    required String replyId,
+    EncryptedFile? encryptedFile,
+    bool isLocal = false,
+    Event? event,
+    String? replaceMessageId,
+  }) async {
+    await BitchatService().sendChannelMessage(
+      session.chatId,
+      contentString,
+    );
+    return OKEvent(
+      Uuid().v4(),
+      true,
+      '',
+    );
+  }
+}
+
+class BitchatPrivateStrategy extends ChatStrategy {
+  final ChatSessionModelISAR session;
+
+  BitchatPrivateStrategy(this.session);
+
+  @override
+  String get receiverId => session.chatId.orDefault(session.groupId ?? '');
+
+  @override
+  Future getSendMessageEvent({
+    required MessageType messageType,
+    required String contentString,
+    required String replyId,
+    EncryptedFile? encryptedFile,
+    String? source,
+  }) async {
+    return Event(
+      '',
+      '',
+      0,
+      0,
+      [],
+      '',
+      '',
+    );
+  }
+
+  @override
+  Future<OKEvent> doSendMessageAction({
+    required MessageType messageType,
+    required String contentString,
+    required String replyId,
+    EncryptedFile? encryptedFile,
+    bool isLocal = false,
+    Event? event,
+    String? replaceMessageId,
+  }) async {
+    await BitchatService().sendPrivateMessage(
+      session.chatId,
+      contentString,
+    );
+    return OKEvent(
+      Uuid().v4(),
+      true,
+      '',
+    );
   }
 }
 

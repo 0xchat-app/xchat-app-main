@@ -51,8 +51,10 @@ String getUserInitials(types.User user) {
 String getUserName(types.User user) {
   final nickName = (user.sourceObject?.nickName ?? '').trim();
   final name = (user.sourceObject?.name ?? '').trim();
+  final lastName = (user.lastName ?? '').trim();
   if (nickName.isNotEmpty) return nickName;
   if (name.isNotEmpty) return name;
+  if (lastName.isNotEmpty) return lastName;
   return 'unknown';
 }
 

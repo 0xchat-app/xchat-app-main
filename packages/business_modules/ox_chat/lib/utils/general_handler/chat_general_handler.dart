@@ -16,6 +16,8 @@ import 'package:ox_chat/utils/message_parser/define.dart';
 import 'package:ox_chat/utils/send_message/chat_send_message_helper.dart';
 import 'package:ox_chat/widget/chat_send_image_prepare_dialog.dart';
 import 'package:ox_common/business_interface/ox_chat/call_message_type.dart';
+import 'package:ox_common/login/login_manager.dart';
+import 'package:ox_common/login/login_models.dart';
 import 'package:ox_common/ox_common.dart';
 import 'package:ox_common/upload/file_type.dart';
 import 'package:ox_common/upload/upload_utils.dart';
@@ -105,6 +107,11 @@ class ChatGeneralHandler {
   bool isPreviewMode = false;
 
   static types.User _defaultAuthor() {
+    if (LoginManager.instance.currentCircle?.type == CircleType.bitchat) {
+      return types.User(
+        id: BitchatService().cachedPeerID!,
+      );
+    }
     UserDBISAR? userDB = Account.sharedInstance.me;
     return types.User(
       id: userDB!.pubKey,
@@ -264,7 +271,7 @@ extension ChatGestureHandlerEx on ChatGeneralHandler {
   /// Handles the avatar click event in chat messages.
   Future avatarPressHandler(context, {required String userId}) async {
 
-    if (OXUserInfoManager.sharedInstance.isCurrentUser(userId)) {
+    if (LoginManager.instance.isMe(userId)) {
       ChatLogUtils.info(className: 'ChatMessagePage', funcName: '_avatarPressHandler', message: 'Not allowed push own detail page');
       return ;
     }

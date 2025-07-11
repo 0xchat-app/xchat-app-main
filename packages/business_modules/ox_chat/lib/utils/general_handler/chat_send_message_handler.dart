@@ -160,6 +160,7 @@ extension ChatMessageSendEx on ChatGeneralHandler {
         type: messageType,
         createTime: tempCreateTime,
         chatId: session.chatId,
+        chatType: session.chatType,
         replyId: messageType == MessageType.text ? replyHandler.replyMessage?.remoteId : null,
         decryptSecret: decryptSecret,
         decryptNonce: decryptNonce,
@@ -238,6 +239,8 @@ extension ChatMessageSendEx on ChatGeneralHandler {
     required ChatSendingType sendingType,
     String? replaceMessageId,
   }) {
+    if (LoginManager.instance.currentCircle?.type == CircleType.bitchat) return;
+
     if (replaceMessageId != null && replaceMessageId.isNotEmpty) {
       dataController.updateMessage(message, originMessageId: replaceMessageId);
     } else {

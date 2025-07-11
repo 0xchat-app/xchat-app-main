@@ -32,6 +32,7 @@ class MessageDataController with OXChatObserver {
 
   Set<String> _messageIdCache = {};
   List<types.Message> _messages = [];
+  List<types.Message> get messages => _messages;
 
   bool _hasMoreOldMessage = true;
   bool get canLoadMoreMessage {

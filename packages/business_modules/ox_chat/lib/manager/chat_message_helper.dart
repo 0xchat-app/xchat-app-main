@@ -16,6 +16,7 @@ import 'package:ox_common/business_interface/ox_chat/call_message_type.dart';
 import 'package:ox_common/business_interface/ox_chat/custom_message_type.dart';
 import 'package:ox_common/business_interface/ox_chat/utils.dart';
 import 'package:ox_common/login/login_manager.dart';
+import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/utils/web_url_helper.dart';
 import 'package:ox_localizable/ox_localizable.dart';
@@ -85,7 +86,7 @@ class ChatMessageHelper {
               key == 'ox_chat.screenshot_hint_message') {
             final sender = senderId;
             var senderName = '';
-            final isMe = OXUserInfoManager.sharedInstance.isCurrentUser(sender);
+            final isMe = false;
             final userDB = Account.sharedInstance.getUserInfo(sender);
             if (userDB is UserDBISAR) {
               senderName = userDB.name ?? '';
@@ -160,6 +161,7 @@ class ChatMessageHelper {
     if (user == null) {
       return types.User(
         id: userPubkey,
+        lastName: userPubkey,
       );
     }
     return user.toMessageModel();
@@ -191,7 +193,7 @@ class ChatMessageHelper {
         final initialText = content;
         final mentionDecodeText = ChatMentionMessageEx.tryDecoder(initialText, mentionsCallback: (mentions) {
           if (mentions.isEmpty) return ;
-          final hasCurrentUser = mentions.any((mention) => OXUserInfoManager.sharedInstance.isCurrentUser(mention.pubkey));
+          final hasCurrentUser = mentions.any((mention) => LoginManager.instance.isMe(mention.pubkey));
           if (hasCurrentUser) {
             isMentionMessageCallback?.call();
           }
@@ -367,6 +369,7 @@ class ChatMessageHelper {
     required MessageType type,
     required int createTime, // timestamp(ms)
     required String chatId,
+    int? chatType,
     UIMessage.Status? msgStatus,
     String? replyId,
     String? previewData,
@@ -411,7 +414,16 @@ class ChatMessageHelper {
     final zapsInfoList = await _getZapsInfo(zapsInfoIds);
 
     final messageFactory = await _getMessageFactory(messageType);
-    final isMe = OXUserInfoManager.sharedInstance.isCurrentUser(authorPubkey);
+    bool isMe;
+    switch (chatType) {
+      case ChatType.bitchatPrivate:
+      case ChatType.bitchatChannel:
+        isMe = authorPubkey == BitchatService().cachedPeerID;
+        break;
+      default:
+        isMe = LoginManager.instance.isMe(authorPubkey);
+    }
+
     final uiMessage = messageFactory.createMessage(
       author: author,
       timestamp: createTime,
@@ -505,6 +517,7 @@ extension MessageDBToUIEx on MessageDBISAR {
       await Messages.saveMessageToDB(this);
       asyncUpdateHandler?.call(this);
     };
+
     return ChatMessageHelper.createUIMessage(
       messageId: messageId,
       remoteId: messageId,
@@ -513,6 +526,7 @@ extension MessageDBToUIEx on MessageDBISAR {
       type: MessageDBISAR.stringtoMessageType(this.type),
       createTime: createTime * 1000,
       chatId: chatId,
+      chatType: chatType,
       msgStatus: msgStatus,
       replyId: replyId,
       previewData: previewData,
@@ -549,7 +563,7 @@ extension MessageDBToUIEx on MessageDBISAR {
   }
 
   UIMessage.Status getStatus() {
-    final senderIsMe = OXUserInfoManager.sharedInstance.isCurrentUser(sender);
+    final senderIsMe = LoginManager.instance.isMe(sender);
     final status = this.status; // 0 sending, 1 sent, 2 fail 3 recall
     switch (status) {
       case 0:

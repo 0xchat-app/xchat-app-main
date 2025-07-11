@@ -90,16 +90,6 @@ class ChatDataCache with OXChatObserver, LoginManagerObserver {
   }
 
   @override
-  void didMessageActionsCallBack(MessageDBISAR message) async {
-    final sessionId = message.chatTypeKey?.sessionId;
-    final messageId = message.messageId;
-    if (sessionId == null || sessionId.isEmpty || messageId.isEmpty) return;
-    if (!OXUserInfoManager.sharedInstance.isCurrentUser(message.sender)) return;
-
-    OXChatBinding.sharedInstance.addReactionMessage(sessionId, messageId);
-  }
-
-  @override
   void didMessageDeleteCallBack(List<MessageDBISAR> delMessages) async {
     for (var message in delMessages) {
       final chatType = message.chatTypeKey;

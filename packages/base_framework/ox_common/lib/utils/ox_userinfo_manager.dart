@@ -131,10 +131,6 @@ class OXUserInfoManager {
     assert(false, 'Use LoginManager');
   }
 
-  bool isCurrentUser(String userID) {
-    return Account.sharedInstance.currentPubkey == userID;
-  }
-
   Future<bool> setNotification() async {
     assert(false, 'Deprecated Class');
 
