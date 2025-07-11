@@ -47,7 +47,31 @@ class CircleJoinUtils {
       relayUrl: 'wss://relay.0xchat.com',
       type: CircleType.relay,
     ),
+    'damus': _CircleConfig(
+      relayUrl: 'wss://relay.damus.io',
+      type: CircleType.relay,
+    ),
+    'nos': _CircleConfig(
+      relayUrl: 'wss://nos.lol',
+      type: CircleType.relay,
+    ),
+    'primal': _CircleConfig(
+      relayUrl: 'wss://relay.primal.net',
+      type: CircleType.relay,
+    ),
+    'yabu': _CircleConfig(
+      relayUrl: 'wss://yabu.me',
+      type: CircleType.relay,
+    ),
+    'nostrband': _CircleConfig(
+      relayUrl: 'wss://relay.nostr.band',
+      type: CircleType.relay,
+    ),
     'bitchat': _CircleConfig(
+      relayUrl: null,
+      type: CircleType.bitchat,
+    ),
+    'bitch@': _CircleConfig(
       relayUrl: null,
       type: CircleType.bitchat,
     ),
