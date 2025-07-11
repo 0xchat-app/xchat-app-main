@@ -285,6 +285,10 @@
 	<string>0xchat needs access to your album permission, to set avatar in the user center, and send pictures or video messages through the customer service function.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>0xchat needs access to your album permission, to set avatar in the user center, and send pictures or video messages through the customer service function.</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>0xchat needs access to Bluetooth to discover and connect with nearby devices for peer-to-peer messaging.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>0xchat needs access to Bluetooth to discover and connect with nearby devices for peer-to-peer messaging.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
