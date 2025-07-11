@@ -35,13 +35,13 @@ class _BitchatChannelMessagePageState extends State<BitchatChannelMessagePage> {
   Widget build(BuildContext context) {
     return CommonChatWidget(
       handler: handler,
-      title: session.chatId,
+      title: session.chatName,
       actions: [
         Container(
           alignment: Alignment.center,
           child: SmartGroupAvatar(
             size: 36.px,
-            isClickable: true,
+            isClickable: false,
             onTap: () async {
               OXNavigator.pushPage(context, (_) => GroupInfoPage(groupId: '123',));
             },

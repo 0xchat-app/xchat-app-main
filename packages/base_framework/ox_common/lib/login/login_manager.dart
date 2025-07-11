@@ -37,6 +37,10 @@ class LoginUserNotifier {
 
   ValueNotifier<String> get avatarUrl$ => LoginManager.instance._userInfo$
       .map((userInfo) => userInfo?.picture ?? '');
+
+  void updateNickname(String nickname) {
+    LoginManager.instance._userInfo$.value?.name = nickname;
+  }
 }
 
 /// Login manager
@@ -800,7 +804,6 @@ extension LoginManagerCircle on LoginManager {
     _userInfo$ = Account.sharedInstance.getUserNotifier(pubkey);
     Account.sharedInstance.reloadProfileFromRelay(pubkey);
     Account.sharedInstance.syncFollowingListFromRelay(pubkey, relay: circle.relayUrl);
-
   }
 
   /// Initialize and start BitchatService for bitchat circles
@@ -812,19 +815,17 @@ extension LoginManagerCircle on LoginManager {
       await bitchatService.initialize();
       debugPrint('BitchatService initialized successfully');
 
-      // Start broadcasting identity with user's pubkey and name
-      final userInfo = Account.sharedInstance.me;
-      final nickname = userInfo?.name ?? userInfo?.shortEncodedPubkey ?? 'Unknown';
-
-      await bitchatService.startBroadcasting(
-        nickname: nickname,
-      );
+      await bitchatService.startBroadcasting();
       bitchatService.setMessageCallback((message) {
         Messages.saveMessageToDB(message);
         OXChatBinding.sharedInstance.didReceiveMessageHandler(message);
       });
-      debugPrint('BitchatService started broadcasting for ${account.pubkey} with nickname: $nickname');
-      
+
+
+      _userInfo$.value = UserDBISAR(
+        pubKey: bitchatService.cachedPeerID ?? '',
+        name: bitchatService.cachedNickname,
+      )..updateEncodedPubkey(bitchatService.cachedPeerID ?? '');
     } catch (e, stack) {
       debugPrint('Failed to initialize BitchatService: $e, $stack');
     }

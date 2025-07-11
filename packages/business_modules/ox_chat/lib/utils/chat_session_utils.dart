@@ -27,7 +27,7 @@ class ChatSessionUtils {
         valueNotifier = Groups.sharedInstance.getPrivateGroupNotifier(model.chatId);
         break;
       case ChatType.bitchatChannel:
-        valueNotifier = ValueNotifier(model.chatId);
+        valueNotifier = ValueNotifier(model.chatName);
     }
     return valueNotifier;
   }
