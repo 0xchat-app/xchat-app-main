@@ -371,10 +371,15 @@ class BitchatChannelStrategy extends ChatStrategy {
     Event? event,
     String? replaceMessageId,
   }) async {
-    await BitchatService().sendChannelMessage(
-      session.chatId,
-      contentString,
-    );
+    final chatId = session.chatId;
+    if (chatId.isEmpty) {
+      BitchatService().sendBroadcastMessage(contentString);
+    } else {
+      BitchatService().sendChannelMessage(
+        chatId,
+        contentString,
+      );
+    }
     return OKEvent(
       Uuid().v4(),
       true,
