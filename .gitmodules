@@ -7,3 +7,6 @@
 [submodule "packages/nostr-mls-package"]
 	path = packages/nostr-mls-package
 	url = https://github.com/0xchat-app/nostr-mls-package.git
+[submodule "packages/bitchat-flutter-plugin"]
+	path = packages/bitchat-flutter-plugin
+	url = https://github.com/wcat7/bitchat-flutter-plugin.git

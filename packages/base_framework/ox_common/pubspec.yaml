@@ -105,7 +105,9 @@ dependencies:
   ox_network:
     path: ../ox_network
   bitchat_flutter_plugin:
-    path: ../../bitchat-core
+    git:
+      url: https://github.com/wcat7/bitchat-flutter-plugin.git
+      ref: master
 
 dev_dependencies:
   build_runner: ^2.4.10

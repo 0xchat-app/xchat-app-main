@@ -92,6 +92,8 @@ dependency_overrides:
     path: packages/nostr-dart
   nostr_mls_package:
     path: packages/nostr-mls-package
+  bitchat_flutter_plugin:
+    path: packages/bitchat-flutter-plugin
 
 
 # For information on the generic Dart part of this file, see the
