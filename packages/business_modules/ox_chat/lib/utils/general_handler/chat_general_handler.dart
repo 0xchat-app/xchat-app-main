@@ -116,13 +116,8 @@ class ChatGeneralHandler {
     final sessionType = session.chatType;
     switch (sessionType) {
       case ChatType.chatSingle:
-      case ChatType.chatStranger:
-      case ChatType.chatSecret:
       case ChatType.chatGroup:
         return types.EncryptionType.encrypted;
-      case ChatType.chatChannel:
-      case ChatType.chatRelayGroup:
-        return types.EncryptionType.none;
       default:
         return types.EncryptionType.none;
     }
@@ -165,7 +160,6 @@ class ChatGeneralHandler {
 
     final mentionHandler = ChatMentionHandler(
       allUserGetter: userListGetter,
-      isUseAllUserCache: session.chatType == ChatType.chatChannel,
     );
     userListGetter().then((userList) {
       mentionHandler.allUserCache = userList;
@@ -798,36 +792,5 @@ extension StringChatEx on String {
   /// Returns whether it is a local path or null if it is not a path String
   bool? get isLocalPath {
     return !this.startsWith('http://') && !this.startsWith('https://') && !this.startsWith('data:image/');
-  }
-}
-
-extension ChatZapsEx on ChatSessionModelISAR {
-  ZapType? get asZapType {
-    switch (chatType) {
-      case ChatType.chatSingle:
-      case ChatType.chatStranger:
-      case ChatType.chatSecret:
-      case ChatType.chatSecretStranger:
-        return ZapType.privateChat;
-      case ChatType.chatGroup:
-        return ZapType.privateGroup;
-      case ChatType.chatChannel:
-        return ZapType.channelChat;
-      case ChatType.chatRelayGroup:
-        return ZapType.relayGroup;
-    }
-    return null;
-  }
-
-  bool get isContentEncrypt {
-    switch (chatType) {
-      case ChatType.chatSingle:
-      case ChatType.chatStranger:
-      case ChatType.chatSecret:
-      case ChatType.chatSecretStranger:
-      case ChatType.chatGroup:
-        return true;
-    }
-    return false;
   }
 }

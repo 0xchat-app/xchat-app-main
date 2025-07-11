@@ -172,12 +172,10 @@ extension CommonChatSessionEx on ChatSessionModelISAR {
         return 0;
       case ChatType.chatGroup:
         return 1;
-      case ChatType.chatChannel:
-        return 2;
-      case ChatType.chatSecret:
-        return 3;
-      case ChatType.chatRelayGroup:
-        return 4;
+      case ChatType.bitchatChannel:
+        return 5;
+      case ChatType.bitchatPrivate:
+        return 6;
       default:
         return null;
     }

@@ -87,7 +87,7 @@ class MessageLongPressWidgetState extends State<MessageLongPressWidget> {
         AssetImageData('icon_quote.png', package: 'ox_chat'),
         MessageLongPressEventType.quote,
       ),
-      if (widget.handler.session.chatType == ChatType.chatRelayGroup || message.isMe)
+      if (message.isMe)
         ItemModel(
           Localized.text('ox_chat.message_menu_delete'),
           AssetImageData('icon_delete.png', package: 'ox_common'),

@@ -266,20 +266,6 @@ class _ChatChooseSharePageState extends State<ChatChooseSharePage> with ShareIte
             ShareSearchGroup(title: 'str_title_groups'.localized(), type: ShareSearchType.groups, items: groupSessions),
           );
         }
-        List<ChannelDBISAR>? tempChannelList = loadChatChannelsWithSymbol(searchQuery);
-        if (tempChannelList != null && tempChannelList.length > 0) {
-          List<ChatSessionModelISAR> channelSessions = [];
-          tempChannelList.forEach((element) {
-            channelSessions.add(ChatSessionModelISAR(
-              chatId: element.channelId,
-              chatType: ChatType.chatChannel,
-            ));
-          });
-          searchResult.add(
-            ShareSearchGroup(
-                title: 'str_title_channels'.localized(), type: ShareSearchType.channels, items: channelSessions),
-          );
-        }
 
         _showChatList = searchResult;
       }

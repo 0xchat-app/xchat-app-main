@@ -256,17 +256,9 @@ extension SessionChatTypeKeyEx on ChatSessionModelISAR {
     final chatType = this.chatType;
     switch (chatType) {
       case ChatType.chatSingle:
-      case ChatType.chatStranger:
         return _convertSessionToPrivateChatKey();
       case ChatType.chatGroup:
         return _convertSessionToGroupKey();
-      case ChatType.chatChannel:
-        return _convertSessionToChannelKey();
-      case ChatType.chatSecret:
-      case ChatType.chatSecretStranger:
-        return _convertSessionToSecretChatKey();
-      case ChatType.chatRelayGroup:
-        return _convertSessionToRelayGroupKey();
       default:
         assert(false, 'unknown chatType');
         return null;

@@ -14,15 +14,11 @@ class ChatStrategyFactory {
     switch (session.chatType) {
       case ChatType.chatGroup:
         return GroupChatStrategy(session);
-      case ChatType.chatChannel:
-        return ChannelChatStrategy(session);
-      case ChatType.chatSecret:
-        return SecretChatStrategy(session);
       case ChatType.chatSingle:
-      case ChatType.chatStranger:
-      case ChatType.chatSecretStranger:
         return PrivateChatStrategy(session);
-      case ChatType.chatRelayGroup:
+      case ChatType.bitchatChannel:
+        return RelayGroupChatStrategy(session);
+      case ChatType.bitchatPrivate:
         return RelayGroupChatStrategy(session);
       default:
         ChatLogUtils.error(

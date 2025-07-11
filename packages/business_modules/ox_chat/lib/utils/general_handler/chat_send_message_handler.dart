@@ -339,7 +339,7 @@ extension ChatMessageSendEx on ChatGeneralHandler {
   }
 
   Future<bool> sendTextMessage(BuildContext? context, String text) async {
-    if (session.isContentEncrypt && text.length > 30000) {
+    if (text.length > 30000) {
       CommonToast.instance.show(context, 'chat_input_length_over_hint'.localized());
       return false;
     }

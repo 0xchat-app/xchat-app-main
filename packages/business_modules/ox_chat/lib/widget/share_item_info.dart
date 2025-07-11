@@ -25,55 +25,16 @@ mixin ShareItemInfoMixin {
   Widget buildItemName(ChatSessionModelISAR item) {
     String showName = '';
     switch (item.chatType) {
-      case ChatType.chatChannel:
-        showName = Channels.sharedInstance.channels[item.chatId]?.value.name ?? '';
-        break;
       case ChatType.chatSingle:
-      case ChatType.chatSecret:
         showName = Account.sharedInstance.userCache[item.getOtherPubkey]?.value.name ?? '';
         break;
       case ChatType.chatGroup:
         showName = Groups.sharedInstance.groups[item.chatId]?.value.name ?? '';
         break;
-      case ChatType.chatRelayGroup:
-        showName = RelayGroup.sharedInstance.groups[item.chatId]?.value.name ?? '';
-        break;
     }
     return Container(
       margin: EdgeInsets.only(right: 4.px),
-      child: item.chatType == ChatType.chatSecret
-          ? Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CommonImage(
-                  iconName: 'icon_lock_secret.png',
-                  width: Adapt.px(16),
-                  height: Adapt.px(16),
-                  package: 'ox_chat',
-                ),
-                SizedBox(
-                  width: Adapt.px(4),
-                ),
-                ShaderMask(
-                  shaderCallback: (Rect bounds) {
-                    return LinearGradient(
-                      colors: [
-                        ThemeColor.gradientMainEnd,
-                        ThemeColor.gradientMainStart,
-                      ],
-                    ).createShader(Offset.zero & bounds.size);
-                  },
-                  child: MyText(
-                    showName,
-                    16,
-                    ThemeColor.color0,
-                    letterSpacing: 0.4.px,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            )
-          : Text(showName,
+      child: Text(showName,
               textAlign: TextAlign.left,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -90,25 +51,10 @@ mixin ShareItemInfoMixin {
       String showPicUrl = '';
       String localAvatarPath = '';
       switch (item.chatType) {
-        case ChatType.chatChannel:
-          showPicUrl = Channels.sharedInstance.channels[item.chatId]?.value.picture ?? '';
-          localAvatarPath = 'icon_group_default.png';
-          break;
         case ChatType.chatSingle:
-        case ChatType.chatSecret:
-          showPicUrl = Account.sharedInstance.userCache[item.getOtherPubkey]?.value.picture ?? '';
-          localAvatarPath = 'user_image.png';
-          break;
         case ChatType.chatGroup:
           showPicUrl = Groups.sharedInstance.groups[item.chatId]?.value.picture ?? '';
           localAvatarPath = 'icon_group_default.png';
-          break;
-        case ChatType.chatRelayGroup:
-          showPicUrl = RelayGroup.sharedInstance.groups[item.chatId]?.value.picture ?? '';
-          localAvatarPath = 'icon_group_default.png';
-          break;
-        case ChatType.chatNotice:
-          localAvatarPath = 'icon_request_avatar.png';
           break;
       }
       return Container(

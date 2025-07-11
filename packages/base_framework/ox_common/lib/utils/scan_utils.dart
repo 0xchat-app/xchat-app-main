@@ -131,22 +131,7 @@ extension ScanAnalysisHandlerEx on ScanUtils {
       final kind = data?['kind'];
       if (data == null || groupId == null || groupId is! String || groupId.isEmpty) return true;
       if (kind == 40 || kind == 41) {
-        // Go to Channel
-        await OXLoading.show();
-        ChannelDBISAR? channelDB = await Channels.sharedInstance.searchChannel(groupId, relays);
-        await OXLoading.dismiss();
-        if (channelDB != null) {
-          if (context.mounted) {
-            OXModuleService.pushPage(context, 'ox_chat', 'ChatGroupMessagePage', {
-              'chatId': groupId,
-              'chatName': channelDB.name,
-              'chatType': ChatType.chatChannel,
-              'time': channelDB.createTime * 1000,
-              'avatar': channelDB.picture,
-              'groupId': channelDB.channelId,
-            });
-          }
-        }
+        
       }
     },
   );

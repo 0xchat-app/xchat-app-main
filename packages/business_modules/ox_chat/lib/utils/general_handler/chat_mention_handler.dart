@@ -21,10 +21,6 @@ extension ChatSessionModelMentionEx on ChatSessionModelISAR {
     switch (this.chatType) {
       case ChatType.chatGroup:
         return _userListGetterByGroupMember;
-      case ChatType.chatChannel:
-        return _userListGetterByMessageList;
-      case ChatType.chatRelayGroup:
-        return _userListGetterByRelayGroupMember;
       default:
         return null;
     }
