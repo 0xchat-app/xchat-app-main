@@ -31,6 +31,8 @@ import java.util.Objects;
 import io.flutter.embedding.android.FlutterFragmentActivity;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugins.GeneratedPluginRegistrant;
+import io.flutter.plugin.common.MethodChannel;
+import com.oxchat.nostr.BleAdvertisingService;
 
 public class MainActivity extends FlutterFragmentActivity {
 
@@ -81,11 +83,36 @@ public class MainActivity extends FlutterFragmentActivity {
         handleIntent(getIntent());
     }
 
+    private static final String CHANNEL = "com.oxchat.lite/ble_service";
+
     @Override
     public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
         GeneratedPluginRegistrant.registerWith(flutterEngine);
         flutterEngine.getPlugins().add(new AppPreferences());
 
+        // Setup BLE service method channel
+        new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), CHANNEL).setMethodCallHandler(
+            (call, result) -> {
+                if (call.method.equals("startBleService")) {
+                    startBleAdvertisingService();
+                    result.success(null);
+                } else {
+                    result.notImplemented();
+                }
+            }
+        );
+    }
+
+    private void startBleAdvertisingService() {
+        Log.d("MainActivity", "Starting BLE advertising service...");
+        Intent serviceIntent = new Intent(this, BleAdvertisingService.class);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            Log.d("MainActivity", "Starting foreground service");
+            startForegroundService(serviceIntent);
+        } else {
+            Log.d("MainActivity", "Starting regular service");
+            startService(serviceIntent);
+        }
     }
 
     private void getOpenData(Intent intent) {
