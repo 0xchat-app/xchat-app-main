@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
+import 'package:ox_common/login/login_models.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/avatar.dart';
@@ -13,12 +14,14 @@ class CircleItem {
     required this.name,
     this.iconUrl = '',
     required this.relayUrl,
+    required this.type,
   });
 
   final String id;
   final String name;
   final String iconUrl;
   final String relayUrl;
+  final CircleType type;
 }
 
 class HomeHeaderComponents {
@@ -89,14 +92,23 @@ class HomeHeaderComponents {
       //     iconSize: 24.px,
       //     onTap: onSearchTap,
       //   ),
-      CLButton.icon(
-        iconName: PlatformStyle.isUseMaterial
-            ? 'icon_common_add.png'
-            : 'icon_common_add_cupertino.png',
-        package: 'ox_common',
-        iconSize: 24.px,
-        onTap: addOnTap,
-      ).setPaddingOnly(right: 4.px),
+
+      ValueListenableBuilder(
+        valueListenable: selectedCircle$,
+        builder: (context, selectedCircle, _) {
+          return Visibility(
+            visible: selectedCircle?.type != CircleType.bitchat,
+            child: CLButton.icon(
+              iconName: PlatformStyle.isUseMaterial
+                  ? 'icon_common_add.png'
+                  : 'icon_common_add_cupertino.png',
+              package: 'ox_common',
+              iconSize: 24.px,
+              onTap: addOnTap,
+            ).setPaddingOnly(right: 4.px),
+          );
+        }
+      ),
     ],
     backgroundColor: ColorToken.surface.of(ctx),
   );
@@ -194,7 +206,7 @@ class HomeHeaderComponents {
         child: Text(item.name[0]),
       ),
       titleWidget: CLText(item.name),
-      subtitleWidget: ValueListenableBuilder(
+      subtitleWidget: item.type == CircleType.bitchat ? null : ValueListenableBuilder(
         valueListenable: latency$,
         builder: (_, latencyStr, __) {
           final latencyInt = int.tryParse(latencyStr) ?? -1;

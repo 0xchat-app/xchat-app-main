@@ -224,7 +224,7 @@ class _SessionListWidgetState extends State<SessionListWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CLText.bodyLarge(
-                        _AdaptHelperEx(value).name,
+                        item.name,
                         customColor: ColorToken.onSurface.of(context),
                         maxLines: 1,
                       ),
@@ -262,9 +262,8 @@ class _SessionListWidgetState extends State<SessionListWidget> {
         return ValueListenableBuilder(
           valueListenable: item.groupMember$,
           builder: (context, groupMember, _) {
-            final isSingleChat = _AdaptHelperEx(entity).isSingleChat;
             final size = 40.px;
-            if (!isSingleChat && item.sessionModel.chatType == ChatType.chatGroup) {
+            if (item.sessionModel.chatType == ChatType.chatGroup) {
               return SmartGroupAvatar(
                 groupId: item.sessionModel.groupId,
                 size: size,
@@ -272,8 +271,8 @@ class _SessionListWidgetState extends State<SessionListWidget> {
             }
 
             return BaseAvatarWidget(
-              imageUrl: _AdaptHelperEx(entity).iconUrl,
-              defaultImageName: _AdaptHelperEx(entity).defaultIcon,
+              imageUrl: item.iconUrl,
+              defaultImageName: item.defaultIcon,
               size: size,
               isCircular: true,
             );
@@ -379,83 +378,5 @@ class _SessionListWidgetState extends State<SessionListWidget> {
         ),
       ],
     );
-  }
-}
-
-extension _AdaptHelperEx on dynamic {
-  String get iconUrl {
-    switch (this) {
-      case UserDBISAR user:
-        return user.picture ?? '';
-      case GroupDBISAR group:
-        if(group.isDirectMessage == true){
-          UserDBISAR? otherUser = Account.sharedInstance.userCache[group.otherPubkey]?.value;
-          return otherUser?.picture ?? '';
-        } else {
-          return group.picture ?? '';
-        }
-      case ChannelDBISAR channel:
-        return channel.picture ?? '';
-      case RelayGroupDBISAR relayGroup:
-        return relayGroup.picture;
-      default:
-        assert(false, 'Unknown Type: $runtimeType');
-        return '';
-    }
-  }
-
-  String get defaultIcon {
-    switch (this) {
-      case UserDBISAR _:
-        return 'user_image.png';
-      case GroupDBISAR group:
-        if(group.isDirectMessage == true){
-          return 'user_image.png';
-        } else {
-          return 'icon_group_default.png';
-        }
-      case ChannelDBISAR _:
-      case RelayGroupDBISAR _:
-        return 'icon_group_default.png';
-      default:
-        assert(false, 'Unknown Type: $runtimeType');
-        return '';
-    }
-  }
-
-  String get name {
-    switch (this) {
-      case UserDBISAR user:
-        return user.getUserShowName();
-      case GroupDBISAR group:
-        if (group.isDirectMessage == true) {
-          UserDBISAR? otherUser = Account.sharedInstance.userCache[group.otherPubkey]?.value;
-          return otherUser?.getUserShowName() ?? '';
-        } else {
-          return group.name;
-        }
-      case ChannelDBISAR channel:
-        return channel.name ?? '';
-      case RelayGroupDBISAR relayGroup:
-        return relayGroup.name;
-      default:
-        assert(false, 'Unknown Type: $runtimeType');
-        return '';
-    }
-  }
-
-  bool get isSingleChat {
-    switch (this) {
-      case UserDBISAR:
-        return true;
-      case GroupDBISAR(isDirectMessage: final dm):
-        return dm;
-      case ChannelDBISAR _:
-      case RelayGroupDBISAR _:
-        return false;
-      default:
-        assert(false, 'Unknown Type: $runtimeType');
-        return false;
-    }
   }
 }

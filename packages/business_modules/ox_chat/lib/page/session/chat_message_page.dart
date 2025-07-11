@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:ox_chat/page/session/bitchat_channel_message_page.dart';
 import 'package:ox_chat/page/session/chat_group_message_page.dart';
 import 'package:ox_chat/utils/general_handler/chat_general_handler.dart';
 import 'package:ox_chat/widget/session_longpress_menu_dialog.dart';
@@ -16,18 +17,41 @@ class ChatMessagePage {
     bool isPushWithReplace = false,
     bool isLongPressShow = false,
   }) async {
-    if (communityItem.chatType != ChatType.chatGroup) return null;
+    final isSupportType = [
+      ChatType.chatGroup,
+      ChatType.bitchatChannel,
+    ].contains(communityItem.chatType);
+    if (!isSupportType) return null;
 
-    final handler = ChatGeneralHandler(
-      session: communityItem,
-      anchorMsgId: anchorMsgId,
-      unreadMessageCount: unreadMessageCount ?? 0,
-    );
-    handler.initializeMessage();
+    final handlerCreator = () {
+      final handler = ChatGeneralHandler(
+        session: communityItem,
+        anchorMsgId: anchorMsgId,
+        unreadMessageCount: unreadMessageCount ?? 0,
+      );
+      handler.initializeMessage();
+      return handler;
+    };
 
-    final pageWidget = ChatGroupMessagePage(
-      handler: handler,
-    );
+    Widget pageWidget;
+    ChatGeneralHandler handler;
+    final chatType = communityItem.chatType;
+    switch (chatType) {
+      case ChatType.chatGroup:
+        handler = handlerCreator();
+        pageWidget = ChatGroupMessagePage(
+          handler: handler,
+        );
+        break;
+      case ChatType.bitchatChannel:
+        handler = handlerCreator();
+        pageWidget = BitchatChannelMessagePage(
+          handler: handler,
+        );
+        break;
+      default:
+        return null;
+    }
 
     context ??= OXNavigator.navigatorKey.currentContext!;
     if (isLongPressShow) {

@@ -164,5 +164,6 @@
   "join_predefined_circle_content": "You are about to join the \"{name}\" circle.\n\nType: {type}\n{relayInfo}\n\nDo you want to continue?",
   "relay_info": "Relay: {url}",
   "no_relay_required": "No relay required",
-  "circle_already_exists": "Circle with relay {relay} already exists"
+  "circle_already_exists": "Circle with relay {relay} already exists",
+  "bitchat_circle_already_exists": "Bitchat circle already exists"
 }

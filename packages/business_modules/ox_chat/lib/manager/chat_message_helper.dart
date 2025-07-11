@@ -15,6 +15,7 @@ import 'package:ox_chat/utils/widget_tool.dart';
 import 'package:ox_common/business_interface/ox_chat/call_message_type.dart';
 import 'package:ox_common/business_interface/ox_chat/custom_message_type.dart';
 import 'package:ox_common/business_interface/ox_chat/utils.dart';
+import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/utils/web_url_helper.dart';
 import 'package:ox_localizable/ox_localizable.dart';
@@ -157,13 +158,11 @@ class ChatMessageHelper {
   static Future<types.User?> _getUser(String userPubkey) async {
     final user = await Account.sharedInstance.getUserInfo(userPubkey);
     if (user == null) {
-      ChatLogUtils.error(
-        className: 'ChatMessageHelper',
-        funcName: '_getUser',
-        message: 'user is null',
+      return types.User(
+        id: userPubkey,
       );
     }
-    return user?.toMessageModel();
+    return user.toMessageModel();
   }
 
   static String _getContentString(decryptContent) {
@@ -561,9 +560,9 @@ extension MessageDBToUIEx on MessageDBISAR {
         break;
     }
 
-    if (kind == 4) {
-      return UIMessage.Status.warning;
-    }
+    // if (kind == 4) {
+    //   return UIMessage.Status.warning;
+    // }
 
     return senderIsMe ? UIMessage.Status.sent : UIMessage.Status.delivered;
   }
@@ -604,6 +603,10 @@ extension MessageDBToUIEx on MessageDBISAR {
   String get messagePreviewText {
     final type = MessageDBISAR.stringtoMessageType(this.type);
     return ChatMessageHelper.getMessagePreviewText(decryptContent, type, sender);
+  }
+
+  String get getOtherPubkey {
+    return this.sender != Account.sharedInstance.me!.pubKey ? this.sender : this.receiver;
   }
 }
 

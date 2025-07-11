@@ -706,7 +706,6 @@ extension ChatInputHandlerEx on ChatGeneralHandler {
 
   void _onTextChanged(String text) {
     final chatId = session.chatId;
-    if (chatId.isEmpty) return ;
     ChatDraftManager.shared.updateTempDraft(chatId, text);
   }
 

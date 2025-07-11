@@ -104,11 +104,8 @@ dependencies:
     path: ../ox_localizable
   ox_network:
     path: ../ox_network
-
-#  chatcore:
-#    git:
-#      url: https://github.com/wkuangji/0xchat-core
-
+  bitchat_flutter_plugin:
+    path: ../../bitchat-core
 
 dev_dependencies:
   build_runner: ^2.4.10

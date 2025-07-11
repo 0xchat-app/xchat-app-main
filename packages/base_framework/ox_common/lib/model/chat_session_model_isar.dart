@@ -92,26 +92,22 @@ class ChatSessionModelISAR {
   }
 
   @ignore
-  bool get hasMultipleUsers => {ChatType.chatGroup, ChatType.chatChannel, ChatType.chatRelayGroup}.contains(chatType);
+  bool get hasMultipleUsers => {ChatType.chatGroup, ChatType.bitchatChannel}.contains(chatType);
 
   static ChatSessionModelISAR getDefaultSession(int type, String receiverPubkey, String sender, {String secretSessionId = ''}) {
     String chatId = '';
     String receiver = '';
     switch (type) {
       case ChatType.chatSingle:
-      case ChatType.chatStranger:
         chatId = receiverPubkey;
         receiver = receiverPubkey;
         break;
       case ChatType.chatGroup:
-      case ChatType.chatChannel:
-      case ChatType.chatRelayGroup:
         chatId = receiverPubkey;
         break;
-      case ChatType.chatSecret:
-      case ChatType.chatSecretStranger:
-        chatId = secretSessionId;
-        receiver = receiverPubkey;
+      case ChatType.bitchatChannel:
+      case ChatType.bitchatPrivate:
+        chatId = receiverPubkey;
         break;
     }
     return ChatSessionModelISAR(

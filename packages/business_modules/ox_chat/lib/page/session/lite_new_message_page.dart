@@ -1,5 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:ox_common/component.dart';
+import 'package:ox_common/login/login_manager.dart';
+import 'package:ox_common/login/login_models.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/scan_utils.dart';
@@ -213,6 +215,7 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
   }
 
   ListViewItem userListItem(UserDBISAR user) {
+    final circleType = LoginManager.instance.currentCircle?.type;
     return CustomItemModel(
       leading: OXUserAvatar(
         user: user,
@@ -225,7 +228,7 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
-      subtitleWidget: CLText.bodySmall(
+      subtitleWidget: circleType == CircleType.bitchat ? null : CLText.bodySmall(
         user.encodedPubkey,
         colorToken: ColorToken.onSurfaceVariant,
         maxLines: 1,

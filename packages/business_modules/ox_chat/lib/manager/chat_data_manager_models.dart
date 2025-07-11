@@ -1,6 +1,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:chatcore/chat-core.dart';
+import 'package:ox_chat/manager/chat_message_helper.dart';
 import 'package:ox_chat/utils/chat_log_utils.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'package:ox_common/model/chat_type.dart';
@@ -219,26 +220,97 @@ class RelayGroupKey implements ChatTypeKey {
   }
 }
 
+@immutable
+class BitchatChannelKey implements ChatTypeKey {
+  final String channel;
+
+  BitchatChannelKey(this.channel);
+
+  String getSQLFilter() {
+    return ' groupId = ? ';
+  }
+
+  List<String> getSQLFilterArgs() {
+    return [channel];
+  }
+
+  @override
+  ChatTypeMessageLoaderParams get messageLoaderParams => ChatTypeMessageLoaderParams(
+    groupId: channel,
+  );
+
+  @override
+  String get sessionId => channel;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is BitchatChannelKey && other.channel == channel;
+  }
+
+  @override
+  int get hashCode => channel.hashCode;
+
+  @override
+  String toString() {
+    return '${super.toString()}, channel: $channel';
+  }
+}
+
+@immutable
+class BitchatPrivateKey implements ChatTypeKey {
+  final String userId;
+
+  BitchatPrivateKey(this.userId);
+
+  String getSQLFilter() {
+    return ' groupId = ? ';
+  }
+
+  List<String> getSQLFilterArgs() {
+    return [userId];
+  }
+
+  @override
+  ChatTypeMessageLoaderParams get messageLoaderParams => ChatTypeMessageLoaderParams(
+    groupId: userId,
+  );
+
+  @override
+  String get sessionId => userId;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is BitchatPrivateKey && other.userId == userId;
+  }
+
+  @override
+  int get hashCode => userId.hashCode;
+
+  @override
+  String toString() {
+    return '${super.toString()}, channel: $userId';
+  }
+}
+
 extension MessageChatTypeKeyEx on MessageDBISAR {
   ChatTypeKey? get chatTypeKey {
     MessageDBISAR message = this;
     final type = message.chatType;
-    if (type == 3 || message.sessionId.isNotEmpty) {
-      return SecretChatKey(message.sessionId);
-    }
 
-    if (type == 1) {
-      return GroupKey(message.groupId);
-    }
-    if (type == 4) {
-      return RelayGroupKey(message.groupId);
-    }
-    if (type == 2 || message.groupId.isNotEmpty) {
-      return ChannelKey(message.groupId);
-    }
-
-    if (type == 0 || message.sender.isNotEmpty && message.receiver.isNotEmpty) {
-      return PrivateChatKey(message.sender, message.receiver);
+    switch (type) {
+      case ChatType.chatGroup:
+        return GroupKey(message.groupId);
+      case ChatType.chatSingle:
+        if (message.sender.isNotEmpty && message.receiver.isNotEmpty) {
+          return PrivateChatKey(message.sender, message.receiver);
+        }
+        break;
+      case ChatType.bitchatChannel:
+        return BitchatChannelKey(message.groupId);
+      case ChatType.bitchatPrivate:
+        return BitchatPrivateKey(message.getOtherPubkey);
     }
 
     ChatLogUtils.info(
@@ -259,6 +331,10 @@ extension SessionChatTypeKeyEx on ChatSessionModelISAR {
         return _convertSessionToPrivateChatKey();
       case ChatType.chatGroup:
         return _convertSessionToGroupKey();
+      case ChatType.bitchatChannel:
+        return _convertSessionToBitchatChannelKey();
+      case ChatType.bitchatPrivate:
+        return _convertSessionToBitchatPrivateKey();
       default:
         assert(false, 'unknown chatType');
         return null;
@@ -298,5 +374,13 @@ extension SessionChatTypeKeyEx on ChatSessionModelISAR {
       return null;
     }
     return RelayGroupKey(groupId);
+  }
+
+  BitchatChannelKey? _convertSessionToBitchatChannelKey() {
+    return BitchatChannelKey(chatId);
+  }
+
+  BitchatPrivateKey? _convertSessionToBitchatPrivateKey() {
+    return BitchatPrivateKey(chatId);
   }
 }

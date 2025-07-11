@@ -36,8 +36,6 @@ class SessionListDataController with OXChatObserver {
     });
 
     for (var chatId in chatIds) {
-      if (chatId.isEmpty) continue;
-
       final viewModel = sessionCache[chatId];
       if (viewModel == null) continue;
 
@@ -58,8 +56,6 @@ class SessionListDataController with OXChatObserver {
     if (chatType == null) return;
 
     final chatId = message.chatId;
-    if (chatId.isEmpty) return;
-
     var viewModel = sessionCache[chatId];
     if (viewModel == null) {
       viewModel = SessionListViewModel(ChatSessionModelISAR(
@@ -86,7 +82,6 @@ class SessionListDataController with OXChatObserver {
     if (chatType == null) return;
 
     final chatId = message.chatId;
-    if (chatId.isEmpty) return;
 
     final viewModel = sessionCache[chatId];
     if (viewModel == null) return;
@@ -102,7 +97,6 @@ class SessionListDataController with OXChatObserver {
   @override
   void deleteMessageHandler(MessageDBISAR delMessage, String newSessionSubtitle) {
     final chatId = delMessage.chatId;
-    if (chatId.isEmpty) return;
 
     final viewModel = sessionCache[chatId];
     if (viewModel == null) return;
@@ -116,8 +110,6 @@ class SessionListDataController with OXChatObserver {
 
   @override
   void addReactionMessageCallback(String chatId, String messageId) async {
-    if (chatId.isEmpty) return;
-
     final viewModel = sessionCache[chatId];
     if (viewModel == null) return;
 
@@ -132,8 +124,6 @@ class SessionListDataController with OXChatObserver {
 
   @override
   void removeReactionMessageCallback(String chatId, [bool sendNotification = true]) async {
-    if (chatId.isEmpty) return;
-
     final viewModel = sessionCache[chatId];
     if (viewModel == null) return;
 
@@ -170,8 +160,6 @@ class SessionListDataController with OXChatObserver {
 
   @override
   void removeMentionMessageCallback(String chatId, [bool sendNotification = true]) async {
-    if (chatId.isEmpty) return;
-
     final viewModel = sessionCache[chatId];
     if (viewModel == null) return;
 
@@ -215,7 +203,6 @@ extension SessionDCInterface on SessionListDataController {
 
   Future deleteSession(SessionListViewModel viewModel) async {
     final chatId = viewModel.sessionModel.chatId;
-    if (chatId.isEmpty) return;
 
     final isar = DBISAR.sharedInstance.isar;
     int count = await isar.writeAsync((isar) {
@@ -242,8 +229,6 @@ extension SessionDCInterface on SessionListDataController {
     int? expiration,
     int? lastActivityTime,
   }) async {
-    if (chatId.isEmpty) return true;
-
     final viewModel = sessionCache[chatId];
     if (viewModel == null) return true;
 
@@ -277,7 +262,6 @@ extension SessionDCInterface on SessionListDataController {
 extension _DataControllerEx on SessionListDataController {
   void _addViewModel(SessionListViewModel viewModel) {
     final chatId = viewModel.sessionModel.chatId;
-    if (chatId.isEmpty) return;
 
     if (sessionCache.containsKey(chatId)) return;
 
@@ -302,7 +286,6 @@ extension _DataControllerEx on SessionListDataController {
 
   void _removeViewModel(SessionListViewModel viewModel) {
     final chatId = viewModel.sessionModel.chatId;
-    if (chatId.isEmpty) return;
 
     final del = sessionCache.remove(chatId);
     if (del == null) return;
@@ -313,9 +296,6 @@ extension _DataControllerEx on SessionListDataController {
   }
 
   void _updateSessionPosition(SessionListViewModel viewModel) {
-    final chatId = viewModel.sessionModel.chatId;
-    if (chatId.isEmpty) return;
-
     final newList = [...sessionList$.value];
     final currentIndex = newList.indexOf(viewModel);
     
@@ -346,8 +326,7 @@ extension _DataControllerEx on SessionListDataController {
 
 extension _MessageDBISAREx on MessageDBISAR {
   String get chatId {
-    if (groupId.isNotEmpty) return groupId;
-    return otherPubkey;
+    return groupId;
   }
 
   String get otherPubkey {

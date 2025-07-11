@@ -14,6 +14,7 @@ enum LoginFailureType {
 /// Circle type enumeration
 enum CircleType {
   relay,
+  bitchat,
 }
 
 extension CircleTypeExtension on CircleType {
@@ -21,6 +22,8 @@ extension CircleTypeExtension on CircleType {
     switch (this) {
       case CircleType.relay:
         return 'relay';
+      case CircleType.bitchat:
+        return 'bitchat';
     }
   }
 
@@ -28,6 +31,8 @@ extension CircleTypeExtension on CircleType {
     switch (value) {
       case 'relay':
         return CircleType.relay;
+      case 'bitchat':
+        return CircleType.bitchat;
       default:
         return CircleType.relay;
     }

@@ -25,7 +25,7 @@ class ChatDraftManager {
   Future _tryUpdateLastTempDraft() async {
     final jsonMap = await OXCacheManager.defaultOXCacheManager.getData(localKey, defaultValue: {}) as Map;
     for (var chatId in jsonMap.keys) {
-      if (chatId is! String || chatId.isEmpty || chatId == 'chatId') continue ;
+      if (chatId is! String) continue ;
       
       final draft = jsonMap[chatId];
       if (draft is String && draft.isNotEmpty) {
@@ -36,8 +36,6 @@ class ChatDraftManager {
   }
 
   Future updateTempDraft(String chatId, String text) async {
-    if (chatId.isEmpty) return ;
-
     await setupCompleter.future;
 
     tempDraft[chatId] = text;
@@ -50,8 +48,6 @@ class ChatDraftManager {
   }
 
   Future updateSessionDraft(String chatId) async {
-    if (chatId.isEmpty) return ;
-
     final draft = tempDraft[chatId];
     await OXChatBinding.sharedInstance.updateChatSession(chatId, draft: draft);
 

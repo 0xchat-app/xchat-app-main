@@ -56,7 +56,7 @@ class MessageDataController with OXChatObserver {
   }
 
   @override
-  void didPrivateMessageCallBack(MessageDBISAR message) async {
+  void didReceiveMessageCallback(MessageDBISAR message) {
     _receiveMessageHandler(message);
   }
 
@@ -92,21 +92,6 @@ class MessageDataController with OXChatObserver {
     }
 
     updateMessage(uiMessage, originMessageId: replacedMessageId);
-  }
-
-  @override
-  void didSecretChatMessageCallBack(MessageDBISAR message) async {
-    _receiveMessageHandler(message);
-  }
-
-  @override
-  void didGroupMessageCallBack(MessageDBISAR message) async {
-    _receiveMessageHandler(message);
-  }
-
-  @override
-  void didChannalMessageCallBack(MessageDBISAR message) async {
-    _receiveMessageHandler(message);
   }
   
   @override

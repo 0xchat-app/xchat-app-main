@@ -5,6 +5,7 @@ import 'package:isar/isar.dart';
 import 'package:nostr_core_dart/nostr.dart';
 import 'package:convert/convert.dart';
 import 'package:ox_common/utils/extension.dart';
+import '../utils/ox_chat_binding.dart';
 import 'database_manager.dart';
 import 'login_models.dart';
 import 'account_models.dart';
@@ -471,7 +472,7 @@ extension LoginManagerCircle on LoginManager {
       // Create new circle
       final newCircle = Circle(
         id: circleId,
-        name: _extractCircleName(relayUrl),
+        name: _extractCircleName(relayUrl, type),
         relayUrl: relayUrl,
         type: type,
       );
@@ -515,9 +516,24 @@ extension LoginManagerCircle on LoginManager {
   Future<Circle?> logoutCircle() async {
     final originCircle = currentState.currentCircle;
     if (originCircle != null) {
+      // Stop BitchatService if it was a bitchat circle
+      if (originCircle.type == CircleType.bitchat) {
+        await _stopBitchatService();
+      }
       await Account.sharedInstance.logout();
     }
     return originCircle;
+  }
+
+  /// Stop BitchatService when logging out of bitchat circle
+  Future<void> _stopBitchatService() async {
+    try {
+      final bitchatService = BitchatService();
+      await bitchatService.stop();
+      debugPrint('BitchatService stopped successfully');
+    } catch (e) {
+      debugPrint('Failed to stop BitchatService: $e');
+    }
   }
 
   /// Delete circle completely
@@ -677,28 +693,11 @@ extension LoginManagerCircle on LoginManager {
         return false;
       }
 
-      // Build configuration for chat core initialization
-      final config = ChatCoreInitConfig(
-        pubkey: account.pubkey,
-        databasePath: await AccountPathUtils.getCircleFolderPath(account.pubkey, circle.id),
-        encryptionPassword: await _getEncryptionPassword(account),
-        circleId: circle.id,
-        isLite: true,
-        circleRelay: circle.relayUrl,
-        contactUpdatedCallBack: Contacts.sharedInstance.contactUpdatedCallBack,
-        channelsUpdatedCallBack: Channels.sharedInstance.myChannelsUpdatedCallBack,
-        groupsUpdatedCallBack: Groups.sharedInstance.myGroupsUpdatedCallBack,
-        relayGroupsUpdatedCallBack: RelayGroup.sharedInstance.myGroupsUpdatedCallBack,
-      );
-
-      await ChatCoreManager().initChatCoreWithConfig(config);
-
       // Login success
       account.updateLastLoginCircle(circle.id);
       _state$.value = loginState.copyWith(
         currentCircle: circle,
       );
-      _userInfo$ = Account.sharedInstance.getUserNotifier(user.pubKey);
 
       _loginCircleSuccessHandler(account, circle);
 
@@ -763,11 +762,66 @@ extension LoginManagerCircle on LoginManager {
     }
   }
 
-  void _loginCircleSuccessHandler(AccountModel account, Circle circle) {
+  void _loginCircleSuccessHandler(AccountModel account, Circle circle) async {
     final pubkey = account.pubkey;
+    final circleType = circle.type;
+    switch (circleType) {
+      case CircleType.relay:
+        _loginRelayCircleSuccessHandler(account, circle);
+        break;
+      case CircleType.bitchat:
+        _initializeBitchatService(account, circle);
+        break;
+    }
+  }
 
+  void _loginRelayCircleSuccessHandler(AccountModel account, Circle circle) async {
+    final pubkey = account.pubkey;
+    final config = ChatCoreInitConfig(
+      pubkey: account.pubkey,
+      databasePath: await AccountPathUtils.getCircleFolderPath(account.pubkey, circle.id),
+      encryptionPassword: await _getEncryptionPassword(account),
+      circleId: circle.id,
+      isLite: true,
+      circleRelay: circle.relayUrl,
+      contactUpdatedCallBack: Contacts.sharedInstance.contactUpdatedCallBack,
+      channelsUpdatedCallBack: Channels.sharedInstance.myChannelsUpdatedCallBack,
+      groupsUpdatedCallBack: Groups.sharedInstance.myGroupsUpdatedCallBack,
+      relayGroupsUpdatedCallBack: RelayGroup.sharedInstance.myGroupsUpdatedCallBack,
+    );
+    await ChatCoreManager().initChatCoreWithConfig(config);
+    _userInfo$ = Account.sharedInstance.getUserNotifier(pubkey);
     Account.sharedInstance.reloadProfileFromRelay(pubkey);
     Account.sharedInstance.syncFollowingListFromRelay(pubkey, relay: circle.relayUrl);
+
+  }
+
+  /// Initialize and start BitchatService for bitchat circles
+  Future<void> _initializeBitchatService(AccountModel account, Circle circle) async {
+    try {
+      final bitchatService = BitchatService();
+      
+      // Initialize the service
+      await bitchatService.initialize();
+      debugPrint('BitchatService initialized successfully');
+      
+      // Start broadcasting identity with user's pubkey and name
+      final userInfo = Account.sharedInstance.me;
+      final nickname = userInfo?.name ?? userInfo?.shortEncodedPubkey ?? 'Unknown';
+      
+      await bitchatService.startBroadcasting(
+        peerID: account.pubkey,
+        nickname: nickname,
+      );
+      bitchatService.setMessageCallback((message) {
+        Messages.saveMessageToDB(message);
+        OXChatBinding.sharedInstance.didReceiveMessageHandler(message);
+      });
+      debugPrint('BitchatService started broadcasting for ${account.pubkey} with nickname: $nickname');
+      
+    } catch (e, stack) {
+      debugPrint('Failed to initialize BitchatService: $e, $stack');
+    }
   }
 }
 
@@ -844,15 +898,20 @@ extension LoginManagerUtils on LoginManager {
   }
 
   /// Extract circle name from relay URL
-  String _extractCircleName(String relayUrl) {
-    try {
-      final uri = Uri.parse(relayUrl);
-      final host = uri.host;
-      // Remove common prefixes and return a clean name
-      return host.replaceAll('relay.', '').replaceAll('www.', '').split('.').first;
-    } catch (e) {
-      // Fallback to simplified name
-      return relayUrl.replaceAll('wss://', '').replaceAll('ws://', '').split('/').first;
+  String _extractCircleName(String relayUrl, CircleType type) {
+    switch (type) {
+      case CircleType.relay:
+        try {
+          final uri = Uri.parse(relayUrl);
+          final host = uri.host;
+          // Remove common prefixes and return a clean name
+          return host.replaceAll('relay.', '').replaceAll('www.', '').split('.').first;
+        } catch (e) {
+          // Fallback to simplified name
+          return relayUrl.replaceAll('wss://', '').replaceAll('ws://', '').split('/').first;
+        }
+      case CircleType.bitchat:
+        return 'bitchat';
     }
   }
 }

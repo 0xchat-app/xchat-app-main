@@ -47,6 +47,10 @@ class CircleJoinUtils {
       relayUrl: 'wss://relay.0xchat.com',
       type: CircleType.relay,
     ),
+    'bitchat': _CircleConfig(
+      relayUrl: null,
+      type: CircleType.bitchat,
+    ),
   };
 
   /// Get circle config for predefined short name
@@ -131,6 +135,8 @@ class CircleJoinUtils {
       switch (config.type) {
         case CircleType.relay:
           return _checkRelayCircleExists(account.circles, config.relayUrl);
+        case CircleType.bitchat:
+          return _checkBitchatCircleExists(account.circles);
       }
     } catch (e) {
       // If error occurs, assume circle doesn't exist and continue
@@ -155,12 +161,27 @@ class CircleJoinUtils {
     return const _CircleExistsResult.notExists();
   }
 
+  /// Check if bitchat type circle exists
+  static _CircleExistsResult _checkBitchatCircleExists(List<Circle> circles) {
+    for (final circle in circles) {
+      if (circle.type == CircleType.bitchat) {
+        return _CircleExistsResult.exists(
+          Localized.text('ox_common.bitchat_circle_already_exists')
+        );
+      }
+    }
+
+    return const _CircleExistsResult.notExists();
+  }
+
   /// Perform pre-checks based on circle configuration
   static Future<_PreflightCheckResult> _performPreChecks(
       BuildContext context, _CircleConfig config) async {
     switch (config.type) {
       case CircleType.relay:
         return await _performRelayPreChecks(context, config.relayUrl);
+      case CircleType.bitchat:
+        return await _performBitchatPreChecks(context);
     }
   }
 
@@ -180,6 +201,13 @@ class CircleJoinUtils {
 
     // Perform network connectivity test with user confirmation option
     return await _performWeakPreflightChecks(context, relayUrl);
+  }
+
+  /// Perform pre-checks for bitchat type circles
+  static Future<_PreflightCheckResult> _performBitchatPreChecks(
+      BuildContext context) async {
+    // Currently no pre-checks for bitchat type
+    return const _PreflightCheckResult.success();
   }
 
   /// Validate relay URL format

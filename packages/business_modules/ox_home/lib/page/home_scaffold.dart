@@ -169,9 +169,12 @@ class _HomeScaffoldState extends State<HomeScaffold> {
     );
   }
 
-  void _handleJoinCircle() {
+  void _handleJoinCircle() async {
     debugPrint('HomeScaffold: Join Circle button tapped');
-    CircleJoinUtils.showJoinCircleDialog(context: context);
+    final isSuccess = await CircleJoinUtils.showJoinCircleDialog(context: context);
+    if (isSuccess) {
+      isShowExtendBody$.value = false;
+    }
   }
 
   void _handleCreatePaidCircle() {
@@ -239,6 +242,7 @@ extension _CircleEx on Circle {
       id: id,
       name: name,
       relayUrl: relayUrl,
+      type: type,
     );
   }
 }
