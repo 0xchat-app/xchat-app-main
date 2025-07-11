@@ -203,7 +203,7 @@ class HomeHeaderComponents {
 
     return CustomItemModel(
       leading: CircleAvatar(
-        child: Text(item.name[0]),
+        child: Text(item.name.isNotEmpty ? item.name[0] : '?'),
       ),
       titleWidget: CLText(item.name),
       subtitleWidget: item.type == CircleType.bitchat ? null : ValueListenableBuilder(
