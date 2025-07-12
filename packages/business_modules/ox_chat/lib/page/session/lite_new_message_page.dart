@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
@@ -49,6 +50,9 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
 
   // For tracking scroll-based background color changes
   final ValueNotifier<double> _scrollOffset = ValueNotifier(0.0);
+  
+  // Timer for auto search after 0.5 seconds of no input
+  Timer? _searchTimer;
 
   @override
   void initState() {
@@ -65,6 +69,7 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
     _searchController.dispose();
     _searchFocusNode.dispose();
     _scrollOffset.dispose();
+    _searchTimer?.cancel();
     super.dispose();
   }
 
@@ -321,9 +326,18 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
 
   void _onSearchChanged() {
     final query = _searchController.text.trim();
+    
+    // Cancel previous timer if exists
+    _searchTimer?.cancel();
+    
     setState(() {
       if (query.isNotEmpty) {
-        _performSearch(query);
+        // Start timer for auto search after 0.5 seconds
+        _searchTimer = Timer(const Duration(milliseconds: 500), () {
+          _performSearch(query);
+          // Also trigger remote search for npub or DNS format
+          _onSubmittedHandler(query);
+        });
       } else {
         _searchResults.clear();
         _waitingRemoteSearch = false; // Reset when search query cleared
@@ -338,15 +352,17 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
 
   void _performSearch(String query) {
     final lowerQuery = query.toLowerCase();
-    _searchResults = _allUsers.where((user) {
-      final name = (user.name ?? '').toLowerCase();
-      final nickName = (user.nickName ?? '').toLowerCase();
-      final encodedPubkey = user.encodedPubkey.toLowerCase();
+    setState(() {
+      _searchResults = _allUsers.where((user) {
+        final name = (user.name ?? '').toLowerCase();
+        final nickName = (user.nickName ?? '').toLowerCase();
+        final encodedPubkey = user.encodedPubkey.toLowerCase();
 
-      return name.contains(lowerQuery) ||
-          nickName.contains(lowerQuery) ||
-          encodedPubkey.contains(lowerQuery);
-    }).toList();
+        return name.contains(lowerQuery) ||
+            nickName.contains(lowerQuery) ||
+            encodedPubkey.contains(lowerQuery);
+      }).toList();
+    });
   }
 
   void _onScanQRCode() async {
