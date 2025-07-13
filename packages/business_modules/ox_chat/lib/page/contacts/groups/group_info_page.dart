@@ -118,7 +118,7 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        if (_isGroupMember) ...[
+        if (_isGroupOwner) ...[
           _buildActionButton(
             icon: Icons.person_add,
             label: Localized.text('ox_chat.add_member_title'),
@@ -174,7 +174,7 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
         LabelItemModel(
           title: Localized.text('ox_chat.group_name'),
           value$: ValueNotifier(_groupNotifier.value.name.isEmpty ? '--' : _groupNotifier.value.name),
-          onTap: _isGroupMember ? _updateGroupNameFn : null,
+          onTap: _isGroupOwner ? _updateGroupNameFn : null,
         ),
         CustomItemModel(
           title: Localized.text('ox_chat.group_member'),
@@ -264,7 +264,7 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
   }
 
   void _updateGroupNameFn() async {
-    if (!_isGroupMember) return;
+    if (!_isGroupOwner) return;
 
     OXNavigator.pushPage(
       context,
@@ -276,7 +276,7 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
   }
 
   void _addMembersFn() async {
-    if (!_isGroupMember) return;
+    if (!_isGroupOwner) return;
     
     OXNavigator.pushPage(
       context,
@@ -288,7 +288,7 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
   }
 
   void _removeMembersFn() async {
-    if (!_isGroupMember) return;
+    if (!_isGroupOwner) return;
     
     OXNavigator.pushPage(
       context,
