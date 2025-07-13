@@ -172,13 +172,6 @@ class CircleDetailPage extends StatelessWidget {
         },
         isCupertinoAutoTrailing: true,
       ),
-      // Circle Type
-      LabelItemModel(
-        icon: ListViewIcon.data(CupertinoIcons.circle_grid_3x3),
-        title: Localized.text('ox_usercenter.circle_type'),
-        value$: ValueNotifier(circle.type.value),
-        onTap: null,
-      ),
       // Relay Server
       LabelItemModel(
         icon: ListViewIcon.data(CupertinoIcons.antenna_radiowaves_left_right),
