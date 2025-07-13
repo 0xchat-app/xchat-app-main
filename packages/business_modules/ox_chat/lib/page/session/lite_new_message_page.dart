@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
@@ -7,10 +6,7 @@ import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/scan_utils.dart';
 import 'package:ox_common/widgets/avatar.dart';
-
-import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/widgets/common_scan_page.dart';
-import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:lpinyin/lpinyin.dart';
@@ -18,7 +14,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'select_group_members_page.dart';
 import '../../utils/chat_session_utils.dart';
-import '../../utils/chat_user_utils.dart';
+import '../../utils/user_search_manager.dart';
 
 class CLNewMessagePage extends StatefulWidget {
   const CLNewMessagePage({super.key});
@@ -30,33 +26,30 @@ class CLNewMessagePage extends StatefulWidget {
 }
 
 class _CLNewMessagePageState extends State<CLNewMessagePage> {
-  
+
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
   bool get isSearchOnFocus => _searchFocusNode.hasFocus;
-  
+
   List<UserDBISAR> _allUsers = [];
   Map<String, List<UserDBISAR>> _groupedUsers = {};
-  List<UserDBISAR> _searchResults = [];
-
-  // True when a remote search has been requested and is still in progress.
-  bool _waitingRemoteSearch = false;
-
-  // True after user presses submit at least once for current query.
-  bool _hasSubmitted = false;
-
-  // True when loading users from utility
-  bool _isLoadingUsers = true;
+  late final UserSearchManager _userSearchManager;
 
   // For tracking scroll-based background color changes
   final ValueNotifier<double> _scrollOffset = ValueNotifier(0.0);
-  
-  // Timer for auto search after 0.5 seconds of no input
-  Timer? _searchTimer;
 
   @override
   void initState() {
     super.initState();
+    _userSearchManager = UserSearchManager(
+      debounceDelay: const Duration(milliseconds: 300),
+      minSearchLength: 1,
+      maxResults: 50,
+    );
+
+    // Add search result listener for immediate UI updates
+    _userSearchManager.resultNotifier.addListener(_onSearchResultChanged);
+
     _loadData();
     _searchController.addListener(_onSearchChanged);
     _searchFocusNode.addListener(_onFocusChanged);
@@ -69,30 +62,30 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
     _searchController.dispose();
     _searchFocusNode.dispose();
     _scrollOffset.dispose();
-    _searchTimer?.cancel();
+    _userSearchManager.resultNotifier.removeListener(_onSearchResultChanged);
+    _userSearchManager.dispose();
     super.dispose();
   }
 
   void _loadData() async {
     try {
-      _allUsers = await ChatUserUtils.getAllUsers();
+      await _userSearchManager.initialize();
+      _allUsers = _userSearchManager.allUsers;
       _groupUsers();
     } catch (e) {
       print('Error loading users: $e');
     } finally {
-      setState(() {
-        _isLoadingUsers = false;
-      });
+      setState(() {});
     }
   }
 
   void _groupUsers() {
     _groupedUsers.clear();
-    
+
     for (final user in _allUsers) {
       final showName = _getUserShowName(user);
       String firstChar = '#';
-      
+
       if (showName.isNotEmpty) {
         final firstCharacter = showName[0];
         if (RegExp(r'[a-zA-Z]').hasMatch(firstCharacter)) {
@@ -105,10 +98,10 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
           }
         }
       }
-      
+
       _groupedUsers.putIfAbsent(firstChar, () => []).add(user);
     }
-    
+
     // Sort users within each group
     _groupedUsers.forEach((key, users) {
       users.sort((a, b) => _getUserShowName(a).compareTo(_getUserShowName(b)));
@@ -135,13 +128,13 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
       ),
       isSectionListPage: true,
       body: GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onTap: () {
-          _searchFocusNode.unfocus();
-        },
-        child: isSearchOnFocus || _searchController.text.isNotEmpty
-            ? _buildSearchResults()
-            : _buildUserList()
+          behavior: HitTestBehavior.translucent,
+          onTap: () {
+            _searchFocusNode.unfocus();
+          },
+          child: isSearchOnFocus || _searchController.text.isNotEmpty
+              ? _buildSearchResults()
+              : _buildUserList()
       ),
     );
   }
@@ -154,14 +147,14 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
       ),
       controller: _searchController,
       focusNode: _searchFocusNode,
-              placeholder: Localized.text('ox_common.search'),
+      placeholder: Localized.text('ox_common.search'),
       showClearButton: true,
       onSubmitted: _onSubmittedHandler,
     );
   }
 
   Widget _buildUserList() {
-    if (_isLoadingUsers) {
+    if (_userSearchManager.isLoading) {
       return SizedBox.expand();
     }
 
@@ -248,52 +241,63 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
       return SizedBox.expand();
     }
 
-    if (_searchResults.isEmpty) {
-      final query = _searchController.text.trim();
-      final potentialRemote = query.startsWith('npub') || query.contains('@');
+    return ValueListenableBuilder<SearchResult<UserDBISAR>>(
+      valueListenable: _userSearchManager.resultNotifier,
+      builder: (context, searchResult, child) {
+        // Show loading indicator when searching
+        if (searchResult.state == SearchState.searching) {
+          return Center(
+            child: Padding(
+              padding: EdgeInsets.all(32.px),
+              child: CLProgressIndicator.circular(),
+            ),
+          );
+        }
 
-      // Hide empty UI when:
-      // • still waiting remote search, OR
-      // • potential remote search AND input field is focused.
-      if (_waitingRemoteSearch || (potentialRemote && isSearchOnFocus)) {
-        return SizedBox.expand();
-      }
+        // Show empty results
+        if (searchResult.results.isEmpty) {
+          final query = _searchController.text.trim();
+          final potentialRemote = query.startsWith('npub') || query.contains('@');
 
-      // Otherwise show empty UI only if the user has submitted, or it's not a remote pattern.
-      if (_hasSubmitted || !potentialRemote) {
-        return _buildEmptySearchResults();
-      }
+          // Hide empty UI when typing or potential remote search
+          if (searchResult.state == SearchState.typing ||
+              (potentialRemote && isSearchOnFocus)) {
+            return SizedBox.expand();
+          }
 
-      return SizedBox.expand();
-    }
-    
-    final sections = <SectionListViewItem>[
-      SectionListViewItem(
-        data: _searchResults.map((user) => CustomItemModel(
-          leading: OXUserAvatar(
-            user: user,
-            size: 40.px,
-            isClickable: false,
+          return _buildEmptySearchResults();
+        }
+
+        // Show search results
+        final sections = <SectionListViewItem>[
+          SectionListViewItem(
+            data: searchResult.results.map((user) => CustomItemModel(
+              leading: OXUserAvatar(
+                user: user,
+                size: 40.px,
+                isClickable: false,
+              ),
+              titleWidget: CLText.bodyMedium(
+                _getUserShowName(user),
+                colorToken: ColorToken.onSurface,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              subtitleWidget: CLText.bodySmall(
+                user.encodedPubkey,
+                colorToken: ColorToken.onSurfaceVariant,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              onTap: () => _onUserTap(user),
+            )).toList(),
           ),
-          titleWidget: CLText.bodyMedium(
-            _getUserShowName(user),
-            colorToken: ColorToken.onSurface,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          subtitleWidget: CLText.bodySmall(
-            user.encodedPubkey,
-            colorToken: ColorToken.onSurfaceVariant,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          onTap: () => _onUserTap(user),
-        )).toList(),
-      ),
-    ];
-    
-    return CLSectionListView(
-      items: sections,
+        ];
+
+        return CLSectionListView(
+          items: sections,
+        );
+      },
     );
   }
 
@@ -311,69 +315,35 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
   }
 
   String _getUserShowName(UserDBISAR user) {
-    final name = user.name ?? '';
-    final nickName = user.nickName ?? '';
-
-    if (name.isNotEmpty && nickName.isNotEmpty) {
-      return '$name($nickName)';
-    } else if (name.isNotEmpty) {
-      return name;
-    } else if (nickName.isNotEmpty) {
-      return nickName;
-    }
-    return 'Unknown';
+    return _userSearchManager.getUserDisplayName(user);
   }
 
   void _onSearchChanged() {
     final query = _searchController.text.trim();
-    
-    // Cancel previous timer if exists
-    _searchTimer?.cancel();
-    
-    setState(() {
-      if (query.isNotEmpty) {
-        // Start timer for auto search after 0.5 seconds
-        _searchTimer = Timer(const Duration(milliseconds: 500), () {
-          _performSearch(query);
-          // Also trigger remote search for npub or DNS format
-          _onSubmittedHandler(query);
-        });
-      } else {
-        _searchResults.clear();
-        _waitingRemoteSearch = false; // Reset when search query cleared
-        _hasSubmitted = false;
-      }
-    });
+    _userSearchManager.search(query);
+  }
+
+  void _onSearchResultChanged() {
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   void _onFocusChanged() {
     setState(() {});
   }
 
-  void _performSearch(String query) {
-    final lowerQuery = query.toLowerCase();
-    setState(() {
-      _searchResults = _allUsers.where((user) {
-        final name = (user.name ?? '').toLowerCase();
-        final nickName = (user.nickName ?? '').toLowerCase();
-        final encodedPubkey = user.encodedPubkey.toLowerCase();
 
-        return name.contains(lowerQuery) ||
-            nickName.contains(lowerQuery) ||
-            encodedPubkey.contains(lowerQuery);
-      }).toList();
-    });
-  }
 
   void _onScanQRCode() async {
     // Check camera permission first
     if (await Permission.camera.request().isGranted) {
       // Navigate to scan page and get result
       String? result = await OXNavigator.pushPage(
-        context, 
-        (context) => CommonScanPage(),
+        context,
+            (context) => CommonScanPage(),
       );
-      
+
       if (result != null && result.isNotEmpty) {
         // Use ScanUtils to analyze the scanned result
         // This will automatically handle npubkey and navigate to user detail page
@@ -416,63 +386,7 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
     text = text.trim();
     if (text.isEmpty) return;
 
-    final isPubkeyFormat = text.startsWith('npub');
-    final isDnsFormat = text.contains('@');
-
-    // If input doesn't meet remote-search formats, simply rely on local results.
-    if (!isPubkeyFormat && !isDnsFormat) {
-      // Non-remote search pattern; mark as submitted to allow empty UI.
-      _waitingRemoteSearch = false;
-      _hasSubmitted = true;
-      setState(() {});
-      return;
-    }
-
-    _waitingRemoteSearch = true;
-    setState(() {}); // Refresh UI while waiting
-
-    await OXLoading.show();
-
-    String pubkey = '';
-    if (isPubkeyFormat) {
-      pubkey = UserDBISAR.decodePubkey(text) ?? '';
-    } else if (isDnsFormat) {
-      pubkey = await Account.getDNSPubkey(
-        text.substring(0, text.indexOf('@')),
-        text.substring(text.indexOf('@') + 1),
-      ) ?? '';
-    }
-
-    UserDBISAR? user;
-    if (pubkey.isNotEmpty) {
-      user = await Account.sharedInstance.getUserInfo(pubkey);
-    }
-
-    await OXLoading.dismiss();
-
-    _waitingRemoteSearch = false; // Remote search finished
-    _hasSubmitted = true; // Search submitted
-
-    if (user == null) {
-      setState(() {}); // Update UI to possibly show empty results
-      CommonToast.instance.show(context, 'User not found, please re-enter.');
-      return;
-    }
-
-    final remoteUser = user;
-    final existsInLocal = _allUsers.any((u) => u.pubKey == remoteUser.pubKey);
-    final existsInResults = _searchResults.any((u) => u.pubKey == remoteUser.pubKey);
-
-    // Add only if not already present.
-    if (!existsInResults) {
-      _searchResults.insert(0, user);
-    }
-
-    // If user is not in local contacts, optionally keep in _allUsers so future searches include it.
-    if (!existsInLocal) {
-      _allUsers.add(user);
-    }
-
-    setState(() {});
+    // Use immediate search for submit action
+    await _userSearchManager.searchImmediate(text);
   }
 }

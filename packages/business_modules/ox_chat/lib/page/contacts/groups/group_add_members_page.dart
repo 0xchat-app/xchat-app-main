@@ -7,6 +7,7 @@ import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_common/widgets/multi_user_selector.dart';
 import 'package:ox_localizable/ox_localizable.dart';
+import '../../../utils/selectable_user_search_manager.dart';
 
 class GroupAddMembersPage extends StatefulWidget {
   const GroupAddMembersPage({
@@ -25,33 +26,39 @@ class GroupAddMembersPage extends StatefulWidget {
 class _GroupAddMembersPageState extends State<GroupAddMembersPage> {
   List<SelectableUser> _selectedUsers = [];
   late Future<List<SelectableUser>> _availableUsersFuture;
+  late SelectableUserSearchManager _searchManager;
 
   @override
   void initState() {
     super.initState();
+    _searchManager = SelectableUserSearchManager();
     _availableUsersFuture = _loadAvailableUsers();
   }
 
+  @override
+  void dispose() {
+    _searchManager.dispose();
+    super.dispose();
+  }
+
   Future<List<SelectableUser>> _loadAvailableUsers() async {
-    // Get all users from userCache and exclude current user
+    // Get current user pubkey
     final myPubkey = Account.sharedInstance.me?.pubKey;
-    final allUsers = Account.sharedInstance.userCache.values
-        .map((e) => e.value)
-        .where((u) => myPubkey == null || u.pubKey != myPubkey)
-        .toList();
     
     // Get current group members
     final groupMembers = await Groups.sharedInstance.getAllGroupMembers(widget.groupInfo.privateGroupId);
     final memberPubkeys = groupMembers.map((user) => user.pubKey).toSet();
     
-    // Filter out users who are already in the group
-    final availableUsers = allUsers.where((user) => !memberPubkeys.contains(user.pubKey)).toList();
+    // Add current user to excluded list
+    final excludedPubkeys = <String>{...memberPubkeys};
+    if (myPubkey != null) {
+      excludedPubkeys.add(myPubkey);
+    }
     
-    return availableUsers.map((user) => SelectableUser(
-      id: user.pubKey,
-      displayName: _getUserDisplayName(user),
-      avatarUrl: user.picture ?? '',
-    )).toList();
+    // Initialize search manager with excluded users
+    await _searchManager.initialize(excludeUserPubkeys: excludedPubkeys.toList());
+    
+    return _searchManager.allUsers;
   }
 
   @override
@@ -155,19 +162,7 @@ class _GroupAddMembersPageState extends State<GroupAddMembersPage> {
     });
   }
 
-  String _getUserDisplayName(UserDBISAR user) {
-    final name = user.name ?? '';
-    final nickName = user.nickName ?? '';
 
-    if (name.isNotEmpty && nickName.isNotEmpty) {
-      return '$name($nickName)';
-    } else if (name.isNotEmpty) {
-      return name;
-    } else if (nickName.isNotEmpty) {
-      return nickName;
-    }
-    return 'Unknown';
-  }
 
   Future<void> _addSelectedMembers() async {
     if (_selectedUsers.isEmpty) {

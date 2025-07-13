@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/adapt.dart';
+import 'package:ox_common/utils/search_manager.dart';
 import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 
@@ -57,7 +58,7 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
   late Map<String, List<SelectableUser>> _groupedUsers;
 
   final List<SelectableUser> _selected = [];
-  List<SelectableUser> _searchResults = [];
+  late final SearchManager<SelectableUser> _searchManager;
 
   // For tracking scroll-based background color changes
   final ValueNotifier<double> _scrollOffset = ValueNotifier(0.0);
@@ -65,6 +66,15 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
   @override
   void initState() {
     super.initState();
+    _searchManager = SearchManager<SelectableUser>(
+      debounceDelay: const Duration(milliseconds: 300),
+      minSearchLength: 1,
+      maxResults: 50,
+    );
+    
+    // Add search result listener only once
+    _searchManager.resultNotifier.addListener(_onSearchResultChanged);
+    
     prepareData();
     _searchCtrl.addListener(_onSearchChanged);
   }
@@ -91,6 +101,8 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
     _searchCtrl.dispose();
     _searchFocus.dispose();
     _scrollOffset.dispose();
+    _searchManager.resultNotifier.removeListener(_onSearchResultChanged);
+    _searchManager.dispose();
     super.dispose();
   }
 
@@ -254,10 +266,11 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
   }
 
   List<SectionListViewItem> _buildSearchItems() {
-    if (_searchResults.isEmpty) {
+    final searchResult = _searchManager.resultNotifier.value;
+    if (searchResult.results.isEmpty) {
       return [];
     }
-    return [SectionListViewItem(data: _searchResults.map(_buildUserItem).toList())];
+    return [SectionListViewItem(data: searchResult.results.map(_buildUserItem).toList())];
   }
 
   ListViewItem _buildUserItem(SelectableUser user) {
@@ -340,15 +353,22 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
   }
 
   void _onSearchChanged() {
-    final q = _searchCtrl.text.trim().toLowerCase();
-    if (q.isEmpty) {
-      setState(() => _searchResults.clear());
-      return;
+    final query = _searchCtrl.text.trim();
+    
+    _searchManager.search(
+      query,
+      localSearch: (searchQuery) async {
+        final lowerQuery = searchQuery.toLowerCase();
+        return _allUsers
+            .where((u) => u.displayName.toLowerCase().contains(lowerQuery))
+            .toList();
+      },
+    );
+  }
+
+  void _onSearchResultChanged() {
+    if (mounted) {
+      setState(() {});
     }
-    setState(() {
-      _searchResults = _allUsers
-          .where((u) => u.displayName.toLowerCase().contains(q))
-          .toList();
-    });
   }
 } 
