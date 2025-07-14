@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -85,6 +86,15 @@ class NIP96Uploader {
           "Nostr ${base64Url.encode(utf8.encode(jsonEncode(nip98Event.toJson())))}";
     }
 
+    var isMockProgress = true;
+    double mockProgress = 0.0;
+    Timer? timer = Timer.periodic(Duration(milliseconds: 50), (timer) {
+      if (!isMockProgress) {
+        timer.cancel();
+        return;
+      }
+      onProgress?.call((mockProgress += 0.005).clamp(0.0, 0.9));
+    });
     var formData = FormData.fromMap({"file": multipartFile});
     try {
       var response = await dio.post(sa.apiUrl!,
@@ -93,9 +103,16 @@ class NIP96Uploader {
           headers: headers,
         ),
         onSendProgress: (count, total) {
-          onProgress?.call(count / total);
+          if (isMockProgress && total > 0 && count <= total) {
+            isMockProgress = false;
+          }
+          if (!isMockProgress) {
+            onProgress?.call(count / total);
+          }
         },
       );
+      timer.cancel();
+      timer = null;
       var body = response.data;
       // log(jsonEncode(response.data));
       if (body is Map<String, dynamic> &&
@@ -116,6 +133,7 @@ class NIP96Uploader {
         }
       }
     } catch (e) {
+      timer?.cancel();
       print("nostr.build nip96 upload exception:");
       print(e);
       rethrow;

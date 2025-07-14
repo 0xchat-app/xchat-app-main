@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
@@ -89,6 +90,15 @@ class BolssomUploader {
     headers["Authorization"] =
         "Nostr ${base64Url.encode(utf8.encode(jsonEncode(nip98Event.toJson())))}";
 
+    var isMockProgress = true;
+    double mockProgress = 0.0;
+    Timer? timer = Timer.periodic(Duration(milliseconds: 50), (timer) {
+      if (!isMockProgress) {
+        timer.cancel();
+        return;
+      }
+      onProgress?.call((mockProgress += 0.005).clamp(0.0, 0.9));
+    });
     try {
       var response = await dio.put(
         uploadApiPath,
@@ -101,9 +111,16 @@ class BolssomUploader {
           },
         ),
         onSendProgress: (count, total) {
-          onProgress?.call(count / total);
+          if (isMockProgress && total > 0 && count <= total) {
+            isMockProgress = false;
+          }
+          if (!isMockProgress) {
+            onProgress?.call(count / total);
+          }
         },
       );
+      timer.cancel();
+      timer = null;
       var body = response.data;
       log(jsonEncode(response.data));
       if (body is Map<String, dynamic> && body["url"] != null) {
@@ -112,6 +129,7 @@ class BolssomUploader {
         throw UploadException('${uri.host} Bad Gateway');
       }
     } catch (e) {
+      timer?.cancel();
       print("BolssomUploader.upload upload exception:");
       print(e);
       rethrow;
