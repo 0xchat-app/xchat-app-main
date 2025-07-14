@@ -141,7 +141,7 @@ class ChatGeneralHandler {
   }
 
   void setupOtherUserIfNeeded() {
-    if (session.hasMultipleUsers) return ;
+    if (!session.isSingleChat) return ;
 
     otherUser = _defaultOtherUser(session);
 

@@ -9,6 +9,7 @@ import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_common/utils/chat_prompt_tone.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
 import 'package:ox_common/utils/ox_chat_observer.dart';
+import 'package:ox_common/utils/session_helper.dart';
 
 import 'session_view_model.dart';
 
@@ -45,7 +46,7 @@ class SessionListDataController with OXChatObserver {
   }
 
   @override
-  void didReceiveMessageCallback(MessageDBISAR message) {
+  void didReceiveMessageCallback(MessageDBISAR message) async {
     final messageIsRead =
         OXChatBinding.sharedInstance.msgIsReaded?.call(message) ?? false;
     if (messageIsRead) {
@@ -59,14 +60,10 @@ class SessionListDataController with OXChatObserver {
     final chatId = message.chatId;
     var viewModel = sessionCache[chatId];
     if (viewModel == null) {
-      viewModel = SessionListViewModel(ChatSessionModelISAR(
-        chatId: message.chatId,
-        chatName: message.defaultChatName,
-        receiver: message.receiver,
-        sender: message.sender,
-        groupId: message.groupId,
-        chatType: chatType,
-      ));
+      final params = SessionCreateParams.fromMessage(message);
+      final sessionModel = await SessionHelper.createSessionModel(params);
+
+      viewModel = SessionListViewModel(sessionModel);
       viewModel.sessionModel.updateWithMessage(message);
       _addViewModel(viewModel);
     } else {
@@ -171,6 +168,16 @@ class SessionListDataController with OXChatObserver {
     if (sendNotification) {
       viewModel.rebuild();
     }
+  }
+
+  @override
+  void didCreateSessionCallBack(ChatSessionModelISAR session) {
+    final chatId = session.chatId;
+    if (sessionCache.containsKey(chatId)) return;
+
+    final viewModel = SessionListViewModel(session);
+    _addViewModel(viewModel);
+    ChatSessionModelISAR.saveChatSessionModelToDB(session);
   }
 }
 
@@ -343,24 +350,6 @@ extension _MessageDBISAREx on MessageDBISAR {
   String get chatId {
     return groupId;
   }
-
-  String? get defaultChatName {
-    if (isBitchatMessage && groupId.isEmpty) return 'Global';
-    return null;
-  }
-
-  String get otherPubkey {
-    final pubkey =
-        Account.sharedInstance.me?.pubKey ?? '';
-    if (pubkey.isEmpty) return '';
-
-    return sender != pubkey ? sender : receiver;
-  }
-
-  bool get isBitchatMessage => [
-    ChatType.bitchatChannel,
-    ChatType.bitchatPrivate,
-  ].contains(chatType);
 }
 
 extension _ChatSessionModelISAREx on ChatSessionModelISAR {

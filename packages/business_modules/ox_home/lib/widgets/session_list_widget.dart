@@ -263,19 +263,19 @@ class _SessionListWidgetState extends State<SessionListWidget> {
           valueListenable: item.groupMember$,
           builder: (context, groupMember, _) {
             final size = 40.px;
-            if (item.sessionModel.chatType == ChatType.chatGroup) {
+            if (item.isSingleChat) {
+              return BaseAvatarWidget(
+                imageUrl: item.iconUrl,
+                defaultImageName: item.defaultIcon,
+                size: size,
+                isCircular: true,
+              );
+            } else {
               return SmartGroupAvatar(
                 groupId: item.sessionModel.groupId,
                 size: size,
               );
             }
-
-            return BaseAvatarWidget(
-              imageUrl: item.iconUrl,
-              defaultImageName: item.defaultIcon,
-              size: size,
-              isCircular: true,
-            );
           }
         );
       }

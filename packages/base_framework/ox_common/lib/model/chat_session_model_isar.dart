@@ -33,6 +33,8 @@ class ChatSessionModelISAR {
   // 0 Chat  1 Normal Group  2 Channel Group  3 Secret Chat 4 Stranger Chat  5 Stranger secret Chat 7 Relay Group Chat
   int chatType;
 
+  bool isSingleChat;
+
   //text, image, video, audio, file, template
   String? messageType;
 
@@ -66,6 +68,7 @@ class ChatSessionModelISAR {
     this.createTime = 0,
     this.lastActivityTime = 0,
     this.chatType = 0,
+    this.isSingleChat = false,
     this.messageType = 'text',
     this.avatar,
     this.alwaysTop = false,
@@ -92,7 +95,13 @@ class ChatSessionModelISAR {
   }
 
   @ignore
-  bool get hasMultipleUsers => {ChatType.chatGroup, ChatType.bitchatChannel}.contains(chatType);
+  bool get hasMultipleUsers {
+    switch (chatType) {
+      case ChatType.bitchatChannel: return true;
+      case ChatType.chatGroup: return false;
+      default: return true;
+    }
+  }
 
   static ChatSessionModelISAR getDefaultSession(int type, String receiverPubkey, String sender, {String secretSessionId = ''}) {
     String chatId = '';

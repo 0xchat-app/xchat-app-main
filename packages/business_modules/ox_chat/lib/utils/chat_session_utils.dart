@@ -13,6 +13,7 @@ import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
+import 'package:ox_common/utils/session_helper.dart';
 import '../page/session/chat_message_page.dart';
 
 class ChatSessionUtils {
@@ -231,8 +232,8 @@ class ChatSessionUtils {
     bool isPushWithReplace = false,
   }) async {
     // Validate current account
-    final myPubkey = Account.sharedInstance.me?.pubKey;
-    if (myPubkey == null || myPubkey.isEmpty) {
+    final myPubkey = LoginManager.instance.currentPubkey;
+    if (myPubkey.isEmpty) {
       CommonToast.instance.show(context, 'Current account is null');
       return false;
     }
@@ -288,17 +289,17 @@ class ChatSessionUtils {
 
       await OXLoading.dismiss();
 
+      // Create session model using SessionHelper
+      final params = SessionCreateParams.fromGroup(groupDB, user);
+      final sessionModel = await SessionHelper.createSessionModel(params);
+
+      // Trigger session creation callback
+      OXChatBinding.sharedInstance.createSessionCallBack(sessionModel);
+
       // Navigate to chat page
       ChatMessagePage.open(
         context: null,
-        communityItem: ChatSessionModelISAR(
-          chatId: groupDB.privateGroupId,
-          groupId: groupDB.privateGroupId,
-          chatType: ChatType.chatGroup,
-          chatName: groupDB.name,
-          createTime: groupDB.updateTime,
-          avatar: groupDB.picture,
-        ),
+        communityItem: sessionModel,
         isPushWithReplace: isPushWithReplace,
       );
 

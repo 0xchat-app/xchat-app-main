@@ -111,16 +111,32 @@ class SessionListViewModel {
     }
   }
 
-  void updateGroupMemberIfNeeded() async {
-    if (_raw.hasMultipleUsers) {
-      final groupId = _raw.groupId ?? '';
-      List<UserDBISAR> groupList =
-          await Groups.sharedInstance.getAllGroupMembers(groupId);
-      List<String> avatars = groupList.map((e) => e.picture ?? '').toList();
-      avatars.removeWhere((e) => e.isEmpty);
-
-      groupMember$.value = avatars;
+  bool get isSingleChat {
+    final entity = entity$.value;
+    switch (entity) {
+      case UserDBISAR:
+        return true;
+      case GroupDBISAR(isDirectMessage: final dm):
+        return dm;
+      case ChannelDBISAR _:
+      case RelayGroupDBISAR _:
+        return false;
+      default:
+        assert(false, 'Unknown Type: $runtimeType');
+        return false;
     }
+  }
+
+  void updateGroupMemberIfNeeded() async {
+    if (isSingleChat) return;
+
+    final groupId = _raw.groupId ?? '';
+    List<UserDBISAR> groupList =
+        await Groups.sharedInstance.getAllGroupMembers(groupId);
+    List<String> avatars = groupList.map((e) => e.picture ?? '').toList();
+    avatars.removeWhere((e) => e.isEmpty);
+
+    groupMember$.value = avatars;
   }
 
   void rebuild() {

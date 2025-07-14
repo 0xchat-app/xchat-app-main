@@ -209,4 +209,10 @@ class OXChatBinding {
       observer.didOfflineSecretMessageFinishCallBack();
     }
   }
+
+  void createSessionCallBack(ChatSessionModelISAR session) {
+    for (OXChatObserver observer in _observers) {
+      observer.didCreateSessionCallBack(session);
+    }
+  }
 }

@@ -62,6 +62,10 @@ const ChatSessionModelISARSchema = IsarGeneratedSchema(
         type: IsarType.long,
       ),
       IsarPropertySchema(
+        name: 'isSingleChat',
+        type: IsarType.bool,
+      ),
+      IsarPropertySchema(
         name: 'messageType',
         type: IsarType.string,
       ),
@@ -159,46 +163,47 @@ int serializeChatSessionModelISAR(
   IsarCore.writeLong(writer, 8, object.createTime);
   IsarCore.writeLong(writer, 9, object.lastActivityTime);
   IsarCore.writeLong(writer, 10, object.chatType);
+  IsarCore.writeBool(writer, 11, object.isSingleChat);
   {
     final value = object.messageType;
-    if (value == null) {
-      IsarCore.writeNull(writer, 11);
-    } else {
-      IsarCore.writeString(writer, 11, value);
-    }
-  }
-  {
-    final value = object.avatar;
     if (value == null) {
       IsarCore.writeNull(writer, 12);
     } else {
       IsarCore.writeString(writer, 12, value);
     }
   }
-  IsarCore.writeBool(writer, 13, object.alwaysTop);
   {
-    final value = object.draft;
+    final value = object.avatar;
     if (value == null) {
-      IsarCore.writeNull(writer, 14);
+      IsarCore.writeNull(writer, 13);
     } else {
-      IsarCore.writeString(writer, 14, value);
+      IsarCore.writeString(writer, 13, value);
     }
   }
+  IsarCore.writeBool(writer, 14, object.alwaysTop);
   {
-    final value = object.replyMessageId;
+    final value = object.draft;
     if (value == null) {
       IsarCore.writeNull(writer, 15);
     } else {
       IsarCore.writeString(writer, 15, value);
     }
   }
-  IsarCore.writeBool(writer, 16, object.isMentioned);
-  IsarCore.writeBool(writer, 17, object.isZapsFromOther);
-  IsarCore.writeLong(writer, 18, object.messageKind ?? -9223372036854775808);
-  IsarCore.writeLong(writer, 19, object.expiration ?? -9223372036854775808);
+  {
+    final value = object.replyMessageId;
+    if (value == null) {
+      IsarCore.writeNull(writer, 16);
+    } else {
+      IsarCore.writeString(writer, 16, value);
+    }
+  }
+  IsarCore.writeBool(writer, 17, object.isMentioned);
+  IsarCore.writeBool(writer, 18, object.isZapsFromOther);
+  IsarCore.writeLong(writer, 19, object.messageKind ?? -9223372036854775808);
+  IsarCore.writeLong(writer, 20, object.expiration ?? -9223372036854775808);
   {
     final list = object.reactionMessageIds;
-    final listWriter = IsarCore.beginList(writer, 20, list.length);
+    final listWriter = IsarCore.beginList(writer, 21, list.length);
     for (var i = 0; i < list.length; i++) {
       IsarCore.writeString(listWriter, i, list[i]);
     }
@@ -206,7 +211,7 @@ int serializeChatSessionModelISAR(
   }
   {
     final list = object.mentionMessageIds;
-    final listWriter = IsarCore.beginList(writer, 21, list.length);
+    final listWriter = IsarCore.beginList(writer, 22, list.length);
     for (var i = 0; i < list.length; i++) {
       IsarCore.writeString(listWriter, i, list[i]);
     }
@@ -265,23 +270,25 @@ ChatSessionModelISAR deserializeChatSessionModelISAR(IsarReader reader) {
       _chatType = value;
     }
   }
+  final bool _isSingleChat;
+  _isSingleChat = IsarCore.readBool(reader, 11);
   final String? _messageType;
-  _messageType = IsarCore.readString(reader, 11) ?? 'text';
+  _messageType = IsarCore.readString(reader, 12) ?? 'text';
   final String? _avatar;
-  _avatar = IsarCore.readString(reader, 12);
+  _avatar = IsarCore.readString(reader, 13);
   final bool _alwaysTop;
-  _alwaysTop = IsarCore.readBool(reader, 13);
+  _alwaysTop = IsarCore.readBool(reader, 14);
   final String? _draft;
-  _draft = IsarCore.readString(reader, 14);
+  _draft = IsarCore.readString(reader, 15);
   final String? _replyMessageId;
-  _replyMessageId = IsarCore.readString(reader, 15);
+  _replyMessageId = IsarCore.readString(reader, 16);
   final bool _isMentioned;
-  _isMentioned = IsarCore.readBool(reader, 16);
+  _isMentioned = IsarCore.readBool(reader, 17);
   final bool _isZapsFromOther;
-  _isZapsFromOther = IsarCore.readBool(reader, 17);
+  _isZapsFromOther = IsarCore.readBool(reader, 18);
   final int? _messageKind;
   {
-    final value = IsarCore.readLong(reader, 18);
+    final value = IsarCore.readLong(reader, 19);
     if (value == -9223372036854775808) {
       _messageKind = null;
     } else {
@@ -290,7 +297,7 @@ ChatSessionModelISAR deserializeChatSessionModelISAR(IsarReader reader) {
   }
   final int? _expiration;
   {
-    final value = IsarCore.readLong(reader, 19);
+    final value = IsarCore.readLong(reader, 20);
     if (value == -9223372036854775808) {
       _expiration = null;
     } else {
@@ -308,6 +315,7 @@ ChatSessionModelISAR deserializeChatSessionModelISAR(IsarReader reader) {
     createTime: _createTime,
     lastActivityTime: _lastActivityTime,
     chatType: _chatType,
+    isSingleChat: _isSingleChat,
     messageType: _messageType,
     avatar: _avatar,
     alwaysTop: _alwaysTop,
@@ -320,7 +328,7 @@ ChatSessionModelISAR deserializeChatSessionModelISAR(IsarReader reader) {
   );
   object.id = IsarCore.readId(reader);
   {
-    final length = IsarCore.readList(reader, 20, IsarCore.readerPtrPtr);
+    final length = IsarCore.readList(reader, 21, IsarCore.readerPtrPtr);
     {
       final reader = IsarCore.readerPtr;
       if (reader.isNull) {
@@ -336,7 +344,7 @@ ChatSessionModelISAR deserializeChatSessionModelISAR(IsarReader reader) {
     }
   }
   {
-    final length = IsarCore.readList(reader, 21, IsarCore.readerPtrPtr);
+    final length = IsarCore.readList(reader, 22, IsarCore.readerPtrPtr);
     {
       final reader = IsarCore.readerPtr;
       if (reader.isNull) {
@@ -408,28 +416,21 @@ dynamic deserializeChatSessionModelISARProp(IsarReader reader, int property) {
         }
       }
     case 11:
-      return IsarCore.readString(reader, 11) ?? 'text';
+      return IsarCore.readBool(reader, 11);
     case 12:
-      return IsarCore.readString(reader, 12);
+      return IsarCore.readString(reader, 12) ?? 'text';
     case 13:
-      return IsarCore.readBool(reader, 13);
+      return IsarCore.readString(reader, 13);
     case 14:
-      return IsarCore.readString(reader, 14);
+      return IsarCore.readBool(reader, 14);
     case 15:
       return IsarCore.readString(reader, 15);
     case 16:
-      return IsarCore.readBool(reader, 16);
+      return IsarCore.readString(reader, 16);
     case 17:
       return IsarCore.readBool(reader, 17);
     case 18:
-      {
-        final value = IsarCore.readLong(reader, 18);
-        if (value == -9223372036854775808) {
-          return null;
-        } else {
-          return value;
-        }
-      }
+      return IsarCore.readBool(reader, 18);
     case 19:
       {
         final value = IsarCore.readLong(reader, 19);
@@ -441,7 +442,16 @@ dynamic deserializeChatSessionModelISARProp(IsarReader reader, int property) {
       }
     case 20:
       {
-        final length = IsarCore.readList(reader, 20, IsarCore.readerPtrPtr);
+        final value = IsarCore.readLong(reader, 20);
+        if (value == -9223372036854775808) {
+          return null;
+        } else {
+          return value;
+        }
+      }
+    case 21:
+      {
+        final length = IsarCore.readList(reader, 21, IsarCore.readerPtrPtr);
         {
           final reader = IsarCore.readerPtr;
           if (reader.isNull) {
@@ -456,9 +466,9 @@ dynamic deserializeChatSessionModelISARProp(IsarReader reader, int property) {
           }
         }
       }
-    case 21:
+    case 22:
       {
-        final length = IsarCore.readList(reader, 21, IsarCore.readerPtrPtr);
+        final length = IsarCore.readList(reader, 22, IsarCore.readerPtrPtr);
         {
           final reader = IsarCore.readerPtr;
           if (reader.isNull) {
@@ -491,6 +501,7 @@ sealed class _ChatSessionModelISARUpdate {
     int? createTime,
     int? lastActivityTime,
     int? chatType,
+    bool? isSingleChat,
     String? messageType,
     String? avatar,
     bool? alwaysTop,
@@ -521,6 +532,7 @@ class _ChatSessionModelISARUpdateImpl implements _ChatSessionModelISARUpdate {
     Object? createTime = ignore,
     Object? lastActivityTime = ignore,
     Object? chatType = ignore,
+    Object? isSingleChat = ignore,
     Object? messageType = ignore,
     Object? avatar = ignore,
     Object? alwaysTop = ignore,
@@ -544,15 +556,16 @@ class _ChatSessionModelISARUpdateImpl implements _ChatSessionModelISARUpdate {
           if (createTime != ignore) 8: createTime as int?,
           if (lastActivityTime != ignore) 9: lastActivityTime as int?,
           if (chatType != ignore) 10: chatType as int?,
-          if (messageType != ignore) 11: messageType as String?,
-          if (avatar != ignore) 12: avatar as String?,
-          if (alwaysTop != ignore) 13: alwaysTop as bool?,
-          if (draft != ignore) 14: draft as String?,
-          if (replyMessageId != ignore) 15: replyMessageId as String?,
-          if (isMentioned != ignore) 16: isMentioned as bool?,
-          if (isZapsFromOther != ignore) 17: isZapsFromOther as bool?,
-          if (messageKind != ignore) 18: messageKind as int?,
-          if (expiration != ignore) 19: expiration as int?,
+          if (isSingleChat != ignore) 11: isSingleChat as bool?,
+          if (messageType != ignore) 12: messageType as String?,
+          if (avatar != ignore) 13: avatar as String?,
+          if (alwaysTop != ignore) 14: alwaysTop as bool?,
+          if (draft != ignore) 15: draft as String?,
+          if (replyMessageId != ignore) 16: replyMessageId as String?,
+          if (isMentioned != ignore) 17: isMentioned as bool?,
+          if (isZapsFromOther != ignore) 18: isZapsFromOther as bool?,
+          if (messageKind != ignore) 19: messageKind as int?,
+          if (expiration != ignore) 20: expiration as int?,
         }) >
         0;
   }
@@ -571,6 +584,7 @@ sealed class _ChatSessionModelISARUpdateAll {
     int? createTime,
     int? lastActivityTime,
     int? chatType,
+    bool? isSingleChat,
     String? messageType,
     String? avatar,
     bool? alwaysTop,
@@ -602,6 +616,7 @@ class _ChatSessionModelISARUpdateAllImpl
     Object? createTime = ignore,
     Object? lastActivityTime = ignore,
     Object? chatType = ignore,
+    Object? isSingleChat = ignore,
     Object? messageType = ignore,
     Object? avatar = ignore,
     Object? alwaysTop = ignore,
@@ -623,15 +638,16 @@ class _ChatSessionModelISARUpdateAllImpl
       if (createTime != ignore) 8: createTime as int?,
       if (lastActivityTime != ignore) 9: lastActivityTime as int?,
       if (chatType != ignore) 10: chatType as int?,
-      if (messageType != ignore) 11: messageType as String?,
-      if (avatar != ignore) 12: avatar as String?,
-      if (alwaysTop != ignore) 13: alwaysTop as bool?,
-      if (draft != ignore) 14: draft as String?,
-      if (replyMessageId != ignore) 15: replyMessageId as String?,
-      if (isMentioned != ignore) 16: isMentioned as bool?,
-      if (isZapsFromOther != ignore) 17: isZapsFromOther as bool?,
-      if (messageKind != ignore) 18: messageKind as int?,
-      if (expiration != ignore) 19: expiration as int?,
+      if (isSingleChat != ignore) 11: isSingleChat as bool?,
+      if (messageType != ignore) 12: messageType as String?,
+      if (avatar != ignore) 13: avatar as String?,
+      if (alwaysTop != ignore) 14: alwaysTop as bool?,
+      if (draft != ignore) 15: draft as String?,
+      if (replyMessageId != ignore) 16: replyMessageId as String?,
+      if (isMentioned != ignore) 17: isMentioned as bool?,
+      if (isZapsFromOther != ignore) 18: isZapsFromOther as bool?,
+      if (messageKind != ignore) 19: messageKind as int?,
+      if (expiration != ignore) 20: expiration as int?,
     });
   }
 }
@@ -657,6 +673,7 @@ sealed class _ChatSessionModelISARQueryUpdate {
     int? createTime,
     int? lastActivityTime,
     int? chatType,
+    bool? isSingleChat,
     String? messageType,
     String? avatar,
     bool? alwaysTop,
@@ -688,6 +705,7 @@ class _ChatSessionModelISARQueryUpdateImpl
     Object? createTime = ignore,
     Object? lastActivityTime = ignore,
     Object? chatType = ignore,
+    Object? isSingleChat = ignore,
     Object? messageType = ignore,
     Object? avatar = ignore,
     Object? alwaysTop = ignore,
@@ -709,15 +727,16 @@ class _ChatSessionModelISARQueryUpdateImpl
       if (createTime != ignore) 8: createTime as int?,
       if (lastActivityTime != ignore) 9: lastActivityTime as int?,
       if (chatType != ignore) 10: chatType as int?,
-      if (messageType != ignore) 11: messageType as String?,
-      if (avatar != ignore) 12: avatar as String?,
-      if (alwaysTop != ignore) 13: alwaysTop as bool?,
-      if (draft != ignore) 14: draft as String?,
-      if (replyMessageId != ignore) 15: replyMessageId as String?,
-      if (isMentioned != ignore) 16: isMentioned as bool?,
-      if (isZapsFromOther != ignore) 17: isZapsFromOther as bool?,
-      if (messageKind != ignore) 18: messageKind as int?,
-      if (expiration != ignore) 19: expiration as int?,
+      if (isSingleChat != ignore) 11: isSingleChat as bool?,
+      if (messageType != ignore) 12: messageType as String?,
+      if (avatar != ignore) 13: avatar as String?,
+      if (alwaysTop != ignore) 14: alwaysTop as bool?,
+      if (draft != ignore) 15: draft as String?,
+      if (replyMessageId != ignore) 16: replyMessageId as String?,
+      if (isMentioned != ignore) 17: isMentioned as bool?,
+      if (isZapsFromOther != ignore) 18: isZapsFromOther as bool?,
+      if (messageKind != ignore) 19: messageKind as int?,
+      if (expiration != ignore) 20: expiration as int?,
     });
   }
 }
@@ -750,6 +769,7 @@ class _ChatSessionModelISARQueryBuilderUpdateImpl
     Object? createTime = ignore,
     Object? lastActivityTime = ignore,
     Object? chatType = ignore,
+    Object? isSingleChat = ignore,
     Object? messageType = ignore,
     Object? avatar = ignore,
     Object? alwaysTop = ignore,
@@ -773,15 +793,16 @@ class _ChatSessionModelISARQueryBuilderUpdateImpl
         if (createTime != ignore) 8: createTime as int?,
         if (lastActivityTime != ignore) 9: lastActivityTime as int?,
         if (chatType != ignore) 10: chatType as int?,
-        if (messageType != ignore) 11: messageType as String?,
-        if (avatar != ignore) 12: avatar as String?,
-        if (alwaysTop != ignore) 13: alwaysTop as bool?,
-        if (draft != ignore) 14: draft as String?,
-        if (replyMessageId != ignore) 15: replyMessageId as String?,
-        if (isMentioned != ignore) 16: isMentioned as bool?,
-        if (isZapsFromOther != ignore) 17: isZapsFromOther as bool?,
-        if (messageKind != ignore) 18: messageKind as int?,
-        if (expiration != ignore) 19: expiration as int?,
+        if (isSingleChat != ignore) 11: isSingleChat as bool?,
+        if (messageType != ignore) 12: messageType as String?,
+        if (avatar != ignore) 13: avatar as String?,
+        if (alwaysTop != ignore) 14: alwaysTop as bool?,
+        if (draft != ignore) 15: draft as String?,
+        if (replyMessageId != ignore) 16: replyMessageId as String?,
+        if (isMentioned != ignore) 17: isMentioned as bool?,
+        if (isZapsFromOther != ignore) 18: isZapsFromOther as bool?,
+        if (messageKind != ignore) 19: messageKind as int?,
+        if (expiration != ignore) 20: expiration as int?,
       });
     } finally {
       q.close();
@@ -2365,16 +2386,30 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR,
+      QAfterFilterCondition> isSingleChatEqualTo(
+    bool value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        EqualCondition(
+          property: 11,
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR,
       QAfterFilterCondition> messageTypeIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const IsNullCondition(property: 11));
+      return query.addFilterCondition(const IsNullCondition(property: 12));
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR,
       QAfterFilterCondition> messageTypeIsNotNull() {
     return QueryBuilder.apply(not(), (query) {
-      return query.addFilterCondition(const IsNullCondition(property: 11));
+      return query.addFilterCondition(const IsNullCondition(property: 12));
     });
   }
 
@@ -2386,7 +2421,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         EqualCondition(
-          property: 11,
+          property: 12,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -2402,7 +2437,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         GreaterCondition(
-          property: 11,
+          property: 12,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -2418,7 +2453,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         GreaterOrEqualCondition(
-          property: 11,
+          property: 12,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -2434,7 +2469,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         LessCondition(
-          property: 11,
+          property: 12,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -2450,7 +2485,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         LessOrEqualCondition(
-          property: 11,
+          property: 12,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -2467,7 +2502,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         BetweenCondition(
-          property: 11,
+          property: 12,
           lower: lower,
           upper: upper,
           caseSensitive: caseSensitive,
@@ -2484,7 +2519,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         StartsWithCondition(
-          property: 11,
+          property: 12,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -2500,7 +2535,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         EndsWithCondition(
-          property: 11,
+          property: 12,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -2514,7 +2549,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         ContainsCondition(
-          property: 11,
+          property: 12,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -2528,7 +2563,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         MatchesCondition(
-          property: 11,
+          property: 12,
           wildcard: pattern,
           caseSensitive: caseSensitive,
         ),
@@ -2541,7 +2576,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         const EqualCondition(
-          property: 11,
+          property: 12,
           value: '',
         ),
       );
@@ -2553,7 +2588,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         const GreaterCondition(
-          property: 11,
+          property: 12,
           value: '',
         ),
       );
@@ -2563,14 +2598,14 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR,
       QAfterFilterCondition> avatarIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const IsNullCondition(property: 12));
+      return query.addFilterCondition(const IsNullCondition(property: 13));
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR,
       QAfterFilterCondition> avatarIsNotNull() {
     return QueryBuilder.apply(not(), (query) {
-      return query.addFilterCondition(const IsNullCondition(property: 12));
+      return query.addFilterCondition(const IsNullCondition(property: 13));
     });
   }
 
@@ -2582,7 +2617,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         EqualCondition(
-          property: 12,
+          property: 13,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -2598,7 +2633,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         GreaterCondition(
-          property: 12,
+          property: 13,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -2614,7 +2649,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         GreaterOrEqualCondition(
-          property: 12,
+          property: 13,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -2630,7 +2665,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         LessCondition(
-          property: 12,
+          property: 13,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -2646,7 +2681,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         LessOrEqualCondition(
-          property: 12,
+          property: 13,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -2663,7 +2698,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         BetweenCondition(
-          property: 12,
+          property: 13,
           lower: lower,
           upper: upper,
           caseSensitive: caseSensitive,
@@ -2680,7 +2715,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         StartsWithCondition(
-          property: 12,
+          property: 13,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -2696,7 +2731,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         EndsWithCondition(
-          property: 12,
+          property: 13,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -2710,7 +2745,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         ContainsCondition(
-          property: 12,
+          property: 13,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -2724,7 +2759,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         MatchesCondition(
-          property: 12,
+          property: 13,
           wildcard: pattern,
           caseSensitive: caseSensitive,
         ),
@@ -2737,7 +2772,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         const EqualCondition(
-          property: 12,
+          property: 13,
           value: '',
         ),
       );
@@ -2749,7 +2784,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         const GreaterCondition(
-          property: 12,
+          property: 13,
           value: '',
         ),
       );
@@ -2763,7 +2798,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         EqualCondition(
-          property: 13,
+          property: 14,
           value: value,
         ),
       );
@@ -2773,14 +2808,14 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR,
       QAfterFilterCondition> draftIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const IsNullCondition(property: 14));
+      return query.addFilterCondition(const IsNullCondition(property: 15));
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR,
       QAfterFilterCondition> draftIsNotNull() {
     return QueryBuilder.apply(not(), (query) {
-      return query.addFilterCondition(const IsNullCondition(property: 14));
+      return query.addFilterCondition(const IsNullCondition(property: 15));
     });
   }
 
@@ -2792,7 +2827,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         EqualCondition(
-          property: 14,
+          property: 15,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -2808,7 +2843,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         GreaterCondition(
-          property: 14,
+          property: 15,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -2824,7 +2859,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         GreaterOrEqualCondition(
-          property: 14,
+          property: 15,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -2840,7 +2875,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         LessCondition(
-          property: 14,
+          property: 15,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -2856,7 +2891,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         LessOrEqualCondition(
-          property: 14,
+          property: 15,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -2873,7 +2908,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         BetweenCondition(
-          property: 14,
+          property: 15,
           lower: lower,
           upper: upper,
           caseSensitive: caseSensitive,
@@ -2890,7 +2925,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         StartsWithCondition(
-          property: 14,
+          property: 15,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -2906,7 +2941,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         EndsWithCondition(
-          property: 14,
+          property: 15,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -2920,7 +2955,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         ContainsCondition(
-          property: 14,
+          property: 15,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -2934,7 +2969,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         MatchesCondition(
-          property: 14,
+          property: 15,
           wildcard: pattern,
           caseSensitive: caseSensitive,
         ),
@@ -2947,7 +2982,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         const EqualCondition(
-          property: 14,
+          property: 15,
           value: '',
         ),
       );
@@ -2959,7 +2994,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         const GreaterCondition(
-          property: 14,
+          property: 15,
           value: '',
         ),
       );
@@ -2969,14 +3004,14 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR,
       QAfterFilterCondition> replyMessageIdIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const IsNullCondition(property: 15));
+      return query.addFilterCondition(const IsNullCondition(property: 16));
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR,
       QAfterFilterCondition> replyMessageIdIsNotNull() {
     return QueryBuilder.apply(not(), (query) {
-      return query.addFilterCondition(const IsNullCondition(property: 15));
+      return query.addFilterCondition(const IsNullCondition(property: 16));
     });
   }
 
@@ -2988,7 +3023,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         EqualCondition(
-          property: 15,
+          property: 16,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -3004,7 +3039,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         GreaterCondition(
-          property: 15,
+          property: 16,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -3020,7 +3055,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         GreaterOrEqualCondition(
-          property: 15,
+          property: 16,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -3036,7 +3071,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         LessCondition(
-          property: 15,
+          property: 16,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -3052,7 +3087,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         LessOrEqualCondition(
-          property: 15,
+          property: 16,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -3069,7 +3104,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         BetweenCondition(
-          property: 15,
+          property: 16,
           lower: lower,
           upper: upper,
           caseSensitive: caseSensitive,
@@ -3086,7 +3121,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         StartsWithCondition(
-          property: 15,
+          property: 16,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -3102,7 +3137,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         EndsWithCondition(
-          property: 15,
+          property: 16,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -3116,7 +3151,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         ContainsCondition(
-          property: 15,
+          property: 16,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -3130,7 +3165,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         MatchesCondition(
-          property: 15,
+          property: 16,
           wildcard: pattern,
           caseSensitive: caseSensitive,
         ),
@@ -3143,7 +3178,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         const EqualCondition(
-          property: 15,
+          property: 16,
           value: '',
         ),
       );
@@ -3155,7 +3190,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         const GreaterCondition(
-          property: 15,
+          property: 16,
           value: '',
         ),
       );
@@ -3169,7 +3204,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         EqualCondition(
-          property: 16,
+          property: 17,
           value: value,
         ),
       );
@@ -3183,7 +3218,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         EqualCondition(
-          property: 17,
+          property: 18,
           value: value,
         ),
       );
@@ -3193,14 +3228,14 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR,
       QAfterFilterCondition> messageKindIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const IsNullCondition(property: 18));
+      return query.addFilterCondition(const IsNullCondition(property: 19));
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR,
       QAfterFilterCondition> messageKindIsNotNull() {
     return QueryBuilder.apply(not(), (query) {
-      return query.addFilterCondition(const IsNullCondition(property: 18));
+      return query.addFilterCondition(const IsNullCondition(property: 19));
     });
   }
 
@@ -3211,7 +3246,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         EqualCondition(
-          property: 18,
+          property: 19,
           value: value,
         ),
       );
@@ -3225,7 +3260,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         GreaterCondition(
-          property: 18,
+          property: 19,
           value: value,
         ),
       );
@@ -3239,7 +3274,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         GreaterOrEqualCondition(
-          property: 18,
+          property: 19,
           value: value,
         ),
       );
@@ -3253,7 +3288,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         LessCondition(
-          property: 18,
+          property: 19,
           value: value,
         ),
       );
@@ -3267,7 +3302,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         LessOrEqualCondition(
-          property: 18,
+          property: 19,
           value: value,
         ),
       );
@@ -3282,7 +3317,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         BetweenCondition(
-          property: 18,
+          property: 19,
           lower: lower,
           upper: upper,
         ),
@@ -3293,14 +3328,14 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR,
       QAfterFilterCondition> expirationIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const IsNullCondition(property: 19));
+      return query.addFilterCondition(const IsNullCondition(property: 20));
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR,
       QAfterFilterCondition> expirationIsNotNull() {
     return QueryBuilder.apply(not(), (query) {
-      return query.addFilterCondition(const IsNullCondition(property: 19));
+      return query.addFilterCondition(const IsNullCondition(property: 20));
     });
   }
 
@@ -3311,7 +3346,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         EqualCondition(
-          property: 19,
+          property: 20,
           value: value,
         ),
       );
@@ -3325,7 +3360,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         GreaterCondition(
-          property: 19,
+          property: 20,
           value: value,
         ),
       );
@@ -3339,7 +3374,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         GreaterOrEqualCondition(
-          property: 19,
+          property: 20,
           value: value,
         ),
       );
@@ -3353,7 +3388,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         LessCondition(
-          property: 19,
+          property: 20,
           value: value,
         ),
       );
@@ -3367,7 +3402,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         LessOrEqualCondition(
-          property: 19,
+          property: 20,
           value: value,
         ),
       );
@@ -3382,7 +3417,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         BetweenCondition(
-          property: 19,
+          property: 20,
           lower: lower,
           upper: upper,
         ),
@@ -3398,7 +3433,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         EqualCondition(
-          property: 20,
+          property: 21,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -3414,7 +3449,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         GreaterCondition(
-          property: 20,
+          property: 21,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -3430,7 +3465,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         GreaterOrEqualCondition(
-          property: 20,
+          property: 21,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -3446,7 +3481,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         LessCondition(
-          property: 20,
+          property: 21,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -3462,7 +3497,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         LessOrEqualCondition(
-          property: 20,
+          property: 21,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -3479,7 +3514,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         BetweenCondition(
-          property: 20,
+          property: 21,
           lower: lower,
           upper: upper,
           caseSensitive: caseSensitive,
@@ -3496,7 +3531,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         StartsWithCondition(
-          property: 20,
+          property: 21,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -3512,7 +3547,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         EndsWithCondition(
-          property: 20,
+          property: 21,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -3527,7 +3562,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         ContainsCondition(
-          property: 20,
+          property: 21,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -3542,7 +3577,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         MatchesCondition(
-          property: 20,
+          property: 21,
           wildcard: pattern,
           caseSensitive: caseSensitive,
         ),
@@ -3555,7 +3590,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         const EqualCondition(
-          property: 20,
+          property: 21,
           value: '',
         ),
       );
@@ -3567,7 +3602,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         const GreaterCondition(
-          property: 20,
+          property: 21,
           value: '',
         ),
       );
@@ -3583,7 +3618,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
       QAfterFilterCondition> reactionMessageIdsIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        const GreaterOrEqualCondition(property: 20, value: null),
+        const GreaterOrEqualCondition(property: 21, value: null),
       );
     });
   }
@@ -3596,7 +3631,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         EqualCondition(
-          property: 21,
+          property: 22,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -3612,7 +3647,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         GreaterCondition(
-          property: 21,
+          property: 22,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -3628,7 +3663,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         GreaterOrEqualCondition(
-          property: 21,
+          property: 22,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -3644,7 +3679,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         LessCondition(
-          property: 21,
+          property: 22,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -3660,7 +3695,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         LessOrEqualCondition(
-          property: 21,
+          property: 22,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -3677,7 +3712,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         BetweenCondition(
-          property: 21,
+          property: 22,
           lower: lower,
           upper: upper,
           caseSensitive: caseSensitive,
@@ -3694,7 +3729,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         StartsWithCondition(
-          property: 21,
+          property: 22,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -3710,7 +3745,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         EndsWithCondition(
-          property: 21,
+          property: 22,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -3725,7 +3760,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         ContainsCondition(
-          property: 21,
+          property: 22,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -3740,7 +3775,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         MatchesCondition(
-          property: 21,
+          property: 22,
           wildcard: pattern,
           caseSensitive: caseSensitive,
         ),
@@ -3753,7 +3788,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         const EqualCondition(
-          property: 21,
+          property: 22,
           value: '',
         ),
       );
@@ -3765,7 +3800,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         const GreaterCondition(
-          property: 21,
+          property: 22,
           value: '',
         ),
       );
@@ -3781,7 +3816,7 @@ extension ChatSessionModelISARQueryFilter on QueryBuilder<ChatSessionModelISAR,
       QAfterFilterCondition> mentionMessageIdsIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        const GreaterOrEqualCondition(property: 21, value: null),
+        const GreaterOrEqualCondition(property: 22, value: null),
       );
     });
   }
@@ -3989,10 +4024,24 @@ extension ChatSessionModelISARQuerySortBy
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
+      sortByIsSingleChat() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(11);
+    });
+  }
+
+  QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
+      sortByIsSingleChatDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(11, sort: Sort.desc);
+    });
+  }
+
+  QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
       sortByMessageType({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(
-        11,
+        12,
         caseSensitive: caseSensitive,
       );
     });
@@ -4002,7 +4051,7 @@ extension ChatSessionModelISARQuerySortBy
       sortByMessageTypeDesc({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(
-        11,
+        12,
         sort: Sort.desc,
         caseSensitive: caseSensitive,
       );
@@ -4013,7 +4062,7 @@ extension ChatSessionModelISARQuerySortBy
       sortByAvatar({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(
-        12,
+        13,
         caseSensitive: caseSensitive,
       );
     });
@@ -4023,7 +4072,7 @@ extension ChatSessionModelISARQuerySortBy
       sortByAvatarDesc({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(
-        12,
+        13,
         sort: Sort.desc,
         caseSensitive: caseSensitive,
       );
@@ -4033,14 +4082,14 @@ extension ChatSessionModelISARQuerySortBy
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
       sortByAlwaysTop() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(13);
+      return query.addSortBy(14);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
       sortByAlwaysTopDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(13, sort: Sort.desc);
+      return query.addSortBy(14, sort: Sort.desc);
     });
   }
 
@@ -4048,7 +4097,7 @@ extension ChatSessionModelISARQuerySortBy
       sortByDraft({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(
-        14,
+        15,
         caseSensitive: caseSensitive,
       );
     });
@@ -4058,7 +4107,7 @@ extension ChatSessionModelISARQuerySortBy
       sortByDraftDesc({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(
-        14,
+        15,
         sort: Sort.desc,
         caseSensitive: caseSensitive,
       );
@@ -4069,7 +4118,7 @@ extension ChatSessionModelISARQuerySortBy
       sortByReplyMessageId({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(
-        15,
+        16,
         caseSensitive: caseSensitive,
       );
     });
@@ -4079,7 +4128,7 @@ extension ChatSessionModelISARQuerySortBy
       sortByReplyMessageIdDesc({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(
-        15,
+        16,
         sort: Sort.desc,
         caseSensitive: caseSensitive,
       );
@@ -4089,56 +4138,56 @@ extension ChatSessionModelISARQuerySortBy
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
       sortByIsMentioned() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(16);
+      return query.addSortBy(17);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
       sortByIsMentionedDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(16, sort: Sort.desc);
+      return query.addSortBy(17, sort: Sort.desc);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
       sortByIsZapsFromOther() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(17);
+      return query.addSortBy(18);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
       sortByIsZapsFromOtherDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(17, sort: Sort.desc);
+      return query.addSortBy(18, sort: Sort.desc);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
       sortByMessageKind() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(18);
+      return query.addSortBy(19);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
       sortByMessageKindDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(18, sort: Sort.desc);
+      return query.addSortBy(19, sort: Sort.desc);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
       sortByExpiration() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(19);
+      return query.addSortBy(20);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
       sortByExpirationDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(19, sort: Sort.desc);
+      return query.addSortBy(20, sort: Sort.desc);
     });
   }
 }
@@ -4300,128 +4349,142 @@ extension ChatSessionModelISARQuerySortThenBy
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
+      thenByIsSingleChat() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(11);
+    });
+  }
+
+  QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
+      thenByIsSingleChatDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(11, sort: Sort.desc);
+    });
+  }
+
+  QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
       thenByMessageType({bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(11, caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
-      thenByMessageTypeDesc({bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(11, sort: Sort.desc, caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
-      thenByAvatar({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(12, caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
-      thenByAvatarDesc({bool caseSensitive = true}) {
+      thenByMessageTypeDesc({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(12, sort: Sort.desc, caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
+      thenByAvatar({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(13, caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
+      thenByAvatarDesc({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(13, sort: Sort.desc, caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
       thenByAlwaysTop() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(13);
+      return query.addSortBy(14);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
       thenByAlwaysTopDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(13, sort: Sort.desc);
+      return query.addSortBy(14, sort: Sort.desc);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
       thenByDraft({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(14, caseSensitive: caseSensitive);
+      return query.addSortBy(15, caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
       thenByDraftDesc({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(14, sort: Sort.desc, caseSensitive: caseSensitive);
+      return query.addSortBy(15, sort: Sort.desc, caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
       thenByReplyMessageId({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(15, caseSensitive: caseSensitive);
+      return query.addSortBy(16, caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
       thenByReplyMessageIdDesc({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(15, sort: Sort.desc, caseSensitive: caseSensitive);
+      return query.addSortBy(16, sort: Sort.desc, caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
       thenByIsMentioned() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(16);
+      return query.addSortBy(17);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
       thenByIsMentionedDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(16, sort: Sort.desc);
+      return query.addSortBy(17, sort: Sort.desc);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
       thenByIsZapsFromOther() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(17);
+      return query.addSortBy(18);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
       thenByIsZapsFromOtherDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(17, sort: Sort.desc);
+      return query.addSortBy(18, sort: Sort.desc);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
       thenByMessageKind() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(18);
+      return query.addSortBy(19);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
       thenByMessageKindDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(18, sort: Sort.desc);
+      return query.addSortBy(19, sort: Sort.desc);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
       thenByExpiration() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(19);
+      return query.addSortBy(20);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterSortBy>
       thenByExpirationDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(19, sort: Sort.desc);
+      return query.addSortBy(20, sort: Sort.desc);
     });
   }
 }
@@ -4499,79 +4562,86 @@ extension ChatSessionModelISARQueryWhereDistinct
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterDistinct>
-      distinctByMessageType({bool caseSensitive = true}) {
+      distinctByIsSingleChat() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(11, caseSensitive: caseSensitive);
+      return query.addDistinctBy(11);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterDistinct>
-      distinctByAvatar({bool caseSensitive = true}) {
+      distinctByMessageType({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(12, caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterDistinct>
+      distinctByAvatar({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(13, caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterDistinct>
       distinctByAlwaysTop() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(13);
+      return query.addDistinctBy(14);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterDistinct>
       distinctByDraft({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(14, caseSensitive: caseSensitive);
+      return query.addDistinctBy(15, caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterDistinct>
       distinctByReplyMessageId({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(15, caseSensitive: caseSensitive);
+      return query.addDistinctBy(16, caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterDistinct>
       distinctByIsMentioned() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(16);
+      return query.addDistinctBy(17);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterDistinct>
       distinctByIsZapsFromOther() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(17);
+      return query.addDistinctBy(18);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterDistinct>
       distinctByMessageKind() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(18);
+      return query.addDistinctBy(19);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterDistinct>
       distinctByExpiration() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(19);
+      return query.addDistinctBy(20);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterDistinct>
       distinctByReactionMessageIds() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(20);
+      return query.addDistinctBy(21);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, ChatSessionModelISAR, QAfterDistinct>
       distinctByMentionMessageIds() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(21);
+      return query.addDistinctBy(22);
     });
   }
 }
@@ -4650,77 +4720,84 @@ extension ChatSessionModelISARQueryProperty1
     });
   }
 
-  QueryBuilder<ChatSessionModelISAR, String?, QAfterProperty>
-      messageTypeProperty() {
+  QueryBuilder<ChatSessionModelISAR, bool, QAfterProperty>
+      isSingleChatProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addProperty(11);
     });
   }
 
-  QueryBuilder<ChatSessionModelISAR, String?, QAfterProperty> avatarProperty() {
+  QueryBuilder<ChatSessionModelISAR, String?, QAfterProperty>
+      messageTypeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addProperty(12);
     });
   }
 
-  QueryBuilder<ChatSessionModelISAR, bool, QAfterProperty> alwaysTopProperty() {
+  QueryBuilder<ChatSessionModelISAR, String?, QAfterProperty> avatarProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addProperty(13);
     });
   }
 
-  QueryBuilder<ChatSessionModelISAR, String?, QAfterProperty> draftProperty() {
+  QueryBuilder<ChatSessionModelISAR, bool, QAfterProperty> alwaysTopProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addProperty(14);
+    });
+  }
+
+  QueryBuilder<ChatSessionModelISAR, String?, QAfterProperty> draftProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(15);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, String?, QAfterProperty>
       replyMessageIdProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addProperty(15);
+      return query.addProperty(16);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, bool, QAfterProperty>
       isMentionedProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addProperty(16);
+      return query.addProperty(17);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, bool, QAfterProperty>
       isZapsFromOtherProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addProperty(17);
+      return query.addProperty(18);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, int?, QAfterProperty>
       messageKindProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addProperty(18);
+      return query.addProperty(19);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, int?, QAfterProperty>
       expirationProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addProperty(19);
+      return query.addProperty(20);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, List<String>, QAfterProperty>
       reactionMessageIdsProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addProperty(20);
+      return query.addProperty(21);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, List<String>, QAfterProperty>
       mentionMessageIdsProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addProperty(21);
+      return query.addProperty(22);
     });
   }
 }
@@ -4803,80 +4880,87 @@ extension ChatSessionModelISARQueryProperty2<R>
     });
   }
 
-  QueryBuilder<ChatSessionModelISAR, (R, String?), QAfterProperty>
-      messageTypeProperty() {
+  QueryBuilder<ChatSessionModelISAR, (R, bool), QAfterProperty>
+      isSingleChatProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addProperty(11);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, (R, String?), QAfterProperty>
-      avatarProperty() {
+      messageTypeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addProperty(12);
+    });
+  }
+
+  QueryBuilder<ChatSessionModelISAR, (R, String?), QAfterProperty>
+      avatarProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(13);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, (R, bool), QAfterProperty>
       alwaysTopProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addProperty(13);
+      return query.addProperty(14);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, (R, String?), QAfterProperty>
       draftProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addProperty(14);
+      return query.addProperty(15);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, (R, String?), QAfterProperty>
       replyMessageIdProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addProperty(15);
+      return query.addProperty(16);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, (R, bool), QAfterProperty>
       isMentionedProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addProperty(16);
+      return query.addProperty(17);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, (R, bool), QAfterProperty>
       isZapsFromOtherProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addProperty(17);
+      return query.addProperty(18);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, (R, int?), QAfterProperty>
       messageKindProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addProperty(18);
+      return query.addProperty(19);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, (R, int?), QAfterProperty>
       expirationProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addProperty(19);
+      return query.addProperty(20);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, (R, List<String>), QAfterProperty>
       reactionMessageIdsProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addProperty(20);
+      return query.addProperty(21);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, (R, List<String>), QAfterProperty>
       mentionMessageIdsProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addProperty(21);
+      return query.addProperty(22);
     });
   }
 }
@@ -4959,80 +5043,87 @@ extension ChatSessionModelISARQueryProperty3<R1, R2>
     });
   }
 
-  QueryBuilder<ChatSessionModelISAR, (R1, R2, String?), QOperations>
-      messageTypeProperty() {
+  QueryBuilder<ChatSessionModelISAR, (R1, R2, bool), QOperations>
+      isSingleChatProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addProperty(11);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, (R1, R2, String?), QOperations>
-      avatarProperty() {
+      messageTypeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addProperty(12);
+    });
+  }
+
+  QueryBuilder<ChatSessionModelISAR, (R1, R2, String?), QOperations>
+      avatarProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addProperty(13);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, (R1, R2, bool), QOperations>
       alwaysTopProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addProperty(13);
+      return query.addProperty(14);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, (R1, R2, String?), QOperations>
       draftProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addProperty(14);
+      return query.addProperty(15);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, (R1, R2, String?), QOperations>
       replyMessageIdProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addProperty(15);
+      return query.addProperty(16);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, (R1, R2, bool), QOperations>
       isMentionedProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addProperty(16);
+      return query.addProperty(17);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, (R1, R2, bool), QOperations>
       isZapsFromOtherProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addProperty(17);
+      return query.addProperty(18);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, (R1, R2, int?), QOperations>
       messageKindProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addProperty(18);
+      return query.addProperty(19);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, (R1, R2, int?), QOperations>
       expirationProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addProperty(19);
+      return query.addProperty(20);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, (R1, R2, List<String>), QOperations>
       reactionMessageIdsProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addProperty(20);
+      return query.addProperty(21);
     });
   }
 
   QueryBuilder<ChatSessionModelISAR, (R1, R2, List<String>), QOperations>
       mentionMessageIdsProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addProperty(21);
+      return query.addProperty(22);
     });
   }
 }

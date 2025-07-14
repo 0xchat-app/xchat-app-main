@@ -51,4 +51,6 @@ abstract mixin class OXChatObserver {
 
   void addMentionMessageCallback(String chatId, String messageId) {}
   void removeMentionMessageCallback(String chatId, [bool sendNotification = true]) {}
+
+  void didCreateSessionCallBack(ChatSessionModelISAR session) {}
 }
