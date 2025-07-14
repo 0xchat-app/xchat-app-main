@@ -66,10 +66,14 @@ class LoginManager {
   bool get isLoginCircle => currentCircle != null;
 
   bool isMe(String id) {
+    return currentPubkey == id;
+  }
+
+  String get currentPubkey {
     if (currentCircle?.type == CircleType.bitchat) {
-      return BitchatService().cachedPeerID == id;
+      return BitchatService().cachedPeerID ?? '';
     }
-    return currentState.account?.pubkey == id;
+    return currentState.account?.pubkey ?? '';
   }
 
   // User info management for UI updates (separate from login state)

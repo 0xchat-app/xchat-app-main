@@ -8,6 +8,7 @@ import 'package:chatcore/chat-core.dart';
 import 'package:nostr_core_dart/nostr.dart';
 import 'package:ox_chat/manager/chat_data_manager_models.dart';
 import 'package:ox_chat/widget/mention_user_list.dart';
+import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'package:ox_common/model/chat_type.dart';
 
@@ -31,7 +32,7 @@ extension ChatSessionModelMentionEx on ChatSessionModelISAR {
     if (loadParams == null) return [];
 
     final completer = Completer<List<UserDBISAR>>();
-    final myPubkey = Account.sharedInstance.me?.pubKey;
+    final myPubkey = LoginManager.instance.currentPubkey;
     Messages.loadMessagesFromDB(
       receiver: loadParams.receiver,
       groupId: loadParams.groupId,

@@ -1,4 +1,5 @@
 import 'package:chatcore/chat-core.dart';
+import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/model/chat_type.dart';
 import 'package:isar/isar.dart';
 
@@ -82,7 +83,7 @@ class ChatSessionModelISAR {
 
   @ignore
   String get getOtherPubkey {
-    return this.sender != Account.sharedInstance.me!.pubKey ? this.sender : this.receiver;
+    return this.sender != LoginManager.instance.currentPubkey ? this.sender : this.receiver;
   }
 
   static ChatSessionModelISAR fromMap(Map<String, Object?> map) {

@@ -116,6 +116,10 @@ dev_dependencies:
   json_serializable: ^6.5.4
   watcher: ^1.1.2
 
+dependency_overrides:
+  bitchat_flutter_plugin:
+    path: ../../bitchat-flutter-plugin
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

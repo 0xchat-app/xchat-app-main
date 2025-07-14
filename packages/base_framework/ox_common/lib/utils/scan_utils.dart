@@ -156,9 +156,9 @@ extension ScanAnalysisHandlerEx on ScanUtils {
             onTap: () async {
               Zaps.sharedInstance.updateNWC(nwcURI);
               await OXCacheManager.defaultOXCacheManager
-                  .saveForeverData('${Account.sharedInstance.me?.pubKey}.isShowWalletSelector', false);
+                  .saveForeverData('${LoginManager.instance.currentPubkey}.isShowWalletSelector', false);
               await OXCacheManager.defaultOXCacheManager
-                  .saveForeverData('${Account.sharedInstance.me?.pubKey}.defaultWallet', 'NWC');
+                  .saveForeverData('${LoginManager.instance.currentPubkey}.defaultWallet', 'NWC');
               OXNavigator.pop(context);
               CommonToast.instance.show(context, 'Success');
             },

@@ -18,7 +18,7 @@ class ChatUserUtils {
 
   static Future<List<UserDBISAR>> _getRelayUserList() async {
 
-    final myPubkey = Account.sharedInstance.me?.pubKey;
+    final myPubkey = LoginManager.instance.currentPubkey;
     if (myPubkey == null || myPubkey.isEmpty) return [];
 
     final users = <UserDBISAR>[];

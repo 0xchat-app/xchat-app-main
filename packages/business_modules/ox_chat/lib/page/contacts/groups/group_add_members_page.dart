@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_common/component.dart';
+import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/widgets/common_loading.dart';
@@ -43,7 +44,7 @@ class _GroupAddMembersPageState extends State<GroupAddMembersPage> {
 
   Future<List<SelectableUser>> _loadAvailableUsers() async {
     // Get current user pubkey
-    final myPubkey = Account.sharedInstance.me?.pubKey;
+    final myPubkey = LoginManager.instance.currentPubkey;
     
     // Get current group members
     final groupMembers = await Groups.sharedInstance.getAllGroupMembers(widget.groupInfo.privateGroupId);
@@ -51,9 +52,8 @@ class _GroupAddMembersPageState extends State<GroupAddMembersPage> {
     
     // Add current user to excluded list
     final excludedPubkeys = <String>{...memberPubkeys};
-    if (myPubkey != null) {
-      excludedPubkeys.add(myPubkey);
-    }
+    excludedPubkeys.add(myPubkey);
+
     
     // Initialize search manager with excluded users
     await _searchManager.initialize(excludeUserPubkeys: excludedPubkeys.toList());

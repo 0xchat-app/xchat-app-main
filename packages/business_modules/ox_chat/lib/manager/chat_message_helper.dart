@@ -586,7 +586,7 @@ extension MessageDBToUIEx on MessageDBISAR {
     final groupId = this.groupId;
     final senderId = this.sender;
     final receiverId = this.receiver;
-    final currentUserPubKey = Account.sharedInstance.me?.pubKey;
+    final currentUserPubKey = LoginManager.instance.currentPubkey;
     if (groupId.isNotEmpty) {
       chatId = groupId;
     } else if (senderId.isNotEmpty && senderId == receiverId) {
@@ -620,7 +620,7 @@ extension MessageDBToUIEx on MessageDBISAR {
   }
 
   String get getOtherPubkey {
-    return this.sender != Account.sharedInstance.me!.pubKey ? this.sender : this.receiver;
+    return this.sender != LoginManager.instance.currentPubkey ? this.sender : this.receiver;
   }
 }
 

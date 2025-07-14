@@ -4,6 +4,7 @@ import 'package:chatcore/chat-core.dart';
 import 'package:ox_cache_manager/ox_cache_manager.dart';
 import 'package:ox_common/const/common_constant.dart';
 import 'package:ox_common/log_util.dart';
+import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/utils/storage_key_tool.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -141,7 +142,7 @@ class UserConfigTool{
     final currentVersion = packageInfo.version;
     // if(currentVersion != migrationTargetVersion) return;
 
-    String? pubKey = Account.sharedInstance.me?.pubKey;
+    String? pubKey = LoginManager.instance.currentPubkey;
     if (pubKey == null) return;
 
     //check for old values

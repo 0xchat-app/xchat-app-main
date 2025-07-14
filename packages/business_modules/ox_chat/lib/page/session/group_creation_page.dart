@@ -227,7 +227,7 @@ class _GroupCreationPageState extends State<GroupCreationPage> {
       return;
     }
 
-    final myPubkey = Account.sharedInstance.me?.pubKey;
+    final myPubkey = LoginManager.instance.currentPubkey;
     if (myPubkey == null || myPubkey.isEmpty) {
       CommonToast.instance.show(context, 'Current account is null');
       return;
