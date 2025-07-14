@@ -113,16 +113,17 @@ class SessionListViewModel {
 
   bool get isSingleChat {
     final entity = entity$.value;
-    switch (entity) {
-      case UserDBISAR:
-        return true;
-      case GroupDBISAR(isDirectMessage: final dm):
+    final chatType = sessionModel.chatType;
+    switch ((entity, chatType)) {
+      case (GroupDBISAR(isDirectMessage: final dm), _):
         return dm;
-      case ChannelDBISAR _:
-      case RelayGroupDBISAR _:
+      case (_, ChatType.chatSingle):
+      case (_, ChatType.bitchatPrivate):
+        return true;
+      case (_, ChatType.bitchatChannel):
         return false;
       default:
-        assert(false, 'Unknown Type: $runtimeType');
+        assert(false, 'Unknown Type: ${entity.runtimeType}, chatType: $chatType');
         return false;
     }
   }

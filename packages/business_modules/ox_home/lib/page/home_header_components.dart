@@ -62,13 +62,20 @@ class HomeHeaderComponents {
   late final RelayLatencyHandler _latencyHandler;
 
   void _setupLatency() {
-    selectedCircle$.addListener(() {
-      final url = selectedCircle$.value?.relayUrl;
-      if (url != null) _latencyHandler.switchRelay(url);
-    });
+    selectedCircle$.addListener(selectedCircleChangedHandler);
 
     final initUrl = selectedCircle$.value?.relayUrl;
     if (initUrl != null) _latencyHandler.switchRelay(initUrl);
+  }
+
+  selectedCircleChangedHandler() {
+    final url = selectedCircle$.value?.relayUrl;
+    if (url != null) _latencyHandler.switchRelay(url);
+  }
+
+  void dispose() {
+    _latencyHandler.dispose();
+    selectedCircle$.removeListener(selectedCircleChangedHandler);
   }
 
   AppBar buildAppBar(BuildContext ctx) => AppBar(

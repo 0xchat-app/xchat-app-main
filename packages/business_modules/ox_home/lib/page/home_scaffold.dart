@@ -33,6 +33,7 @@ class _HomeScaffoldState extends State<HomeScaffold> {
   final ValueNotifier<CircleItem?> selectedCircle$ = ValueNotifier(null);
   final ValueNotifier<bool> isShowExtendBody$ = ValueNotifier(false);
 
+  HomeHeaderComponents? components;
   late final RelayLatencyHandler _latencyHandler;
 
   Duration get extendBodyDuration => const Duration(milliseconds: 200);
@@ -53,6 +54,8 @@ class _HomeScaffoldState extends State<HomeScaffold> {
         final account = state.account;
         final circles = (account?.circles ?? []).map((e) => e.asViewModel()).toList();
         selectedCircle$.value = state.currentCircle?.asViewModel();
+
+        components?.dispose();
         final headerComponents = HomeHeaderComponents(
           circles: circles,
           selectedCircle$: selectedCircle$,
@@ -66,6 +69,7 @@ class _HomeScaffoldState extends State<HomeScaffold> {
           latencyHandler: _latencyHandler,
           extendBodyDuration: extendBodyDuration,
         );
+        components = headerComponents;
 
         if (PlatformStyle.isUseMaterial) {
           return Scaffold(
@@ -223,7 +227,10 @@ class _HomeScaffoldState extends State<HomeScaffold> {
     OXLoading.dismiss();
 
     if (failure == null) {
-      selectedCircle$.value = newSelected;
+      // Delay is needed because switching circles triggers heavy local operations
+      // that consume performance. The delay ensures smooth window closing animation.
+      await Future.delayed(const Duration(milliseconds: 100));
+      isShowExtendBody$.value = false;
     } else {
       CommonToast.instance.show(context, failure.message);
     }
