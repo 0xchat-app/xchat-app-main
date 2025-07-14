@@ -9,6 +9,6 @@ class EncodeUtils {
     final bytes = await fileStream.fold<List<int>>([],
             (previous, element) => previous..addAll(element));
     final digest = md5.convert(bytes);
-    return digest.toString();
+    return digest.toString() + '$fileSize';
   }
 }

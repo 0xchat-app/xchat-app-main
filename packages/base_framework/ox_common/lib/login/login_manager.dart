@@ -5,6 +5,7 @@ import 'package:isar/isar.dart';
 import 'package:nostr_core_dart/nostr.dart';
 import 'package:convert/convert.dart';
 import 'package:ox_common/utils/extension.dart';
+import 'package:uuid/uuid.dart';
 import '../utils/ox_chat_binding.dart';
 import 'database_manager.dart';
 import 'login_models.dart';
@@ -21,6 +22,8 @@ class LoginUserNotifier {
 
   ValueNotifier<String> get encodedPubkey$ => LoginManager.instance._userInfo$
       .map((userInfo) => userInfo?.encodedPubkey ?? '');
+
+  ValueNotifier<UserDBISAR?> get userInfo$ => LoginManager.instance._userInfo$;
 
   ValueNotifier<String> get name$ => LoginManager.instance._userInfo$
       .map((userInfo) {
@@ -905,7 +908,7 @@ extension LoginManagerUtils on LoginManager {
   /// Generate circle ID from relay URL
   String _generateCircleId(String relayUrl) {
     // Simple hash of the relay URL to create a unique ID
-    return relayUrl.hashCode.abs().toString();
+    return Uuid().v4();
   }
 
   /// Extract circle name from relay URL
