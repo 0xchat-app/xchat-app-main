@@ -30,9 +30,26 @@ class SchemeHelper {
     String action = '';
     Map<String, String> query = <String, String>{};
 
+    // Handle custom scheme formats first (oxchatlite:nprofile, nostr:nprofile)
+    if (uri.startsWith('oxchatlite:')) {
+      final nprofile = uri.replaceFirst('oxchatlite:', '');
+      if (nprofile.isNotEmpty) {
+        // Handle nprofile directly (main app scheme)
+        defaultHandler?.call(uri, 'nprofile', {'value': nprofile});
+        return;
+      }
+    } else if (uri.startsWith('nostr:')) {
+      final nostrContent = uri.replaceFirst('nostr:', '');
+      if (nostrContent.isNotEmpty) {
+        // Handle nostr content directly
+        defaultHandler?.call(uri, 'nostr', {'value': nostrContent});
+        return;
+      }
+    }
+
     try {
       final uriObj = Uri.parse(uri);
-      // Handle oxchatlite (main), nostr schemes
+      // Handle standard URI schemes (oxchatlite://, nostr://)
       if (uriObj.scheme != 'oxchatlite' && uriObj.scheme != 'nostr') return ;
 
       // For oxchatlite scheme (main app scheme), extract the nprofile part
@@ -58,6 +75,7 @@ class SchemeHelper {
       action = uriObj.host.toLowerCase();
       query = uriObj.queryParameters;
     } catch (_) {
+      // Handle other URI formats if needed
       final liteScheme = 'oxchatlite://';
       final nostrScheme = 'nostr://';
       

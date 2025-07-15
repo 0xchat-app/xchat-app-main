@@ -74,10 +74,9 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
         relayList = Account.sharedInstance.getMyGeneralRelayList().map((e) => e.url).take(5).toList();
       }
     }
-    // Generate nprofile with custom oxchatlite scheme
+    // Generate nprofile with custom oxchatlite scheme (standard URI format)
     final profile = Nip19.encodeShareableEntity('nprofile', userNotifier.pubKey, relayList, null, null);
-    qrCodeData = 'oxchatlite:$profile';
-
+    qrCodeData = 'oxchatlite://$profile';
     // Initialize QR code and image
     qrCode = QrCode.fromData(
       data: qrCodeData,
