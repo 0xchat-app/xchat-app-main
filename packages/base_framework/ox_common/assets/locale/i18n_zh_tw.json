@@ -135,6 +135,7 @@
   "str_permission_camera_hint": "請授權訪問相機的權限",
   "str_go_to_settings": "前往設定",
   "search": "搜尋",
+  "search_npub_or_username": "搜尋 npub 或使用者名稱",
   "str_save_image": "保存圖片",
   "str_saved_to_album": "已保存到相冊",
   "str_save_failed": "保存失敗",

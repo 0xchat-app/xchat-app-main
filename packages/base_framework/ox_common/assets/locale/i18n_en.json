@@ -131,6 +131,7 @@
   "str_permission_camera_hint": "Please grant permission to access the camera",
   "str_go_to_settings": "Go to settings",
   "search": "Search",
+  "search_npub_or_username": "Search npub or username",
   "str_save_image": "Save Image",
   "str_saved_to_album": "Saved to album",
   "str_save_failed": "Save failed",

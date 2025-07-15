@@ -163,7 +163,7 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
         vertical:  16.px,
         horizontal: CLLayout.horizontalPadding,
       ),
-              placeholder: Localized.text('ox_common.search'),
+              placeholder: Localized.text('ox_common.search_npub_or_username'),
       onChanged: (value) => _onSearchChanged(),
     );
   }
