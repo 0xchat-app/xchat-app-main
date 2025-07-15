@@ -30,7 +30,7 @@ class CircleEmptyWidget extends StatelessWidget {
           children: [
           // Empty state icon using Material Icons
           Icon(
-            Icons.forum,
+            Icons.forum_outlined,
             size: 120.px,
             color: PlatformStyle.isUseMaterial
                 ? Theme.of(context).textTheme.titleMedium?.color

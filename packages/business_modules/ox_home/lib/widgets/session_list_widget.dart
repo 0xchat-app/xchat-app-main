@@ -348,36 +348,47 @@ class _SessionListWidgetState extends State<SessionListWidget> {
   }
 
   Widget _buildEmptyState(BuildContext context) {
-    return ListView(
-      padding: EdgeInsets.symmetric(
-        horizontal: 32.px,
-        vertical: 100.px,
-      ),
-      children: [
-          // Empty state icon using Material Icons
-          Icon(
-            Icons.forum,
-            size: 120.px,
-            color: PlatformStyle.isUseMaterial
-                ? Theme.of(context).textTheme.titleMedium?.color
-                : CupertinoTheme.of(context).textTheme.actionSmallTextStyle?.color,
+    return Transform.translate(
+      offset: Offset(0, -120.px),
+      child: Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 32.px),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Empty state icon using Material Icons
+              Icon(
+                Icons.forum_outlined,
+                size: 120.px,
+                color: PlatformStyle.isUseMaterial
+                    ? Theme.of(context).textTheme.titleMedium?.color
+                    : CupertinoTheme.of(context).textTheme.actionSmallTextStyle?.color,
+              ),
+
+              SizedBox(height: 24.px),
+
+              // Title
+              CLText.titleMedium(
+                Localized.text('ox_chat.no_sessions_title'),
+                colorToken: ColorToken.onSurface,
+                textAlign: TextAlign.center,
+              ),
+
+              SizedBox(height: 8.px),
+
+              // Description
+              CLText.bodyMedium(
+                Localized.text('ox_chat.no_sessions_description'),
+                colorToken: ColorToken.onSurfaceVariant,
+                textAlign: TextAlign.center,
+                maxLines: 3,
+              ),
+            ],
           ),
-
-        // Title
-        CLText.titleMedium(
-          Localized.text('ox_chat.no_sessions_title'),
-          colorToken: ColorToken.onSurface,
-          textAlign: TextAlign.center,
-        ).setPaddingOnly(bottom: 8.px),
-
-        // Description
-        CLText.bodyMedium(
-          Localized.text('ox_chat.no_sessions_description'),
-          colorToken: ColorToken.onSurfaceVariant,
-          textAlign: TextAlign.center,
-          maxLines: 3,
         ),
-      ],
+      ),
     );
   }
 }
