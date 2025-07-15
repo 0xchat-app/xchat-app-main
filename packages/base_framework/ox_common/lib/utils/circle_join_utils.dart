@@ -103,10 +103,11 @@ class CircleJoinUtils {
       final result = await CLDialog.showInputDialog(
         context: context,
         title: Localized.text('ox_home.join_circle_title'),
-        description: Localized.text('ox_home.join_circle_description'),
+        description: null,
+        descriptionWidget: _buildDescriptionWithLink(context),
         inputLabel: Localized.text('ox_home.join_circle_input_label'),
         confirmText: Localized.text('ox_home.add'),
-        showHintIcon: false,
+        // showHintIcon: true,
         // onHintIconTap: () => _showCircleIntroduction(context),
         onConfirm: (input) async {
           return await _processJoinInput(context, input, circleType);
@@ -131,6 +132,7 @@ class CircleJoinUtils {
     OXNavigator.pushPage(
       context,
       (context) => const CircleIntroductionPage(),
+      type: OXPushPageType.present,
     );
   }
 
@@ -176,6 +178,35 @@ class CircleJoinUtils {
           ),
         ),
       ],
+    );
+  }
+
+  /// Build description with "What is a Circle?" link
+  static Widget _buildDescriptionWithLink(BuildContext context) {
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(
+            text: Localized.text('ox_home.join_circle_description'),
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+              color: ColorToken.onSurfaceVariant.of(context),
+            ),
+          ),
+          const TextSpan(text: ' '),
+          WidgetSpan(
+            alignment: PlaceholderAlignment.middle,
+            child: GestureDetector(
+              onTap: () => _showCircleIntroduction(context),
+              child: Text(
+                Localized.text('ox_common.circle_intro_title'),
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: ColorToken.primary.of(context),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

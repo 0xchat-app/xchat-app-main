@@ -38,6 +38,7 @@ class CLDialog {
     required BuildContext context,
     required String title,
     String? description,
+    Widget? descriptionWidget,
     required String inputLabel,
     String? confirmText,
     String? cancelText,
@@ -57,6 +58,7 @@ class CLDialog {
       builder: (context) => InputBottomSheet(
         title: title,
         description: description,
+        descriptionWidget: descriptionWidget,
         inputLabel: inputLabel,
         confirmText: confirmText,
         cancelText: cancelText,
@@ -78,6 +80,7 @@ class InputBottomSheet extends StatefulWidget {
     Key? key,
     required this.title,
     this.description,
+    this.descriptionWidget,
     required this.inputLabel,
     this.confirmText,
     this.cancelText,
@@ -93,6 +96,7 @@ class InputBottomSheet extends StatefulWidget {
 
   final String title;
   final String? description;
+  final Widget? descriptionWidget;
   final String inputLabel;
   final String? confirmText;
   final String? cancelText;
@@ -197,7 +201,12 @@ class _InputBottomSheetState extends State<InputBottomSheet> {
               SizedBox(height: 8.px),
 
               // Description
-              if (widget.description != null)
+              if (widget.descriptionWidget != null)
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: horizontal),
+                  child: widget.descriptionWidget!,
+                ).setPaddingOnly(bottom: separatorHeight)
+              else if (widget.description != null)
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: horizontal),
                   child: CLText.titleSmall(

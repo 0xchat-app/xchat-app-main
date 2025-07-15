@@ -95,6 +95,7 @@ class CircleEmptyWidget extends StatelessWidget {
     OXNavigator.pushPage(
       context,
       (context) => const CircleIntroductionPage(),
+      type: OXPushPageType.present,
     );
   }
 } 
