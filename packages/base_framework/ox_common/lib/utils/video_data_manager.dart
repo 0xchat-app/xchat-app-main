@@ -201,7 +201,7 @@ class _VideoThumbnailHandler {
         final videoFile = File(videoFilePath);
         if (!videoFile.existsSync()) return null;
 
-        final fileId = cacheKey.isNotEmpty ? cacheKey : await EncodeUtils.generatePartialFileMd5(videoFile);
+        final fileId = cacheKey.isNotEmpty ? cacheKey : await EncodeUtils.generateMultiSampleFileKey(videoFile);
         final cacheManager = OXFileCacheManager.get();
 
         // Cache
