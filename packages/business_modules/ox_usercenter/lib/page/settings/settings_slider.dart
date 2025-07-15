@@ -277,6 +277,13 @@ class SettingSliderState extends State<SettingSlider> {
   }
 
   void inviteItemOnTap() {
+    final circle = LoginManager.instance.currentCircle;
+    if (circle == null) {
+      // Show guide dialog when no circle
+      _showJoinCircleDialog();
+      return;
+    }
+    
     OXNavigator.pushPage(
       context, 
       (context) => QRCodeDisplayPage(previousPageTitle: title),

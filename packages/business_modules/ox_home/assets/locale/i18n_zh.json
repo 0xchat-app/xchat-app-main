@@ -3,7 +3,7 @@
   "Contact": "联系人",
   "Discover": "发现",
   "Me": "我的",
-  "join_or_create_circle_now": "现在加入或创建圈子",
+  "join_or_create_circle_now": "现在创建一个圈子",
   "unlock_advanced_model": "和你的朋友、家人开启私密聊天吧！",
   "join_circle": "加入圈子",
   "add_circle": "新增圈子",
@@ -11,5 +11,6 @@
   "join_circle_title": "加入圈子",
   "join_circle_description": "要加入圈子，请输入中继地址或有效的邀请链接。",
   "join_circle_input_label": "链接",
-  "add": "添加"
+  "add": "添加",
+  "what_is_circle": "什么是圈子？"
 }

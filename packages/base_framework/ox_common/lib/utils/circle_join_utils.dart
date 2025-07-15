@@ -106,8 +106,8 @@ class CircleJoinUtils {
         description: Localized.text('ox_home.join_circle_description'),
         inputLabel: Localized.text('ox_home.join_circle_input_label'),
         confirmText: Localized.text('ox_home.add'),
-        showHintIcon: true,
-        onHintIconTap: () => _showCircleIntroduction(context),
+        showHintIcon: false,
+        // onHintIconTap: () => _showCircleIntroduction(context),
         onConfirm: (input) async {
           return await _processJoinInput(context, input, circleType);
         },
@@ -136,7 +136,7 @@ class CircleJoinUtils {
 
   /// Build hint widget with clickable example address
   static Widget _buildHintWidget(BuildContext context, TextEditingController controller) {
-    const exampleAddress = 'wss://relay.0xchat.com';
+    const exampleAddress = '0xchat';
     return Row(
       children: [
         CLIcon(
@@ -411,7 +411,7 @@ class CircleJoinUtils {
   }) async {
     final shouldJoin = await CLAlertDialog.show<bool>(
       context: context,
-      title: Localized.text('ox_usercenter.profile'),
+      title: Localized.text('ox_usercenter.circle_required_title'),
       content:
           message ?? Localized.text('ox_usercenter.profile_circle_info_dialog'),
       actions: [

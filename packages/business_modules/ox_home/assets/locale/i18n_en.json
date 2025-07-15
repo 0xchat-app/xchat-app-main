@@ -3,7 +3,7 @@
   "Contact": "Contacts",
   "Discover": "Discovery",
   "Me": "Me",
-  "join_or_create_circle_now": "Add a relay to create a Circle",
+  "join_or_create_circle_now": "Add a Circle now",
   "unlock_advanced_model": "and start private chats with your friends and family!",
   "join_circle": "Add Circle",
   "add_circle": "Add Circle",
@@ -11,5 +11,6 @@
   "join_circle_title": "Add Circle",
   "join_circle_description": "To add a Circle, enter a relay address or invitation link.",
   "join_circle_input_label": "relay address or invitation link",
-  "add": "Add"
+  "add": "Add",
+  "what_is_circle": "What is a Circle?"
 }
