@@ -123,7 +123,11 @@ class HomeHeaderComponents {
   Widget _buildAvatar() {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
-      onTap: avatarOnTap,
+      onTap: () {
+        // Close circle list when avatar is tapped
+        isShowExtendBody$.value = false;
+        avatarOnTap?.call();
+      },
       child: Padding(
         padding: EdgeInsets.all(12.px),
         child: ValueListenableBuilder(
