@@ -170,7 +170,7 @@
   "hint_dont_know_what_to_input": "不知道输入什么？试试：",
   "circle_intro_title": "什么是圈子？",
   "circle_intro_subtitle": "了解 0xChat 中的圈子",
-  "circle_intro_content_1": "圈子是一个封闭的通信网络，包含一个中继服务器、多个文件服务器，后续还将包含推送服务器和通话用的 ICE 服务器。",
+  "circle_intro_content_1": "圈子是一个封闭的通信网络，拥有独立的服务器设置，包含一个中继服务器、多个文件服务器，后续还将包含推送服务器和通话用的 ICE 服务器。",
   "circle_intro_content_2": "每个圈子都有独立加密的数据库。当您切换圈子时，也会切换数据库，确保数据完全隔离。",
   "circle_intro_content_3": "0xChat Lite 只会连接您的圈子中继。如果存在其他连接，应用会通知您 - 不存在隐藏连接。",
   "circle_intro_features_title": "圈子特性：",

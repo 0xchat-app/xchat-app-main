@@ -170,7 +170,7 @@
   "hint_dont_know_what_to_input": "Don't know what to input? Try:",
   "circle_intro_title": "What is a Circle?",
   "circle_intro_subtitle": "Understanding Circles in 0xChat",
-  "circle_intro_content_1": "A Circle is a closed communication network that includes a relay server, multiple file servers, and will soon include push servers and ICE servers for calls.",
+  "circle_intro_content_1": "A Circle is a closed communication network that has independent server configurations, including a relay server, multiple file servers, and will soon include push servers and ICE servers for calls.",
   "circle_intro_content_2": "Each Circle has its own independently encrypted database. When you switch circles, you also switch databases, ensuring complete data isolation.",
   "circle_intro_content_3": "0xChat Lite only connects to your circle's relay. If there are any other connections, the app will notify you - there are no hidden connections.",
   "circle_intro_features_title": "Circle Features:",
