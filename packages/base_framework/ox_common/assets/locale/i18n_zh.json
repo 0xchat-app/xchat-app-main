@@ -186,6 +186,11 @@
   "circle_intro_how_step_1": "1. 输入中继 URL（如 wss://relay.example.com）",
   "circle_intro_how_step_2": "2. 或使用预定义名称（如 '0xchat'、'damus'）",
   "circle_intro_how_step_3": "3. 应用将连接到中继并创建您的圈子",
+  "circle_intro_faq_title": "常见问题",
+  "circle_intro_faq_question_1": "一个 circle 只能绑定一个 relay 吗？",
+  "circle_intro_faq_answer_1": "是的，目前一个 circle 0xchat lite 绑定一个 relay 的目的是：\n1 提高消息可靠性\n2 提高隐私性",
+  "circle_intro_faq_question_2": "可以删除circle 吗？",
+  "circle_intro_faq_answer_2": "可以的，在settings -> circle  settings -> 右上角 。。。注意：删除 circle 会删除本地数据库，数据不可恢复",
   "circle_intro_examples_title": "热门中继：",
   "circle_intro_note": "注意：每个圈子都是完全独立的。一个圈子中的联系人和消息不会出现在另一个圈子中，每个圈子都有自己的加密数据库。"
 }
