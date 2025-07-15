@@ -202,9 +202,11 @@ class CommonChatWidgetState extends State<CommonChatWidget> {
               customMessageBuilder: ({
                 required types.CustomMessage message,
                 required int messageWidth,
+                required BorderRadius borderRadius,
               }) => ChatMessageBuilder.buildCustomMessage(
                 message: message,
                 messageWidth: messageWidth,
+                borderRadius: borderRadius,
                 receiverPubkey: handler.otherUser?.pubKey,
                 messageUpdateCallback: (newMessage) {
                   dataController.updateMessage(newMessage);

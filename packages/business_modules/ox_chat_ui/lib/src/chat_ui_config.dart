@@ -20,6 +20,7 @@ class ChatUIConfig {
   final Widget Function({
     required types.CustomMessage message,
     required int messageWidth,
+    required BorderRadius borderRadius,
   })? customMessageBuilder;
 
   /// Create a widget that pops up when long pressing on a message

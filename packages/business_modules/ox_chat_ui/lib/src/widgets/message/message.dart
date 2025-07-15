@@ -418,7 +418,7 @@ class MessageState extends State<Message> {
 
     if (widget.bubbleBuilder != null) {
       final customBubble = widget.bubbleBuilder!(
-        _messageBuilder(context),
+        _messageBuilder(context, borderRadius),
         message: widget.message,
         nextMessageInGroup: widget.roundBorder,
       );
@@ -437,7 +437,7 @@ class MessageState extends State<Message> {
         ) : null,
         child: ClipRRect(
           borderRadius: borderRadius,
-          child: _messageBuilder(context),
+          child: _messageBuilder(context, borderRadius),
         ),
       );
     }
@@ -484,7 +484,7 @@ class MessageState extends State<Message> {
         ?? MessageStatus(size: statusSize, status: widget.message.status),
   );
 
-  Widget _messageBuilder(BuildContext context) {
+  Widget _messageBuilder(BuildContext context, BorderRadius borderRadius) {
     Widget messageContentWidget;
     switch (widget.message.type) {
       case types.MessageType.audio:
@@ -505,6 +505,7 @@ class MessageState extends State<Message> {
         messageContentWidget = widget.uiConfig.customMessageBuilder?.call(
           message: customMessage,
           messageWidth: contentMaxWidth,
+          borderRadius: borderRadius,
         ) ?? const SizedBox();
         break ;
       case types.MessageType.file:

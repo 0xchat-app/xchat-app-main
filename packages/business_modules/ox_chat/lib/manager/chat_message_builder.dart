@@ -210,6 +210,7 @@ class ChatMessageBuilder {
   static Widget buildCustomMessage({
     required types.CustomMessage message,
     required int messageWidth,
+    required BorderRadius borderRadius,
     String? receiverPubkey,
     Function(types.Message newMessage)? messageUpdateCallback,
   }) {
@@ -222,9 +223,22 @@ class ChatMessageBuilder {
       case CustomMessageType.note:
         return ChatMessageBuilderCustomEx._buildNoteMessage(message, isMe);
       case CustomMessageType.imageSending:
-        return ChatMessageBuilderCustomEx._buildImageSendingMessage(message, messageWidth, receiverPubkey, isMe);
+        return ChatMessageBuilderCustomEx._buildImageSendingMessage(
+          message,
+          messageWidth,
+          borderRadius,
+          receiverPubkey,
+          isMe,
+        );
       case CustomMessageType.video:
-        return ChatMessageBuilderCustomEx._buildVideoMessage(message, messageWidth, receiverPubkey, isMe, messageUpdateCallback);
+        return ChatMessageBuilderCustomEx._buildVideoMessage(
+          message,
+          messageWidth,
+          borderRadius,
+          receiverPubkey,
+          isMe,
+          messageUpdateCallback,
+        );
       default:
         return SizedBox();
     }

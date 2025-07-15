@@ -206,6 +206,7 @@ extension ChatMessageBuilderCustomEx on ChatMessageBuilder {
   static Widget _buildImageSendingMessage(
     types.CustomMessage message,
     int messageWidth,
+    BorderRadius borderRadius,
     String? receiverPubkey,
     bool isMe,
   ) {
@@ -231,14 +232,17 @@ extension ChatMessageBuilderCustomEx on ChatMessageBuilder {
 
     return Hero(
       tag: message.id,
-      child: ChatImagePreviewWidget(
-        uri: uri,
-        imageWidth: width,
-        imageHeight: height,
-        maxWidth: messageWidth.toDouble(),
-        progressStream: stream,
-        decryptKey: encryptedKey,
-        decryptNonce: encryptedNonce,
+      child: ClipRRect(
+        borderRadius: borderRadius,
+        child: ChatImagePreviewWidget(
+          uri: uri,
+          imageWidth: width,
+          imageHeight: height,
+          maxWidth: messageWidth.toDouble(),
+          progressStream: stream,
+          decryptKey: encryptedKey,
+          decryptNonce: encryptedNonce,
+        ),
       ),
     );
   }
@@ -246,15 +250,19 @@ extension ChatMessageBuilderCustomEx on ChatMessageBuilder {
   static Widget _buildVideoMessage(
     types.CustomMessage message,
     int messageWidth,
+    BorderRadius borderRadius,
     String? receiverPubkey,
     bool isMe,
     Function(types.Message newMessage)? messageUpdateCallback,
   ) {
-    return ChatVideoMessage(
-      message: message,
-      messageWidth: messageWidth,
-      receiverPubkey: receiverPubkey,
-      messageUpdateCallback: messageUpdateCallback,
+    return ClipRRect(
+      borderRadius: borderRadius,
+      child: ChatVideoMessage(
+        message: message,
+        messageWidth: messageWidth,
+        receiverPubkey: receiverPubkey,
+        messageUpdateCallback: messageUpdateCallback,
+      ),
     );
   }
 }
