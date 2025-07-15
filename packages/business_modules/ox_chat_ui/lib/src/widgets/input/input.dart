@@ -387,17 +387,25 @@ class InputState extends State<Input> {
         iconSize: iconSize,
       );
 
-  Widget _buildEmojiButton() =>
-      CommonIconButton(
-        onPressed: () {
+  Widget _buildEmojiButton() {
+    final isEmojiMode = inputType == InputType.inputTypeEmoji;
+    return CommonIconButton(
+      onPressed: () {
+        if (isEmojiMode) {
+          // Switch from emoji to keyboard input
+          _inputFocusNode.requestFocus();
+        } else {
+          // Switch to emoji input
           changeInputType(InputType.inputTypeEmoji);
-        },
-        iconName: 'chat_emoti_icon.png',
-        size: iconButtonSize,
-        iconSize: iconSize,
-        color: ColorToken.onSurface.of(context),
-        package: 'ox_chat_ui',
-      );
+        }
+      },
+      iconName: isEmojiMode ? 'icon_chat_keyboard.png' : 'chat_emoti_icon.png',
+      size: iconButtonSize,
+      iconSize: iconSize,
+      color: ColorToken.onSurface.of(context),
+      package: 'ox_chat_ui',
+    );
+  }
 
   Widget _buildMoreButton() {
     final isOnInput = this.isOnInput;
