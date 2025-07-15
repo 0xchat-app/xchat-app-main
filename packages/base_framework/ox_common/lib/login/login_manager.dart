@@ -20,29 +20,49 @@ class LoginUserNotifier {
   static final LoginUserNotifier _instance = LoginUserNotifier._();
   static LoginUserNotifier get instance => _instance;
 
-  ValueNotifier<String> get encodedPubkey$ => LoginManager.instance._userInfo$
+  ValueNotifier<UserDBISAR?>? _source;
+
+  ValueNotifier<UserDBISAR?> _userInfo$ = ValueNotifier(null);
+  ValueNotifier<UserDBISAR?> get userInfo$ => _userInfo$;
+
+  ValueNotifier<String> get encodedPubkey$ => userInfo$
       .map((userInfo) => userInfo?.encodedPubkey ?? '');
 
-  ValueNotifier<UserDBISAR?> get userInfo$ => LoginManager.instance._userInfo$;
-
-  ValueNotifier<String> get name$ => LoginManager.instance._userInfo$
+  ValueNotifier<String> get name$ => userInfo$
       .map((userInfo) {
-        if (userInfo == null) return '';
+    if (userInfo == null) return '';
 
-        final name = userInfo.name;
-        if (name != null && name.isNotEmpty) return name;
+    final name = userInfo.name;
+    if (name != null && name.isNotEmpty) return name;
 
-        return userInfo.shortEncodedPubkey;
-      });
+    return userInfo.shortEncodedPubkey;
+  });
 
-  ValueNotifier<String> get bio$ => LoginManager.instance._userInfo$
+  ValueNotifier<String> get bio$ => userInfo$
       .map((userInfo) => userInfo?.about ?? '');
 
-  ValueNotifier<String> get avatarUrl$ => LoginManager.instance._userInfo$
+  ValueNotifier<String> get avatarUrl$ => userInfo$
       .map((userInfo) => userInfo?.picture ?? '');
+  
+  void updateUserSource(ValueNotifier<UserDBISAR?>? source) {
+    if (_source != null) {
+      _source!.removeListener(_onSrc);
+      _source = null;
+    }
+    
+    _source = source;
+    userInfo$.value = source?.value;
+    source?.addListener(_onSrc);
+  }
+
+  void _onSrc() {
+    userInfo$.value = _source?.value;
+    userInfo$.notifyListeners();
+  }
 
   void updateNickname(String nickname) {
-    LoginManager.instance._userInfo$.value?.name = nickname;
+    userInfo$.value?.name = nickname;
+    userInfo$.notifyListeners();
   }
 }
 
@@ -78,10 +98,7 @@ class LoginManager {
     }
     return currentState.account?.pubkey ?? '';
   }
-
-  // User info management for UI updates (separate from login state)
-  ValueNotifier<UserDBISAR?> _userInfo$ = ValueNotifier<UserDBISAR?>(null);
-
+  
   // Observer management
   final List<LoginManagerObserver> _observers = [];
 
@@ -269,7 +286,7 @@ extension LoginManagerAccount on LoginManager {
 
     // Clear login state
     _state$.value = LoginState();
-    _userInfo$ = ValueNotifier<UserDBISAR?>(null);
+    LoginUserNotifier.instance.updateUserSource(null);
 
     // Circle Logout
     await logoutCircle();
@@ -624,7 +641,7 @@ extension LoginManagerCircle on LoginManager {
 
       // Update state
       if (!isSwitch) {
-        _userInfo$ = ValueNotifier<UserDBISAR?>(null);
+        LoginUserNotifier.instance.updateUserSource(null);
       }
       final updatedState = this.currentState.copyWith(
         account: updatedAccount,
@@ -808,7 +825,7 @@ extension LoginManagerCircle on LoginManager {
       relayGroupsUpdatedCallBack: RelayGroup.sharedInstance.myGroupsUpdatedCallBack,
     );
     await ChatCoreManager().initChatCoreWithConfig(config);
-    _userInfo$ = Account.sharedInstance.getUserNotifier(pubkey);
+    LoginUserNotifier.instance.updateUserSource(Account.sharedInstance.getUserNotifier(pubkey));
     Account.sharedInstance.reloadProfileFromRelay(pubkey);
     Account.sharedInstance.syncFollowingListFromRelay(pubkey, relay: circle.relayUrl);
   }
@@ -828,8 +845,7 @@ extension LoginManagerCircle on LoginManager {
         OXChatBinding.sharedInstance.didReceiveMessageHandler(message);
       });
 
-
-      _userInfo$.value = UserDBISAR(
+      LoginUserNotifier.instance.userInfo$.value = UserDBISAR(
         pubKey: bitchatService.cachedPeerID ?? '',
         name: bitchatService.cachedNickname,
       )..updateEncodedPubkey(bitchatService.cachedPeerID ?? '');
