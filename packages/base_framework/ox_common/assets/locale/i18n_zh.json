@@ -165,5 +165,6 @@
   "relay_info": "中继：{url}",
   "no_relay_required": "无需中继",
   "circle_already_exists": "使用中继 {relay} 的圈子已存在",
-  "bitchat_circle_already_exists": "Bitchat 圈子已存在"
+  "bitchat_circle_already_exists": "Bitchat 圈子已存在",
+  "hint_dont_know_what_to_input": "不知道输入什么？试试："
 }

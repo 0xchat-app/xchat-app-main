@@ -7,6 +7,8 @@ import 'color_token.dart';
 import 'text.dart';
 import 'text_field.dart';
 
+typedef InputControllerBuilder = Widget Function(BuildContext context, TextEditingController controller);
+
 class CLDialog {
   /// Show a bottom sheet input dialog that slides up from the bottom
   /// 
@@ -26,6 +28,8 @@ class CLDialog {
   /// [validator] Optional input validator function
   /// [onConfirm] Async callback when confirm button is pressed, receives input value, returns success boolean
   /// [onCancel] Optional callback when dialog is dismissed
+  /// [belowInputWidget] Optional widget to display below the input field (deprecated, use belowInputBuilder instead)
+  /// [belowInputBuilder] Optional builder function that provides access to TextEditingController
   /// 
   /// Returns the input value if confirmed, null if cancelled
   static Future<String?> showInputDialog({
@@ -39,6 +43,8 @@ class CLDialog {
     String? Function(String?)? validator,
     Future<bool> Function(String)? onConfirm,
     VoidCallback? onCancel,
+    Widget? belowInputWidget,
+    InputControllerBuilder? belowInputBuilder,
   }) async {
     return await showModalBottomSheet<String>(
       context: context,
@@ -54,6 +60,8 @@ class CLDialog {
         validator: validator,
         onConfirm: onConfirm,
         onCancel: onCancel,
+        belowInputWidget: belowInputWidget,
+        belowInputBuilder: belowInputBuilder,
       ),
     );
   }
@@ -71,6 +79,8 @@ class InputBottomSheet extends StatefulWidget {
     this.validator,
     this.onConfirm,
     this.onCancel,
+    this.belowInputWidget,
+    this.belowInputBuilder,
   }) : super(key: key);
 
   final String title;
@@ -82,6 +92,8 @@ class InputBottomSheet extends StatefulWidget {
   final String? Function(String?)? validator;
   final Future<bool> Function(String)? onConfirm;
   final VoidCallback? onCancel;
+  final Widget? belowInputWidget;
+  final InputControllerBuilder? belowInputBuilder;
 
   @override
   State<InputBottomSheet> createState() => _InputBottomSheetState();
@@ -206,6 +218,20 @@ class _InputBottomSheetState extends State<InputBottomSheet> {
                   ),
                 ),
               ).setPaddingOnly(bottom: separatorHeight),
+
+              // Below input widget
+              if (widget.belowInputWidget != null)
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: horizontal),
+                  child: widget.belowInputWidget!,
+                ).setPaddingOnly(bottom: separatorHeight),
+              
+              // Below input builder widget
+              if (widget.belowInputBuilder != null)
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: horizontal),
+                  child: widget.belowInputBuilder!(context, _controller),
+                ).setPaddingOnly(bottom: separatorHeight),
 
               // Buttons
               Padding(

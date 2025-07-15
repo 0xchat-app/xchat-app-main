@@ -9,7 +9,7 @@
   "add_circle": "Kreis hinzufügen",
   "new_paid_circle": "Neuer bezahlter Kreis 💎",
   "join_circle_title": "Kreis hinzufügen",
-  "join_circle_description": "Um einen Kreis hinzuzufügen, geben Sie eine Relais-Adresse oder einen gültigen Einladungslink ein.\nZum Beispiel: wss://groups.nostr.com",
+  "join_circle_description": "Um einen Kreis hinzuzufügen, geben Sie eine Relais-Adresse oder einen gültigen Einladungslink ein.",
   "join_circle_input_label": "Link",
   "add": "Hinzufügen"
 }

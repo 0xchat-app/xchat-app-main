@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/login/login_models.dart';
+import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/ping_utils.dart';
+import 'package:ox_common/navigator/navigator.dart';
+import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 
 /// Predefined circle configuration
@@ -106,6 +109,7 @@ class CircleJoinUtils {
         onConfirm: (input) async {
           return await _processJoinInput(context, input, circleType);
         },
+        belowInputBuilder: (ctx, controller) => _buildHintWidget(ctx, controller),
       );
 
       return result != null;
@@ -113,6 +117,51 @@ class CircleJoinUtils {
       debugPrint('CircleJoinUtils: Error in join circle dialog: $e');
       return false;
     }
+  }
+
+  /// Build hint widget with clickable example address
+  static Widget _buildHintWidget(BuildContext context, TextEditingController controller) {
+    const exampleAddress = 'wss://relay.0xchat.com';
+    return Row(
+      children: [
+        CLIcon(
+          icon: Icons.lightbulb_outline,
+          size: 16.px,
+          color: ColorToken.onSurfaceVariant.of(context),
+        ),
+        SizedBox(width: 8.px),
+        Expanded(
+          child: Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: Localized.text('ox_common.hint_dont_know_what_to_input'),
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    color: ColorToken.onSurfaceVariant.of(context),
+                  ),
+                ),
+                const TextSpan(text: ' '),
+                WidgetSpan(
+                  alignment: PlaceholderAlignment.middle,
+                  child: GestureDetector(
+                    onTap: () {
+                      controller.text = exampleAddress;
+                      controller.selection = TextSelection.fromPosition(
+                        TextPosition(offset: controller.text.length),
+                      );
+                    },
+                    child: CLText.labelMedium(
+                      exampleAddress,
+                      colorToken: ColorToken.primary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   /// Process join input (either URL or short name)

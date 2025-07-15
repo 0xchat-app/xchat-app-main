@@ -9,7 +9,7 @@
   "add_circle": "Add Circle",
   "new_paid_circle": "New Paid Circle \uD83D\uDC8E",
   "join_circle_title": "Add Circle",
-  "join_circle_description": "To add a Circle, enter a relay address or invitation link.\nFor example: enter 'wss://relay.0xchat.com'.",
+  "join_circle_description": "To add a Circle, enter a relay address or invitation link.",
   "join_circle_input_label": "relay address or invitation link",
   "add": "Add"
 }

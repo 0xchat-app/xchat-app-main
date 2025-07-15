@@ -6,7 +6,7 @@
   "add": "Añadir",
   "add_circle": "Añadir círculo",
   "join_circle": "Unirse al círculo",
-  "join_circle_description": "Para añadir un círculo, introduce una dirección de relay o enlace de invitación válido.\nPor ejemplo: wss://groups.nostr.com",
+  "join_circle_description": "Para añadir un círculo, introduce una dirección de relay o enlace de invitación válido.",
   "join_circle_input_label": "Enlace",
   "join_circle_title": "Añadir círculo",
   "join_or_create_circle_now": "Únete o crea un círculo ahora",

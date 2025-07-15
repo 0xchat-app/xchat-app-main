@@ -165,5 +165,6 @@
   "relay_info": "Relay: {url}",
   "no_relay_required": "No relay required",
   "circle_already_exists": "Circle with relay {relay} already exists",
-  "bitchat_circle_already_exists": "Bitchat circle already exists"
+  "bitchat_circle_already_exists": "Bitchat circle already exists",
+  "hint_dont_know_what_to_input": "Don't know what to input? Try:"
 }
