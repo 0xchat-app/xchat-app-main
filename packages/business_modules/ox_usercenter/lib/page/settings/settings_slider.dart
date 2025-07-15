@@ -19,6 +19,7 @@ import 'keys_page.dart';
 import 'circle_detail_page.dart';
 import 'font_size_settings_page.dart';
 import 'profile_settings_page.dart';
+import 'qr_code_display_page.dart';
 
 class SettingSlider extends StatefulWidget {
   const SettingSlider({super.key});
@@ -84,6 +85,11 @@ class SettingSliderState extends State<SettingSlider> {
         icon: ListViewIcon(iconName: 'icon_setting_security.png', package: 'ox_usercenter'),
         title: Localized.text('ox_usercenter.keys'),
         onTap: keysItemOnTap,
+      ),
+      LabelItemModel(
+        icon: ListViewIcon.data(Icons.qr_code),
+        title: 'Share QR Code',
+        onTap: inviteItemOnTap,
       ),
     ];
     
@@ -268,6 +274,13 @@ class SettingSliderState extends State<SettingSlider> {
 
   void keysItemOnTap() {
     OXNavigator.pushPage(context, (_) => KeysPage(previousPageTitle: title,));
+  }
+
+  void inviteItemOnTap() {
+    OXNavigator.pushPage(
+      context, 
+      (context) => QRCodeDisplayPage(previousPageTitle: title),
+    );
   }
 
   void circleItemOnTap() {

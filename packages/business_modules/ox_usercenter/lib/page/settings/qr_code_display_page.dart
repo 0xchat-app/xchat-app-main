@@ -16,6 +16,8 @@ import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:path_provider/path_provider.dart';
 
 enum QRCodeStyle {
   defaultStyle, // Default
@@ -450,10 +452,17 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
   }
 
   Future<void> _shareQRCode() async {
-    // TODO: Implement share functionality
-    CommonToast.instance.show(
-      context, 
-      Localized.text('ox_usercenter.share_coming_soon'),
-    );
+    try {
+      // Share text only
+      await Share.share(
+        '${Localized.text('ox_usercenter.share_qr_code_text')}\n\n$qrCodeData',
+        subject: '${userName} - ${Localized.text('ox_usercenter.share_qr_code_subject')}',
+      );
+    } catch (e) {
+      CommonToast.instance.show(
+        context, 
+        '${Localized.text('ox_usercenter.share_failed')}: $e',
+      );
+    }
   }
 } 

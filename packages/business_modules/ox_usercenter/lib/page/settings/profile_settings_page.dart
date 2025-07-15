@@ -52,11 +52,6 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
             ),
             onTap: _isRefreshing ? null : refreshProfile,
           ),
-          CLButton.icon(
-            isAppBarAction: true,
-            child: const Icon(Icons.qr_code),
-            onTap: showMyQRCode,
-          ),
         ],
       ),
       isSectionListPage: true,
@@ -140,12 +135,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
     OXNavigator.pushPage(context, (_) => BioSettingsPage());
   }
 
-  void showMyQRCode() {
-    OXNavigator.pushPage(
-      context, 
-      (context) => const QRCodeDisplayPage(previousPageTitle: 'Profile'),
-    );
-  }
+
 
   void refreshProfile() async {
     if (_isRefreshing) return;

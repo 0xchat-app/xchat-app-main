@@ -280,9 +280,12 @@
   "dots": "圆点",
   "gradient": "渐变",
   "save_qr_code": "保存二维码",
-  "share_qr_code": "分享二维码",
+  "share_qr_code": "分享",
   "storage_permission_denied": "存储权限被拒绝",
   "qr_code_saved": "二维码已保存到相册",
   "save_failed": "保存失败",
-  "share_coming_soon": "分享功能即将推出"
+  "share_coming_soon": "分享功能即将推出",
+  "share_failed": "分享失败",
+  "share_qr_code_text": "下载0xchat lite，然后在浏览器中打开此链接添加我为好友",
+  "share_qr_code_subject": "二维码"
 }

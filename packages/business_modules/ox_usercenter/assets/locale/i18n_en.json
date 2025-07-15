@@ -281,9 +281,12 @@
   "dots": "Dots",
   "gradient": "Gradient",
   "save_qr_code": "Save QR Code",
-  "share_qr_code": "Share QR Code",
+  "share_qr_code": "Share",
   "storage_permission_denied": "Storage permission denied",
   "qr_code_saved": "QR code saved to gallery",
   "save_failed": "Save failed",
-  "share_coming_soon": "Share feature coming soon"
+  "share_coming_soon": "Share feature coming soon",
+  "share_failed": "Share failed",
+  "share_qr_code_text": "Download 0xchat lite, then open this link in browser to add me as friend",
+  "share_qr_code_subject": "QR Code"
 }
