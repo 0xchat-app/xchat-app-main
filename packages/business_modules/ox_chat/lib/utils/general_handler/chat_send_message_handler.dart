@@ -357,7 +357,7 @@ extension ChatMessageSendEx on ChatGeneralHandler {
 
   Future sendImageMessageWithFile(BuildContext? context, List<File> images) async {
     for (final imageFile in images) {
-      final fileId = await EncodeUtils.generatePartialFileMd5(imageFile);
+      final fileId = await EncodeUtils.generateMultiSampleFileKey(imageFile);
       final bytes = await imageFile.readAsBytes();
       final image = await decodeImageFromList(bytes);
 
@@ -607,7 +607,7 @@ extension ChatMessageSendEx on ChatGeneralHandler {
       if (videoPath.isEmpty) continue;
 
       final videoFile = File(videoPath);
-      final fileId = await EncodeUtils.generatePartialFileMd5(videoFile);
+      final fileId = await EncodeUtils.generateMultiSampleFileKey(videoFile);
 
       File? thumbnailImageFile;
       final thumbPath = videoMedia.thumbPath ?? '';
