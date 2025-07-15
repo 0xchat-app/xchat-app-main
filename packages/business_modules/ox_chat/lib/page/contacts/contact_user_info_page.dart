@@ -9,6 +9,7 @@ import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_common/login/login_manager.dart';
+import 'package:ox_common/widgets/common_loading.dart';
 import '../../utils/chat_session_utils.dart';
 
 class ContactUserInfoPage extends StatefulWidget {
@@ -30,6 +31,7 @@ class ContactUserInfoPage extends StatefulWidget {
 
 class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
   late ValueNotifier<UserDBISAR> user$;
+  bool _isRefreshing = false;
 
   @override
   void initState() {
@@ -48,6 +50,16 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
     return CLScaffold(
       appBar: CLAppBar(
         title: Localized.text('ox_chat.user_detail'),
+        actions: [
+          CLButton.icon(
+            isAppBarAction: true,
+            child: Icon(
+              _isRefreshing ? Icons.refresh : Icons.refresh_outlined,
+              color: _isRefreshing ? Colors.grey : null,
+            ),
+            onTap: _isRefreshing ? null : refreshUserProfile,
+          ),
+        ],
       ),
       isSectionListPage: true,
       body: ValueListenableBuilder(
@@ -159,5 +171,67 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
       user: user$.value,
       isPushWithReplace: true,
     );
+  }
+
+  void refreshUserProfile() async {
+    if (_isRefreshing) return;
+    
+    // Show confirmation dialog
+    final shouldRefreshFromSpecificRelay = await CLAlertDialog.show<bool>(
+      context: context,
+      title: Localized.text('ox_usercenter.refresh_user_profile'),
+      content: Localized.text('ox_usercenter.refresh_user_profile_from_relay_confirm'),
+      actions: [
+        CLAlertAction.cancel(),
+        CLAlertAction<bool>(
+          label: Localized.text('ox_usercenter.confirm'),
+          value: true,
+        ),
+      ],
+    );
+
+    if (shouldRefreshFromSpecificRelay != true) return;
+    
+    setState(() {
+      _isRefreshing = true;
+    });
+
+    try {
+      final pubkey = widget.user?.pubKey ?? widget.pubkey ?? '';
+      if (pubkey.isEmpty) {
+        CommonToast.instance.show(context, Localized.text('ox_chat.user_pubkey_not_found'));
+        return;
+      }
+
+      // Show loading indicator
+      OXLoading.show();
+      
+      // Connect to specific relay as temp type
+      const specificRelay = 'wss://purplepag.es';
+      final connectSuccess = await Connect.sharedInstance.connectRelays([specificRelay], relayKind: RelayKind.temp);
+      
+      if (!connectSuccess) {
+        CommonToast.instance.show(context, '${Localized.text('ox_usercenter.relay_connection_failed')}: $specificRelay');
+        return;
+      }
+      
+      // Reload profile from specific relay
+      await Account.sharedInstance.reloadProfileFromRelay(pubkey, relays: [specificRelay]);
+      
+      // Close temp relay connection after use
+      await Connect.sharedInstance.closeTempConnects([specificRelay]);
+      
+      // Dismiss loading and show success message
+      OXLoading.dismiss();
+      CommonToast.instance.show(context, Localized.text('ox_usercenter.refresh_user_profile_success'));
+      
+    } catch (e) {
+      OXLoading.dismiss();
+      CommonToast.instance.show(context, '${Localized.text('ox_usercenter.refresh_user_profile_failed')}: $e');
+    } finally {
+      setState(() {
+        _isRefreshing = false;
+      });
+    }
   }
 }
