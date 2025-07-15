@@ -354,13 +354,14 @@ class _SessionListWidgetState extends State<SessionListWidget> {
         vertical: 100.px,
       ),
       children: [
-        // Empty state icon using Material Icons
-        CommonImage(
-          iconName: 'image_home_emtyp_circle.png',
-          size: 280.px,
-          package: 'ox_home',
-          isPlatformStyle: true,
-        ),
+          // Empty state icon using Material Icons
+          Icon(
+            Icons.forum,
+            size: 120.px,
+            color: PlatformStyle.isUseMaterial
+                ? Theme.of(context).textTheme.titleMedium?.color
+                : CupertinoTheme.of(context).textTheme.actionSmallTextStyle?.color,
+          ),
 
         // Title
         CLText.titleMedium(

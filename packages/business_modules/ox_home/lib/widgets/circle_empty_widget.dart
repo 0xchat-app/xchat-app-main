@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/component.dart';
-import 'package:ox_common/widgets/common_image.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 
 class CircleEmptyWidget extends StatelessWidget {
@@ -20,12 +20,16 @@ class CircleEmptyWidget extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 16.px),
       child: Column(
         children: [
-          CommonImage(
-            iconName: 'image_home_emtyp_circle.png',
-            size: 280.px,
-            package: 'ox_home',
-            isPlatformStyle: true,
+          // Empty state icon using Material Icons
+          Icon(
+            Icons.diversity_3,
+            size: 120.px,
+            color: PlatformStyle.isUseMaterial
+                ? Theme.of(context).textTheme.titleMedium?.color
+                : CupertinoTheme.of(context).textTheme.actionSmallTextStyle?.color,
           ),
+
+          SizedBox(height: 24.px),
 
           // Title
           CLText.headlineSmall(
