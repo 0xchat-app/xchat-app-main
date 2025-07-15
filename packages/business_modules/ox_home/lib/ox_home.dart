@@ -8,6 +8,7 @@ import 'package:ox_common/utils/custom_uri_helper.dart';
 import 'package:ox_common/utils/scan_utils.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/login/login_models.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_module_service/ox_module_service.dart';
 
 class OxChatHome extends OXFlutterModule {
@@ -104,22 +105,18 @@ class OxChatHome extends OXFlutterModule {
     final primaryRelay = relays.first;
     final relayName = _extractRelayName(primaryRelay);
     
-    final result = await showDialog<bool>(
+    final result = await CLAlertDialog.show<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Join Circle'),
-        content: Text('This user is from circle "$relayName". Would you like to join this circle to chat with them?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text('Join Circle'),
-          ),
-        ],
-      ),
+      title: 'Join Circle',
+      content: 'This user is from circle "$relayName". Would you like to join this circle to chat with them?',
+      actions: [
+        CLAlertAction.cancel(),
+        CLAlertAction<bool>(
+          label: 'Join Circle',
+          value: true,
+          isDefaultAction: true,
+        ),
+      ],
     );
 
     if (result == true) {
@@ -179,18 +176,16 @@ class OxChatHome extends OXFlutterModule {
   }
 
   void _showErrorDialog(BuildContext context, String message) {
-    showDialog(
+    CLAlertDialog.show(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Error'),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text('OK'),
-          ),
-        ],
-      ),
+      title: 'Error',
+      content: message,
+      actions: [
+        CLAlertAction(
+          label: 'OK',
+          isDefaultAction: true,
+        ),
+      ],
     );
   }
 
