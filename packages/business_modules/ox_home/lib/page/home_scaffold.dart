@@ -11,6 +11,7 @@ import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/circle_join_utils.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/widgets/common_toast.dart';
+import 'package:ox_theme/ox_theme.dart';
 
 import 'home_header_components.dart';
 import '../widgets/session_list_widget.dart';
@@ -38,6 +39,7 @@ class _HomeScaffoldState extends State<HomeScaffold> {
 
   Duration get extendBodyDuration => const Duration(milliseconds: 200);
 
+  ValueNotifier<bool> isContrastedChild$ = ValueNotifier(false);
   bool isFirstJoin = false;
 
   @override
@@ -51,56 +53,71 @@ class _HomeScaffoldState extends State<HomeScaffold> {
     return ValueListenableBuilder(
       valueListenable: LoginManager.instance.state$,
       builder: (_, state, __) {
-        final account = state.account;
-        final circles = (account?.circles ?? []).map((e) => e.asViewModel()).toList();
-        selectedCircle$.value = state.currentCircle?.asViewModel();
-
-        components?.dispose();
-        final headerComponents = HomeHeaderComponents(
-          circles: circles,
-          selectedCircle$: selectedCircle$,
-          onCircleSelected: _onCircleSelected,
-          avatarOnTap: _avatarOnTap,
-          nameOnTap: _nameOnTap,
-          addOnTap: _addOnTap,
-          joinOnTap: _handleJoinCircle,
-          paidOnTap: _paidOnTap,
-          isShowExtendBody$: isShowExtendBody$,
-          latencyHandler: _latencyHandler,
-          extendBodyDuration: extendBodyDuration,
-        );
-        components = headerComponents;
-
-        if (PlatformStyle.isUseMaterial) {
-          return Scaffold(
-            key: _scaffoldKey,
-            appBar: headerComponents.buildAppBar(context),
-            drawer: Drawer(
-              width: 332.px,
-              child: OXUserCenterInterface.settingSliderBuilder(context),
-            ),
-            drawerEdgeDragWidth: 50.px,
-            resizeToAvoidBottomInset: false,
-            body: buildBody(headerComponents),
-          );
+        final page = buildPage(state);
+        if (state.hasCircle) {
+          return page;
         }
-        // Cupertino style: simplified, modal sidebar
-        return Scaffold(
-          appBar: headerComponents.buildAppBar(context),
-          backgroundColor: CupertinoColors.systemBackground.resolveFrom(context),
-          resizeToAvoidBottomInset: false,
-          body: buildBody(headerComponents),
+
+        return _buildContrastedMask(
+          notifier: isContrastedChild$,
+          child: page,
         );
       },
     );
   }
 
-  Widget buildBody(HomeHeaderComponents components) {
+  Widget buildPage(LoginState state) {
+    final account = state.account;
+    final circles = (account?.circles ?? []).map((e) => e.asViewModel()).toList();
+    selectedCircle$.value = state.currentCircle?.asViewModel();
+
+    components?.dispose();
+    final headerComponents = HomeHeaderComponents(
+      circles: circles,
+      selectedCircle$: selectedCircle$,
+      onCircleSelected: _onCircleSelected,
+      avatarOnTap: _avatarOnTap,
+      nameOnTap: _nameOnTap,
+      addOnTap: _addOnTap,
+      joinOnTap: _handleJoinCircle,
+      paidOnTap: _paidOnTap,
+      isShowExtendBody$: isShowExtendBody$,
+      latencyHandler: _latencyHandler,
+      extendBodyDuration: extendBodyDuration,
+    );
+    components = headerComponents;
+
+    if (PlatformStyle.isUseMaterial) {
+      return Scaffold(
+        key: _scaffoldKey,
+        appBar: headerComponents.buildAppBar(context),
+        drawer: Drawer(
+          width: 332.px,
+          child: OXUserCenterInterface.settingSliderBuilder(context),
+        ),
+        drawerEdgeDragWidth: 50.px,
+        resizeToAvoidBottomInset: false,
+        body: buildBody(context, headerComponents),
+      );
+    }
+    // Cupertino style: simplified, modal sidebar
+    return Scaffold(
+      appBar: headerComponents.buildAppBar(context),
+      backgroundColor: CupertinoColors.systemBackground.resolveFrom(context),
+      resizeToAvoidBottomInset: false,
+      body: buildBody(context, headerComponents),
+    );
+  }
+
+  Widget buildBody(BuildContext context, HomeHeaderComponents components) {
     return Stack(
       fit: StackFit.expand,
       children: [
         Positioned.fill(
-          child: _buildMainContent(),
+          child: _buildContrastedMask(
+            notifier: isShowExtendBody$,
+            child: _buildMainContent(),
+          )
         ),
         Positioned.fill(
           child: components.buildMask(),
@@ -118,6 +135,36 @@ class _HomeScaffoldState extends State<HomeScaffold> {
                 child: components.buildCircleList(context),
               );
             }
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildContrastedMask({
+    required ValueNotifier<bool> notifier,
+    required Widget child,
+  }) {
+    // ref: CupertinoSheetTransition.delegateTransition
+    return Stack(
+      children: [
+        child,
+        IgnorePointer(
+          child: ValueListenableBuilder(
+            valueListenable: notifier,
+            builder: (context, value, __) {
+              return AnimatedOpacity(
+                opacity: value ? 0.1: 0.0,
+                duration: extendBodyDuration,
+                curve: Curves.linearToEaseOut,
+                child: ColoredBox(
+                  color: ThemeManager.brightness() == Brightness.dark
+                      ? const Color(0xFFc8c8c8)
+                      : const Color(0xFF000000),
+                  child: const SizedBox.expand(),
+                ),
+              );
+            },
           ),
         ),
       ],
@@ -174,8 +221,10 @@ class _HomeScaffoldState extends State<HomeScaffold> {
   }
 
   void _handleJoinCircle() async {
+    isContrastedChild$.value = true;
     debugPrint('HomeScaffold: Join Circle button tapped');
     final isSuccess = await CircleJoinUtils.showJoinCircleDialog(context: context);
+    isContrastedChild$.value = false;
     if (isSuccess) {
       isShowExtendBody$.value = false;
     }
