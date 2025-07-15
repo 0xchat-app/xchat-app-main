@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/login/login_models.dart';
+import 'package:ox_common/navigator/navigator.dart';
+import 'package:ox_common/page/circle_introduction_page.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/ping_utils.dart';
-import 'package:ox_common/navigator/navigator.dart';
-import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 
 /// Predefined circle configuration
@@ -106,6 +106,8 @@ class CircleJoinUtils {
         description: Localized.text('ox_home.join_circle_description'),
         inputLabel: Localized.text('ox_home.join_circle_input_label'),
         confirmText: Localized.text('ox_home.add'),
+        showHintIcon: true,
+        onHintIconTap: () => _showCircleIntroduction(context),
         onConfirm: (input) async {
           return await _processJoinInput(context, input, circleType);
         },
@@ -117,6 +119,19 @@ class CircleJoinUtils {
       debugPrint('CircleJoinUtils: Error in join circle dialog: $e');
       return false;
     }
+  }
+
+  /// Show Circle introduction page to help users understand what Circles are
+  ///
+  /// This opens a dedicated page explaining the concept of Circles in 0xChat,
+  /// providing guidance for new users who may not be familiar with Nostr relays.
+  ///
+  /// [context] BuildContext for navigation
+  static void _showCircleIntroduction(BuildContext context) {
+    OXNavigator.pushPage(
+      context,
+      (context) => const CircleIntroductionPage(),
+    );
   }
 
   /// Build hint widget with clickable example address

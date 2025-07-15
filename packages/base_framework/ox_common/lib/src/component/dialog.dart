@@ -30,6 +30,8 @@ class CLDialog {
   /// [onCancel] Optional callback when dialog is dismissed
   /// [belowInputWidget] Optional widget to display below the input field (deprecated, use belowInputBuilder instead)
   /// [belowInputBuilder] Optional builder function that provides access to TextEditingController
+  /// [showHintIcon] Whether to show hint icon next to title
+  /// [onHintIconTap] Callback when hint icon is tapped
   /// 
   /// Returns the input value if confirmed, null if cancelled
   static Future<String?> showInputDialog({
@@ -45,6 +47,8 @@ class CLDialog {
     VoidCallback? onCancel,
     Widget? belowInputWidget,
     InputControllerBuilder? belowInputBuilder,
+    bool showHintIcon = false,
+    VoidCallback? onHintIconTap,
   }) async {
     return await showModalBottomSheet<String>(
       context: context,
@@ -62,6 +66,8 @@ class CLDialog {
         onCancel: onCancel,
         belowInputWidget: belowInputWidget,
         belowInputBuilder: belowInputBuilder,
+        showHintIcon: showHintIcon,
+        onHintIconTap: onHintIconTap,
       ),
     );
   }
@@ -81,6 +87,8 @@ class InputBottomSheet extends StatefulWidget {
     this.onCancel,
     this.belowInputWidget,
     this.belowInputBuilder,
+    this.showHintIcon = false,
+    this.onHintIconTap,
   }) : super(key: key);
 
   final String title;
@@ -94,6 +102,8 @@ class InputBottomSheet extends StatefulWidget {
   final VoidCallback? onCancel;
   final Widget? belowInputWidget;
   final InputControllerBuilder? belowInputBuilder;
+  final bool showHintIcon;
+  final VoidCallback? onHintIconTap;
 
   @override
   State<InputBottomSheet> createState() => _InputBottomSheetState();
@@ -149,13 +159,24 @@ class _InputBottomSheetState extends State<InputBottomSheet> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header with title and close button
+              // Header with title, hint icon, and close button
               Row(
                 children: [
                   Expanded(
-                    child: CLText.headlineSmall(
-                      widget.title,
-                    ).setPadding(EdgeInsets.all(horizontal)),
+                    child: Row(
+                      children: [
+                        Flexible(
+                          child: CLText.headlineSmall(
+                            widget.title,
+                          ).setPadding(EdgeInsets.only(left: horizontal)),
+                        ),
+                        if (widget.showHintIcon)
+                          CLButton.icon(
+                            icon: Icons.help_outline,
+                            onTap: widget.onHintIconTap,
+                          )
+                      ],
+                    ),
                   ),
                   GestureDetector(
                     behavior: HitTestBehavior.translucent,
