@@ -5,7 +5,6 @@ import 'package:chatcore/chat-core.dart';
 import 'package:isar/isar.dart';
 import 'package:ox_common/login/login_models.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
-import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_common/utils/chat_prompt_tone.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
 import 'package:ox_common/utils/ox_chat_observer.dart';

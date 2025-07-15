@@ -59,20 +59,25 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
     userNotifier = widget.otherUser ?? Account.sharedInstance.me!;
     userName = userNotifier.name ?? userNotifier.shortEncodedPubkey;
     
-    // Generate QR code data with Nostr protocol
+    // Generate QR code data with Nostr protocol using encodeProfile
     List<String> relayList;
     if (widget.otherUser != null) {
       // For other users, use empty relay list or their known relays
       relayList = [];
     } else {
-      // For current user, use their relay list
-      relayList = Account.sharedInstance.getMyGeneralRelayList().map((e) => e.url).take(5).toList();
+      // For current user, use circle relay if available, otherwise use general relay list
+      final circleRelays = Account.sharedInstance.getCurrentCircleRelay();
+      if (circleRelays.isNotEmpty) {
+        relayList = circleRelays;
+      } else {
+        relayList = Account.sharedInstance.getMyGeneralRelayList().map((e) => e.url).take(5).toList();
+      }
     }
     final nostrValue = Account.encodeProfile(
       userNotifier.pubKey, 
       relayList,
     );
-    qrCodeData = CustomURIHelper.createNostrURI(nostrValue);
+    qrCodeData = nostrValue;
 
     // Initialize QR code and image
     qrCode = QrCode.fromData(
