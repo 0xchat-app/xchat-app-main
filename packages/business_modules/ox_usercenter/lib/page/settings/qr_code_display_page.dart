@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
+import 'package:nostr_core_dart/nostr.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
@@ -73,11 +74,9 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
         relayList = Account.sharedInstance.getMyGeneralRelayList().map((e) => e.url).take(5).toList();
       }
     }
-    final nostrValue = Account.encodeProfile(
-      userNotifier.pubKey, 
-      relayList,
-    );
-    qrCodeData = nostrValue;
+    // Generate nprofile with custom oxchatlite scheme
+    final profile = Nip19.encodeShareableEntity('nprofile', userNotifier.pubKey, relayList, null, null);
+    qrCodeData = 'oxchatlite:$profile';
 
     // Initialize QR code and image
     qrCode = QrCode.fromData(

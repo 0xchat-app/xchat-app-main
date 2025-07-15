@@ -15,7 +15,8 @@ class OxChatHome extends OXFlutterModule {
   Future<void> setup() async {
     await super.setup();
     SchemeHelper.defaultHandler = nostrHandler;
-    SchemeHelper.register(CustomURIHelper.nostrAction, nostrHandler);
+    SchemeHelper.register('nostr', nostrHandler);
+    SchemeHelper.register('nprofile', nostrHandler);
   }
 
   @override
@@ -28,7 +29,9 @@ class OxChatHome extends OXFlutterModule {
     if(context == null) return;
 
     String nostrString = '';
-    if (action == CustomURIHelper.nostrAction) {
+    if (action == 'nostr') {
+      nostrString = queryParameters['value'] ?? '';
+    } else if (action == 'nprofile') {
       nostrString = queryParameters['value'] ?? '';
     } else {
       nostrString = action;

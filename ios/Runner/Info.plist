@@ -241,11 +241,12 @@
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
 			<string>ox</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>oxchat</string>
-				<string>nostr+walletconnect</string>
-			</array>
+					<key>CFBundleURLSchemes</key>
+		<array>
+			<string>oxchatlite</string>
+			<string>nostr</string>
+			<string>nostr+walletconnect</string>
+		</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>

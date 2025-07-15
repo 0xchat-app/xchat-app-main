@@ -32,15 +32,49 @@ class SchemeHelper {
 
     try {
       final uriObj = Uri.parse(uri);
-      if (uriObj.scheme != CommonConstant.APP_SCHEME) return ;
+      // Handle oxchatlite (main), nostr schemes
+      if (uriObj.scheme != 'oxchatlite' && uriObj.scheme != 'nostr') return ;
+
+      // For oxchatlite scheme (main app scheme), extract the nprofile part
+      if (uriObj.scheme == 'oxchatlite') {
+        final nprofile = uriObj.path.isNotEmpty ? uriObj.path.substring(1) : ''; // Remove leading slash
+        if (nprofile.isNotEmpty) {
+          // Handle nprofile directly
+          defaultHandler?.call(uri, 'nprofile', {'value': nprofile});
+          return;
+        }
+      }
+
+      // For nostr scheme, extract the content part
+      if (uriObj.scheme == 'nostr') {
+        final nostrContent = uriObj.path.isNotEmpty ? uriObj.path.substring(1) : ''; // Remove leading slash
+        if (nostrContent.isNotEmpty) {
+          // Handle nostr content directly
+          defaultHandler?.call(uri, 'nostr', {'value': nostrContent});
+          return;
+        }
+      }
 
       action = uriObj.host.toLowerCase();
       query = uriObj.queryParameters;
     } catch (_) {
-      final appScheme = '${CommonConstant.APP_SCHEME}://';
-      if (uri.startsWith(appScheme)) {
-        action = uri.replaceFirst(appScheme, '');
-        uri = appScheme;
+      final liteScheme = 'oxchatlite://';
+      final nostrScheme = 'nostr://';
+      
+      if (uri.startsWith(liteScheme)) {
+        final nprofile = uri.replaceFirst(liteScheme, '');
+        if (nprofile.isNotEmpty) {
+          // Handle nprofile directly (main app scheme)
+          defaultHandler?.call(uri, 'nprofile', {'value': nprofile});
+          return;
+        }
+      } else if (uri.startsWith(nostrScheme)) {
+        final nostrContent = uri.replaceFirst(nostrScheme, '');
+        if (nostrContent.isNotEmpty) {
+          // Handle nostr content directly
+          defaultHandler?.call(uri, 'nostr', {'value': nostrContent});
+          return;
+        }
       }
     }
 
