@@ -271,26 +271,7 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
         // Show search results
         final sections = <SectionListViewItem>[
           SectionListViewItem(
-            data: searchResult.results.map((user) => CustomItemModel(
-              leading: OXUserAvatar(
-                user: user,
-                size: 40.px,
-                isClickable: false,
-              ),
-              titleWidget: CLText.bodyMedium(
-                _getUserShowName(user),
-                colorToken: ColorToken.onSurface,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              subtitleWidget: CLText.bodySmall(
-                user.encodedPubkey,
-                colorToken: ColorToken.onSurfaceVariant,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              onTap: () => _onUserTap(user),
-            )).toList(),
+            data: searchResult.results.map((user) => userListItem(user)).toList(),
           ),
         ];
 
