@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_cache_manager/ox_cache_manager.dart';
@@ -832,6 +834,8 @@ extension LoginManagerCircle on LoginManager {
 
   /// Initialize and start BitchatService for bitchat circles
   Future<void> _initializeBitchatService(AccountModel account, Circle circle) async {
+    if(Platform.isAndroid) return;
+
     try {
       final bitchatService = BitchatService();
       
