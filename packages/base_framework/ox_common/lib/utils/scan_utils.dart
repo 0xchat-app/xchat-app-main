@@ -14,6 +14,7 @@ import 'package:ox_common/utils//string_utils.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_module_service/ox_module_service.dart';
+import 'package:ox_common/log_util.dart';
 
 class ScanUtils {
   static Future<void> analysis(BuildContext context, String url) async {
@@ -23,14 +24,20 @@ class ScanUtils {
       return;
     }
 
+    // Remove oxchatlite:// prefix if present
+    if (url.startsWith('oxchatlite://')) {
+      url = url.substring('oxchatlite://'.length);
+    }
+
     try {
       final uri = Uri.parse(url);
-      if (uri.pathSegments.last == CustomURIHelper.nostrAction) {
+      
+      if (uri.pathSegments.isNotEmpty && uri.pathSegments.last == CustomURIHelper.nostrAction) {
         url = uri.queryParameters['value'] ?? '';
-      } else {
+      } else if (uri.pathSegments.isNotEmpty) {
         url = uri.pathSegments.last;
       }
-    } catch (_) {
+    } catch (e) {
       String shareAppLinkDomain = CommonConstant.SHARE_APP_LINK_DOMAIN + '/';
       if (url.startsWith(shareAppLinkDomain)) {
         url = url.substring(shareAppLinkDomain.length);
@@ -42,10 +49,11 @@ class ScanUtils {
       ScanAnalysisHandlerEx.scanGroupHandler,
       ScanAnalysisHandlerEx.scanNWCHandler,
     ];
+    
     for (var handler in handlers) {
       if (await handler.matcher(url)) {
         handler.action(url, context);
-        return ;
+        return;
       }
     }
   }
@@ -63,8 +71,18 @@ extension ScanAnalysisHandlerEx on ScanUtils {
     List<String> relaysList = (map['relays'] ?? []).cast<String>();
     if (relaysList.isEmpty) return true;
     final newRelay = relaysList.first.replaceFirst(RegExp(r'/+$'), '');
-    final relayAddressList = Account.sharedInstance.getMyGeneralRelayList().map((e) => e.url).toList();
-    if (relayAddressList.contains(newRelay)) return true;
+    
+    // Get current circle relay
+    final circleRelays = Account.sharedInstance.getCurrentCircleRelay();
+    
+    // Also check currently connected relays as fallback
+    final connectedRelays = Connect.sharedInstance.relays();
+    
+    // Check if relay is already available in circle or connected relays
+    bool relayExists = circleRelays.contains(newRelay) ||
+                      connectedRelays.contains(newRelay);
+    
+    if (relayExists) return true;
 
     final completer = Completer<bool>();
     OXCommonHintDialog.show(context,
@@ -90,10 +108,11 @@ extension ScanAnalysisHandlerEx on ScanUtils {
 
   static ScanAnalysisHandler scanUserHandler = ScanAnalysisHandler(
     matcher: (String str) {
-      return str.startsWith('nprofile') ||
+      bool matches = str.startsWith('nprofile') ||
           str.startsWith('nostr:nprofile') ||
           str.startsWith('nostr:npub') ||
           str.startsWith('npub');
+      return matches;
     },
     action: (String str, BuildContext context) async {
       final failedHandle = () {
@@ -101,13 +120,22 @@ extension ScanAnalysisHandlerEx on ScanUtils {
       };
 
       final data = Account.decodeProfile(str);
-      if (data == null || data.isEmpty) return failedHandle();
+      
+      if (data == null || data.isEmpty) {
+        return failedHandle();
+      }
 
-      if (!await _tryHandleRelaysFromMap(data, context)) return true;
+      if (!await _tryHandleRelaysFromMap(data, context)) {
+        return true;
+      }
 
       final pubkey = data['pubkey'] as String? ?? '';
+      
       UserDBISAR? user = await Account.sharedInstance.getUserInfo(pubkey);
-      if (user == null) return failedHandle();
+      
+      if (user == null) {
+        return failedHandle();
+      }
 
       OXModuleService.pushPage(context, 'ox_chat', 'ContactUserInfoPage', {
         'pubkey': user.pubKey,

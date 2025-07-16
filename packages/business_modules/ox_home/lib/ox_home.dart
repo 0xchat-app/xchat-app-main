@@ -10,6 +10,7 @@ import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/login/login_models.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_module_service/ox_module_service.dart';
+import 'package:ox_common/log_util.dart';
 
 class OxChatHome extends OXFlutterModule {
 
@@ -22,6 +23,7 @@ class OxChatHome extends OXFlutterModule {
     SchemeHelper.defaultHandler = nostrHandler;
     SchemeHelper.register('nostr', nostrHandler);
     SchemeHelper.register('nprofile', nostrHandler);
+    SchemeHelper.register('oxchatlite', nostrHandler);
   }
 
   @override
@@ -43,8 +45,8 @@ class OxChatHome extends OXFlutterModule {
     }
     if (nostrString.isEmpty) return ;
 
-    // Special handling for oxchatlite scheme nprofile
-    if (scheme.startsWith('oxchatlite://nprofile')) {
+    // Special handling for oxchatlite scheme
+    if (scheme == 'oxchatlite') {
       // Extract the nprofile part from the full URL
       final nprofilePart = nostrString.replaceFirst('oxchatlite://', '').replaceFirst('//', '');
       await _handleOxchatliteNprofile(context, nprofilePart);
@@ -58,6 +60,7 @@ class OxChatHome extends OXFlutterModule {
     try {
       // Decode nprofile to get pubkey and relays
       final data = Account.decodeProfile(nprofileString);
+      
       if (data == null || data.isEmpty) {
         _showErrorDialog(context, 'Invalid nprofile format');
         return;
