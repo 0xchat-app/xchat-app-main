@@ -9,6 +9,7 @@ import 'package:ox_common/component.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
+import 'package:ox_common/ox_common.dart';
 
 ///Title: permission_utils
 ///Copyright: Copyright (c) 2018
@@ -40,22 +41,65 @@ class PermissionUtils{
   static Future<bool> getPhotosPermission(BuildContext context, {int type = 1}) async {
     DeviceInfoPlugin plugin = DeviceInfoPlugin();
     bool permissionGranted = false;
-    if (Platform.isAndroid && (await plugin.androidInfo).version.sdkInt < 33) {
-      PermissionStatus storageStatus =await Permission.storage.request();
-      if (storageStatus.isGranted) {
-        permissionGranted = true;
-      } else if (storageStatus.isPermanentlyDenied) {
-        await openAppSettings();
-      } else if (storageStatus.isDenied) {
-        permissionGranted = false;
+    if (Platform.isAndroid) {
+      if ((await plugin.androidInfo).version.sdkInt >= 34) {
+        // Android 14+ uses new media permissions
+        Map<String, bool> result = await OXCommon.request34MediaPermission(type);
+        bool readMediaImagesGranted = result['READ_MEDIA_IMAGES'] ?? false;
+        bool readMediaVideoGranted = result['READ_MEDIA_VIDEO'] ?? false;
+        bool readMediaVisualUserSelectedGranted = result['READ_MEDIA_VISUAL_USER_SELECTED'] ?? false;
+        
+        if (type == 1) {
+          permissionGranted = readMediaImagesGranted || readMediaVisualUserSelectedGranted;
+        } else {
+          permissionGranted = readMediaVideoGranted || readMediaVisualUserSelectedGranted;
+        }
+      } else if ((await plugin.androidInfo).version.sdkInt >= 33) {
+        // Android 13 uses photos/videos permission
+        PermissionStatus status = await Permission.photos.request();
+        if (Platform.isAndroid && type == 2) {
+          status = await Permission.videos.request();
+        }
+        if (status.isGranted || status.isLimited) {
+          permissionGranted = true;
+        } else if (status.isPermanentlyDenied) {
+          final result = await CLAlertDialog.show<bool>(
+            context: context,
+            title: Localized.text('ox_common.tips'),
+            content: Localized.text('ox_common.str_grant_permission_photo_hint'),
+            actions: [
+              CLAlertAction.cancel(),
+              CLAlertAction<bool>(
+                label: Localized.text('ox_common.str_go_to_settings'),
+                value: true,
+                isDefaultAction: true,
+              ),
+            ],
+          );
+          
+          if (result == true) {
+            await openAppSettings();
+          }
+          permissionGranted = false;
+        } else if (status.isDenied) {
+          permissionGranted = false;
+        }
+      } else {
+        // Android 12 and below uses storage permission
+        PermissionStatus storageStatus = await Permission.storage.request();
+        if (storageStatus.isGranted) {
+          permissionGranted = true;
+        } else if (storageStatus.isPermanentlyDenied) {
+          await openAppSettings();
+        } else if (storageStatus.isDenied) {
+          permissionGranted = false;
+        }
       }
     } else if(PlatformUtils.isDesktop) {
       permissionGranted = true;
-    }else {
+    } else {
+      // iOS uses photos permission
       PermissionStatus status = await Permission.photos.request();
-      if (Platform.isAndroid && type == 2 ) {
-        status = await Permission.videos.request();
-      }
       if (status.isGranted || status.isLimited) {
         permissionGranted = true;
       } else if (status.isPermanentlyDenied) {

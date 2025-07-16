@@ -18,6 +18,9 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:ox_common/ox_common.dart';
+import 'package:ox_common/utils/permission_utils.dart';
 
 enum QRCodeStyle {
   defaultStyle, // Default
@@ -395,13 +398,10 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
 
   Future<void> _saveQRCode() async {
     try {
-      // Request storage permission
-      final permission = Platform.isAndroid
-          ? Permission.storage
-          : Permission.photos;
+      // Request appropriate permissions using existing utility method
+      bool permissionGranted = await PermissionUtils.getPhotosPermission(context, type: 1);
 
-      final status = await permission.request();
-      if (!status.isGranted) {
+      if (!permissionGranted) {
         CommonToast.instance.show(
           context, 
           Localized.text('ox_usercenter.storage_permission_denied'),
