@@ -39,13 +39,6 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
     prepareData();
   }
 
-  @override
-  void dispose() {
-    // Dispose the ValueNotifier to prevent memory leaks
-    user$.dispose();
-    super.dispose();
-  }
-
   void prepareData() {
     final pubkey = widget.user?.pubKey ?? widget.pubkey ?? '';
     user$ = Account.sharedInstance.getUserNotifier(pubkey);
