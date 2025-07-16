@@ -115,6 +115,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
   }
 
   void editPhotoOnTap() async {
+    if (!mounted) return;
     // Use the new avatar display page with static open method
     await AvatarDisplayPage.open(
       context,
@@ -124,7 +125,9 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
     );
     
     // The page handles avatar updates internally, so we just refresh the UI
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   void nickNameOnTap() {
@@ -156,6 +159,9 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
 
     if (shouldRefreshFromSpecificRelay != true) return;
     
+    // Check if widget is still mounted before calling setState
+    if (!mounted) return;
+    
     setState(() {
       _isRefreshing = true;
     });
@@ -163,6 +169,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
     try {
       final currentUser = LoginManager.instance.currentState.account;
       if (currentUser == null) {
+        if (!mounted) return;
         CommonToast.instance.show(context, Localized.text('ox_usercenter.user_not_found'));
         return;
       }
@@ -175,6 +182,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
       final connectSuccess = await Connect.sharedInstance.connectRelays([specificRelay], relayKind: RelayKind.temp);
       
       if (!connectSuccess) {
+        if (!mounted) return;
         CommonToast.instance.show(context, '${Localized.text('ox_usercenter.relay_connection_failed')}: $specificRelay');
         return;
       }
@@ -187,15 +195,20 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
       
       // Dismiss loading and show success message
       OXLoading.dismiss();
+      if (!mounted) return;
       CommonToast.instance.show(context, Localized.text('ox_usercenter.refresh_profile_success'));
       
     } catch (e) {
       OXLoading.dismiss();
+      if (!mounted) return;
       CommonToast.instance.show(context, '${Localized.text('ox_usercenter.refresh_profile_failed')}: $e');
     } finally {
-      setState(() {
-        _isRefreshing = false;
-      });
+      // Check if widget is still mounted before calling setState
+      if (mounted) {
+        setState(() {
+          _isRefreshing = false;
+        });
+      }
     }
   }
 }

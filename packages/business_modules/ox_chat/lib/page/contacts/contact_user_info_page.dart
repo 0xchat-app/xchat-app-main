@@ -39,6 +39,13 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
     prepareData();
   }
 
+  @override
+  void dispose() {
+    // Dispose the ValueNotifier to prevent memory leaks
+    user$.dispose();
+    super.dispose();
+  }
+
   void prepareData() {
     final pubkey = widget.user?.pubKey ?? widget.pubkey ?? '';
     user$ = Account.sharedInstance.getUserNotifier(pubkey);
@@ -159,6 +166,7 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
 
   void _copyToClipboard(String text, String label) {
     Clipboard.setData(ClipboardData(text: text));
+    if (!mounted) return;
     CommonToast.instance.show(
       context, 
       '$label ${Localized.text('ox_common.copied_to_clipboard')}',
@@ -166,6 +174,7 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
   }
 
   void _sendMessage() async {
+    if (!mounted) return;
     await ChatSessionUtils.createSecretChatWithConfirmation(
       context: context,
       user: user$.value,
@@ -192,6 +201,9 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
 
     if (shouldRefreshFromSpecificRelay != true) return;
     
+    // Check if widget is still mounted before calling setState
+    if (!mounted) return;
+    
     setState(() {
       _isRefreshing = true;
     });
@@ -199,6 +211,7 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
     try {
       final pubkey = widget.user?.pubKey ?? widget.pubkey ?? '';
       if (pubkey.isEmpty) {
+        if (!mounted) return;
         CommonToast.instance.show(context, Localized.text('ox_chat.user_pubkey_not_found'));
         return;
       }
@@ -211,6 +224,7 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
       final connectSuccess = await Connect.sharedInstance.connectRelays([specificRelay], relayKind: RelayKind.temp);
       
       if (!connectSuccess) {
+        if (!mounted) return;
         CommonToast.instance.show(context, '${Localized.text('ox_usercenter.relay_connection_failed')}: $specificRelay');
         return;
       }
@@ -223,15 +237,20 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
       
       // Dismiss loading and show success message
       OXLoading.dismiss();
+      if (!mounted) return;
       CommonToast.instance.show(context, Localized.text('ox_usercenter.refresh_user_profile_success'));
       
     } catch (e) {
       OXLoading.dismiss();
+      if (!mounted) return;
       CommonToast.instance.show(context, '${Localized.text('ox_usercenter.refresh_user_profile_failed')}: $e');
     } finally {
-      setState(() {
-        _isRefreshing = false;
-      });
+      // Check if widget is still mounted before calling setState
+      if (mounted) {
+        setState(() {
+          _isRefreshing = false;
+        });
+      }
     }
   }
 }

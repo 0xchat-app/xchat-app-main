@@ -157,15 +157,18 @@ class _GroupAddMembersPageState extends State<GroupAddMembersPage> {
   }
 
   void _onSelectionChanged(List<SelectableUser> selectedUsers) {
-    setState(() {
-      _selectedUsers = selectedUsers;
-    });
+    if (mounted) {
+      setState(() {
+        _selectedUsers = selectedUsers;
+      });
+    }
   }
 
 
 
   Future<void> _addSelectedMembers() async {
     if (_selectedUsers.isEmpty) {
+      if (!mounted) return;
       CommonToast.instance.show(context, Localized.text('ox_chat.create_group_select_toast'));
       return;
     }
@@ -186,13 +189,16 @@ class _GroupAddMembersPageState extends State<GroupAddMembersPage> {
         final notifier = Groups.sharedInstance.getPrivateGroupNotifier(widget.groupInfo.privateGroupId);
         notifier.value = result;
 
+        if (!mounted) return;
         CommonToast.instance.show(context, Localized.text('ox_chat.add_member_success_tips'));
         OXNavigator.pop(context, true);
       } else {
+        if (!mounted) return;
         CommonToast.instance.show(context, Localized.text('ox_chat.add_member_fail_tips'));
       }
     } catch (e) {
       await OXLoading.dismiss();
+      if (!mounted) return;
       CommonToast.instance.show(context, 'Failed to add members: $e');
     }
   }

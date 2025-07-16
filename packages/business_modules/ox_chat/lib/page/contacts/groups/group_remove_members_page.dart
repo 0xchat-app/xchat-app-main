@@ -53,9 +53,11 @@ class _GroupRemoveMembersPageState extends State<GroupRemoveMembersPage> {
   }
 
   void _onSelectionChanged(List<SelectableUser> selectedUsers) {
-    setState(() {
-      _selectedUsers = selectedUsers;
-    });
+    if (mounted) {
+      setState(() {
+        _selectedUsers = selectedUsers;
+      });
+    }
   }
 
   String _getUserDisplayName(UserDBISAR user) {
@@ -72,6 +74,7 @@ class _GroupRemoveMembersPageState extends State<GroupRemoveMembersPage> {
 
   Future<void> _removeSelectedMembers() async {
     if (_selectedUsers.isEmpty) {
+      if (!mounted) return;
       CommonToast.instance.show(context, Localized.text('ox_chat.select_at_least_one_member'));
       return;
     }
@@ -110,13 +113,16 @@ class _GroupRemoveMembersPageState extends State<GroupRemoveMembersPage> {
         final notifier = Groups.sharedInstance.getPrivateGroupNotifier(widget.groupInfo.privateGroupId);
         notifier.value = result;
         
+        if (!mounted) return;
         CommonToast.instance.show(context, Localized.text('ox_chat.remove_member_success_tips'));
         OXNavigator.pop(context, true);
       } else {
+        if (!mounted) return;
         CommonToast.instance.show(context, Localized.text('ox_chat.remove_member_fail_tips'));
       }
     } catch (e) {
       await OXLoading.dismiss();
+      if (!mounted) return;
       CommonToast.instance.show(context, 'Failed to remove members: $e');
     }
   }
