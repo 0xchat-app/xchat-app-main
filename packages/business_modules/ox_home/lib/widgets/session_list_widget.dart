@@ -363,7 +363,7 @@ class _SessionListWidgetState extends State<SessionListWidget> {
                 Icons.forum_outlined,
                 size: 120.px,
                 color: PlatformStyle.isUseMaterial
-                    ? Theme.of(context).textTheme.titleMedium?.color
+                    ? ColorToken.primary.of(context)
                     : CupertinoTheme.of(context).textTheme.actionSmallTextStyle?.color,
               ),
 
