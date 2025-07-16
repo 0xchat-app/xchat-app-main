@@ -46,4 +46,11 @@ class CLScaffold extends StatelessWidget {
   Color? get defaultCupertinoPageBgColor {
     return isSectionListPage ? CupertinoColors.systemGroupedBackground : null;
   }
+
+  static Color defaultPageBgColor(BuildContext context, bool isSectionListPage) {
+    if (!PlatformStyle.isUseMaterial && isSectionListPage) {
+      return CupertinoColors.systemGroupedBackground;
+    }
+    return Theme.of(context).scaffoldBackgroundColor;
+  }
 }

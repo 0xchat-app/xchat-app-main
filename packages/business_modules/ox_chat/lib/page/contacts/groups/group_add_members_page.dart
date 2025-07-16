@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:chatcore/chat-core.dart';
+import 'package:ox_chat/utils/chat_session_utils.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/navigator/navigator.dart';
@@ -164,8 +165,6 @@ class _GroupAddMembersPageState extends State<GroupAddMembersPage> {
     }
   }
 
-
-
   Future<void> _addSelectedMembers() async {
     if (_selectedUsers.isEmpty) {
       if (!mounted) return;
@@ -180,6 +179,12 @@ class _GroupAddMembersPageState extends State<GroupAddMembersPage> {
       final result = await Groups.sharedInstance.addMembersToPrivateGroup(
         widget.groupInfo.privateGroupId,
         memberPubkeys,
+        onKeyPackageSelection: (pubkey, availableKeyPackages) =>
+            ChatSessionUtils.onKeyPackageSelection(
+              context: context,
+              pubkey: pubkey,
+              availableKeyPackages: availableKeyPackages,
+            ),
       );
 
       await OXLoading.dismiss();

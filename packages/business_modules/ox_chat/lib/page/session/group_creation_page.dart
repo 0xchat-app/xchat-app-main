@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:chatcore/chat-core.dart';
+import 'package:ox_chat/utils/chat_session_utils.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
-import 'package:ox_common/model/chat_session_model_isar.dart';
-import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
-import 'package:ox_common/utils/theme_color.dart';
-import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/widgets/common_toast.dart';
+import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_common/widgets/multi_user_selector.dart';
+import 'package:ox_common/model/chat_session_model_isar.dart';
+import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_localizable/ox_localizable.dart';
-import 'package:chatcore/chat-core.dart';
 
 import 'chat_message_page.dart';
 
 class GroupCreationPage extends StatefulWidget {
-  final List<SelectableUser> selectedUsers;
-
   const GroupCreationPage({
     super.key,
     required this.selectedUsers,
   });
+
+  final List<SelectableUser> selectedUsers;
 
   @override
   State<GroupCreationPage> createState() => _GroupCreationPageState();
@@ -60,7 +60,7 @@ class _GroupCreationPageState extends State<GroupCreationPage> {
         title: Localized.text('ox_chat.str_new_group'),
         actions: [
           CLButton.text(
-            text: Localized.text('ox_common.create'),
+            text: Localized.text('ox_chat.next'),
             onTap: _onCreateGroup,
           ),
         ],
@@ -83,7 +83,7 @@ class _GroupCreationPageState extends State<GroupCreationPage> {
     return Container(
       padding: EdgeInsets.all(16.px),
       decoration: BoxDecoration(
-        color: ThemeColor.color190,
+        color: ColorToken.surfaceContainer.of(context),
         borderRadius: BorderRadius.circular(12.px),
       ),
       child: Row(
@@ -95,7 +95,7 @@ class _GroupCreationPageState extends State<GroupCreationPage> {
               width: 64.px,
               height: 64.px,
               decoration: BoxDecoration(
-                color: ThemeColor.color180,
+                color: ColorToken.surfaceContainerHigh.of(context),
                 borderRadius: BorderRadius.circular(32.px),
               ),
               child: _groupAvatarUrl != null
@@ -111,7 +111,7 @@ class _GroupCreationPageState extends State<GroupCreationPage> {
                   : Icon(
                       Icons.camera_alt,
                       size: 24.px,
-                      color: ThemeColor.color100,
+                      color: ColorToken.onSurfaceVariant.of(context),
                     ),
             ),
           ),
@@ -122,7 +122,7 @@ class _GroupCreationPageState extends State<GroupCreationPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CLText.bodyMedium(
-                  Localized.text('ox_chat.group_name'),
+                  Localized.text('ox_chat.group_name_item'),
                   colorToken: ColorToken.onSurfaceVariant,
                 ),
                 SizedBox(height: 8.px),
@@ -150,7 +150,7 @@ class _GroupCreationPageState extends State<GroupCreationPage> {
         SizedBox(height: 12.px),
         Container(
           decoration: BoxDecoration(
-            color: ThemeColor.color190,
+            color: ColorToken.surfaceContainer.of(context),
             borderRadius: BorderRadius.circular(12.px),
           ),
           child: Column(
@@ -228,7 +228,7 @@ class _GroupCreationPageState extends State<GroupCreationPage> {
     }
 
     final myPubkey = LoginManager.instance.currentPubkey;
-    if (myPubkey == null || myPubkey.isEmpty) {
+    if (myPubkey.isEmpty) {
       CommonToast.instance.show(context, 'Current account is null');
       return;
     }
@@ -246,13 +246,19 @@ class _GroupCreationPageState extends State<GroupCreationPage> {
       final memberPubkeys = widget.selectedUsers.map((u) => u.id).toList();
       memberPubkeys.add(myPubkey);
 
-      // Create MLS group
+      // Create MLS group with key package selection callback
       GroupDBISAR? groupDB = await Groups.sharedInstance.createMLSGroup(
         groupName,
         '', // Group description
         memberPubkeys,
         [myPubkey], // Admin list
         [circle.relayUrl],
+        onKeyPackageSelection: (pubkey, availableKeyPackages) =>
+          ChatSessionUtils.onKeyPackageSelection(
+            context: context,
+            pubkey: pubkey,
+            availableKeyPackages: availableKeyPackages,
+          ),
       );
 
       await OXLoading.dismiss();

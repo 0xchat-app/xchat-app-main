@@ -8,6 +8,7 @@ class SectionListViewItem {
     required this.data,
     String? header,
     Widget? headerWidget,
+    this.margin,
     this.isEditing = false,
     this.onDelete,
   }) : headerWidget = headerWidget
@@ -30,10 +31,12 @@ class SectionListViewItem {
        _isButtonSection = true,
        _buttonOnTap = onTap,
        _buttonType = type,
-       _buttonText = text;
+       _buttonText = text,
+       margin = null;
 
   final List<ListViewItem> data;
   final Widget? headerWidget;
+  final EdgeInsetsGeometry? margin;
 
   /// Whether the CLListView inside this section is in editing mode.
   final bool isEditing;

@@ -100,6 +100,7 @@ class CLSectionListView extends StatelessWidget {
       return CupertinoListSection.insetGrouped(
         header: headerWidget,
         hasLeading: listView.hasLeading,
+        margin: model.margin,
         separatorColor: kSystemSeparator.resolveFrom(context),
         children: listView.asCupertinoSectionChildren(false),
       );

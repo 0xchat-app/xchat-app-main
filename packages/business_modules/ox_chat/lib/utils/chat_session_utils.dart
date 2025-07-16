@@ -15,6 +15,7 @@ import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/utils/session_helper.dart';
 import '../page/session/chat_message_page.dart';
+import '../page/session/key_package_selection_dialog.dart';
 
 class ChatSessionUtils {
   static ValueNotifier? getChatValueNotifier(ChatSessionModelISAR model) {
@@ -272,13 +273,19 @@ class ChatSessionUtils {
       // Create group name
       String groupName = '${user.name} & ${Account.sharedInstance.me!.name}';
       
-      // Create MLS group
+      // Create MLS group with key package selection callback
       GroupDBISAR? groupDB = await Groups.sharedInstance.createMLSGroup(
         groupName,
         '',
         [user.pubKey, myPubkey],
         [myPubkey],
         [circle.relayUrl],
+        onKeyPackageSelection: (pubkey, availableKeyPackages) =>
+            onKeyPackageSelection(
+              context: context,
+              pubkey: pubkey,
+              availableKeyPackages: availableKeyPackages,
+            ),
       );
 
       if (groupDB == null) {
@@ -309,5 +316,28 @@ class ChatSessionUtils {
       CommonToast.instance.show(context, e.toString());
       return false;
     }
+  }
+
+  static Future<String?> onKeyPackageSelection({
+    required BuildContext context,
+    required String pubkey,
+    required List<KeyPackageEvent> availableKeyPackages,
+  }) async {
+    // For secret chats, we can use the same key package selection logic
+    // If only one key package is available, return it directly
+    if (availableKeyPackages.length == 1) {
+      return availableKeyPackages.first.encoded_key_package;
+    }
+
+    // If multiple key packages are available, show selection dialog
+    await OXLoading.dismiss();
+    String? selectedKeyPackage = await KeyPackageSelectionDialog.show(
+      context: context,
+      pubkey: pubkey,
+      availableKeyPackages: availableKeyPackages,
+    );
+
+    await OXLoading.show();
+    return selectedKeyPackage;
   }
 }
