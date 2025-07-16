@@ -44,7 +44,7 @@ class CLSearch extends StatefulWidget implements PreferredSizeWidget {
   final double? preferredHeight;
 
   @override
-  Size get preferredSize => Size.fromHeight(preferredHeight ?? (PlatformStyle.isUseMaterial ? 56.px : 36.px));
+  Size get preferredSize => Size.fromHeight(preferredHeight ?? (PlatformStyle.isUseMaterial ? 64.px : 36.px));
 
   @override
   State<CLSearch> createState() => _CLSearchState();
@@ -102,12 +102,17 @@ class _CLSearchState extends State<CLSearch> {
         controller: widget.controller,
         focusNode: _focusNode,
         elevation: const WidgetStatePropertyAll<double>(0.0),
-        leading: Padding(
-          padding: EdgeInsets.only(
-            left: 12.px,
-            right: 8.px,
+        leading: Container(
+          constraints: BoxConstraints(
+            maxHeight: 40.px, // Constrain height for better layout
           ),
-          child: widget.prefixIcon,
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: 12.px,
+              right: 8.px,
+            ),
+            child: widget.prefixIcon,
+          ),
         ),
         trailing: [
           if (_hasText)

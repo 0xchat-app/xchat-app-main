@@ -6,6 +6,12 @@ import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 
 /// Lightweight data model used by [CLMultiUserSelector].
+/// 
+/// Fixed Android layout issues:
+/// - Added height constraints for prefixIcon container
+/// - Reduced avatar size and padding for better fit in search bar
+/// - Increased preferred size for better layout control
+/// - Optimized AnimatedList height and constraints
 class SelectableUser {
   SelectableUser({
     required this.id,
@@ -133,7 +139,7 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
         title: title,
         actions: widget.actions ?? [],
         bottom: PreferredSize(
-          preferredSize: Size(double.infinity, 80.px),
+          preferredSize: Size(double.infinity, 88.px), // Increased height for better layout
           child: _buildSearchBar(context),
         ),
       ),
@@ -154,16 +160,19 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
           );
         },
         child: _selected.isEmpty ? CLSearchIcon()
-            : ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: 200.px),
+            : Container(
+          constraints: BoxConstraints(
+            maxWidth: 180.px, // Smaller width for better Android layout
+            maxHeight: 40.px, // Add height constraint for Android
+          ),
           child: _buildSelectedUsersList(),
         ),
       ),
       padding: EdgeInsets.symmetric(
-        vertical:  16.px,
+        vertical: 12.px, // Reduced padding for better Android layout
         horizontal: CLLayout.horizontalPadding,
       ),
-              placeholder: Localized.text('ox_common.search_npub_or_username'),
+      placeholder: Localized.text('ox_common.search_npub_or_username'),
       onChanged: (value) => _onSearchChanged(),
     );
   }
@@ -171,12 +180,14 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
   Widget _buildSelectedUsersList() {
     return Container(
       key: const ValueKey('selected_users'),
+      height: 36.px, // Fixed height for better layout control
       child: AnimatedList(
         key: _animatedListKey,
         shrinkWrap: true,
         scrollDirection: Axis.horizontal,
         reverse: true, // Reverse display, new items appear in visible area
         initialItemCount: _selected.length,
+        physics: const ClampingScrollPhysics(), // Better scroll behavior on Android
         itemBuilder: (context, index, animation) {
           // Adjust index due to reverse layout
           final reversedIndex = _selected.length - 1 - index;
@@ -222,15 +233,17 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
             ),
           ),
           child: Padding(
-            padding: EdgeInsets.only(right: 8.px),
+            padding: EdgeInsets.only(right: 6.px), // Reduced padding for better fit
             child: GestureDetector(
               onTap: () => _toggleSelect(user),
               child: Container(
+                width: 32.px, // Fixed width for better layout
+                height: 32.px, // Fixed height for better layout
                 alignment: Alignment.center,
                 child: OXUserAvatar(
                   user: null,
                   imageUrl: user.avatarUrl,
-                  size: 36.px,
+                  size: 32.px, // Reduced size to fit better in search bar
                 ),
               ),
             ),
