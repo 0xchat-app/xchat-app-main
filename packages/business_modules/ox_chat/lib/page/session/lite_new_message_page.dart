@@ -5,6 +5,7 @@ import 'package:ox_common/login/login_models.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/scan_utils.dart';
+import 'package:ox_common/utils/user_search_manager.dart';
 import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_common/widgets/common_scan_page.dart';
 import 'package:ox_localizable/ox_localizable.dart';
@@ -14,7 +15,6 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'select_group_members_page.dart';
 import '../../utils/chat_session_utils.dart';
-import '../../utils/user_search_manager.dart';
 
 class CLNewMessagePage extends StatefulWidget {
   const CLNewMessagePage({super.key});
@@ -33,7 +33,7 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
 
   List<UserDBISAR> _allUsers = [];
   Map<String, List<UserDBISAR>> _groupedUsers = {};
-  late final UserSearchManager _userSearchManager;
+  late final UserSearchManager<UserDBISAR> _userSearchManager;
 
   // For tracking scroll-based background color changes
   final ValueNotifier<double> _scrollOffset = ValueNotifier(0.0);
@@ -41,7 +41,7 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
   @override
   void initState() {
     super.initState();
-    _userSearchManager = UserSearchManager(
+    _userSearchManager = UserSearchManager.defaultCreate(
       debounceDelay: const Duration(milliseconds: 300),
       minSearchLength: 1,
       maxResults: 50,
@@ -306,6 +306,23 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
 
   void _onSearchResultChanged() {
     if (mounted) {
+      // Update local users list with any new users from remote search
+      final searchResults = _userSearchManager.results;
+      bool hasNewUsers = false;
+      
+      for (final searchUser in searchResults) {
+        // Check if this user is not in our local list
+        if (!_allUsers.any((user) => user.pubKey == searchUser.pubKey)) {
+          _allUsers.add(searchUser);
+          hasNewUsers = true;
+        }
+      }
+      
+      // Re-group users only if we added new ones (performance optimization)
+      if (hasNewUsers) {
+        _groupUsers();
+      }
+      
       setState(() {});
     }
   }

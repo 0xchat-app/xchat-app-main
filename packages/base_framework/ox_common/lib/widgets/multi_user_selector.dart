@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/adapt.dart';
-import 'package:ox_common/utils/search_manager.dart';
+import 'package:ox_common/utils/user_search_manager.dart';
 import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_localizable/ox_localizable.dart';
+import 'package:chatcore/chat-core.dart';
 
 /// Lightweight data model used by [CLMultiUserSelector].
-/// 
-/// Fixed Android layout issues:
-/// - Added height constraints for prefixIcon container
-/// - Reduced avatar size and padding for better fit in search bar
-/// - Increased preferred size for better layout control
-/// - Optimized AnimatedList height and constraints
 class SelectableUser {
   SelectableUser({
     required this.id,
@@ -64,7 +59,10 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
   late Map<String, List<SelectableUser>> _groupedUsers;
 
   final List<SelectableUser> _selected = [];
-  late final SearchManager<SelectableUser> _searchManager;
+  late final UserSearchManager<SelectableUser> _searchManager;
+  
+  // Track user update listeners for UI synchronization
+  final Map<String, void Function()> _userUpdateListeners = {};
 
   // For tracking scroll-based background color changes
   final ValueNotifier<double> _scrollOffset = ValueNotifier(0.0);
@@ -72,7 +70,14 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
   @override
   void initState() {
     super.initState();
-    _searchManager = SearchManager<SelectableUser>(
+    _searchManager = UserSearchManager<SelectableUser>.custom(
+      convertToTargetModel: (user) => _getOrCreateSelectableUser(
+        user.pubKey,
+        _getUserDisplayName(user),
+        user.picture ?? '',
+      ),
+      getUserId: (user) => user.id,
+      getUserDisplayName: (user) => user.displayName,
       debounceDelay: const Duration(milliseconds: 300),
       minSearchLength: 1,
       maxResults: 50,
@@ -92,6 +97,78 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
       _selected.add(user);
     }
     _groupUsers();
+    
+    // Initialize the search manager with the current users
+    _searchManager.initialize();
+  }
+
+  /// Get or create SelectableUser, maintaining selection state
+  SelectableUser _getOrCreateSelectableUser(String id, String displayName, String avatarUrl) {
+    // First check if we already have this user in _allUsers
+    final existingUser = _allUsers.firstWhere(
+      (user) => user.id == id,
+      orElse: () => SelectableUser(id: id, displayName: displayName, avatarUrl: avatarUrl),
+    );
+    
+    // If user exists, check if it's already selected
+    final selectedUser = _selected.firstWhere(
+      (user) => user.id == id,
+      orElse: () => existingUser,
+    );
+    
+    // If the user is selected, return the selected version to maintain state
+    if (selectedUser.selected$.value) {
+      return selectedUser;
+    }
+    
+    // Add user update listener for remote users
+    _addUserUpdateListener(id);
+    
+    return existingUser;
+  }
+
+  /// Add listener for user info updates from remote search
+  void _addUserUpdateListener(String pubkey) {
+    if (_userUpdateListeners.containsKey(pubkey)) return;
+    
+    final userNotifier = Account.sharedInstance.getUserNotifier(pubkey);
+    final listener = () {
+      _onUserInfoUpdated(pubkey, userNotifier.value);
+    };
+    
+    userNotifier.addListener(listener);
+    _userUpdateListeners[pubkey] = listener;
+  }
+
+  /// Handle user info updates
+  void _onUserInfoUpdated(String pubkey, UserDBISAR updatedUser) {
+    // Find and update the user in _allUsers list
+    final userIndex = _allUsers.indexWhere((user) => user.id == pubkey);
+    if (userIndex != -1) {
+      final oldUser = _allUsers[userIndex];
+      final newDisplayName = _getUserDisplayName(updatedUser);
+      final newAvatarUrl = updatedUser.picture ?? '';
+      
+      // Update user information
+      _allUsers[userIndex] = SelectableUser(
+        id: pubkey,
+        displayName: newDisplayName,
+        avatarUrl: newAvatarUrl,
+        defaultSelected: oldUser.selected$.value,
+      );
+      
+      // Update selected list if this user is selected
+      final selectedIndex = _selected.indexWhere((user) => user.id == pubkey);
+      if (selectedIndex != -1) {
+        _selected[selectedIndex] = _allUsers[userIndex];
+      }
+      
+      // Re-group users and update UI
+      _groupUsers();
+      if (mounted) {
+        setState(() {});
+      }
+    }
   }
 
   @override
@@ -109,7 +186,27 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
     _scrollOffset.dispose();
     _searchManager.resultNotifier.removeListener(_onSearchResultChanged);
     _searchManager.dispose();
+    
+    // Remove all user update listeners
+    _removeAllUserUpdateListeners();
+    
     super.dispose();
+  }
+
+  /// Remove all user update listeners
+  void _removeAllUserUpdateListeners() {
+    for (final pubkey in _userUpdateListeners.keys.toList()) {
+      _removeUserUpdateListener(pubkey);
+    }
+  }
+
+  /// Remove listener for specific user
+  void _removeUserUpdateListener(String pubkey) {
+    final listener = _userUpdateListeners.remove(pubkey);
+    if (listener != null) {
+      final userNotifier = Account.sharedInstance.getUserNotifier(pubkey);
+      userNotifier.removeListener(listener);
+    }
   }
 
   void _groupUsers() {
@@ -139,12 +236,12 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
         title: title,
         actions: widget.actions ?? [],
         bottom: PreferredSize(
-          preferredSize: Size(double.infinity, 88.px), // Increased height for better layout
+          preferredSize: Size(double.infinity, 80.px),
           child: _buildSearchBar(context),
         ),
       ),
       isSectionListPage: true,
-      body: _buildBody(),
+      body: LoseFocusWrap(child: _buildBody()),
     );
   }
 
@@ -160,16 +257,13 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
           );
         },
         child: _selected.isEmpty ? CLSearchIcon()
-            : Container(
-          constraints: BoxConstraints(
-            maxWidth: 180.px, // Smaller width for better Android layout
-            maxHeight: 40.px, // Add height constraint for Android
-          ),
+            : ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: 200.px),
           child: _buildSelectedUsersList(),
         ),
       ),
       padding: EdgeInsets.symmetric(
-        vertical: 12.px, // Reduced padding for better Android layout
+        vertical: 16.px,
         horizontal: CLLayout.horizontalPadding,
       ),
       placeholder: Localized.text('ox_common.search_npub_or_username'),
@@ -180,14 +274,12 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
   Widget _buildSelectedUsersList() {
     return Container(
       key: const ValueKey('selected_users'),
-      height: 36.px, // Fixed height for better layout control
       child: AnimatedList(
         key: _animatedListKey,
         shrinkWrap: true,
         scrollDirection: Axis.horizontal,
         reverse: true, // Reverse display, new items appear in visible area
         initialItemCount: _selected.length,
-        physics: const ClampingScrollPhysics(), // Better scroll behavior on Android
         itemBuilder: (context, index, animation) {
           // Adjust index due to reverse layout
           final reversedIndex = _selected.length - 1 - index;
@@ -233,17 +325,15 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
             ),
           ),
           child: Padding(
-            padding: EdgeInsets.only(right: 6.px), // Reduced padding for better fit
+            padding: EdgeInsets.only(right: 8.px),
             child: GestureDetector(
               onTap: () => _toggleSelect(user),
               child: Container(
-                width: 32.px, // Fixed width for better layout
-                height: 32.px, // Fixed height for better layout
                 alignment: Alignment.center,
                 child: OXUserAvatar(
                   user: null,
                   imageUrl: user.avatarUrl,
-                  size: 32.px, // Reduced size to fit better in search bar
+                  size: 36.px,
                 ),
               ),
             ),
@@ -367,21 +457,47 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
 
   void _onSearchChanged() {
     final query = _searchCtrl.text.trim();
-    
-    _searchManager.search(
-      query,
-      localSearch: (searchQuery) async {
-        final lowerQuery = searchQuery.toLowerCase();
-        return _allUsers
-            .where((u) => u.displayName.toLowerCase().contains(lowerQuery))
-            .toList();
-      },
-    );
+    _searchManager.search(query);
   }
 
   void _onSearchResultChanged() {
     if (mounted) {
+      // Update local users list with any new users from remote search
+      final searchResults = _searchManager.results;
+      bool hasNewUsers = false;
+      
+      for (final searchUser in searchResults) {
+        // Check if this user is not in our local list
+        if (!_allUsers.any((user) => user.id == searchUser.id)) {
+          _allUsers.add(searchUser);
+          hasNewUsers = true;
+          
+          // Add user update listener for new remote users
+          _addUserUpdateListener(searchUser.id);
+        }
+      }
+      
+      // Re-group users only if we added new ones (performance optimization)
+      if (hasNewUsers) {
+        _groupUsers();
+      }
+      
       setState(() {});
     }
+  }
+
+  /// Helper function to get user display name from UserDBISAR
+  String _getUserDisplayName(UserDBISAR user) {
+    final name = user.name ?? '';
+    final nickName = user.nickName ?? '';
+
+    if (name.isNotEmpty && nickName.isNotEmpty) {
+      return '$name($nickName)';
+    } else if (name.isNotEmpty) {
+      return name;
+    } else if (nickName.isNotEmpty) {
+      return nickName;
+    }
+    return 'Unknown';
   }
 } 

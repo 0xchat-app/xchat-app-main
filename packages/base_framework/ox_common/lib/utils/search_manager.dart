@@ -75,6 +75,7 @@ class SearchManager<T> {
     String query, {
     required Future<List<T>> Function(String) localSearch,
     Future<List<T>> Function(String)? remoteSearch,
+    bool Function(T, T)? isDuplicate,
   }) {
     _currentQuery = query.trim();
     
@@ -99,7 +100,7 @@ class SearchManager<T> {
 
     // Start debounce timer
     _debounceTimer = Timer(debounceDelay, () async {
-      await _performSearch(localSearch, remoteSearch);
+      await _performSearch(localSearch, remoteSearch, isDuplicate);
     });
   }
 
@@ -108,6 +109,7 @@ class SearchManager<T> {
     String query, {
     required Future<List<T>> Function(String) localSearch,
     Future<List<T>> Function(String)? remoteSearch,
+    bool Function(T, T)? isDuplicate,
   }) async {
     _currentQuery = query.trim();
     _debounceTimer?.cancel();
@@ -117,13 +119,14 @@ class SearchManager<T> {
       return;
     }
 
-    await _performSearch(localSearch, remoteSearch);
+    await _performSearch(localSearch, remoteSearch, isDuplicate);
   }
 
   /// Internal search implementation
   Future<void> _performSearch(
     Future<List<T>> Function(String) localSearch,
     Future<List<T>> Function(String)? remoteSearch,
+    bool Function(T, T)? isDuplicate,
   ) async {
     if (_currentQuery.isEmpty) return;
 
@@ -152,7 +155,15 @@ class SearchManager<T> {
           // Merge results, avoiding duplicates
           final mergedResults = <T>[...localResults];
           for (final result in remoteResults) {
-            if (!mergedResults.contains(result)) {
+            bool shouldAdd = true;
+            if (isDuplicate != null) {
+              // Use custom duplicate detection
+              shouldAdd = !mergedResults.any((localResult) => isDuplicate(localResult, result));
+            } else {
+              // Use default duplicate detection
+              shouldAdd = !mergedResults.contains(result);
+            }
+            if (shouldAdd) {
               mergedResults.add(result);
             }
           }

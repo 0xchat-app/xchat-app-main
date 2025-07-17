@@ -109,7 +109,6 @@ class _CLSearchState extends State<CLSearch> {
           child: Padding(
             padding: EdgeInsets.only(
               left: 12.px,
-              right: 8.px,
             ),
             child: widget.prefixIcon,
           ),

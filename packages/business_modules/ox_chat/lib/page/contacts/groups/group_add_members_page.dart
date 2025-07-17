@@ -8,8 +8,8 @@ import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_common/widgets/multi_user_selector.dart';
+import 'package:ox_common/utils/user_search_manager.dart';
 import 'package:ox_localizable/ox_localizable.dart';
-import '../../../utils/selectable_user_search_manager.dart';
 
 class GroupAddMembersPage extends StatefulWidget {
   const GroupAddMembersPage({
@@ -28,12 +28,23 @@ class GroupAddMembersPage extends StatefulWidget {
 class _GroupAddMembersPageState extends State<GroupAddMembersPage> {
   List<SelectableUser> _selectedUsers = [];
   late Future<List<SelectableUser>> _availableUsersFuture;
-  late SelectableUserSearchManager _searchManager;
+  late UserSearchManager<SelectableUser> _searchManager;
 
   @override
   void initState() {
     super.initState();
-    _searchManager = SelectableUserSearchManager();
+    _searchManager = UserSearchManager<SelectableUser>.custom(
+      convertToTargetModel: (user) => SelectableUser(
+        id: user.pubKey,
+        displayName: _getUserDisplayName(user),
+        avatarUrl: user.picture ?? '',
+      ),
+      getUserId: (user) => user.id,
+      getUserDisplayName: (user) => user.displayName,
+      debounceDelay: const Duration(milliseconds: 300),
+      minSearchLength: 1,
+      maxResults: 50,
+    );
     _availableUsersFuture = _loadAvailableUsers();
   }
 
@@ -41,6 +52,21 @@ class _GroupAddMembersPageState extends State<GroupAddMembersPage> {
   void dispose() {
     _searchManager.dispose();
     super.dispose();
+  }
+
+  /// Helper function to get user display name from UserDBISAR
+  String _getUserDisplayName(UserDBISAR user) {
+    final name = user.name ?? '';
+    final nickName = user.nickName ?? '';
+
+    if (name.isNotEmpty && nickName.isNotEmpty) {
+      return '$name($nickName)';
+    } else if (name.isNotEmpty) {
+      return name;
+    } else if (nickName.isNotEmpty) {
+      return nickName;
+    }
+    return 'Unknown';
   }
 
   Future<List<SelectableUser>> _loadAvailableUsers() async {
@@ -55,7 +81,6 @@ class _GroupAddMembersPageState extends State<GroupAddMembersPage> {
     final excludedPubkeys = <String>{...memberPubkeys};
     excludedPubkeys.add(myPubkey);
 
-    
     // Initialize search manager with excluded users
     await _searchManager.initialize(excludeUserPubkeys: excludedPubkeys.toList());
     
