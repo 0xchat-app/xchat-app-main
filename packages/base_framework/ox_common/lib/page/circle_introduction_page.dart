@@ -32,6 +32,8 @@ class CircleIntroductionPage extends StatelessWidget {
                 SizedBox(height: 24.px),
                 // _buildFeatures(),
                 // SizedBox(height: 24.px),
+                _buildRelayInfo(),
+                SizedBox(height: 24.px),
                 _buildHowTo(),
                 SizedBox(height: 24.px),
                 _buildFAQ(context),
@@ -188,17 +190,33 @@ class CircleIntroductionPage extends StatelessWidget {
   }
 
   Widget _buildHowTo() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CLText.titleLarge(
-          Localized.text('ox_common.circle_intro_how_title'),
-        ),
-        SizedBox(height: 16.px),
-        _buildStepItem(Localized.text('ox_common.circle_intro_how_step_1')),
-        _buildStepItem(Localized.text('ox_common.circle_intro_how_step_2')),
-        _buildStepItem(Localized.text('ox_common.circle_intro_how_step_3')),
-      ],
+    return Builder(
+      builder: (context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CLText.titleLarge(
+            Localized.text('ox_common.circle_intro_how_title'),
+          ),
+          SizedBox(height: 16.px),
+          Container(
+            padding: EdgeInsets.all(16.px),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12.px),
+              border: Border.all(
+                color: ColorToken.onSurfaceVariant.of(context).withOpacity(0.2),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildStepItem(Localized.text('ox_common.circle_intro_how_step_1')),
+                _buildStepItem(Localized.text('ox_common.circle_intro_how_step_2')),
+                _buildStepItem(Localized.text('ox_common.circle_intro_how_step_3')),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -206,6 +224,62 @@ class CircleIntroductionPage extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(bottom: 8.px),
       child: CLText.bodyMedium(step),
+    );
+  }
+
+  Widget _buildRelayInfo() {
+    return Builder(
+      builder: (context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CLText.titleLarge(
+            Localized.text('ox_common.circle_intro_relay_title'),
+          ),
+          SizedBox(height: 16.px),
+          Container(
+            padding: EdgeInsets.all(16.px),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12.px),
+              border: Border.all(
+                color: ColorToken.onSurfaceVariant.of(context).withOpacity(0.2),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 6.px,
+                      height: 6.px,
+                      margin: EdgeInsets.only(top: 8.px, right: 8.px),
+                      decoration: BoxDecoration(
+                        color: ColorToken.primary.of(context),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    Expanded(
+                      child: CLText.titleSmall(
+                        Localized.text('ox_common.circle_intro_relay_question'),
+                        colorToken: ColorToken.primary,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 12.px),
+                Padding(
+                  padding: EdgeInsets.only(left: 14.px),
+                  child: CLText.bodyMedium(
+                    Localized.text('ox_common.circle_intro_relay_answer'),
+                    maxLines: null,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
