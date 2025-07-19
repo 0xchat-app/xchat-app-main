@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:isar/isar.dart';
 import 'package:chatcore/chat-core.dart';
-import 'account_file_utils.dart';
+import 'account_path_manager.dart';
 import 'login_models.dart';
 import 'account_models.dart';
 import '../secure/db_key_manager.dart';
@@ -25,13 +25,13 @@ class DatabaseUtils {
   static Future<Isar?> initAccountDatabase(String pubkey) async {
     try {
       // Ensure account folder exists
-      if (!await AccountPathUtils.ensureAccountFolderExists(pubkey)) {
+      if (!await AccountPathManager.ensureAccountFolderExists(pubkey)) {
         debugPrint('Failed to create account folder for $pubkey');
         return null;
       }
 
-      // Get account database path using AccountPathUtils
-      final accountDbPath = await AccountPathUtils.getAccountDbPath(pubkey);
+      // Get account database path using AccountPathManager
+      final accountDbPath = await AccountPathManager.getAccountDbPath(pubkey);
       final accountDir = accountDbPath.substring(0, accountDbPath.lastIndexOf('/'));
 
       // Create own Isar instance with account schemas
@@ -62,12 +62,12 @@ class DatabaseUtils {
   static Future<Isar?> initCircleDatabase(String pubkey, Circle circle) async {
     try {
       // Ensure circle folder exists
-      if (!await AccountPathUtils.ensureCircleFolderExists(pubkey, circle.id)) {
+      if (!await AccountPathManager.ensureCircleFolderExists(pubkey, circle.id)) {
         debugPrint('Failed to create circle folder for pubkey: $pubkey circleId: ${circle.id}');
         return null;
       }
 
-      final circleFolder = await AccountPathUtils.getCircleFolderPath(pubkey, circle.id);
+      final circleFolder = await AccountPathManager.getCircleFolderPath(pubkey, circle.id);
       final String encKey = await DBKeyManager.getKey();
       await DBISAR.sharedInstance.open(
         pubkey,

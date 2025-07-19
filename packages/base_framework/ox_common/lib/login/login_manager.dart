@@ -13,7 +13,7 @@ import 'database_manager.dart';
 import 'login_models.dart';
 import 'account_models.dart';
 import 'circle_config_models.dart';
-import 'account_file_utils.dart';
+import 'account_path_manager.dart';
 import '../secure/db_key_manager.dart';
 
 class LoginUserNotifier {
@@ -628,7 +628,7 @@ extension LoginManagerCircle on LoginManager {
       }
 
       // Delete circle folder and all its contents directly
-      final deleteSuccess = await AccountPathUtils.deleteCircleFolder(
+      final deleteSuccess = await AccountPathManager.deleteCircleFolder(
         account.pubkey, 
         circleId,
       );
@@ -816,7 +816,7 @@ extension LoginManagerCircle on LoginManager {
     final pubkey = account.pubkey;
     final config = ChatCoreInitConfig(
       pubkey: account.pubkey,
-      databasePath: await AccountPathUtils.getCircleFolderPath(account.pubkey, circle.id),
+      databasePath: await AccountPathManager.getCircleFolderPath(account.pubkey, circle.id),
       encryptionPassword: await _getEncryptionPassword(account),
       circleId: circle.id,
       isLite: true,
