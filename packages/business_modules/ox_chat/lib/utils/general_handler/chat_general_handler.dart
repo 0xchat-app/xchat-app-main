@@ -16,6 +16,7 @@ import 'package:ox_chat/utils/message_parser/define.dart';
 import 'package:ox_chat/utils/send_message/chat_send_message_helper.dart';
 import 'package:ox_chat/widget/chat_send_image_prepare_dialog.dart';
 import 'package:ox_common/business_interface/ox_chat/call_message_type.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/login/login_models.dart';
 import 'package:ox_common/ox_common.dart';
@@ -32,7 +33,6 @@ import 'package:ox_common/utils/platform_utils.dart';
 import 'package:ox_common/utils/string_utils.dart';
 import 'package:ox_common/utils/custom_uri_helper.dart';
 import 'package:ox_common/utils/video_data_manager.dart';
-import 'package:ox_common/widgets/common_file_cache_manager.dart';
 import 'package:ox_common/widgets/common_image_gallery.dart';
 import 'package:ox_common/widgets/common_long_content_page.dart';
 import 'package:ox_common/widgets/common_video_page.dart';
@@ -508,20 +508,6 @@ extension ChatMenuHandlerEx on ChatGeneralHandler {
   void _copyMenuItemPressHandler(types.Message message) async {
     if (message is types.TextMessage) {
       Clipboard.setData(ClipboardData(text: message.text));
-    } else if (message is types.CustomMessage && message.customType == CustomMessageType.imageSending) {
-      var path = ImageSendingMessageEx(message).path;
-      final url = ImageSendingMessageEx(message).url;
-      if (path.isEmpty && url.isNotEmpty) {
-        final manager = OXFileCacheManager.get(
-          encryptKey: message.decryptKey,
-          encryptNonce: message.decryptNonce,
-        );
-        final file = await manager.getFileFromCache(url);
-        path = file?.file.path ?? '';
-      }
-      if (path.isNotEmpty) {
-        OXClipboard.copyImageToClipboard(path);
-      }
     }
   }
 

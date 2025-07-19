@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:encrypt/encrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:minio/minio.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/log_util.dart';
 import 'package:ox_common/model/file_server_model.dart';
 import 'package:ox_common/upload/file_type.dart';
@@ -13,7 +14,6 @@ import 'package:ox_common/utils/aes_encrypt_utils.dart';
 import 'package:ox_common/utils/file_utils.dart';
 import 'package:ox_common/utils/file_server_helper.dart';
 import 'package:ox_common/utils/string_utils.dart';
-import 'package:ox_common/widgets/common_file_cache_manager.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart';
@@ -97,7 +97,8 @@ class UploadUtils {
     }
 
     if (fileType == FileType.image && autoStoreImage) {
-      await OXFileCacheManager.get(encryptKey: encryptedKey).putFile(
+      final cacheManager = await CLCacheManager.getCircleCacheManager(CacheFileType.image);
+      await cacheManager.putFile(
         url,
         file.readAsBytesSync(),
         fileExtension: file.path.getFileExtension(),

@@ -5,8 +5,8 @@ import 'dart:typed_data';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/adapt.dart';
-import 'package:ox_common/widgets/common_file_cache_manager.dart';
 
 import '../state/inherited_chat_theme.dart';
 import '../state/inherited_user.dart';
@@ -51,6 +51,11 @@ class _ImageMessageState extends State<ImageMessage> {
   @override
   void initState() {
     super.initState();
+    _initializeImage();
+    _size = Size(widget.message.width ?? 0, widget.message.height ?? 0);
+  }
+
+  Future<void> _initializeImage() async {
     if (widget.message.fileEncryptionType == types.EncryptionType.none) {
       if(widget.message.uri.startsWith('data:image/')){
         print('widget.message.uri.startsWith');
@@ -65,14 +70,15 @@ class _ImageMessageState extends State<ImageMessage> {
         );
       }
     } else {
-      final decryptKey = widget.message.decryptKey;
-      final decryptNonce = widget.message.decryptNonce;
+      final cacheManager = await CLCacheManager.getCircleCacheManager(CacheFileType.image);
       _image = CachedNetworkImageProvider(
         widget.message.uri,
-        cacheManager: OXFileCacheManager.get(encryptKey: decryptKey ?? '', encryptNonce: decryptNonce),
+        cacheManager: cacheManager,
       );
     }
-    _size = Size(widget.message.width ?? 0, widget.message.height ?? 0);
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override

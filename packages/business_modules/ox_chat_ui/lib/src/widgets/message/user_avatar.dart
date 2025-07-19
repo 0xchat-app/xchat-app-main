@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/adapt.dart';
-import 'package:ox_common/widgets/common_network_image.dart';
 
 import '../../models/bubble_rtl_alignment.dart';
 import '../../util.dart';
@@ -59,7 +59,7 @@ class UserAvatar extends StatelessWidget {
           child: ClipRRect(
             borderRadius:
             const BorderRadius.all(Radius.circular(5.0)),
-            child: OXCachedNetworkImage(
+            child: CLCachedNetworkImage(
               imageUrl: author.imageUrl ?? '',
               fit: BoxFit.cover,
               width: Adapt.px(40),

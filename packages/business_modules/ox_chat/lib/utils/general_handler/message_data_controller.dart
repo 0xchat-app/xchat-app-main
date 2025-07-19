@@ -12,11 +12,11 @@ import 'package:ox_chat/utils/chat_log_utils.dart';
 import 'package:ox_chat/utils/chat_voice_helper.dart';
 import 'package:ox_chat/utils/custom_message_utils.dart';
 import 'package:ox_common/business_interface/ox_chat/custom_message_type.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/list_extension.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
 import 'package:ox_common/utils/ox_chat_observer.dart';
 import 'package:ox_common/utils/string_utils.dart';
-import 'package:ox_common/widgets/common_file_cache_manager.dart';
 
 import 'chat_gallery_data_cache.dart';
 
@@ -74,10 +74,8 @@ class MessageDataController with OXChatObserver {
       var uri = uiMessage.uri;
       String localPath = '';
       if (uri.isRemoteURL) {
-        localPath = (await OXFileCacheManager.get(
-          encryptKey: uiMessage.decryptKey,
-          encryptNonce: uiMessage.decryptNonce,
-        ).getFileFromCache(uri))?.file.path ?? '';
+        final cacheManager = await CLCacheManager.getCircleCacheManager(CacheFileType.image);
+        localPath = (await cacheManager.getSingleFile(uiMessage.uri)).path;
       } else {
         localPath = uri;
       }

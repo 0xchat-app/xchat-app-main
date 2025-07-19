@@ -14,7 +14,6 @@ import 'package:ox_common/utils/platform_utils.dart';
 import 'package:ox_common/utils/string_utils.dart';
 import 'package:ox_common/widgets/common_image.dart';
 import 'package:ox_common/widgets/common_loading.dart';
-import 'package:ox_common/widgets/common_network_image.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -176,33 +175,44 @@ class _AvatarDisplayPageState extends State<AvatarDisplayPage>
   Widget _buildAvatarImage() {
     if (_currentAvatarUrl != null && _currentAvatarUrl!.isNotEmpty) {
       // Network image with gesture support
-      return ExtendedImage(
-        image: OXCachedImageProviderEx.create(_currentAvatarUrl!),
-        fit: BoxFit.cover,
-        enableSlideOutPage: true,
-        onDoubleTap: _onDoubleTap,
-        mode: ExtendedImageMode.gesture,
-        loadStateChanged: (state) {
-          switch (state.extendedImageLoadState) {
-            case LoadState.loading:
-              return Center(child: CLProgressIndicator.circular());
-            case LoadState.failed:
-              return _buildDefaultAvatar();
-            case LoadState.completed:
-              return null;
+      return CLCachedImageProviderStateful(
+        imageUrl: _currentAvatarUrl!,
+        builder: (context, provider, loading, error) {
+          if (provider == null || error != null) {
+            return _buildDefaultAvatar();
           }
-        },
-        initGestureConfigHandler: (state) {
-          return GestureConfig(
-            minScale: 1.0,
-            animationMinScale: 0.7,
-            maxScale: 3.0,
-            animationMaxScale: 3.5,
-            speed: 1.0,
-            inertialSpeed: 100.0,
-            initialScale: 1.0,
-            inPageView: false,
-            initialAlignment: InitialAlignment.center,
+          if (loading) {
+            return Center(child: CLProgressIndicator.circular());
+          }
+          return ExtendedImage(
+            image: provider,
+            fit: BoxFit.cover,
+            enableSlideOutPage: true,
+            onDoubleTap: _onDoubleTap,
+            mode: ExtendedImageMode.gesture,
+            loadStateChanged: (state) {
+              switch (state.extendedImageLoadState) {
+                case LoadState.loading:
+                  return Center(child: CLProgressIndicator.circular());
+                case LoadState.failed:
+                  return _buildDefaultAvatar();
+                case LoadState.completed:
+                  return null;
+              }
+            },
+            initGestureConfigHandler: (state) {
+              return GestureConfig(
+                minScale: 1.0,
+                animationMinScale: 0.7,
+                maxScale: 3.0,
+                animationMaxScale: 3.5,
+                speed: 1.0,
+                inertialSpeed: 100.0,
+                initialScale: 1.0,
+                inPageView: false,
+                initialAlignment: InitialAlignment.center,
+              );
+            },
           );
         },
       );

@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:chewie/chewie.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/theme_color.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/common_image.dart';
 import 'package:ox_common/widgets/common_loading.dart';
-import 'package:ox_common/widgets/common_file_cache_manager.dart';
 import 'package:video_player/video_player.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:dio/dio.dart';
@@ -159,8 +159,8 @@ class _CommonVideoPageState extends State<CommonVideoPage> {
   Future<void> initializePlayer() async {
     try {
       if (RegExp(r'https?:\/\/').hasMatch(widget.videoUrl)) {
-        final fileInfo =
-            await OXFileCacheManager.get().getFileFromCache(widget.videoUrl);
+        final cacheManager = await CLCacheManager.getCircleCacheManager(CacheFileType.video);
+        final fileInfo = await cacheManager.getFileFromCache(widget.videoUrl);
         if (fileInfo != null) {
           _videoPlayerController = VideoPlayerController.file(fileInfo.file);
         } else {
@@ -185,7 +185,8 @@ class _CommonVideoPageState extends State<CommonVideoPage> {
   Future<void> cacheVideo() async {
     try {
       print('Starting cache process...');
-      await OXFileCacheManager.get().downloadFile(widget.videoUrl);
+      final cacheManager = await CLCacheManager.getCircleCacheManager(CacheFileType.video);
+      await cacheManager.downloadFile(widget.videoUrl);
       print('Video cached successfully');
     } catch (e) {
       print('Error caching video: $e');
@@ -337,8 +338,8 @@ class _CustomControlsState extends State<CustomControls> {
                   await OXLoading.show();
                   if (RegExp(r'https?:\/\/').hasMatch(widget.videoUrl)) {
                     var result;
-                    final fileInfo = await OXFileCacheManager.get()
-                        .getFileFromCache(widget.videoUrl);
+                    final cacheManager = await CLCacheManager.getCircleCacheManager(CacheFileType.video);
+                    final fileInfo = await cacheManager.getFileFromCache(widget.videoUrl);
                     if (fileInfo != null) {
                       result =
                           await ImageGallerySaverPlus.saveFile(fileInfo.file.path);

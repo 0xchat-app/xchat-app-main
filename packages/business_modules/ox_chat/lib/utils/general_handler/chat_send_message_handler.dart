@@ -498,17 +498,6 @@ extension ChatMessageSendEx on ChatGeneralHandler {
               height: imageHeight,
             );
 
-            // Store cache image for new URL
-            final imageFile = File(filePath!);
-            OXFileCacheManager.get(
-              encryptKey: encryptedKey,
-              encryptNonce: encryptedNonce,
-            ).putFile(
-              imageURL,
-              imageFile.readAsBytesSync(),
-              fileExtension: imageFile.path.getFileExtension(),
-            );
-
             sendImageMessageWithURL(
               imageURL: imageURL,
               imagePath: filePath,
@@ -758,17 +747,6 @@ extension ChatMessageSendEx on ChatGeneralHandler {
               );
             }
 
-            if (videoPath != null && videoPath.isNotEmpty && !isFromCache) {
-              final videoFile = File(videoPath);
-              videoFile.readAsBytes().then((bytes) {
-                OXFileCacheManager.get(encryptKey: encryptedKey).putFile(
-                  videoURL,
-                  bytes,
-                  fileExtension: videoFile.path.getFileExtension(),
-                );
-              });
-            }
-
             sendVideoMessageWithURL(
               videoURL: videoURL,
               fileId: fileId ?? '',
@@ -929,24 +907,9 @@ extension ChatMessageSendUtileEx on ChatGeneralHandler {
       final audioURL = result.url;
       final audioFile = File(filePath);
 
-      final audioManager = OXFileCacheManager.get(
-        encryptKey: encryptedKey,
-        encryptNonce: encryptedNonce,
-      );
-
-      final cacheFile = await audioManager.putFile(
-        audioURL,
-        audioFile.readAsBytesSync(),
-        fileExtension: audioFile.path.getFileExtension(),
-      );
-
-      if (audioFile.path != cacheFile.path) {
-        audioFile.delete();
-      }
-
       return message.copyWith(
         uri: audioURL,
-        audioFile: cacheFile,
+        audioFile: audioFile,
         decryptKey: encryptedKey,
         decryptNonce: encryptedNonce,
       );

@@ -10,7 +10,6 @@ import '../component.dart';
 import '../utils/date_utils.dart';
 import '../utils/theme_color.dart';
 import 'common_image.dart';
-import 'common_network_image.dart';
 
 class CommonLongContentPage extends StatefulWidget {
   final String? content;
@@ -85,7 +84,7 @@ class CommonLongContentPageState extends State<CommonLongContentPage> {
       child: Container(
         width: double.infinity,
         color: ThemeColor.color100,
-        child: OXCachedNetworkImage(
+        child: CLCachedNetworkImage(
           imageUrl: surfacePic,
           fit: BoxFit.cover,
           placeholder: (context, url) =>
@@ -137,7 +136,7 @@ class CommonLongContentPageState extends State<CommonLongContentPage> {
                         },
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(40.px),
-                          child: OXCachedNetworkImage(
+                          child: CLCachedNetworkImage(
                             imageUrl: widget.author?.picture ?? widget.userPic,
                             fit: BoxFit.cover,
                             placeholder: (context, url) => badgePlaceholderImage(),

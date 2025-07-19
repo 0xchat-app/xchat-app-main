@@ -39,7 +39,7 @@ extension ChatMessageBuilderCustomEx on ChatMessageBuilder {
     Widget iconWidget = SizedBox();
     if (icon.isNotEmpty) {
       if (icon.isRemoteURL) {
-        iconWidget = OXCachedNetworkImage(
+        iconWidget = CLCachedNetworkImage(
           imageUrl: icon,
           height: 48.px,
           width: 48.px,
@@ -112,7 +112,7 @@ extension ChatMessageBuilderCustomEx on ChatMessageBuilder {
     Widget iconWidget = SizedBox().setPadding(EdgeInsets.only(bottom: 10.px));
     if (icon.isNotEmpty) {
       if (icon.isRemoteURL) {
-        iconWidget = OXCachedNetworkImage(
+        iconWidget = CLCachedNetworkImage(
           imageUrl: icon,
           height: 139.px,
           width: 265.px,
@@ -141,7 +141,7 @@ extension ChatMessageBuilderCustomEx on ChatMessageBuilder {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ClipOval(
-                    child: OXCachedNetworkImage(
+                    child: CLCachedNetworkImage(
                       imageUrl: authorIcon,
                       height: 20.px,
                       width: 20.px,

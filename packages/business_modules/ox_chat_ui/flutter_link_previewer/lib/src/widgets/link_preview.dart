@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart' hide UrlLinkifier;
+import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/web_url_helper.dart';
-import 'package:ox_common/widgets/common_network_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../url_linkifier.dart' show UrlLinkifier;
@@ -366,7 +366,7 @@ class _LinkPreviewState extends State<LinkPreview>
             width: 48,
             child: widget.imageBuilder != null
                 ? widget.imageBuilder!(imageUrl)
-                : OXCachedNetworkImage(
+                : CLCachedNetworkImage(
               imageUrl:imageUrl,
               fit: BoxFit.contain,
             ),

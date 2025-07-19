@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:chatcore/chat-core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/adapt.dart';
-import 'package:ox_common/widgets/common_network_image.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_module_service/ox_module_service.dart';
 
@@ -44,7 +44,7 @@ class BaseAvatarWidget extends StatelessWidget {
 
   Widget _buildAvatar() {
     if (imageUrl.isNotEmpty) {
-      return OXCachedNetworkImage(
+      return CLCachedNetworkImage(
         errorWidget: (context, url, error) => _defaultImage(defaultImageName, size),
         placeholder: (context, url) => _defaultImage(defaultImageName, size),
         fit: BoxFit.cover,

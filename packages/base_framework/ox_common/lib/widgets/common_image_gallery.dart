@@ -8,14 +8,13 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/ox_common.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/scan_utils.dart';
 import 'package:ox_common/utils/string_utils.dart';
-import 'package:ox_common/widgets/common_file_cache_manager.dart';
 import 'package:ox_common/widgets/common_image.dart';
-import 'package:ox_common/widgets/common_network_image.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
@@ -236,43 +235,50 @@ class _CommonImageGalleryState extends State<CommonImageGallery>
                   itemBuilder: (BuildContext context, int index) {
                     final entry = widget.imageList[index];
                     return HeroWidget(
-                      child: ExtendedImage(
-                        image: OXCachedImageProviderEx.create(
+                      child: FutureBuilder(
+                        future: CLCachedNetworkImageProvider.createProvider(
                           entry.url,
-                          decryptedKey: entry.decryptedKey,
-                          decryptedNonce: entry.decryptedNonce,
+                          decryptKey: entry.decryptedKey,
+                          decryptNonce: entry.decryptedNonce,
                         ),
-                        loadStateChanged: (ExtendedImageState state) {
-                          switch (state.extendedImageLoadState) {
-                            case LoadState.loading:
-                              return Center(
-                                child: CircularProgressIndicator(),
+                        builder: (context, snapshot) {
+                          final provider = snapshot.data;
+                          if (provider == null) return SizedBox();
+                          return ExtendedImage(
+                            image: provider,
+                            loadStateChanged: (ExtendedImageState state) {
+                              switch (state.extendedImageLoadState) {
+                                case LoadState.loading:
+                                  return Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                case LoadState.completed:
+                                  return null; // Use the completed image
+                                case LoadState.failed:
+                                  return Center(
+                                    child: Text('Load failed'),
+                                  );
+                              }
+                            },
+                            enableSlideOutPage: true,
+                            onDoubleTap: (ExtendedImageGestureState state) =>
+                                _onDoubleTap(state),
+                            mode: ExtendedImageMode.gesture,
+                            initGestureConfigHandler: (state) {
+                              return GestureConfig(
+                                minScale: 0.9,
+                                animationMinScale: 0.7,
+                                maxScale: 3.0,
+                                animationMaxScale: 3.5,
+                                speed: 1.0,
+                                inertialSpeed: 100.0,
+                                initialScale: 1.0,
+                                inPageView: true,
+                                initialAlignment: InitialAlignment.center,
                               );
-                            case LoadState.completed:
-                              return null; // Use the completed image
-                            case LoadState.failed:
-                              return Center(
-                                child: Text('Load failed'),
-                              );
-                          }
-                        },
-                        enableSlideOutPage: true,
-                        onDoubleTap: (ExtendedImageGestureState state) =>
-                            _onDoubleTap(state),
-                        mode: ExtendedImageMode.gesture,
-                        initGestureConfigHandler: (state) {
-                          return GestureConfig(
-                            minScale: 0.9,
-                            animationMinScale: 0.7,
-                            maxScale: 3.0,
-                            animationMaxScale: 3.5,
-                            speed: 1.0,
-                            inertialSpeed: 100.0,
-                            initialScale: 1.0,
-                            inPageView: true,
-                            initialAlignment: InitialAlignment.center,
+                            },
                           );
-                        },
+                        }
                       ),
                       tag: widget.imageList[index].id,
                       slideType: SlideType.onlyImage,
@@ -525,7 +531,7 @@ class _CommonImageGalleryState extends State<CommonImageGallery>
     var result;
     if (imageUri.isRemoteURL) {
       // Remote image
-      final imageManager = OXFileCacheManager.get(encryptKey: decryptKey, encryptNonce: decryptNonce);
+      final imageManager = await CLCacheManager.getCircleCacheManager(CacheFileType.image);
       try {
         final imageFile = await imageManager.getSingleFile(imageUri)
             .timeout(const Duration(seconds: 30), onTimeout: () {
@@ -545,15 +551,15 @@ class _CommonImageGalleryState extends State<CommonImageGallery>
       // Local image
       final imageFile = File(imageUri);
       if (decryptKey != null) {
-        final completer = Completer();
-        await DecryptedCacheManager.decryptFile(imageFile, decryptKey, nonce: decryptNonce,).then((decryptFile) async {
-          result = await ImageGallerySaverPlus.saveImage(decryptFile.readAsBytesSync());
-          completer.complete();
-        });
-        await completer.future;
+        final decryptData = await CLCachedNetworkImageProvider.decryptFileInMemory(
+          imageFile,
+          decryptKey,
+          decryptNonce,
+        );
+        result = await ImageGallerySaverPlus.saveImage(decryptData);
       } else {
         final imageData = await imageFile.readAsBytes();
-        result = await ImageGallerySaverPlus.saveImage(Uint8List.fromList(imageData));
+        result = await ImageGallerySaverPlus.saveImage(imageData);
       }
     }
 

@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:chatcore/chat-core.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/encode_utils.dart';
 import 'package:ox_common/utils/image_picker_utils.dart';
 import 'package:ox_common/utils/string_utils.dart';
 import 'package:ox_common/utils/uplod_aliyun_utils.dart';
-import 'package:ox_common/widgets/common_file_cache_manager.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:uuid/uuid.dart';
 
@@ -33,10 +33,7 @@ class VideoDataManager {
       taskKey: taskKey,
       task: () async {
         Media media = Media()..galleryMode = GalleryMode.video;
-        final cacheManager = OXFileCacheManager.get(
-          encryptKey: encryptedKey,
-          encryptNonce: encryptedNonce,
-        );
+        final cacheManager = await CLCacheManager.getCircleCacheManager(CacheFileType.video);
 
         try {
           final file = await cacheManager.getSingleFile(videoURL);
@@ -152,7 +149,7 @@ class _VideoThumbnailHandler {
     final task = _Task(
       taskKey: taskKey,
       task: () async {
-        final cacheManager = OXFileCacheManager.get();
+        final cacheManager = await CLCacheManager.getCircleCacheManager(CacheFileType.image);
 
         // Cache
         final thumbnailCacheFile = (await cacheManager.getFileFromCache(thumbnailURL))?.file;
@@ -202,7 +199,7 @@ class _VideoThumbnailHandler {
         if (!videoFile.existsSync()) return null;
 
         final fileId = cacheKey.isNotEmpty ? cacheKey : await EncodeUtils.generateMultiSampleFileKey(videoFile);
-        final cacheManager = OXFileCacheManager.get();
+        final cacheManager = await CLCacheManager.getCircleCacheManager(CacheFileType.image);
 
         // Cache
         final thumbnailCacheFile = (await cacheManager.getFileFromCache(fileId))?.file;
@@ -246,7 +243,8 @@ class _VideoThumbnailHandler {
   }) async {
     final thumbnailURL = _thumbnailSnapshotURL(videoURL);
     final thumbnailFile = File(thumbnailPath);
-    return OXFileCacheManager.get().putFile(
+    final cacheManager = await CLCacheManager.getCircleCacheManager(CacheFileType.image);
+    return cacheManager.putFile(
       thumbnailURL,
       thumbnailFile.readAsBytesSync(),
       fileExtension: thumbnailPath.getFileExtension(),

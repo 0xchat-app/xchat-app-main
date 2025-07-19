@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/theme_color.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_common/utils/widget_tool.dart';
-import 'package:ox_common/widgets/common_network_image.dart';
 
 class GroupMemberItem extends StatelessWidget {
 
@@ -60,7 +60,7 @@ class GroupMemberItem extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(Adapt.px(40)),
         ),
-        child: OXCachedNetworkImage(
+        child: CLCachedNetworkImage(
           imageUrl: picture,
           fit: BoxFit.cover,
           placeholder: (context, url) => placeholderImage,

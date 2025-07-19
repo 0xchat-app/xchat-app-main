@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:ox_chat/utils/chat_log_utils.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/string_utils.dart';
-import 'package:ox_common/widgets/common_network_image.dart';
+import 'package:ox_common/component.dart';
 
 class ChatImagePreviewWidget extends StatefulWidget {
   ChatImagePreviewWidget({
@@ -63,17 +63,25 @@ class ChatImagePreviewWidgetState extends State<ChatImagePreviewWidget> {
     }
 
     if (uri.isEmpty) return ;
-    imageProvider = OXCachedImageProviderEx.create(
+    
+    CLCachedNetworkImageProvider.createProvider(
       uri,
       width: width,
       height: height,
       maxWidth: widget.maxWidth,
-      decryptedKey: widget.decryptKey,
-      decryptedNonce: widget.decryptNonce
-    );
+      decryptKey: widget.decryptKey,
+      decryptNonce: widget.decryptNonce,
+    ).then((provider) {
+      if (mounted) {
+        setState(() {
+          imageProvider = provider;
+        });
+      }
+    });
 
     if (uri.isImageBase64) {
-      imageSize = OXCachedImageProviderEx.getImageSizeWithBase64(uri) ?? imageSize;
+      // For base64 images, get size from the new method
+      imageSize = CLCachedNetworkImage.getImageSizeWithBase64(uri) ?? imageSize;
     }
   }
 

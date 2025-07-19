@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:ox_common/component.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'package:ox_common/utils/string_utils.dart';
-import 'package:ox_common/widgets/common_file_cache_manager.dart';
 
 class ChatVoiceMessageHelper {
   static Map<String, Duration> durationCache = {};
@@ -29,8 +29,7 @@ class ChatVoiceMessageHelper {
     File sourceFile;
     final uri = message.uri;
     final urlExtension = uri.split('.').last;
-    final audioManager =
-        OXFileCacheManager.get(encryptKey: message.decryptKey, encryptNonce: message.decryptNonce);
+    final audioManager = await CLCacheManager.getCircleCacheManager(CacheFileType.audio);
     final cacheFile = message.audioFile ?? (await audioManager.getFileFromCache(uri))?.file;
 
     if (cacheFile != null) {

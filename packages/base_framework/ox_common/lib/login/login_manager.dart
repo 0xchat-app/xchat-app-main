@@ -6,6 +6,7 @@ import 'package:ox_cache_manager/ox_cache_manager.dart';
 import 'package:isar/isar.dart';
 import 'package:nostr_core_dart/nostr.dart';
 import 'package:convert/convert.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/extension.dart';
 import 'package:uuid/uuid.dart';
 import '../utils/ox_chat_binding.dart';
@@ -558,6 +559,7 @@ extension LoginManagerCircle on LoginManager {
         await _stopBitchatService();
       }
       await Account.sharedInstance.logout();
+      CLCacheManager.clearCircleCacheById(originCircle.id);
     }
     return originCircle;
   }
