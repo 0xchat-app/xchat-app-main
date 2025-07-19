@@ -103,7 +103,7 @@ class AccountPathManager {
   /// [circleId] Circle ID
   /// [fileType] Type of cached files (Image, File, Audio, Video)
   /// Returns: {root}/accounts/{pubkey}/circles/{circleId}/cache/{fileType}/
-  static Future<String> getCircleCacheFilePath(String pubkey, String circleId, String fileType) async {
+  static Future<String> _getCircleCacheFilePath(String pubkey, String circleId, String fileType) async {
     final cachePath = await getCircleCachePath(pubkey, circleId);
     return path.join(cachePath, fileType);
   }
@@ -114,7 +114,7 @@ class AccountPathManager {
   /// [circleId] Circle ID
   /// Returns: {root}/accounts/{pubkey}/circles/{circleId}/cache/Image/
   static Future<String> getCircleImageCachePath(String pubkey, String circleId) async {
-    return getCircleCacheFilePath(pubkey, circleId, 'Image');
+    return _getCircleCacheFilePath(pubkey, circleId, 'Image');
   }
 
   /// Get circle file cache directory path
@@ -123,7 +123,7 @@ class AccountPathManager {
   /// [circleId] Circle ID
   /// Returns: {root}/accounts/{pubkey}/circles/{circleId}/cache/File/
   static Future<String> getCircleFileCachePath(String pubkey, String circleId) async {
-    return getCircleCacheFilePath(pubkey, circleId, 'File');
+    return _getCircleCacheFilePath(pubkey, circleId, 'File');
   }
 
   /// Get circle audio cache directory path
@@ -132,7 +132,7 @@ class AccountPathManager {
   /// [circleId] Circle ID
   /// Returns: {root}/accounts/{pubkey}/circles/{circleId}/cache/Audio/
   static Future<String> getCircleAudioCachePath(String pubkey, String circleId) async {
-    return getCircleCacheFilePath(pubkey, circleId, 'Audio');
+    return _getCircleCacheFilePath(pubkey, circleId, 'Audio');
   }
 
   /// Get circle video cache directory path
@@ -141,7 +141,7 @@ class AccountPathManager {
   /// [circleId] Circle ID
   /// Returns: {root}/accounts/{pubkey}/circles/{circleId}/cache/Video/
   static Future<String> getCircleVideoCachePath(String pubkey, String circleId) async {
-    return getCircleCacheFilePath(pubkey, circleId, 'Video');
+    return _getCircleCacheFilePath(pubkey, circleId, 'Video');
   }
 
   // ========== Public Path Interfaces ==========
@@ -352,22 +352,6 @@ class AccountPathManager {
     }
   }
 
-  /// Delete specific file type cache in circle
-  static Future<bool> deleteCircleCacheByType(String pubkey, String circleId, String fileType) async {
-    try {
-      final cachePath = await getCircleCacheFilePath(pubkey, circleId, fileType);
-      final dir = Directory(cachePath);
-      if (await dir.exists()) {
-        await dir.delete(recursive: true);
-        // Recreate empty directory
-        await dir.create(recursive: true);
-      }
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
   // ========== Utility Methods ==========
 
   /// List all files in account folder
@@ -442,7 +426,7 @@ class AccountPathManager {
   /// Get cache size by file type
   static Future<int> getCircleCacheSizeByType(String pubkey, String circleId, String fileType) async {
     try {
-      final cachePath = await getCircleCacheFilePath(pubkey, circleId, fileType);
+      final cachePath = await _getCircleCacheFilePath(pubkey, circleId, fileType);
       final dir = Directory(cachePath);
       if (!await dir.exists()) {
         return 0;
