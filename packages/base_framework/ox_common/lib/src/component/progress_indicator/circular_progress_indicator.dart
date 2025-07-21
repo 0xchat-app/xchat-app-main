@@ -10,10 +10,12 @@ class CLCircularProgressIndicator extends StatelessWidget {
     super.key,
     this.progress,
     this.size,
+    this.color,
   });
 
   final double? progress;
   final double? size;
+  final Color? color;
 
   double get defaultSize => 40; // _CircularProgressIndicatorDefaultsM3.constraints
 
@@ -52,7 +54,7 @@ class CLCircularProgressIndicator extends StatelessWidget {
       width: size,
       alignment: Alignment.center,
       child: progress == null ?
-      CupertinoActivityIndicator(radius: size / 2) :
+      CupertinoActivityIndicator(radius: size / 2, color: color,) :
       _buildCircularProgressIndicatorForCupertino(context, size),
     );
   }

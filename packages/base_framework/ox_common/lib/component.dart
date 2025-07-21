@@ -28,8 +28,11 @@ export 'src/component/scaffold.dart';
 export 'utils/search_manager.dart';
 export 'src/component/switch.dart';
 export 'src/component/picker.dart';
+
 export 'src/component/image/cached_network_image.dart';
 export 'src/component/image/cache_manager.dart';
+export 'src/component/image/encrypted_image_provider.dart';
+export 'src/component/image/base64_image_prodiver.dart';
 
 export 'src/component/tools/lose_focus_wrap.dart';
 

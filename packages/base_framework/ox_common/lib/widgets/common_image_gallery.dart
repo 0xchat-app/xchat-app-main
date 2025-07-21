@@ -151,7 +151,7 @@ class _CommonImageGalleryState extends State<CommonImageGallery>
   @override
   void initState() {
     super.initState();
-    print('Jeff: --_CommonImageGalleryState--initState----');
+
     _pageController = ExtendedPageController(
       initialPage: widget.initialPage,
       pageSpacing: 50,
@@ -234,57 +234,7 @@ class _CommonImageGalleryState extends State<CommonImageGallery>
                   },
                   itemBuilder: (BuildContext context, int index) {
                     final entry = widget.imageList[index];
-                    return HeroWidget(
-                      child: FutureBuilder(
-                        future: CLCachedNetworkImageProvider.createProvider(
-                          entry.url,
-                          decryptKey: entry.decryptedKey,
-                          decryptNonce: entry.decryptedNonce,
-                        ),
-                        builder: (context, snapshot) {
-                          final provider = snapshot.data;
-                          if (provider == null) return SizedBox();
-                          return ExtendedImage(
-                            image: provider,
-                            loadStateChanged: (ExtendedImageState state) {
-                              switch (state.extendedImageLoadState) {
-                                case LoadState.loading:
-                                  return Center(
-                                    child: CircularProgressIndicator(),
-                                  );
-                                case LoadState.completed:
-                                  return null; // Use the completed image
-                                case LoadState.failed:
-                                  return Center(
-                                    child: Text('Load failed'),
-                                  );
-                              }
-                            },
-                            enableSlideOutPage: true,
-                            onDoubleTap: (ExtendedImageGestureState state) =>
-                                _onDoubleTap(state),
-                            mode: ExtendedImageMode.gesture,
-                            initGestureConfigHandler: (state) {
-                              return GestureConfig(
-                                minScale: 0.9,
-                                animationMinScale: 0.7,
-                                maxScale: 3.0,
-                                animationMaxScale: 3.5,
-                                speed: 1.0,
-                                inertialSpeed: 100.0,
-                                initialScale: 1.0,
-                                inPageView: true,
-                                initialAlignment: InitialAlignment.center,
-                              );
-                            },
-                          );
-                        }
-                      ),
-                      tag: widget.imageList[index].id,
-                      slideType: SlideType.onlyImage,
-                      slidePagekey: slidePagekey,
-                    );
-                    // );
+                    return buildImageWidget(entry);
                   },
                   onPageChanged: (int index) {
                     print('page changed to $index');
@@ -319,6 +269,58 @@ class _CommonImageGalleryState extends State<CommonImageGallery>
           ),
         ],
       ),
+    );
+  }
+
+  Widget buildImageWidget(ImageEntry entry) {
+    ImageProvider provider;
+    if (entry.url.isImageBase64) {
+      provider = Base64ImageProvider(entry.url);
+    } else {
+      provider = CLEncryptedImageProvider(
+        url: entry.url,
+        decryptKey: entry.decryptedKey,
+        decryptNonce: entry.decryptedNonce,
+      );
+    }
+    return HeroWidget(
+      child: ExtendedImage(
+        image: provider,
+        loadStateChanged: (ExtendedImageState state) {
+          switch (state.extendedImageLoadState) {
+            case LoadState.loading:
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            case LoadState.completed:
+              return null; // Use the completed image
+            case LoadState.failed:
+              return Center(
+                child: Text('Load failed'),
+              );
+          }
+        },
+        enableSlideOutPage: true,
+        onDoubleTap: (ExtendedImageGestureState state) =>
+            _onDoubleTap(state),
+        mode: ExtendedImageMode.gesture,
+        initGestureConfigHandler: (state) {
+          return GestureConfig(
+            minScale: 0.9,
+            animationMinScale: 0.7,
+            maxScale: 3.0,
+            animationMaxScale: 3.5,
+            speed: 1.0,
+            inertialSpeed: 100.0,
+            initialScale: 1.0,
+            inPageView: true,
+            initialAlignment: InitialAlignment.center,
+          );
+        },
+      ),
+      tag: entry.id,
+      slideType: SlideType.onlyImage,
+      slidePagekey: slidePagekey,
     );
   }
 
@@ -551,7 +553,7 @@ class _CommonImageGalleryState extends State<CommonImageGallery>
       // Local image
       final imageFile = File(imageUri);
       if (decryptKey != null) {
-        final decryptData = await CLCachedNetworkImageProvider.decryptFileInMemory(
+        final decryptData = await CLEncryptedImageProvider.decryptFileInMemory(
           imageFile,
           decryptKey,
           decryptNonce,

@@ -1,20 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
-import 'dart:math';
-import 'dart:typed_data';
-import 'dart:ui' as ui;
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:ox_common/utils/aes_encrypt_utils.dart';
+import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/num_utils.dart';
-import 'package:path_provider/path_provider.dart';
 
 import 'cache_manager.dart';
+import 'encrypted_image_provider.dart';
 
 /// A stateful widget that manages ImageProvider lifecycle with optimized defaults.
 /// 
@@ -90,15 +86,6 @@ class CLCachedImageProviderStateful extends StatefulWidget {
   /// Target height for resizing
   final double? height;
 
-  /// Maximum width constraint
-  final double? maxWidth;
-
-  /// Maximum height constraint
-  final double? maxHeight;
-
-  /// HTTP headers for the request
-  final Map<String, String>? headers;
-
   /// Whether this image should be treated as a thumbnail
   final bool isThumb;
 
@@ -134,9 +121,6 @@ class CLCachedImageProviderStateful extends StatefulWidget {
     this.decryptNonce,
     this.width,
     this.height,
-    this.maxWidth,
-    this.maxHeight,
-    this.headers,
     this.isThumb = false,
     this.maxRetries = 1,
     this.retryDelay = const Duration(milliseconds: 500),
@@ -171,9 +155,6 @@ class _CLCachedImageProviderStatefulState extends State<CLCachedImageProviderSta
         oldWidget.decryptNonce != widget.decryptNonce ||
         oldWidget.width != widget.width ||
         oldWidget.height != widget.height ||
-        oldWidget.maxWidth != widget.maxWidth ||
-        oldWidget.maxHeight != widget.maxHeight ||
-        oldWidget.headers != widget.headers ||
         oldWidget.isThumb != widget.isThumb) {
       _resetAndCreateProvider();
     }
@@ -198,16 +179,22 @@ class _CLCachedImageProviderStatefulState extends State<CLCachedImageProviderSta
 
   Future<void> _createProvider() async {
     try {
-      final provider = await CLCachedNetworkImageProvider.createProvider(
-        widget.imageUrl,
+      final devicePixelRatio = Adapt.devicePixelRatio;
+      int? cacheWidth;
+      int? cacheHeight;
+      if (widget.width != null) {
+        cacheWidth = (widget.width! * devicePixelRatio).floor();
+      }
+      if (widget.height != null) {
+        cacheHeight = (widget.height! * devicePixelRatio).floor();
+      }
+      final provider = await CLEncryptedImageProvider(
+        url: widget.imageUrl,
         decryptKey: widget.decryptKey,
         decryptNonce: widget.decryptNonce,
-        width: widget.width,
-        height: widget.height,
-        maxWidth: widget.maxWidth,
-        maxHeight: widget.maxHeight,
-        headers: widget.headers,
-        isThumb: widget.isThumb,
+        cacheWidth: cacheWidth,
+        cacheHeight: cacheHeight,
+        // isThumb: widget.isThumb,
       );
 
       if (mounted) {
@@ -389,45 +376,23 @@ class CLCachedNetworkImage extends StatelessWidget {
   }
 
   Widget _buildEncryptedImage(BuildContext context) {
-    return FutureBuilder<Widget>(
-      future: _loadEncryptedImage(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return placeholder?.call(context, imageUrl) ?? _buildPlaceholderWidget(context);
-        }
-        
-        if (snapshot.hasError) {
-          return errorWidget?.call(context, imageUrl, snapshot.error!) ?? 
-                 _buildErrorWidget(context, snapshot.error);
-        }
-        
-        return snapshot.data ?? _buildErrorWidget(context, 'Failed to load image');
+    return Image(
+      image: CLEncryptedImageProvider(
+        url: imageUrl,
+        decryptKey: decryptKey,
+        decryptNonce: decryptNonce,
+      ),
+      fit: fit,
+      width: width,
+      height: height,
+      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+        return placeholder?.call(context, imageUrl) ?? _buildPlaceholderWidget(context);
+      },
+      errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+        return errorWidget?.call(context, imageUrl, error) ??
+            _buildErrorWidget(context, error);
       },
     );
-  }
-
-  Future<Widget> _loadEncryptedImage() async {
-    try {
-      // Always use circle cache manager to avoid creating global cache files
-      final cacheManager = await CLCacheManager.getCircleCacheManager(CacheFileType.image);
-      
-      // Get or download the original file
-      final originalFile = await cacheManager.getSingleFile(imageUrl);
-      
-      // Decrypt the file in memory
-      final decryptedData = await CLCachedNetworkImageProvider.decryptFileInMemory(originalFile, decryptKey!, decryptNonce);
-      
-      // Create image widget from memory data
-      // For thumbnails, we still use the original dimensions but the cache key will be different
-      return Image.memory(
-        decryptedData,
-        fit: fit,
-        width: width,
-        height: height,
-      );
-    } catch (e) {
-      throw Exception('Failed to load encrypted image: $e');
-    }
   }
 
   Widget _buildCachedNetworkImage(BuildContext context, CacheManager cacheManager) {
@@ -541,296 +506,6 @@ class CLCachedNetworkImage extends StatelessWidget {
     });
 
     return null;
-  }
-}
-
-class CLCachedNetworkImageProvider {
-  /// Creates an [ImageProvider] for external use with unified logic.
-  ///
-  /// This method provides the same caching and encryption logic as the widget
-  /// but returns an [ImageProvider] that can be used with other image widgets.
-  ///
-  /// ## Parameters
-  ///
-  /// - [imageUrl]: The URL of the image to load
-  /// - [decryptKey]: Decryption key for encrypted images
-  /// - [decryptNonce]: Decryption nonce for encrypted images
-  /// - [width]: Target width for resizing
-  /// - [height]: Target height for resizing
-  /// - [maxWidth]: Maximum width constraint
-  /// - [maxHeight]: Maximum height constraint
-  /// - [headers]: HTTP headers for the request
-  /// - [isThumb]: Whether this is a thumbnail image
-  ///
-  /// ## Returns
-  ///
-  /// An [ImageProvider] configured with circle-specific cache management
-  /// and encryption support if needed.
-  ///
-  /// ## Usage Example
-  ///
-  /// ```dart
-  /// Image(
-  ///   image: await CLCachedNetworkImage.createProvider(
-  ///     'https://example.com/image.jpg',
-  ///     width: 200,
-  ///     height: 200,
-  ///   ),
-  /// )
-  /// ```
-  static Future<ImageProvider> createProvider(
-      String imageUrl, {
-        String? decryptKey,
-        String? decryptNonce,
-        double? width,
-        double? height,
-        double? maxWidth,
-        double? maxHeight,
-        Map<String, String>? headers,
-        bool isThumb = false,
-      }) async {
-    // Validate image URL
-    if (imageUrl.isEmpty) {
-      throw ArgumentError('Image URL cannot be empty');
-    }
-
-    // Check if this is an encrypted image
-    final isEncrypted = decryptKey != null && decryptKey.isNotEmpty;
-
-    if (isEncrypted) {
-      // For encrypted images, use CircleDefaultCacheManager with decryption
-      return await _createEncryptedImageProvider(
-        imageUrl,
-        decryptKey,
-        decryptNonce,
-        width,
-        height,
-        maxWidth,
-        maxHeight,
-        isThumb,
-      );
-    } else {
-      // Use standard cached network image provider for non-encrypted images
-      return await _createStandardImageProvider(
-        imageUrl,
-        width,
-        height,
-        maxWidth,
-        maxHeight,
-        headers,
-        isThumb,
-      );
-    }
-  }
-
-  static Future<ImageProvider> _createEncryptedImageProvider(
-      String imageUrl,
-      String decryptKey,
-      String? decryptNonce,
-      double? width,
-      double? height,
-      double? maxWidth,
-      double? maxHeight,
-      bool isThumb,
-      ) async {
-    // Get circle cache manager
-    final cacheManager = await CLCacheManager.getCircleCacheManager(CacheFileType.image);
-
-    // Generate cache key for encrypted images
-    final encryptedCacheKey = _generateEncryptedCacheKey(imageUrl, decryptKey, decryptNonce, isThumb);
-
-    // Check if decrypted image is already cached
-    final cachedFile = await cacheManager.getFileFromCache(encryptedCacheKey);
-    if (cachedFile != null && cachedFile.file.existsSync()) {
-      // Return cached decrypted image
-      return _createFileImageProvider(
-        cachedFile.file,
-        width,
-        height,
-        maxWidth,
-        maxHeight,
-      );
-    }
-
-    // Download encrypted file using circle cache manager
-    final encryptedFile = await cacheManager.getSingleFile(imageUrl);
-
-    // Decrypt the file in memory
-    final decryptedData = await decryptFileInMemory(encryptedFile, decryptKey, decryptNonce);
-
-    // Cache the decrypted data
-    final fileExtension = encryptedFile.path.split('.').last;
-    final cachedDecryptedFile = await cacheManager.putFile(
-      encryptedCacheKey,
-      decryptedData,
-      fileExtension: fileExtension,
-      maxAge: const Duration(days: 30),
-    );
-
-    // Return file image provider for the cached decrypted file
-    return _createFileImageProvider(
-      cachedDecryptedFile,
-      width,
-      height,
-      maxWidth,
-      maxHeight,
-    );
-  }
-
-  static String _generateEncryptedCacheKey(
-      String imageUrl,
-      String decryptKey,
-      String? decryptNonce,
-      bool isThumb,
-      ) {
-    final baseKey = '${imageUrl.hashCode}_decrypted_${decryptKey.hashCode}';
-    if (decryptNonce != null && decryptNonce.isNotEmpty) {
-      return '${baseKey}_${decryptNonce.hashCode}${isThumb ? '_thumb' : ''}';
-    }
-    return '${baseKey}${isThumb ? '_thumb' : ''}';
-  }
-
-  static ImageProvider _createFileImageProvider(
-      File file,
-      double? width,
-      double? height,
-      double? maxWidth,
-      double? maxHeight,
-      ) {
-    final provider = FileImage(file);
-
-    // Apply resize if needed
-    final resizeDimensions = _calculateResizeDimensions(
-      width,
-      height,
-      maxWidth,
-      maxHeight,
-    );
-
-    return ResizeImage.resizeIfNeeded(
-      resizeDimensions.width,
-      resizeDimensions.height,
-      provider,
-    );
-  }
-
-  static Future<Uint8List> decryptFileInMemory(
-      File encryptedFile,
-      String decryptKey,
-      String? decryptNonce,
-      ) async {
-    // Create a temporary file for decryption
-    final tempDir = await getTemporaryDirectory();
-    final tempFile = File('${tempDir.path}/cl_decrypt_${DateTime.now().millisecondsSinceEpoch}');
-
-    try {
-      // Decrypt the file using isolate
-      await AesEncryptUtils.decryptFileInIsolate(
-        encryptedFile,
-        tempFile,
-        decryptKey,
-        nonce: decryptNonce,
-      );
-
-      // Read the decrypted data
-      final decryptedData = await tempFile.readAsBytes();
-
-      return decryptedData;
-    } finally {
-      // Clean up temporary file
-      if (await tempFile.exists()) {
-        await tempFile.delete();
-      }
-    }
-  }
-
-  static Future<ImageProvider> _createStandardImageProvider(
-      String imageUrl,
-      double? width,
-      double? height,
-      double? maxWidth,
-      double? maxHeight,
-      Map<String, String>? headers,
-      bool isThumb,
-      ) async {
-    // Get circle cache manager
-    final cacheManager = await CLCacheManager.getCircleCacheManager(CacheFileType.image);
-
-    // Calculate resize dimensions
-    final resizeDimensions = _calculateResizeDimensions(
-      width,
-      height,
-      maxWidth,
-      maxHeight,
-    );
-
-    // Create the provider
-    final provider = CachedNetworkImageProvider(
-      imageUrl,
-      headers: headers,
-      cacheManager: cacheManager,
-    );
-
-    // Apply resize if needed
-    return ResizeImage.resizeIfNeeded(
-      resizeDimensions.width,
-      resizeDimensions.height,
-      provider,
-    );
-  }
-
-  static ({int? width, int? height}) _calculateResizeDimensions(
-      double? width,
-      double? height,
-      double? maxWidth,
-      double? maxHeight,
-      ) {
-    final pixelRatio = WidgetsBinding.instance.window.devicePixelRatio;
-
-    // Default dimensions
-    final defaultWidth = WidgetsBinding.instance.window.physicalSize.width / pixelRatio;
-    final defaultHeight = WidgetsBinding.instance.window.physicalSize.height / pixelRatio;
-
-    // Initialize values
-    if (!width.isValid() && maxWidth != null) {
-      width = defaultWidth;
-    } else if (!height.isValid() && maxHeight != null) {
-      height = defaultHeight;
-    } else if (!width.isValid() && !height.isValid()) {
-      width = defaultWidth;
-    }
-
-    final maxPixelWidth = maxWidth != null ? maxWidth * pixelRatio : null;
-    final maxPixelHeight = maxHeight != null ? maxHeight * pixelRatio : null;
-
-    int? resizeWidth;
-    int? resizeHeight;
-    double? widthFactor;
-    double? heightFactor;
-
-    if (width != null && width.isValid()) {
-      resizeWidth = (width * pixelRatio).round();
-      if (maxPixelWidth != null) {
-        widthFactor = maxPixelWidth / resizeWidth;
-      }
-    }
-    if (height != null && height != double.infinity) {
-      resizeHeight = (height * pixelRatio).round();
-      if (maxPixelHeight != null) {
-        heightFactor = maxPixelHeight / resizeHeight;
-      }
-    }
-
-    final factor = min(widthFactor ?? 1, heightFactor ?? 1);
-    if (factor > 0.0 && factor < 1.0) {
-      resizeWidth = (resizeWidth?.toDouble() * factor)?.toInt();
-      resizeHeight = (resizeHeight?.toDouble() * factor)?.toInt();
-    }
-
-    return (
-      width: resizeWidth,
-      height: resizeHeight,
-    );
   }
 }
 

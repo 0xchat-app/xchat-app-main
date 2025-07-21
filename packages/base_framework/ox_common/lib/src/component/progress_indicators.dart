@@ -8,8 +8,13 @@ class CLProgressIndicator {
   static Widget circular({
     double? progress,
     double? size,
+    Color? color,
   }) {
-    return CLCircularProgressIndicator(progress: progress, size: size,);
+    return CLCircularProgressIndicator(
+      progress: progress,
+      size: size,
+      color: color,
+    );
   }
 
   static Widget linear({

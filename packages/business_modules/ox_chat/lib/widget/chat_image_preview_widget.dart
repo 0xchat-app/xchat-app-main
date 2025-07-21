@@ -2,8 +2,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:ox_chat/utils/chat_log_utils.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/string_utils.dart';
 import 'package:ox_common/component.dart';
@@ -31,13 +31,15 @@ class ChatImagePreviewWidget extends StatefulWidget {
   State<StatefulWidget> createState() => ChatImagePreviewWidgetState();
 }
 
-class ChatImagePreviewWidgetState extends State<ChatImagePreviewWidget> {
+class ChatImagePreviewWidgetState extends State<ChatImagePreviewWidget> with TickerProviderStateMixin {
 
   ImageProvider? imageProvider;
   ImageStream? imageStream;
   Size imageSize = Size.zero;
 
   bool isLoadImageFinish = false;
+  late AnimationController _shimmerController;
+  late Animation<double> _shimmerAnimation;
 
   double get minWidth => 100.px;
   double get minHeight => 100.px;
@@ -46,6 +48,11 @@ class ChatImagePreviewWidgetState extends State<ChatImagePreviewWidget> {
   @override
   void initState() {
     super.initState();
+    _shimmerController = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    )..repeat();
+    _shimmerAnimation = Tween<double>(begin: -1.0, end: 2.0).animate(_shimmerController);
     prepareImage();
   }
 
@@ -63,25 +70,19 @@ class ChatImagePreviewWidgetState extends State<ChatImagePreviewWidget> {
     }
 
     if (uri.isEmpty) return ;
-    
-    CLCachedNetworkImageProvider.createProvider(
-      uri,
-      width: width,
-      height: height,
-      maxWidth: widget.maxWidth,
-      decryptKey: widget.decryptKey,
-      decryptNonce: widget.decryptNonce,
-    ).then((provider) {
-      if (mounted) {
-        setState(() {
-          imageProvider = provider;
-        });
-      }
-    });
 
     if (uri.isImageBase64) {
       // For base64 images, get size from the new method
       imageSize = CLCachedNetworkImage.getImageSizeWithBase64(uri) ?? imageSize;
+      imageProvider = Base64ImageProvider(uri);
+    } else {
+      imageProvider = CLEncryptedImageProvider(
+        url: uri,
+        decryptKey: widget.decryptKey,
+        decryptNonce: widget.decryptNonce,
+        cacheWidth: widget.imageWidth,
+        cacheHeight: widget.imageHeight,
+      );
     }
   }
 
@@ -110,6 +111,7 @@ class ChatImagePreviewWidgetState extends State<ChatImagePreviewWidget> {
 
   @override
   void dispose() {
+    _shimmerController.dispose();
     imageStream?.removeListener(ImageStreamListener(updateImage));
     super.dispose();
   }
@@ -133,7 +135,6 @@ class ChatImagePreviewWidgetState extends State<ChatImagePreviewWidget> {
         minHeight: minHeight,
         maxHeight: maxHeight,
       ),
-      color: isLoadImageFinish == true ? null : Colors.grey.withOpacity(0.7),
       child: AspectRatio(
         aspectRatio: imageSize.aspectRatio > 0 ? imageSize.aspectRatio : 0.7,
         child: imageProvider != null ? Image(
@@ -147,25 +148,64 @@ class ChatImagePreviewWidgetState extends State<ChatImagePreviewWidget> {
                 });
               });
             }
+            
+            // Show skeleton loading UI when image is still loading
+            if (!isLoadImageFinish) {
+              return buildDecryptionIndicator();
+            }
+            
             return child;
           },
-          errorBuilder: (context, error, stackTrace,) {
-            ChatLogUtils.error(
-              className: 'ImagePreviewWidget',
-              funcName: 'buildImageWidget',
-              message: error.toString(),
-            );
-            return SizedBox();
-          },
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            final expectedTotalBytes = loadingProgress.expectedTotalBytes ?? 0;
-            final progress = expectedTotalBytes > 0
-                ? loadingProgress.cumulativeBytesLoaded / expectedTotalBytes
-                : 0.0;
-            return buildProgressMask(progress.clamp(0.0, 1.0));
-          },
-        ) : null,
+          // errorBuilder: (context, error, stackTrace,) {
+          //   ChatLogUtils.error(
+          //     className: 'ImagePreviewWidget',
+          //     funcName: 'buildImageWidget',
+          //     message: error.toString(),
+          //   );
+          //   return SizedBox();
+          // },
+          // loadingBuilder: (context, child, loadingProgress) {
+          //   if (loadingProgress == null) return child;
+          //   final expectedTotalBytes = loadingProgress.expectedTotalBytes ?? 0;
+          //   final progress = expectedTotalBytes > 0
+          //       ? loadingProgress.cumulativeBytesLoaded / expectedTotalBytes
+          //       : 0.0;
+          //   return buildProgressMask(progress.clamp(0.0, 1.0));
+          // },
+        ) : SizedBox(),
+      ),
+    );
+  }
+
+  Widget buildDecryptionIndicator() {
+    return Container(
+      padding: EdgeInsets.all(16.px),
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.7),
+        borderRadius: BorderRadius.circular(12.px),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 8.px,
+            offset: Offset(0, 2.px),
+          ),
+        ],
+      ),
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.lock,
+            color: Colors.white,
+            size: 28.px,
+          ),
+          SizedBox(height: 10.px),
+          CLProgressIndicator.circular(
+            size: 24.px,
+            color: ColorToken.onSecondary.of(context)
+          ),
+        ],
       ),
     );
   }
@@ -184,7 +224,7 @@ class ChatImagePreviewWidgetState extends State<ChatImagePreviewWidget> {
       child: CircularProgressIndicator(
         value: progress,
         strokeWidth: 5,
-        backgroundColor: Colors.white.withOpacity(0.5),
+        backgroundColor: Colors.white.withValues(alpha: 0.5),
         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
         strokeCap: StrokeCap.round,
       ),
