@@ -8,6 +8,8 @@ import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/string_utils.dart';
 import 'package:ox_common/component.dart';
 
+import 'decryption_overlay.dart';
+
 class ChatImagePreviewWidget extends StatefulWidget {
   ChatImagePreviewWidget({
     required this.uri,
@@ -37,7 +39,6 @@ class ChatImagePreviewWidgetState extends State<ChatImagePreviewWidget> with Tic
   ImageStream? imageStream;
   Size imageSize = Size.zero;
 
-  bool isLoadImageFinish = false;
   late AnimationController _shimmerController;
   late Animation<double> _shimmerAnimation;
 
@@ -141,20 +142,12 @@ class ChatImagePreviewWidgetState extends State<ChatImagePreviewWidget> with Tic
           fit: BoxFit.cover,
           image: imageProvider!,
           frameBuilder: (BuildContext context, Widget child, int? frame, bool wasSynchronouslyLoaded,) {
-            if (!isLoadImageFinish && frame != null) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                setState(() {
-                  isLoadImageFinish = true;
-                });
-              });
-            }
-            
-            // Show skeleton loading UI when image is still loading
-            if (!isLoadImageFinish) {
-              return buildDecryptionIndicator();
-            }
-            
-            return child;
+            return DecryptionOverlay(
+              isDecrypting: frame == null,
+              backgroundColor: ColorToken.onSecondaryContainer.of(context).withValues(alpha: 1.0),
+              iconTintColor: ColorToken.secondaryContainer.of(context).withValues(alpha: 0.6),
+              child: child,
+            );
           },
           // errorBuilder: (context, error, stackTrace,) {
           //   ChatLogUtils.error(
@@ -173,39 +166,6 @@ class ChatImagePreviewWidgetState extends State<ChatImagePreviewWidget> with Tic
           //   return buildProgressMask(progress.clamp(0.0, 1.0));
           // },
         ) : SizedBox(),
-      ),
-    );
-  }
-
-  Widget buildDecryptionIndicator() {
-    return Container(
-      padding: EdgeInsets.all(16.px),
-      decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.7),
-        borderRadius: BorderRadius.circular(12.px),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
-            blurRadius: 8.px,
-            offset: Offset(0, 2.px),
-          ),
-        ],
-      ),
-      alignment: Alignment.center,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.lock,
-            color: Colors.white,
-            size: 28.px,
-          ),
-          SizedBox(height: 10.px),
-          CLProgressIndicator.circular(
-            size: 24.px,
-            color: ColorToken.onSecondary.of(context)
-          ),
-        ],
       ),
     );
   }
