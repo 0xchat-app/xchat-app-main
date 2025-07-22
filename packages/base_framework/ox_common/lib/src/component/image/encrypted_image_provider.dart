@@ -195,4 +195,25 @@ class CLEncryptedImageProvider extends ImageProvider<_CLEncryptedImageKey> {
       return Uint8List(0);
     }
   }
+
+  static Future<T> decryptFileAndHandle<T>({
+    required File encryptedFile,
+    required String decryptKey,
+    String? decryptNonce,
+    required Future<T> Function(File decryptedFile) handler,
+  }) async {
+    final bytes = await decryptFileInMemory(encryptedFile, decryptKey, decryptNonce);
+    final tempDir = await getTemporaryDirectory();
+    final tempFile = await File('${tempDir.path}/dec_${DateTime.now().microsecondsSinceEpoch}_${encryptedFile.uri.pathSegments.last}').create();
+    await tempFile.writeAsBytes(bytes, flush: true);
+    try {
+      return await handler(tempFile);
+    } finally {
+      if (await tempFile.exists()) {
+        try {
+          await tempFile.delete();
+        } catch (_) {}
+      }
+    }
+  }
 }

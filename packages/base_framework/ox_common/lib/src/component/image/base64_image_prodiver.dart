@@ -84,6 +84,42 @@ class Base64ImageProvider extends ImageProvider<_B64Key> {
       _B64Key key,
       ImageDecoderCallback decode,
       ) async {
+    // Decode Base64 using the static method
+    final bytes = await decodeBase64ToBytes(base64String, maxBytes: maxBytes);
+
+    // Wrap bytes in ImmutableBuffer (zero-copy where possible).
+    final buffer = await ui.ImmutableBuffer.fromUint8List(bytes);
+
+    // Let Flutter decode (with optional down-sampling).
+    return decode(
+      buffer,
+      getTargetSize: (int intrinsicW, int intrinsicH) {
+        final hasW = key.w != null;
+        final hasH = key.h != null;
+        if (!hasW && !hasH) {
+          return ui.TargetImageSize(width: intrinsicW, height: intrinsicH);
+        }
+
+        final aspect = intrinsicW / intrinsicH;
+        final targetW = hasW ? key.w! : (key.h! * aspect).round();
+        final targetH = hasH ? key.h! : (key.w! / aspect).round();
+        return ui.TargetImageSize(width: targetW, height: targetH);
+      },
+    );
+  }
+
+  /// Decode Base64 string to bytes with size validation.
+  /// 
+  /// [base64String] can be either raw Base64 string or data-URI format.
+  /// [maxBytes] is the maximum allowed decoded size in bytes.
+  /// 
+  /// Returns [Uint8List] of decoded bytes.
+  /// Throws [FormatException] on invalid Base64 input.
+  /// Throws [StateError] if decoded size exceeds [maxBytes].
+  static Future<Uint8List> decodeBase64ToBytes(
+    String base64String, {
+    int maxBytes = 10 << 20, // Default safety limit: 10 MiB
+  }) async {
     Uint8List bytes;
 
     // Decode Base64 in a background isolate.
@@ -106,24 +142,6 @@ class Base64ImageProvider extends ImageProvider<_B64Key> {
       rethrow;
     }
 
-    // Wrap bytes in ImmutableBuffer (zero-copy where possible).
-    final buffer = await ui.ImmutableBuffer.fromUint8List(bytes);
-
-    // Let Flutter decode (with optional down-sampling).
-    return decode(
-      buffer,
-      getTargetSize: (int intrinsicW, int intrinsicH) {
-        final hasW = key.w != null;
-        final hasH = key.h != null;
-        if (!hasW && !hasH) {
-          return ui.TargetImageSize(width: intrinsicW, height: intrinsicH);
-        }
-
-        final aspect = intrinsicW / intrinsicH;
-        final targetW = hasW ? key.w! : (key.h! * aspect).round();
-        final targetH = hasH ? key.h! : (key.w! / aspect).round();
-        return ui.TargetImageSize(width: targetW, height: targetH);
-      },
-    );
+    return bytes;
   }
 }

@@ -383,10 +383,21 @@ extension ChatMessageSendEx on ChatGeneralHandler {
             fileEncryptionType == types.EncryptionType.encrypted ? createEncryptNonce() : null;
       }
 
+      final encryptedFile = await encryptFile(
+        origin: imageFile,
+        encryptedKey: encryptedKey,
+        encryptedNonce: encryptedNonce,
+      );
+      imageFile.delete();
+      if (encryptedFile == null) {
+        assert(false, 'encryptedFile is null');
+        return;
+      }
+
       await sendImageMessage(
         context: context,
         fileId: fileId,
-        filePath: imageFile.path,
+        imageFile: encryptedFile,
         imageWidth: image.width,
         imageHeight: image.height,
         encryptedKey: encryptedKey,
@@ -396,10 +407,45 @@ extension ChatMessageSendEx on ChatGeneralHandler {
     }
   }
 
+  Future<File?> encryptFile({
+    required File origin,
+    required String? encryptedKey,
+    required String? encryptedNonce,
+  }) async {
+    if (encryptedKey == null && encryptedNonce == null) return origin;
+
+    final fileName = '${Uuid().v1()}.${origin.path.getFileExtension()}';
+    File? encryptedFile;
+    String directoryPath = '';
+
+    if (Platform.isAndroid) {
+      Directory? externalStorageDirectory = await getExternalStorageDirectory();
+      if (externalStorageDirectory == null) {
+        return null;
+      }
+      directoryPath = externalStorageDirectory.path;
+    } else if (Platform.isIOS || Platform.isMacOS) {
+      Directory temporaryDirectory = await getTemporaryDirectory();
+      directoryPath = temporaryDirectory.path;
+    }
+    
+    final cacheManager = await CLCacheManager.getCircleCacheManager(CacheFileType.image);
+    encryptedFile = await cacheManager.store.fileSystem.createFile(fileName);
+    await AesEncryptUtils.encryptFileInIsolate(
+      origin,
+      encryptedFile,
+      encryptedKey ?? '',
+      nonce: encryptedNonce,
+      mode: AESMode.gcm,
+    );
+    return encryptedFile;
+  }
+
   Future sendImageMessage({
     BuildContext? context,
     String? fileId,
-    String? filePath,
+    File? imageFile,
+    String? fileName,
     String? url,
     int? imageWidth,
     int? imageHeight,
@@ -409,7 +455,7 @@ extension ChatMessageSendEx on ChatGeneralHandler {
   }) async {
     if (resendMessage != null) {
       fileId ??= ImageSendingMessageEx(resendMessage).fileId;
-      filePath ??= ImageSendingMessageEx(resendMessage).path;
+      imageFile ??= File(ImageSendingMessageEx(resendMessage).path);
       imageWidth ??= ImageSendingMessageEx(resendMessage).width;
       imageHeight ??= ImageSendingMessageEx(resendMessage).height;
       encryptedKey ??= ImageSendingMessageEx(resendMessage).encryptedKey;
@@ -420,7 +466,6 @@ extension ChatMessageSendEx on ChatGeneralHandler {
     if (url != null && url.isRemoteURL) {
       sendImageMessageWithURL(
         imageURL: url,
-        imagePath: filePath,
         imageWidth: imageWidth,
         imageHeight: imageHeight,
         encryptedKey: encryptedKey,
@@ -430,11 +475,11 @@ extension ChatMessageSendEx on ChatGeneralHandler {
       return;
     }
 
-    if (filePath == null || fileId == null) {
+    if (imageFile == null || fileId == null) {
       ChatLogUtils.error(
         className: 'ChatMessageSendEx',
         funcName: 'sendImageMessage',
-        message: 'filePath: $filePath, fileId: $fileId',
+        message: 'filePath: ${imageFile?.path}, fileId: $fileId',
       );
       return;
     }
@@ -443,7 +488,7 @@ extension ChatMessageSendEx on ChatGeneralHandler {
     try {
       content = jsonEncode(CustomMessageEx.imageSendingMetaData(
         fileId: fileId,
-        path: filePath,
+        path: imageFile.path,
         url: url ?? '',
         width: imageWidth,
         height: imageHeight,
@@ -472,7 +517,7 @@ extension ChatMessageSendEx on ChatGeneralHandler {
       sendActionFinishHandler: (sendMessage) {
         UploadManager.shared.uploadFile(
           fileType: FileType.image,
-          filePath: filePath!,
+          filePath: imageFile!.path,
           uploadId: fileId,
           receivePubkey: otherUser?.pubKey ?? '',
           encryptedKey: encryptedKey,
@@ -498,9 +543,14 @@ extension ChatMessageSendEx on ChatGeneralHandler {
               height: imageHeight,
             );
 
+            if (!isFromCache) {
+              final cacheManager = await CLCacheManager.getCircleCacheManager(CacheFileType.image);
+              imageFile = await cacheManager.putFile(imageURL, imageFile!.readAsBytesSync());
+            }
+
             sendImageMessageWithURL(
               imageURL: imageURL,
-              imagePath: filePath,
+              imagePath: imageFile?.path,
               imageWidth: imageWidth,
               imageHeight: imageHeight,
               encryptedKey: encryptedKey,
@@ -549,16 +599,17 @@ extension ChatMessageSendEx on ChatGeneralHandler {
   }
 
   Future sendGifImageMessage(BuildContext context, GiphyImage image) async {
-    String? filePath, url;
+    File? file;
+    String? url;
     if (image.url.isRemoteURL) {
       url = image.url;
     } else {
-      filePath = image.url;
+      file = File(image.url);
     }
 
     await sendImageMessage(
       context: context,
-      filePath: filePath,
+      imageFile: file,
       url: url,
     );
   }

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:encrypt/encrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:minio/minio.dart';
 import 'package:ox_common/component.dart';
@@ -10,12 +9,9 @@ import 'package:ox_common/upload/file_type.dart';
 import 'package:ox_common/upload/minio_uploader.dart';
 import 'package:ox_common/upload/upload_exception.dart';
 import 'package:ox_common/upload/uploader.dart';
-import 'package:ox_common/utils/aes_encrypt_utils.dart';
-import 'package:ox_common/utils/file_utils.dart';
 import 'package:ox_common/utils/file_server_helper.dart';
 import 'package:ox_common/utils/string_utils.dart';
 import 'package:ox_common/widgets/common_loading.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart';
 import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
@@ -34,24 +30,6 @@ class UploadUtils {
     Function(double progress)? onProgress,
   }) async {
     File uploadFile = file;
-    File? encryptedFile;
-    if (encryptedKey != null && encryptedKey.isNotEmpty) {
-      String directoryPath = '';
-      if (Platform.isAndroid) {
-        Directory? externalStorageDirectory = await getExternalStorageDirectory();
-        if (externalStorageDirectory == null) {
-          return UploadResult.error('Storage function abnormal');
-        }
-        directoryPath = externalStorageDirectory.path;
-      } else if (Platform.isIOS || Platform.isMacOS) {
-        Directory temporaryDirectory = await getTemporaryDirectory();
-        directoryPath = temporaryDirectory.path;
-      }
-      encryptedFile = FileUtils.createFolderAndFile(directoryPath + "/encrytedfile", filename);
-      await AesEncryptUtils.encryptFileInIsolate(file, encryptedFile, encryptedKey,
-          nonce: encryptedNonce, mode: AESMode.gcm);
-      uploadFile = encryptedFile;
-    }
     final fileServer = await FileServerHelper.currentFileServer();
     if (fileServer == null) {
       return UploadResult.error('No file server configured.');
@@ -103,9 +81,6 @@ class UploadUtils {
         file.readAsBytesSync(),
         fileExtension: file.path.getFileExtension(),
       );
-    }
-    if (encryptedFile != null && encryptedFile.existsSync()) {
-      encryptedFile.delete();
     }
 
     return UploadResult.success(url, encryptedKey, encryptedNonce);
@@ -221,7 +196,7 @@ class UploadManager {
     final file = File(filePath);
     UploadUtils.uploadFile(
       file: file,
-      filename: '${Uuid().v1()}.${filePath.getFileExtension()}',
+      filename: file.path.getFileName() ?? '${Uuid().v1()}.${filePath.getFileExtension()}',
       fileType: fileType,
       encryptedKey: encryptedKey,
       encryptedNonce: encryptedNonce,
