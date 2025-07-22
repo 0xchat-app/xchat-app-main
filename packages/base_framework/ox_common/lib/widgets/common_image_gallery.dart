@@ -184,91 +184,88 @@ class _CommonImageGalleryState extends State<CommonImageGallery>
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: Stack(
-        children: [
-          Screenshot(
-            controller: _screenshotController,
-            child: GestureDetector(
-              onLongPress: _showBottomMenu,
-              onTap: () {
-                if (isScrollComplete) {
-                  OXNavigator.pop(context);
-                }
+    return Stack(
+      children: [
+        Screenshot(
+          controller: _screenshotController,
+          child: GestureDetector(
+            onLongPress: _showBottomMenu,
+            onTap: () {
+              if (isScrollComplete) {
+                OXNavigator.pop(context);
+              }
+            },
+            child: ExtendedImageSlidePage(
+              key: slidePagekey,
+              slideAxis: SlideAxis.both,
+              slideType: SlideType.onlyImage,
+              slidePageBackgroundHandler: (Offset offset, Size pageSize) =>
+                  _slidePageBackgroundHandler(offset, pageSize),
+              slideOffsetHandler: (
+                Offset offset, {
+                ExtendedImageSlidePageState? state,
+              }) =>
+                  _slideOffsetHandler(offset, state: state),
+              slideScaleHandler: (
+                Offset offset, {
+                ExtendedImageSlidePageState? state,
+              }) {
+                return 1.0;
               },
-              child: ExtendedImageSlidePage(
-                key: slidePagekey,
-                slideAxis: SlideAxis.both,
-                slideType: SlideType.onlyImage,
-                slidePageBackgroundHandler: (Offset offset, Size pageSize) =>
-                    _slidePageBackgroundHandler(offset, pageSize),
-                slideOffsetHandler: (
-                  Offset offset, {
-                  ExtendedImageSlidePageState? state,
-                }) =>
-                    _slideOffsetHandler(offset, state: state),
-                slideScaleHandler: (
-                  Offset offset, {
-                  ExtendedImageSlidePageState? state,
-                }) {
-                  return 1.0;
+              slideEndHandler: (
+                Offset offset, {
+                ExtendedImageSlidePageState? state,
+                ScaleEndDetails? details,
+              }) =>
+                  _slideEndHandler(offset, state: state, details: details),
+              resetPageDuration: const Duration(milliseconds: 1),
+              onSlidingPage: (ExtendedImageSlidePageState state) {},
+              child: ExtendedImageGesturePageView.builder(
+                controller: _pageController,
+                itemCount: widget.imageList.length,
+                scrollDirection: Axis.horizontal,
+                physics: widget.imageList.length == 1
+                    ? NeverScrollableScrollPhysics()
+                    : SmoothPageScrollPhysics(),
+                canScrollPage: (GestureDetails? gestureDetails) {
+                  return true;
                 },
-                slideEndHandler: (
-                  Offset offset, {
-                  ExtendedImageSlidePageState? state,
-                  ScaleEndDetails? details,
-                }) =>
-                    _slideEndHandler(offset, state: state, details: details),
-                resetPageDuration: const Duration(milliseconds: 1),
-                onSlidingPage: (ExtendedImageSlidePageState state) {},
-                child: ExtendedImageGesturePageView.builder(
-                  controller: _pageController,
-                  itemCount: widget.imageList.length,
-                  scrollDirection: Axis.horizontal,
-                  physics: widget.imageList.length == 1
-                      ? NeverScrollableScrollPhysics()
-                      : SmoothPageScrollPhysics(),
-                  canScrollPage: (GestureDetails? gestureDetails) {
-                    return true;
-                  },
-                  itemBuilder: (BuildContext context, int index) {
-                    final entry = widget.imageList[index];
-                    return buildImageWidget(entry);
-                  },
-                  onPageChanged: (int index) {
-                    print('page changed to $index');
-                  },
-                ),
+                itemBuilder: (BuildContext context, int index) {
+                  final entry = widget.imageList[index];
+                  return buildImageWidget(entry);
+                },
+                onPageChanged: (int index) {
+                  print('page changed to $index');
+                },
               ),
             ),
           ),
-          Positioned.directional(
-            end: 16,
-            textDirection: Directionality.of(context),
-            bottom: 56,
+        ),
+        Positioned.directional(
+          end: 16,
+          textDirection: Directionality.of(context),
+          bottom: 56,
+          child: GestureDetector(
+            onTap: _widgetShotAndSave,
             child: Container(
               width: 35.px,
               height: 35.px,
               decoration: BoxDecoration(
-                  color: ThemeColor.color180,
-                  borderRadius: BorderRadius.all(
-                      Radius.circular(35.px),
-                  ),
-              ),
-              child: Center(
-                child: GestureDetector(
-                  child: CommonImage(
-                    iconName: 'icon_download.png',
-                    size: 24,
-                  ),
-                  onTap: _widgetShotAndSave,
+                color: ColorToken.secondaryContainer.of(context),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(35.px),
                 ),
+              ),
+              alignment: Alignment.center,
+              child: CommonImage(
+                iconName: 'icon_download.png',
+                size: 24,
+                color: ColorToken.onSurface.of(context),
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -324,106 +321,33 @@ class _CommonImageGalleryState extends State<CommonImageGallery>
     );
   }
 
-  void _showBottomMenu() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (BuildContext context) => Container(
-        padding: EdgeInsets.only(bottom: 30.px),
-        color: ThemeColor.color180,
-        child: GestureDetector(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: new Material(
-            type: MaterialType.transparency,
-            child: new Opacity(
-              opacity: 1, //Opacity containing a widget
-              child: new GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: new Container(
-                  decoration: BoxDecoration(
-                    color: ThemeColor.color190,
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      new GestureDetector(
-                        onTap: _identifyQRCode,
-                        child: Container(
-                          height: Adapt.px(48),
-                          padding: EdgeInsets.all(Adapt.px(8)),
-                          alignment: FractionalOffset.center,
-                          decoration: new BoxDecoration(
-                            color: ThemeColor.color180,
-                          ),
-                          child: Text(
-                            Localized.text('ox_common.scan_qr_code'),
-                            style: new TextStyle(color: ThemeColor.gray02, fontSize: Adapt.px(16), fontWeight: FontWeight.normal),
-                          ),
-                        ),
-                      ),
-                      Divider(
-                        height: Adapt.px(0.5),
-                        color: ThemeColor.color160,
-                      ),
-                      new GestureDetector(
-                        onTap: () async {
-                          await _widgetShotAndSave();
-                          OXNavigator.pop(context);
-                        },
-                        child: Container(
-                          height: 48.px,
-                          padding: EdgeInsets.all(8.px),
-                          alignment: FractionalOffset.center,
-                          decoration: new BoxDecoration(
-                            color: ThemeColor.color180,
-                          ),
-                          child: Text(
-                            Localized.text('ox_common.str_save_image'),
-                            style: new TextStyle(
-                                color: ThemeColor.gray02,
-                                fontSize: 16.px,
-                                fontWeight: FontWeight.normal),
-                          ),
-                        ),
-                      ),
-                      new Container(
-                        height: 2.px,
-                        color: ThemeColor.dark01,
-                      ),
-                      widget.extraMenus ?? SizedBox(),
-                      new GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: Container(
-                          height: 48.px,
-                          padding: EdgeInsets.all(8.px),
-                          alignment: FractionalOffset.center,
-                          color: ThemeColor.color180,
-                          child: Text(
-                            'cancel'.commonLocalized(),
-                            style: new TextStyle(
-                              color: ThemeColor.gray02,
-                              fontSize: 16.px,
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
+  void _showBottomMenu() async {
+    final List<CLPickerItem<String>> items = [
+      CLPickerItem(
+        label: Localized.text('ox_common.scan_qr_code'),
+        value: 'scan_qr_code',
       ),
+      CLPickerItem(
+        label: Localized.text('ox_common.str_save_image'),
+        value: 'save_image',
+      ),
+    ];
+
+    final result = await CLPicker.show<String>(
+      context: context,
+      items: items,
     );
+
+    if (result != null) {
+      switch (result) {
+        case 'scan_qr_code':
+          _identifyQRCode();
+          break;
+        case 'save_image':
+          await _widgetShotAndSave();
+          break;
+      }
+    }
   }
 
   Color _slidePageBackgroundHandler(Offset offset, Size pageSize) {
@@ -527,6 +451,7 @@ class _CommonImageGalleryState extends State<CommonImageGallery>
     final decryptNonce = widget.imageList[pageIndex].decryptedNonce;
     final fileName = imageUri.split('/').lastOrNull?.split('?').firstOrNull ?? '';
     final isGIF = fileName.contains('.gif');
+    final isEncryptedFile = decryptKey != null;
 
     unawaited(OXLoading.show());
 
@@ -535,20 +460,53 @@ class _CommonImageGalleryState extends State<CommonImageGallery>
       // Remote image
       final imageManager = await CLCacheManager.getCircleCacheManager(CacheFileType.image);
       try {
-        final imageFile = await imageManager.getSingleFile(imageUri)
+        File imageFile = await imageManager.getSingleFile(imageUri)
             .timeout(const Duration(seconds: 30), onTimeout: () {
           throw Exception('time out');
         });
 
-        if (isGIF) {
-          result = await ImageGallerySaverPlus.saveFile(imageFile.path, isReturnPathOfIOS: true);
-        } else {
-          final imageData = await imageFile.readAsBytes();
-          result = await ImageGallerySaverPlus.saveImage(Uint8List.fromList(imageData));
+        switch ((isGIF, isEncryptedFile)) {
+          case (true, false):
+            result = await ImageGallerySaverPlus.saveFile(
+              imageFile.path,
+              isReturnPathOfIOS: true,
+            );
+            break;
+
+          case (true, true):
+            await CLEncryptedImageProvider.decryptFileAndHandle(
+              encryptedFile: imageFile,
+              decryptKey: decryptKey!,
+              decryptNonce: decryptNonce,
+              handler: (decryptedFile) async {
+                result = await ImageGallerySaverPlus.saveFile(
+                  decryptedFile.path,
+                  isReturnPathOfIOS: true,
+                );
+              },
+            );
+            break;
+
+          case (false, false):
+            final imageData = await imageFile.readAsBytes();
+            result = await ImageGallerySaverPlus.saveImage(Uint8List.fromList(imageData));
+            break;
+
+          case (false, true):
+            final imageData = await CLEncryptedImageProvider.decryptFileInMemory(
+              imageFile,
+              decryptKey!,
+              decryptNonce,
+            );
+            result = await ImageGallerySaverPlus.saveImage(Uint8List.fromList(imageData));
+            break;
         }
       } catch (e) {
         unawaited(CommonToast.instance.show(context, e.toString()));
       }
+    } else if (imageUri.isImageBase64) {
+      final imageData = await Base64ImageProvider.decodeBase64ToBytes(imageUri);
+      result = await ImageGallerySaverPlus.saveImage(imageData, quality: 100);
     } else {
       // Local image
       final imageFile = File(imageUri);
