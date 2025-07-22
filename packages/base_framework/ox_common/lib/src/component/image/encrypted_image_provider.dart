@@ -184,18 +184,15 @@ class CLEncryptedImageProvider extends ImageProvider<_CLEncryptedImageKey> {
       String decryptKey,
       String? decryptNonce,
       ) async {
-    final tempDir = await getTemporaryDirectory();
-    final tmp = File('${tempDir.path}/cl_decrypt_${DateTime.now().microsecondsSinceEpoch}');
     try {
-      await AesEncryptUtils.decryptFileInIsolate(
+      final bytes = await AesEncryptUtils.decryptFileOnMemoryInIsolate(
         encryptedFile,
-        tmp,
         decryptKey,
         nonce: decryptNonce,
       );
-      return await tmp.readAsBytes();
-    } finally {
-      if (await tmp.exists()) await tmp.delete();
+      return Uint8List.fromList(bytes);
+    } catch (_) {
+      return Uint8List(0);
     }
   }
 }
