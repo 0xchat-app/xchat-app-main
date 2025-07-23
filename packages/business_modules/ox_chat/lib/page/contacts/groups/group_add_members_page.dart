@@ -5,10 +5,10 @@ import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
+import 'package:ox_common/utils/chat_user_utils.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_common/widgets/multi_user_selector.dart';
-import 'package:ox_common/utils/user_search_manager.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 
 class GroupAddMembersPage extends StatefulWidget {
@@ -27,49 +27,15 @@ class GroupAddMembersPage extends StatefulWidget {
 
 class _GroupAddMembersPageState extends State<GroupAddMembersPage> {
   List<SelectableUser> _selectedUsers = [];
-  late Future<List<SelectableUser>> _availableUsersFuture;
-  late UserSearchManager<SelectableUser> _searchManager;
+  late Future<List<String>> _availableUserPubkeysFuture;
 
   @override
   void initState() {
     super.initState();
-    _searchManager = UserSearchManager<SelectableUser>.custom(
-      convertToTargetModel: (user) => SelectableUser(
-        id: user.pubKey,
-        displayName: _getUserDisplayName(user),
-        avatarUrl: user.picture ?? '',
-      ),
-      getUserId: (user) => user.id,
-      getUserDisplayName: (user) => user.displayName,
-      debounceDelay: const Duration(milliseconds: 300),
-      minSearchLength: 1,
-      maxResults: 50,
-    );
-    _availableUsersFuture = _loadAvailableUsers();
+    _availableUserPubkeysFuture = _loadAvailableUsers();
   }
 
-  @override
-  void dispose() {
-    _searchManager.dispose();
-    super.dispose();
-  }
-
-  /// Helper function to get user display name from UserDBISAR
-  String _getUserDisplayName(UserDBISAR user) {
-    final name = user.name ?? '';
-    final nickName = user.nickName ?? '';
-
-    if (name.isNotEmpty && nickName.isNotEmpty) {
-      return '$name($nickName)';
-    } else if (name.isNotEmpty) {
-      return name;
-    } else if (nickName.isNotEmpty) {
-      return nickName;
-    }
-    return 'Unknown';
-  }
-
-  Future<List<SelectableUser>> _loadAvailableUsers() async {
+  Future<List<String>> _loadAvailableUsers() async {
     // Get current user pubkey
     final myPubkey = LoginManager.instance.currentPubkey;
     
@@ -77,20 +43,19 @@ class _GroupAddMembersPageState extends State<GroupAddMembersPage> {
     final groupMembers = await Groups.sharedInstance.getAllGroupMembers(widget.groupInfo.privateGroupId);
     final memberPubkeys = groupMembers.map((user) => user.pubKey).toSet();
     
-    // Add current user to excluded list
-    final excludedPubkeys = <String>{...memberPubkeys};
-    excludedPubkeys.add(myPubkey);
+    // Get all users and filter out current user and group members
+    final allUsers = await ChatUserUtils.getAllUsers();
+    final availableUsers = allUsers.where((user) => 
+      user.pubKey != myPubkey && !memberPubkeys.contains(user.pubKey)
+    ).toList();
 
-    // Initialize search manager with excluded users
-    await _searchManager.initialize(excludeUserPubkeys: excludedPubkeys.toList());
-    
-    return _searchManager.allUsers;
+    return availableUsers.map((user) => user.pubKey).toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<SelectableUser>>(
-      future: _availableUsersFuture,
+    return FutureBuilder<List<String>>(
+      future: _availableUserPubkeysFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CLScaffold(
@@ -167,7 +132,7 @@ class _GroupAddMembersPageState extends State<GroupAddMembersPage> {
         }
 
         return CLMultiUserSelector(
-          users: availableUsers,
+          userPubkeys: availableUsers,
           onChanged: _onSelectionChanged,
           title: '${Localized.text('ox_chat.add_member_title')} ${_selectedUsers.isNotEmpty ? '(${_selectedUsers.length})' : ''}',
           actions: [

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_chat/utils/chat_session_utils.dart';
+import 'package:ox_common/business_interface/ox_chat/utils.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/navigator/navigator.dart';
@@ -47,7 +48,8 @@ class _GroupCreationPageState extends State<GroupCreationPage> {
     // Generate default group name
     final myName = Account.sharedInstance.me?.name ?? 'Me';
     if (widget.selectedUsers.length == 1) {
-      _groupNameController.text = '${widget.selectedUsers.first.displayName} & $myName';
+      _groupNameController.text =
+        '${widget.selectedUsers.first.user$.value.getUserShowName()} & $myName';
     } else {
       _groupNameController.text = '$myName\'s Group';
     }
@@ -157,17 +159,13 @@ class _GroupCreationPageState extends State<GroupCreationPage> {
             children: [
               // Current user (me)
               _buildMemberItem(
-                avatarUrl: Account.sharedInstance.me?.picture,
-                name: Account.sharedInstance.me?.name ?? 'Me',
+                user: Account.sharedInstance.me!,
                 subtitle: 'Admin',
-                isMe: true,
               ),
               // Selected users
-              ...widget.selectedUsers.map((user) => _buildMemberItem(
-                    avatarUrl: user.avatarUrl,
-                    name: user.displayName,
+              ...widget.selectedUsers.map((entry) => _buildMemberItem(
+                    user: entry.user$.value,
                     subtitle: '',
-                    isMe: false,
                   )),
             ],
           ),
@@ -177,18 +175,15 @@ class _GroupCreationPageState extends State<GroupCreationPage> {
   }
 
   Widget _buildMemberItem({
-    required String? avatarUrl,
-    required String name,
+    required UserDBISAR user,
     required String subtitle,
-    required bool isMe,
   }) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.px, vertical: 12.px),
       child: Row(
         children: [
           OXUserAvatar(
-            user: null,
-            imageUrl: avatarUrl,
+            user: user,
             size: 40.px,
           ),
           SizedBox(width: 12.px),
@@ -197,7 +192,7 @@ class _GroupCreationPageState extends State<GroupCreationPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CLText.bodyMedium(
-                  name,
+                  user.getUserShowName(),
                   colorToken: ColorToken.onSurface,
                 ),
                 if (subtitle.isNotEmpty) ...[

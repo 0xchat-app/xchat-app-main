@@ -31,9 +31,9 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
   final FocusNode _searchFocusNode = FocusNode();
   bool get isSearchOnFocus => _searchFocusNode.hasFocus;
 
-  List<UserDBISAR> _allUsers = [];
-  Map<String, List<UserDBISAR>> _groupedUsers = {};
-  late final UserSearchManager<UserDBISAR> _userSearchManager;
+  List<ValueNotifier<UserDBISAR>> _allUsers = [];
+  Map<String, List<ValueNotifier<UserDBISAR>>> _groupedUsers = {};
+  late final UserSearchManager<ValueNotifier<UserDBISAR>> _userSearchManager;
 
   // For tracking scroll-based background color changes
   final ValueNotifier<double> _scrollOffset = ValueNotifier(0.0);
@@ -82,8 +82,8 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
   void _groupUsers() {
     _groupedUsers.clear();
 
-    for (final user in _allUsers) {
-      final showName = _getUserShowName(user);
+    for (final user$ in _allUsers) {
+      final showName = _getUserShowName(user$);
       String firstChar = '#';
 
       if (showName.isNotEmpty) {
@@ -99,7 +99,7 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
         }
       }
 
-      _groupedUsers.putIfAbsent(firstChar, () => []).add(user);
+      _groupedUsers.putIfAbsent(firstChar, () => []).add(user$);
     }
 
     // Sort users within each group
@@ -205,34 +205,44 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
       final users = _groupedUsers[key]!;
       list.add(SectionListViewItem(
         header: key,
-        data: users.map((user) => userListItem(user)).toList(),
+        data: users.map((user$) => userListItem(user$)).toList(),
       ));
     }
 
     return list;
   }
 
-  ListViewItem userListItem(UserDBISAR user) {
+  ListViewItem userListItem(ValueNotifier<UserDBISAR> user$) {
     final circleType = LoginManager.instance.currentCircle?.type;
     return CustomItemModel(
-      leading: OXUserAvatar(
-        user: user,
-        size: 40.px,
-        isClickable: false,
+      leading: ValueListenableBuilder(
+        valueListenable: user$,
+        builder: (context, user, _) {
+          return OXUserAvatar(
+            user: user,
+            size: 40.px,
+            isClickable: false,
+          );
+        }
       ),
-      titleWidget: CLText.bodyMedium(
-        _getUserShowName(user),
-        colorToken: ColorToken.onSurface,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
+      titleWidget: ValueListenableBuilder(
+        valueListenable: user$,
+        builder: (context, user, _) {
+          return CLText.bodyMedium(
+            _getUserShowName(user$),
+            colorToken: ColorToken.onSurface,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          );
+        }
       ),
       subtitleWidget: circleType == CircleType.bitchat ? null : CLText.bodySmall(
-        user.encodedPubkey,
+        user$.value.encodedPubkey,
         colorToken: ColorToken.onSurfaceVariant,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
-      onTap: () => _onUserTap(user),
+      onTap: () => _onUserTap(user$),
     );
   }
 
@@ -241,7 +251,7 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
       return SizedBox.expand();
     }
 
-    return ValueListenableBuilder<SearchResult<UserDBISAR>>(
+    return ValueListenableBuilder<SearchResult<ValueNotifier<UserDBISAR>>>(
       valueListenable: _userSearchManager.resultNotifier,
       builder: (context, searchResult, child) {
         // Show loading indicator when searching
@@ -295,8 +305,19 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
     );
   }
 
-  String _getUserShowName(UserDBISAR user) {
-    return _userSearchManager.getUserDisplayName(user);
+  static String _getUserShowName(ValueNotifier<UserDBISAR> user$) {
+    final user = user$.value;
+    final name = user.name ?? '';
+    final nickName = user.nickName ?? '';
+
+    if (name.isNotEmpty && nickName.isNotEmpty) {
+      return '$name($nickName)';
+    } else if (name.isNotEmpty) {
+      return name;
+    } else if (nickName.isNotEmpty) {
+      return nickName;
+    }
+    return user.shortEncodedPubkey;
   }
 
   void _onSearchChanged() {
@@ -310,10 +331,10 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
       final searchResults = _userSearchManager.results;
       bool hasNewUsers = false;
       
-      for (final searchUser in searchResults) {
+      for (final searchUser$ in searchResults) {
         // Check if this user is not in our local list
-        if (!_allUsers.any((user) => user.pubKey == searchUser.pubKey)) {
-          _allUsers.add(searchUser);
+        if (!_allUsers.any((user$) => user$.value.pubKey == searchUser$.value.pubKey)) {
+          _allUsers.add(searchUser$);
           hasNewUsers = true;
         }
       }
@@ -372,10 +393,10 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
     OXNavigator.pushPage(context, (context) => const SelectGroupMembersPage());
   }
 
-  void _onUserTap(UserDBISAR user) async {
+  void _onUserTap(ValueNotifier<UserDBISAR> user$) async {
     await ChatSessionUtils.createSecretChatWithConfirmation(
       context: context,
-      user: user,
+      user: user$.value,
       isPushWithReplace: true,
     );
   }

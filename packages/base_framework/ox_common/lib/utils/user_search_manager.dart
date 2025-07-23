@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:ox_common/utils/chat_user_utils.dart';
 import 'package:ox_common/utils/search_manager.dart';
 import 'package:chatcore/chat-core.dart';
 
@@ -6,19 +7,14 @@ import 'package:chatcore/chat-core.dart';
 /// with support for different user model types through conversion
 class UserSearchManager<T> {
   final SearchManager<T> _searchManager;
-  List<UserDBISAR> _allUsers = [];
+  List<ValueNotifier<UserDBISAR>> _allUsers = [];
   bool _isLoading = false;
 
-  // Track remote search users for dynamic updates
-  final Set<String> _remoteSearchUserPubkeys = {};
-  final Map<String, void Function()> _userUpdateListeners = {};
-
   // Conversion functions
-  final T Function(UserDBISAR) _convertToTargetModel;
+  final T Function(ValueNotifier<UserDBISAR>) _convertToTargetModel;
   final String Function(T) _getUserId;
-  final String Function(T) _getUserDisplayName;
 
-  static UserSearchManager<UserDBISAR> defaultCreate({
+  static UserSearchManager<ValueNotifier<UserDBISAR>> defaultCreate({
     Duration debounceDelay = const Duration(milliseconds: 300),
     int minSearchLength = 1,
     int maxResults = 50,
@@ -31,15 +27,13 @@ class UserSearchManager<T> {
   /// Constructor for custom user models
   /// Use this when your user model is different from UserDBISAR
   UserSearchManager.custom({
-    required T Function(UserDBISAR) convertToTargetModel,
+    required T Function(ValueNotifier<UserDBISAR>) convertToTargetModel,
     required String Function(T) getUserId,
-    required String Function(T) getUserDisplayName,
     Duration debounceDelay = const Duration(milliseconds: 300),
     int minSearchLength = 1,
     int maxResults = 50,
   })  : _convertToTargetModel = convertToTargetModel,
         _getUserId = getUserId,
-        _getUserDisplayName = getUserDisplayName,
         _searchManager = SearchManager<T>(
           debounceDelay: debounceDelay,
           minSearchLength: minSearchLength,
@@ -63,20 +57,28 @@ class UserSearchManager<T> {
   bool get isLoading => _isLoading;
 
   /// Initialize and load user data
-  Future<void> initialize({List<String>? excludeUserPubkeys}) async {
+  Future<void> initialize({
+    List<String>? excludeUserPubkeys,
+    List<ValueNotifier<UserDBISAR>>? externalUsers,
+  }) async {
     if (_isLoading) return;
 
     _isLoading = true;
     try {
-      // Use Account class to get all users from cache
-      final account = Account.sharedInstance;
-      _allUsers =
-          account.userCache.values.map((notifier) => notifier.value).toList();
+      if (externalUsers != null) {
+        // Use externally provided user list
+        _allUsers = [...externalUsers];
+      } else {
+        // Default behavior: use ChatUserUtils to get all users from cache
+        _allUsers = (await ChatUserUtils.getAllUsers()).map(
+          (e) => Account.sharedInstance.getUserNotifier(e.pubKey)
+        ).toList();
+      }
       
       // Filter out excluded users if provided
       if (excludeUserPubkeys != null && excludeUserPubkeys.isNotEmpty) {
-        _allUsers = _allUsers.where((user) => 
-          !excludeUserPubkeys.contains(user.pubKey)
+        _allUsers = _allUsers.where((notifier) =>
+          !excludeUserPubkeys.contains(notifier.value.pubKey)
         ).toList();
       }
     } catch (e) {
@@ -117,7 +119,6 @@ class UserSearchManager<T> {
 
   /// Dispose resources
   void dispose() {
-    _removeAllUserUpdateListeners();
     _searchManager.dispose();
   }
 
@@ -125,7 +126,8 @@ class UserSearchManager<T> {
   Future<List<T>> _performLocalSearch(String query) async {
     final lowerQuery = query.toLowerCase();
     return _allUsers
-        .where((user) {
+        .where((notifier) {
+          final user = notifier.value;
           final name = (user.name ?? '').toLowerCase();
           final nickName = (user.nickName ?? '').toLowerCase();
           final encodedPubkey = user.encodedPubkey.toLowerCase();
@@ -164,96 +166,27 @@ class UserSearchManager<T> {
     }
 
     if (pubkey.isNotEmpty) {
-      UserDBISAR? user = await Account.sharedInstance.getUserInfo(pubkey);
-      if (user != null) {
-        // Add to local users if not already present
-        if (!_allUsers.any((u) => u.pubKey == user.pubKey)) {
-          _allUsers.add(user);
-        }
+      ValueNotifier<UserDBISAR> user$ =
+        await Account.sharedInstance.getUserNotifier(pubkey);
 
-        // Add listener for user info updates for remote search users
-        // This allows real-time updates when user info is fetched from remote
-        Account.sharedInstance.reloadProfileFromRelay(user.pubKey,);
-        _addUserUpdateListener(pubkey);
-
-        return [_convertToTargetModel(user)];
+      // Add to local users if not already present
+      if (!_allUsers.any((notifier) => notifier.value.pubKey == user$.value.pubKey)) {
+        _allUsers.add(user$);
       }
+
+      // Reload user info from remote
+      Account.sharedInstance.reloadProfileFromRelay(user$.value.pubKey,);
+
+      return [_convertToTargetModel(user$)];
     }
 
     return [];
-  }
-
-  /// Get user display name from target model
-  String getUserDisplayName(T user) {
-    return _getUserDisplayName(user);
-  }
-
-  /// Add listener for user info updates from remote search
-  void _addUserUpdateListener(String pubkey) {
-    if (_userUpdateListeners.containsKey(pubkey)) return;
-
-    final userNotifier = Account.sharedInstance.getUserNotifier(pubkey);
-    final listener = () {
-      _onRemoteUserInfoUpdated(pubkey, userNotifier.value);
-    };
-
-    userNotifier.addListener(listener);
-    _userUpdateListeners[pubkey] = listener;
-    _remoteSearchUserPubkeys.add(pubkey);
-  }
-
-  /// Remove listener for specific user
-  void _removeUserUpdateListener(String pubkey) {
-    final listener = _userUpdateListeners.remove(pubkey);
-    if (listener != null) {
-      final userNotifier = Account.sharedInstance.getUserNotifier(pubkey);
-      userNotifier.removeListener(listener);
-    }
-    _remoteSearchUserPubkeys.remove(pubkey);
-  }
-
-  /// Remove all user update listeners
-  void _removeAllUserUpdateListeners() {
-    for (final pubkey in _userUpdateListeners.keys.toList()) {
-      _removeUserUpdateListener(pubkey);
-    }
-  }
-
-  /// Handle remote user info updates
-  void _onRemoteUserInfoUpdated(String pubkey, UserDBISAR updatedUser) {
-    // Update the user in _allUsers list
-    final index = _allUsers.indexWhere((user) => user.pubKey == pubkey);
-    if (index != -1) {
-      _allUsers[index] = updatedUser;
-
-      // If this user is in current search results, refresh the search
-      final currentResults = _searchManager.results;
-      final updatedUserModel = _convertToTargetModel(updatedUser);
-      if (currentResults
-          .any((user) => _getUserId(user) == _getUserId(updatedUserModel))) {
-        _refreshCurrentSearchResults();
-      }
-    }
-  }
-
-  /// Refresh current search results without changing the query
-  void _refreshCurrentSearchResults() {
-    final currentQuery = _searchManager.currentQuery;
-    if (currentQuery.isNotEmpty) {
-      // Trigger a new search with the same query to update results
-      _searchManager.searchImmediate(
-        currentQuery,
-        localSearch: _performLocalSearch,
-        remoteSearch: _performRemoteSearch,
-        isDuplicate: (local, remote) => _getUserId(local) == _getUserId(remote),
-      );
-    }
   }
 }
 
 /// Default UserSearchManager for UserDBISAR
 /// Use this when your user model is UserDBISAR (no conversion needed)
-class _DefaultUserSearchManager extends UserSearchManager<UserDBISAR> {
+class _DefaultUserSearchManager extends UserSearchManager<ValueNotifier<UserDBISAR>> {
   _DefaultUserSearchManager({
     Duration debounceDelay = const Duration(milliseconds: 300),
     int minSearchLength = 1,
@@ -261,27 +194,13 @@ class _DefaultUserSearchManager extends UserSearchManager<UserDBISAR> {
   }) : super.custom(
           convertToTargetModel: defaultConvertToTargetModel,
           getUserId: defaultGetUserId,
-          getUserDisplayName: defaultGetUserDisplayName,
           debounceDelay: debounceDelay,
           minSearchLength: minSearchLength,
           maxResults: maxResults,
         );
 
-  static UserDBISAR defaultConvertToTargetModel(UserDBISAR user) => user;
+  static ValueNotifier<UserDBISAR> defaultConvertToTargetModel(ValueNotifier<UserDBISAR> user$) => user$;
 
-  static String defaultGetUserId(UserDBISAR user) => user.pubKey;
-
-  static String defaultGetUserDisplayName(UserDBISAR user) {
-    final name = user.name ?? '';
-    final nickName = user.nickName ?? '';
-
-    if (name.isNotEmpty && nickName.isNotEmpty) {
-      return '$name($nickName)';
-    } else if (name.isNotEmpty) {
-      return name;
-    } else if (nickName.isNotEmpty) {
-      return nickName;
-    }
-    return 'Unknown';
-  }
+  static String defaultGetUserId(ValueNotifier<UserDBISAR> user$) =>
+      user$.value.pubKey;
 }

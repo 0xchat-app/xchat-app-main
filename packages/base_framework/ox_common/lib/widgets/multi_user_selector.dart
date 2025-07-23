@@ -9,15 +9,12 @@ import 'package:chatcore/chat-core.dart';
 /// Lightweight data model used by [CLMultiUserSelector].
 class SelectableUser {
   SelectableUser({
-    required this.id,
-    required this.displayName,
-    this.avatarUrl = '',
+    required this.user$,
     bool defaultSelected = false,
   }) : selected$ = ValueNotifier<bool>(defaultSelected);
 
-  final String id; // Unique identifier of user
-  final String displayName;
-  final String avatarUrl;
+  String get id => user$.value.pubKey;
+  final ValueNotifier<UserDBISAR> user$;
   final ValueNotifier<bool> selected$;
 }
 
@@ -31,7 +28,7 @@ class SelectableUser {
 class CLMultiUserSelector extends StatefulWidget {
   const CLMultiUserSelector({
     super.key,
-    required this.users,
+    this.userPubkeys,
     this.initialSelectedIds = const [],
     required this.onChanged,
     this.title,
@@ -39,7 +36,7 @@ class CLMultiUserSelector extends StatefulWidget {
     this.actions,
   });
 
-  final List<SelectableUser> users;
+  final List<String>? userPubkeys;
   final List<String> initialSelectedIds;
   final void Function(List<SelectableUser> selected) onChanged;
   final String? title;
@@ -55,14 +52,11 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
   final FocusNode _searchFocus = FocusNode();
   final GlobalKey<AnimatedListState> _animatedListKey = GlobalKey<AnimatedListState>();
 
-  late List<SelectableUser> _allUsers;
-  late Map<String, List<SelectableUser>> _groupedUsers;
+  List<SelectableUser> _allUsers = [];
+  Map<String, List<SelectableUser>> _groupedUsers = {};
 
   final List<SelectableUser> _selected = [];
   late final UserSearchManager<SelectableUser> _searchManager;
-  
-  // Track user update listeners for UI synchronization
-  final Map<String, void Function()> _userUpdateListeners = {};
 
   // For tracking scroll-based background color changes
   final ValueNotifier<double> _scrollOffset = ValueNotifier(0.0);
@@ -71,13 +65,8 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
   void initState() {
     super.initState();
     _searchManager = UserSearchManager<SelectableUser>.custom(
-      convertToTargetModel: (user) => _getOrCreateSelectableUser(
-        user.pubKey,
-        _getUserDisplayName(user),
-        user.picture ?? '',
-      ),
+      convertToTargetModel: (user$) => _getOrCreateSelectableUser(user$),
       getUserId: (user) => user.id,
-      getUserDisplayName: (user) => user.displayName,
       debounceDelay: const Duration(milliseconds: 300),
       minSearchLength: 1,
       maxResults: 50,
@@ -87,94 +76,46 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
     _searchManager.resultNotifier.addListener(_onSearchResultChanged);
     
     prepareData();
-    _searchCtrl.addListener(_onSearchChanged);
   }
 
-  void prepareData() {
-    _allUsers = List.from(widget.users);
-    for (final id in widget.initialSelectedIds) {
-      final user = widget.users.firstWhere((u) => u.id == id, orElse: () => SelectableUser(id: id, displayName: id));
-      _selected.add(user);
+  void prepareData() async {
+    if (widget.userPubkeys != null) {
+      await _searchManager.initialize(
+        externalUsers: widget.userPubkeys?.map(
+          (pubkey) => Account.sharedInstance.getUserNotifier(pubkey)
+        ).toList(),
+      );
+    } else {
+      await _searchManager.initialize();
     }
+
+    _allUsers = _searchManager.allUsers;
     _groupUsers();
-    
-    // Initialize the search manager with the current users
-    _searchManager.initialize();
+
+    // Set initial selected users
+    for (final id in widget.initialSelectedIds) {
+      final user = _allUsers.where((u) => u.id == id).firstOrNull;
+      if (user != null) _selected.add(user);
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {});
+    });
   }
 
   /// Get or create SelectableUser, maintaining selection state
-  SelectableUser _getOrCreateSelectableUser(String id, String displayName, String avatarUrl) {
+  SelectableUser _getOrCreateSelectableUser(ValueNotifier<UserDBISAR> user$) {
     // First check if we already have this user in _allUsers
-    final existingUser = _allUsers.firstWhere(
-      (user) => user.id == id,
-      orElse: () => SelectableUser(id: id, displayName: displayName, avatarUrl: avatarUrl),
+    return _allUsers.firstWhere(
+      (user) => user.id == user$.value.pubKey,
+      orElse: () => SelectableUser(user$: user$)
     );
-    
-    // If user exists, check if it's already selected
-    final selectedUser = _selected.firstWhere(
-      (user) => user.id == id,
-      orElse: () => existingUser,
-    );
-    
-    // If the user is selected, return the selected version to maintain state
-    if (selectedUser.selected$.value) {
-      return selectedUser;
-    }
-    
-    // Add user update listener for remote users
-    _addUserUpdateListener(id);
-    
-    return existingUser;
-  }
-
-  /// Add listener for user info updates from remote search
-  void _addUserUpdateListener(String pubkey) {
-    if (_userUpdateListeners.containsKey(pubkey)) return;
-    
-    final userNotifier = Account.sharedInstance.getUserNotifier(pubkey);
-    final listener = () {
-      _onUserInfoUpdated(pubkey, userNotifier.value);
-    };
-    
-    userNotifier.addListener(listener);
-    _userUpdateListeners[pubkey] = listener;
-  }
-
-  /// Handle user info updates
-  void _onUserInfoUpdated(String pubkey, UserDBISAR updatedUser) {
-    // Find and update the user in _allUsers list
-    final userIndex = _allUsers.indexWhere((user) => user.id == pubkey);
-    if (userIndex != -1) {
-      final oldUser = _allUsers[userIndex];
-      final newDisplayName = _getUserDisplayName(updatedUser);
-      final newAvatarUrl = updatedUser.picture ?? '';
-      
-      // Update user information
-      _allUsers[userIndex] = SelectableUser(
-        id: pubkey,
-        displayName: newDisplayName,
-        avatarUrl: newAvatarUrl,
-        defaultSelected: oldUser.selected$.value,
-      );
-      
-      // Update selected list if this user is selected
-      final selectedIndex = _selected.indexWhere((user) => user.id == pubkey);
-      if (selectedIndex != -1) {
-        _selected[selectedIndex] = _allUsers[userIndex];
-      }
-      
-      // Re-group users and update UI
-      _groupUsers();
-      if (mounted) {
-        setState(() {});
-      }
-    }
   }
 
   @override
   void didUpdateWidget(covariant CLMultiUserSelector oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.users != oldWidget.users) {
+    if (widget.userPubkeys != oldWidget.userPubkeys) {
       prepareData();
     }
   }
@@ -187,46 +128,30 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
     _searchManager.resultNotifier.removeListener(_onSearchResultChanged);
     _searchManager.dispose();
     
-    // Remove all user update listeners
-    _removeAllUserUpdateListeners();
-    
     super.dispose();
-  }
-
-  /// Remove all user update listeners
-  void _removeAllUserUpdateListeners() {
-    for (final pubkey in _userUpdateListeners.keys.toList()) {
-      _removeUserUpdateListener(pubkey);
-    }
-  }
-
-  /// Remove listener for specific user
-  void _removeUserUpdateListener(String pubkey) {
-    final listener = _userUpdateListeners.remove(pubkey);
-    if (listener != null) {
-      final userNotifier = Account.sharedInstance.getUserNotifier(pubkey);
-      userNotifier.removeListener(listener);
-    }
   }
 
   void _groupUsers() {
     _groupedUsers = {};
-    for (final user in _allUsers) {
+    for (final entry in _allUsers) {
       String first = '#';
-      if (user.displayName.isNotEmpty) {
-        final ch = user.displayName[0].toUpperCase();
+      final displayName = _getUserDisplayName(entry.user$.value);
+      if (displayName.isNotEmpty) {
+        final ch = displayName[0].toUpperCase();
         if (RegExp(r'[A-Z]').hasMatch(ch)) {
           first = ch;
         }
       }
-      _groupedUsers.putIfAbsent(first, () => []).add(user);
+      _groupedUsers.putIfAbsent(first, () => []).add(entry);
     }
     _groupedUsers.forEach((key, list) {
-      list.sort((a, b) => a.displayName.compareTo(b.displayName));
+      list.sort((a, b) {
+        final displayNameA = _getUserDisplayName(a.user$.value);
+        final displayNameB = _getUserDisplayName(b.user$.value);
+        return displayNameA.compareTo(displayNameB);
+      });
     });
   }
-
-  // --- UI builders ---------------------------------------------------------
 
   @override
   Widget build(BuildContext context) {
@@ -293,9 +218,7 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
     );
   }
 
-
-
-  Widget _buildAnimatedChip(SelectableUser user, Animation<double> animation) {
+  Widget _buildAnimatedChip(SelectableUser entry, Animation<double> animation) {
     final sizeAnimation = animation.drive(
       Tween<double>(begin: 0.0, end: 1.0).chain(
         CurveTween(curve: Curves.easeInOut),
@@ -327,13 +250,18 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
           child: Padding(
             padding: EdgeInsets.only(right: 8.px),
             child: GestureDetector(
-              onTap: () => _toggleSelect(user),
+              onTap: () => _toggleSelect(entry),
               child: Container(
                 alignment: Alignment.center,
-                child: OXUserAvatar(
-                  user: null,
-                  imageUrl: user.avatarUrl,
-                  size: 36.px,
+                child: ValueListenableBuilder(
+                  valueListenable: entry.user$,
+                  builder: (context, user, _) {
+                    return OXUserAvatar(
+                      user: null,
+                      imageUrl: user.picture,
+                      size: 36.px,
+                    );
+                  }
                 ),
               ),
             ),
@@ -376,40 +304,48 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
     return [SectionListViewItem(data: searchResult.results.map(_buildUserItem).toList())];
   }
 
-  ListViewItem _buildUserItem(SelectableUser user) {
+  ListViewItem _buildUserItem(SelectableUser entry) {
     return CustomItemModel(
-      leading: OXUserAvatar(
-        user: null,
-        imageUrl: user.avatarUrl,
-        size: 40.px,
+      leading: ValueListenableBuilder(
+        valueListenable: entry.user$,
+        builder: (context, user, _) {
+          return OXUserAvatar(
+            user: null,
+            imageUrl: user.picture,
+            size: 40.px,
+          );
+        }
       ),
       isCupertinoAutoTrailing: false,
-      titleWidget: Row(
-        children: [
-          Expanded(
-            child: CLText.bodyLarge(user.displayName),
-          ),
-          ValueListenableBuilder<bool>(
-            valueListenable: user.selected$,
-            builder: (context, isSelected, child) {
-              return CLIcon(
-                icon: isSelected ? Icons.check_circle : Icons.radio_button_unchecked,
-                size: 24.px,
-                color: isSelected
-                    ? ColorToken.primary.of(context)
-                    : ColorToken.onSurfaceVariant.of(context),
-              );
-            },
-          ),
-        ],
+      titleWidget: ValueListenableBuilder(
+        valueListenable: entry.user$,
+        builder: (context, user, _) {
+          return Row(
+            children: [
+              Expanded(
+                child: CLText.bodyLarge(_getUserDisplayName(user)),
+              ),
+              ValueListenableBuilder<bool>(
+                valueListenable: entry.selected$,
+                builder: (context, isSelected, child) {
+                  return CLIcon(
+                    icon: isSelected ? Icons.check_circle : Icons.radio_button_unchecked,
+                    size: 24.px,
+                    color: isSelected
+                        ? ColorToken.primary.of(context)
+                        : ColorToken.onSurfaceVariant.of(context),
+                  );
+                },
+              ),
+            ],
+          );
+        }
       ),
       onTap: () {
-        _toggleSelect(user);
+        _toggleSelect(entry);
       },
     );
   }
-
-  // --- logic ---------------------------------------------------------------
 
   void _toggleSelect(SelectableUser user) {
     final selected$ = user.selected$;
@@ -423,7 +359,7 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
         
         // Adjust animation index due to reverse layout
         final animatedIndex = _selected.length - 1 - index;
-        
+
         _animatedListKey.currentState?.removeItem(
           animatedIndex,
           (context, animation) => _buildAnimatedChip(removedUser, animation),
@@ -438,12 +374,12 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
     } else {
       // Add user
       if (widget.maxSelectable != null && _selected.length >= widget.maxSelectable!) return;
-      
+
       setState(() {
         _selected.add(user);
         selected$.value = true;
       });
-      
+
       // Due to reverse layout, new items are inserted at index 0
       _animatedListKey.currentState?.insertItem(
         0,
@@ -471,9 +407,6 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
         if (!_allUsers.any((user) => user.id == searchUser.id)) {
           _allUsers.add(searchUser);
           hasNewUsers = true;
-          
-          // Add user update listener for new remote users
-          _addUserUpdateListener(searchUser.id);
         }
       }
       
@@ -498,6 +431,6 @@ class _CLMultiUserSelectorState extends State<CLMultiUserSelector> {
     } else if (nickName.isNotEmpty) {
       return nickName;
     }
-    return 'Unknown';
+    return user.shortEncodedPubkey;
   }
 } 

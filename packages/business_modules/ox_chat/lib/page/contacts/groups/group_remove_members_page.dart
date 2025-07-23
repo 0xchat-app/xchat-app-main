@@ -24,15 +24,15 @@ class GroupRemoveMembersPage extends StatefulWidget {
 
 class _GroupRemoveMembersPageState extends State<GroupRemoveMembersPage> {
   List<SelectableUser> _selectedUsers = [];
-  late Future<List<SelectableUser>> _removableMembersFuture;
+  late Future<List<String>> _removableMemberPubkeysFuture;
 
   @override
   void initState() {
     super.initState();
-    _removableMembersFuture = _loadRemovableMembers();
+    _removableMemberPubkeysFuture = _loadRemovableMembers();
   }
 
-  Future<List<SelectableUser>> _loadRemovableMembers() async {
+  Future<List<String>> _loadRemovableMembers() async {
     // Get current group members
     final groupMembers = await Groups.sharedInstance.getAllGroupMembers(widget.groupInfo.privateGroupId);
     
@@ -45,11 +45,7 @@ class _GroupRemoveMembersPageState extends State<GroupRemoveMembersPage> {
       user.pubKey != currentUser?.pubKey
     ).toList();
     
-    return removableMembers.map((user) => SelectableUser(
-      id: user.pubKey,
-      displayName: _getUserDisplayName(user),
-      avatarUrl: user.picture ?? '',
-    )).toList();
+    return removableMembers.map((user) => user.pubKey).toList();
   }
 
   void _onSelectionChanged(List<SelectableUser> selectedUsers) {
@@ -58,18 +54,6 @@ class _GroupRemoveMembersPageState extends State<GroupRemoveMembersPage> {
         _selectedUsers = selectedUsers;
       });
     }
-  }
-
-  String _getUserDisplayName(UserDBISAR user) {
-    final nickName = user.nickName;
-    final name = user.name;
-    
-    if (nickName != null && nickName.isNotEmpty) {
-      return nickName;
-    } else if (name != null && name.isNotEmpty) {
-      return name;
-    }
-    return 'Unknown User';
   }
 
   Future<void> _removeSelectedMembers() async {
@@ -129,8 +113,8 @@ class _GroupRemoveMembersPageState extends State<GroupRemoveMembersPage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<SelectableUser>>(
-      future: _removableMembersFuture,
+    return FutureBuilder<List<String>>(
+      future: _removableMemberPubkeysFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CLScaffold(
@@ -207,7 +191,7 @@ class _GroupRemoveMembersPageState extends State<GroupRemoveMembersPage> {
         }
 
         return CLMultiUserSelector(
-          users: removableMembers,
+          userPubkeys: removableMembers,
           onChanged: _onSelectionChanged,
           title: '${Localized.text('ox_chat.remove_member_title')} ${_selectedUsers.isNotEmpty ? '(${_selectedUsers.length})' : ''}',
           actions: [
