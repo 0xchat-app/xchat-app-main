@@ -351,7 +351,7 @@ class CLCachedNetworkImage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Validate image URL
     if (imageUrl.isEmpty) {
-      return _buildErrorWidget(context, 'Invalid image URL');
+      return errorWidgetFn(context, '', 'Invalid image URL');
     }
 
     // Check if this is an encrypted image
@@ -360,19 +360,22 @@ class CLCachedNetworkImage extends StatelessWidget {
     if (isEncrypted) {
       // For encrypted images, use a custom approach
       return _buildEncryptedImage(context);
-    } else {
-      // Use standard cached network image for non-encrypted images
-      // Always use circle cache manager to avoid creating global cache files
-      return FutureBuilder<CacheManager>(
-        future: CLCacheManager.getCircleCacheManager(CacheFileType.image),
-        builder: (context, snapshot) {
-          final cacheManager = snapshot.data;
-          if (cacheManager == null) return SizedBox();
-
-          return _buildCachedNetworkImage(context, cacheManager);
-        },
-      );
     }
+
+    final cacheManager = CLCacheManager.getCircleCacheManagerSync(CacheFileType.image);
+    if (cacheManager != null) {
+      return _buildCachedNetworkImage(context, cacheManager);
+    }
+
+    return FutureBuilder<CacheManager>(
+      future: CLCacheManager.getCircleCacheManager(CacheFileType.image),
+      builder: (context, snapshot) {
+        final cacheManager = snapshot.data;
+        if (cacheManager == null) return placeholderFn(context, imageUrl);
+
+        return _buildCachedNetworkImage(context, cacheManager);
+      },
+    );
   }
 
   Widget _buildEncryptedImage(BuildContext context) {
@@ -386,11 +389,10 @@ class CLCachedNetworkImage extends StatelessWidget {
       width: width,
       height: height,
       loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-        return placeholder?.call(context, imageUrl) ?? _buildPlaceholderWidget(context);
+        return placeholderFn(context, imageUrl);
       },
       errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-        return errorWidget?.call(context, imageUrl, error) ??
-            _buildErrorWidget(context, error);
+        return errorWidgetFn(context, imageUrl, error);
       },
     );
   }
@@ -433,12 +435,18 @@ class CLCachedNetworkImage extends StatelessWidget {
       cacheKey: cacheKey,
       maxWidthDiskCache: maxWidthDiskCache,
       maxHeightDiskCache: maxHeightDiskCache,
-      placeholder: placeholder ?? (context, url) => _buildPlaceholderWidget(context),
-      errorWidget: errorWidget ?? (context, url, error) => _buildErrorWidget(context, error),
+      placeholder: placeholderFn,
+      errorWidget: errorWidgetFn,
     );
   }
 
-  Widget _buildPlaceholderWidget(BuildContext context, [String? url]) {
+  PlaceholderWidgetBuilder get placeholderFn => placeholder
+      ?? (context, url) => _defaultPlaceholderWidget(context);
+
+  LoadingErrorWidgetBuilder get errorWidgetFn =>  errorWidget
+      ?? (context, url, error) => _defaultErrorWidget(context, error);
+
+  Widget _defaultPlaceholderWidget(BuildContext context, [String? url]) {
     return Container(
       color: Colors.grey[300],
       child: const Center(
@@ -447,7 +455,7 @@ class CLCachedNetworkImage extends StatelessWidget {
     );
   }
 
-  Widget _buildErrorWidget(BuildContext context, [dynamic error]) {
+  Widget _defaultErrorWidget(BuildContext context, [dynamic error]) {
     return Container(
       color: Colors.grey[300],
       child: const Center(

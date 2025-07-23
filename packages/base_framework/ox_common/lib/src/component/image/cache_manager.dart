@@ -37,6 +37,20 @@ class CLCacheManager {
     return CircleDefaultCacheManager(managerConfig, circle.id, fileType);
   }
 
+  static CacheManager? getCircleCacheManagerSync(CacheFileType fileType) {
+    final currentState = LoginManager.instance.currentState;
+    final account = currentState.account;
+    final circle = currentState.currentCircle;
+
+    if (account == null || circle == null) {
+      // Fall back to default cache manager if no circle is active
+      assert(false, 'Error Scene');
+      return DefaultCacheManager();
+    }
+
+    return CircleDefaultCacheManager.get(circle.id, fileType);
+  }
+
   /// Empty cache for all circles
   static Future<void> clearAllCircleCache() async {
     final currentState = LoginManager.instance.currentState;
@@ -96,6 +110,11 @@ class CircleDefaultCacheManager extends CacheManager with ImageCacheManager {
     }
     
     return _instances[key]!;
+  }
+
+  static CircleDefaultCacheManager? get(String circleId, CacheFileType fileType) {
+    final key = _generateCacheKey(circleId, fileType);
+    return _instances[key];
   }
 
   /// Generate cache key
