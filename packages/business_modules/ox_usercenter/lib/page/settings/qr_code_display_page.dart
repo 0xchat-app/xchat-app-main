@@ -133,7 +133,7 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
         );
         qrImage = QrImage(qrCode!);
       } catch (e) {
-        LogUtils.e('QR code generation failed: $e');
+        print('QR code generation failed: $e');
         qrCode = null;
         qrImage = null;
         CommonToast.instance.show(context, Localized.text('ox_usercenter.qr_generation_failed'));
@@ -364,6 +364,10 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
                       ? Localized.text('ox_usercenter.empty_invite_link')
                       : Localized.text('ox_usercenter.qr_generation_failed'),
                 style: TextStyle(
+                  color: CupertinoColors.systemGrey,
+                  fontSize: 14.px,
+                ),
+                textAlign: TextAlign.center,
               ),
             ] else ...[
               CLText.bodyMedium(
@@ -388,6 +392,7 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
           begin: previousDecoration,
           end: currentDecoration,
         ),
+        curve: Curves.ease,
         duration: const Duration(milliseconds: 300),
         builder: (context, decoration, child) {
           return PrettyQrView(
