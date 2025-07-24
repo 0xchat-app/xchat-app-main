@@ -300,7 +300,7 @@
   "invite_to_chat": "邀请加入聊天",
   "share_failed": "分享失败",
   "empty_invite_link": "空邀请链接",
-  "invite": "邀请",
+  "invite": "邀请好友",
   "generate_invite_link": "生成邀请链接",
   "one_time_keypackage_confirm_title": "生成一次性链接",
   "one_time_keypackage_confirm_content": "生成一次性链接，只能使用一次",

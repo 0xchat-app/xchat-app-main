@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/login/login_models.dart';
@@ -15,6 +16,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'select_group_members_page.dart';
 import '../../utils/chat_session_utils.dart';
+import 'package:ox_usercenter/page/settings/qr_code_display_page.dart';
 
 class CLNewMessagePage extends StatefulWidget {
   const CLNewMessagePage({super.key});
@@ -169,6 +171,11 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
   SectionListViewItem menuSection() {
     return SectionListViewItem(
       data: [
+        LabelItemModel(
+          icon: ListViewIcon.data(Icons.share),
+          title: Localized.text('ox_usercenter.invite'),
+          onTap: _onInviteFriends,
+        ),
         if (!PlatformStyle.isUseMaterial)
           LabelItemModel(
             icon: ListViewIcon(
@@ -188,6 +195,7 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
           title: Localized.text('ox_chat.str_new_group'),
           onTap: _onNewGroup,
         ),
+
       ],
     );
   }
@@ -391,6 +399,13 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
 
   void _onNewGroup() {
     OXNavigator.pushPage(context, (context) => const SelectGroupMembersPage());
+  }
+
+  void _onInviteFriends() {
+    OXNavigator.pushPage(
+      context, 
+      (context) => const QRCodeDisplayPage(),
+    );
   }
 
   void _onUserTap(ValueNotifier<UserDBISAR> user$) async {
