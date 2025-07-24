@@ -21,7 +21,7 @@ class ChatSendMessageHelper {
     MessageContentCreator? contentEncoder,
     MessageContentCreator? sourceCreator,
     String? replaceMessageId,
-    Future Function(OKEvent event, types.Message)? sendEventHandler,
+    Future Function(OKEvent event, types.Message)? sendRemoteEventHandler,
   }) async {
     // prepare data
     final type = message.dbMessageType;
@@ -81,11 +81,10 @@ class ChatSendMessageHelper {
         replaceMessageId: replaceMessageId,
       );
 
-      final isWaitForSend = sendingType != ChatSendingType.remote;
-      if (isWaitForSend) {
-        sendEventHandler?.call(await sendResultEvent, sendMsg);
-      } else {
-        sendResultEvent.then((event) => sendEventHandler?.call(event, sendMsg));
+      if (sendingType == ChatSendingType.remote) {
+        sendResultEvent.then(
+          (event) => sendRemoteEventHandler?.call(event, sendMsg)
+        );
       }
     }
     return sendMsg;

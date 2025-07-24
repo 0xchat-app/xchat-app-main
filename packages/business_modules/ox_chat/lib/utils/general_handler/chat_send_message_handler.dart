@@ -194,7 +194,7 @@ extension ChatMessageSendEx on ChatGeneralHandler {
         return null;
       },
       replaceMessageId: replaceMessageId,
-      sendEventHandler: (event, sendMsg) => _sendEventHandler(
+      sendRemoteEventHandler: (event, sendMsg) => _sendRemoteEventHandler(
         event: event,
         sendMsg: sendMsg,
         sendFinish: sendFinish,
@@ -214,21 +214,21 @@ extension ChatMessageSendEx on ChatGeneralHandler {
     return sentMessage;
   }
 
-  Future _sendEventHandler({
+  Future _sendRemoteEventHandler({
     required OKEvent event,
     required types.Message sendMsg,
     required OXValue sendFinish,
     String? replaceMessageId,
   }) async {
     sendFinish.value = true;
-    final message = await dataController.getMessage(replaceMessageId ?? sendMsg.id);
+    final originMessageId = replaceMessageId ?? sendMsg.id;
+    final message = await dataController.getMessage(originMessageId);
     if (message == null) return;
 
     final updatedMessage = message.copyWith(
-      remoteId: event.eventId,
       status: event.status ? types.Status.sent : types.Status.error,
     );
-    dataController.updateMessage(updatedMessage, originMessageId: sendMsg.id);
+    dataController.updateMessage(updatedMessage, originMessageId: originMessageId);
   }
 
   void _sendActionFinishHandler({
@@ -240,7 +240,12 @@ extension ChatMessageSendEx on ChatGeneralHandler {
     if (LoginManager.instance.currentCircle?.type == CircleType.bitchat) return;
 
     if (replaceMessageId != null && replaceMessageId.isNotEmpty) {
-      dataController.updateMessage(message, originMessageId: replaceMessageId);
+      dataController.updateMessage(
+        message.copyWith(
+          id: replaceMessageId,
+        ),
+        originMessageId: replaceMessageId,
+      );
     } else {
       dataController.addMessage(message);
       dataController.galleryCache.tryAddPreviewImage(message: message);
