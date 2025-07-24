@@ -302,6 +302,9 @@ extension LoginManagerAccount on LoginManager {
     // Clear persistent data
     await _clearLoginInfo();
 
+    // Clear temp folders for all accounts
+    AccountPathManager.clearAllTempFolders();
+
     // Notify observers
     for (final observer in _observers) {
       observer.onLogout();
@@ -560,6 +563,10 @@ extension LoginManagerCircle on LoginManager {
       }
       await Account.sharedInstance.logout();
       CLCacheManager.clearCircleCacheById(originCircle.id);
+      AccountPathManager.clearCircleTempFolder(
+        currentState.account!.pubkey,
+        originCircle.id,
+      );
     }
     return originCircle;
   }

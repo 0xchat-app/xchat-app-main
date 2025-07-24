@@ -10,6 +10,7 @@ import 'package:ox_common/desktop/window_manager.dart';
 import 'package:ox_common/log_util.dart';
 import 'package:ox_common/ox_common.dart';
 import 'package:ox_common/login/login_manager.dart';
+import 'package:ox_common/login/account_path_manager.dart';
 import 'package:ox_common/utils/error_utils.dart';
 import 'package:ox_common/utils/font_size_notifier.dart';
 import 'package:ox_common/utils/storage_key_tool.dart';
@@ -86,6 +87,7 @@ class AppInitializer {
   /// User-level initialization including auto login
   Future userInitializer() async {
     await _tryAutoLogin();
+    _cleanupTempFolders();
   }
 
   /// Try auto login using LoginManager
@@ -160,6 +162,16 @@ class AppInitializer {
         return SizedBox();
       }
     };
+  }
+
+  /// Clean up temp folders on app startup
+  Future<void> _cleanupTempFolders() async {
+    try {
+      final deletedCount = await AccountPathManager.clearAllTempFolders();
+      LogUtil.d('Cleaned up $deletedCount temp files on app startup');
+    } catch (e) {
+      LogUtil.e('Error cleaning up temp folders on app startup: $e');
+    }
   }
 }
 
