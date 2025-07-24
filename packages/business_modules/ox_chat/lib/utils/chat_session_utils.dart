@@ -318,7 +318,7 @@ class ChatSessionUtils {
     }
   }
 
-  static Future<String?> onKeyPackageSelection({
+  static Future<KeyPackageSelectionResult?> onKeyPackageSelection({
     required BuildContext context,
     required String pubkey,
     required List<KeyPackageEvent> availableKeyPackages,
@@ -326,7 +326,10 @@ class ChatSessionUtils {
     // For secret chats, we can use the same key package selection logic
     // If only one key package is available, return it directly
     if (availableKeyPackages.length == 1) {
-      return availableKeyPackages.first.encoded_key_package;
+      return KeyPackageSelectionResult(
+        availableKeyPackages.first.encoded_key_package,
+        true,
+      );
     }
 
     // If multiple key packages are available, show selection dialog
@@ -338,6 +341,20 @@ class ChatSessionUtils {
     );
 
     await OXLoading.show();
-    return selectedKeyPackage;
+    
+    if (selectedKeyPackage != null) {
+      // Find the selected key package event
+      KeyPackageEvent? selectedEvent = availableKeyPackages.firstWhere(
+        (kp) => kp.encoded_key_package == selectedKeyPackage,
+        orElse: () => availableKeyPackages.first,
+      );
+      
+      return KeyPackageSelectionResult(
+        selectedEvent.encoded_key_package,
+        true,
+      );
+    }
+    
+    return null;
   }
 }

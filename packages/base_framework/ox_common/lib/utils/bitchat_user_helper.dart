@@ -138,9 +138,6 @@ extension PeerToBitchatUserState on BitChat.Peer {
       remoteSignerURI: null,
       clientPrivateKey: null,
       remotePubkey: null,
-      encodedKeyPackage: null,
-      keyPackageEventListJson: null,
-      encodedKeyPackageJson: null,
       settings: null,
     );
 
