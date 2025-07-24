@@ -1,4 +1,5 @@
 import '../const/common_constant.dart';
+import '../const/app_config.dart';
 import '../log_util.dart';
 import '../ox_common.dart';
 import '../utils/platform_utils.dart';
@@ -29,6 +30,26 @@ class SchemeHelper {
 
     String action = '';
     Map<String, String> query = <String, String>{};
+
+    // Handle Universal Links for 0xchat.com domains
+    if (AppConfig.supportedDomains.any((domain) => uri.contains(domain))) {
+      final uriObj = Uri.parse(uri);
+      final path = uriObj.path;
+      
+      // Only handle /lite paths
+      if (path.startsWith('/lite')) {
+        // This is a supported path, handle it
+        if (defaultHandler != null) {
+          final handler = defaultHandler!;
+          await handler(uri, 'universal_lite', {});
+        }
+        return;
+      } else {
+        // This is not a supported path, ignore it
+        LogUtil.d('Lite app ignoring non-lite path: $path');
+        return;
+      }
+    }
 
     // Handle custom scheme formats first (oxchatlite:nprofile, nostr:nprofile)
     if (uri.startsWith('oxchatlite:')) {

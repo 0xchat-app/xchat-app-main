@@ -5,25 +5,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/foundation.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:nostr_core_dart/nostr.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
-import 'package:ox_common/utils/custom_uri_helper.dart';
-import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:device_info_plus/device_info_plus.dart';
-import 'package:ox_common/ox_common.dart';
 import 'package:ox_common/utils/permission_utils.dart';
+import 'package:ox_common/const/app_config.dart';
 
 enum QRCodeStyle {
   defaultStyle, // Default
@@ -114,10 +108,11 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
 
       // Generate invite link
       if (linkType == InviteLinkType.oneTime) {
-        // For one-time invites, use a shorter format to avoid QR code issues
-        currentInviteLink = 'https://0xchat.com/invite?keypackage=${Uri.encodeComponent(keyPackageEvent.encoded_key_package)}&relay=${Uri.encodeComponent(relayUrl)}';
+        // For one-time invites, include sender's pubkey
+        final senderPubkey = Account.sharedInstance.currentPubkey;
+        currentInviteLink = '${AppConfig.inviteBaseUrl}?keypackage=${Uri.encodeComponent(keyPackageEvent.encoded_key_package)}&pubkey=${Uri.encodeComponent(senderPubkey)}&relay=${Uri.encodeComponent(relayUrl)}';
       } else {
-        currentInviteLink = 'https://www.0xchat.com/lite/invite?eventid=${Uri.encodeComponent(keyPackageEvent.eventId)}&relay=${Uri.encodeComponent(relayUrl)}';
+        currentInviteLink = '${AppConfig.inviteBaseUrl}?eventid=${Uri.encodeComponent(keyPackageEvent.eventId)}&relay=${Uri.encodeComponent(relayUrl)}';
       }
 
       // Update QR code data and current link type

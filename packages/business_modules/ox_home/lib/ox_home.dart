@@ -1,7 +1,8 @@
-
+import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:chatcore/chat-core.dart';
+import 'package:nostr_core_dart/nostr.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/scheme/scheme_helper.dart';
 import 'package:ox_common/utils/custom_uri_helper.dart';
@@ -11,9 +12,10 @@ import 'package:ox_common/login/login_models.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_module_service/ox_module_service.dart';
 import 'package:ox_common/log_util.dart';
+import 'package:ox_common/widgets/common_toast.dart';
+
 
 class OxChatHome extends OXFlutterModule {
-
   @override
   String get moduleName => 'ox_home';
 
@@ -27,13 +29,23 @@ class OxChatHome extends OXFlutterModule {
   }
 
   @override
-  Future<T?>? navigateToPage<T>(BuildContext context, String pageName, Map<String, dynamic>? params) {
+  Future<T?>? navigateToPage<T>(
+      BuildContext context, String pageName, Map<String, dynamic>? params) {
     return null;
   }
 
-  nostrHandler(String scheme, String action, Map<String, String> queryParameters) async {
+  nostrHandler(
+      String scheme, String action, Map<String, String> queryParameters) async {
     BuildContext? context = OXNavigator.navigatorKey.currentContext;
-    if(context == null) return;
+    if (context == null) return;
+
+    // Handle Universal Links
+    if (action == 'universal_lite') {
+      await handleUniversalLink(scheme);
+      return;
+    }
+
+
 
     String nostrString = '';
     if (action == 'nostr') {
@@ -43,12 +55,13 @@ class OxChatHome extends OXFlutterModule {
     } else {
       nostrString = action;
     }
-    if (nostrString.isEmpty) return ;
+    if (nostrString.isEmpty) return;
 
     // Special handling for oxchatlite scheme
     if (scheme == 'oxchatlite') {
       // Extract the nprofile part from the full URL
-      final nprofilePart = nostrString.replaceFirst('oxchatlite://', '').replaceFirst('//', '');
+      final nprofilePart =
+          nostrString.replaceFirst('oxchatlite://', '').replaceFirst('//', '');
       await _handleOxchatliteNprofile(context, nprofilePart);
     } else {
       // Use existing ScanUtils for other schemes
@@ -56,11 +69,105 @@ class OxChatHome extends OXFlutterModule {
     }
   }
 
-  Future<void> _handleOxchatliteNprofile(BuildContext context, String nprofileString) async {
+  /// Handle Universal Links from https://0xchat.com/lite
+  Future<void> handleUniversalLink(String url) async {
+    BuildContext? context = OXNavigator.navigatorKey.currentContext;
+    if (context == null) return;
+
+    try {
+      final uri = Uri.parse(url);
+
+      // Handle invite links
+      if (uri.path == '/lite/invite') {
+        await _handleInviteLink(uri);
+        return;
+      }
+
+      // Handle other paths as needed
+      LogUtil.d('Unhandled Universal Link: $url');
+    } catch (e) {
+      LogUtil.e('Error handling Universal Link: $e');
+    }
+  }
+
+  /// Handle invite links from Universal Links
+  Future<void> _handleInviteLink(Uri uri) async {
+    BuildContext? context = OXNavigator.navigatorKey.currentContext;
+    if (context == null) return;
+
+    try {
+      final keypackage = uri.queryParameters['keypackage'];
+      final pubkey = uri.queryParameters['pubkey'];
+      final eventid = uri.queryParameters['eventid'];
+      final relay = uri.queryParameters['relay'];
+
+      // Check if relay is provided
+      if (relay == null || relay.isEmpty) {
+        CommonToast.instance.show(context, 'Invalid invite link: missing relay');
+        return;
+      }
+
+      // Check if we need to join a circle based on relay
+      final relayUrl = relay;
+      final currentCircle = LoginManager.instance.currentCircle;
+      bool needToJoinCircle = false;
+
+      if (currentCircle != null) {
+        if (currentCircle.relayUrl != relayUrl &&
+            currentCircle.relayUrl.replaceFirst(RegExp(r'/+$'), '') !=
+                relayUrl.replaceFirst(RegExp(r'/+$'), '')) {
+          needToJoinCircle = true;
+        }
+      } else {
+        needToJoinCircle = true;
+      }
+
+      // If we need to join a circle, show dialog first
+      if (needToJoinCircle) {
+        await _showJoinCircleDialog(context, [relayUrl], pubkey ?? '');
+        // Note: _showJoinCircleDialog handles the circle joining logic internally
+      }
+
+      // Process the invite link
+      bool success = false;
+      if (keypackage != null && pubkey != null) {
+        // Handle one-time invite link
+        success = await KeyPackageManager.handleOneTimeInviteLink(
+          encodedKeyPackage: keypackage,
+          senderPubkey: pubkey,
+          relays: [relayUrl],
+        );
+      } else if (eventid != null) {
+        // Handle permanent invite link
+        success = await KeyPackageManager.handlePermanentInviteLink(
+          eventId: eventid,
+          relays: [relayUrl],
+        );
+      }
+
+      if (success) {
+        // Navigate to sender's profile page
+        if (pubkey != null) {
+          await _navigateToUserDetail(context, pubkey);
+        } else {
+          CommonToast.instance
+              .show(context, 'Successfully processed invite link');
+        }
+      } else {
+        CommonToast.instance.show(context, 'Failed to process invite link');
+      }
+    } catch (e) {
+      LogUtil.e('Error handling invite link: $e');
+      CommonToast.instance.show(context, 'Failed to process invite link');
+    }
+  }
+
+  Future<void> _handleOxchatliteNprofile(
+      BuildContext context, String nprofileString) async {
     try {
       // Decode nprofile to get pubkey and relays
       final data = Account.decodeProfile(nprofileString);
-      
+
       if (data == null || data.isEmpty) {
         _showErrorDialog(context, 'Invalid nprofile format');
         return;
@@ -68,7 +175,7 @@ class OxChatHome extends OXFlutterModule {
 
       final pubkey = data['pubkey'] as String? ?? '';
       final relays = (data['relays'] as List<dynamic>?)?.cast<String>() ?? [];
-      
+
       if (pubkey.isEmpty) {
         _showErrorDialog(context, 'Invalid pubkey');
         return;
@@ -77,12 +184,13 @@ class OxChatHome extends OXFlutterModule {
       // Check if we're already in a circle with these relays
       final currentCircle = LoginManager.instance.currentCircle;
       bool isInSameCircle = false;
-      
+
       if (currentCircle != null && relays.isNotEmpty) {
         // Check if any of the nprofile relays match current circle relay
         for (final relay in relays) {
-          if (currentCircle.relayUrl == relay || 
-              currentCircle.relayUrl.replaceFirst(RegExp(r'/+$'), '') == relay.replaceFirst(RegExp(r'/+$'), '')) {
+          if (currentCircle.relayUrl == relay ||
+              currentCircle.relayUrl.replaceFirst(RegExp(r'/+$'), '') ==
+                  relay.replaceFirst(RegExp(r'/+$'), '')) {
             isInSameCircle = true;
             break;
           }
@@ -104,14 +212,16 @@ class OxChatHome extends OXFlutterModule {
     }
   }
 
-  Future<void> _showJoinCircleDialog(BuildContext context, List<String> relays, String pubkey) async {
+  Future<void> _showJoinCircleDialog(
+      BuildContext context, List<String> relays, String pubkey) async {
     final primaryRelay = relays.first;
     final relayName = _extractRelayName(primaryRelay);
-    
+
     final result = await CLAlertDialog.show<bool>(
       context: context,
       title: 'Join Circle',
-      content: 'This user is from circle "$relayName". Would you like to join this circle to chat with them?',
+      content:
+          'This user is from circle "$relayName". Would you like to join this circle to chat with them?',
       actions: [
         CLAlertAction.cancel(),
         CLAlertAction<bool>(
@@ -128,7 +238,8 @@ class OxChatHome extends OXFlutterModule {
     }
   }
 
-  Future<void> _joinCircleAndNavigate(BuildContext context, String relayUrl, String pubkey) async {
+  Future<void> _joinCircleAndNavigate(
+      BuildContext context, String relayUrl, String pubkey) async {
     try {
       // Show loading
       showDialog(
@@ -147,7 +258,7 @@ class OxChatHome extends OXFlutterModule {
 
       // Join the circle
       final failure = await LoginManager.instance.joinCircle(relayUrl);
-      
+
       // Hide loading
       Navigator.of(context).pop();
 
@@ -164,7 +275,8 @@ class OxChatHome extends OXFlutterModule {
     }
   }
 
-  Future<void> _navigateToUserDetail(BuildContext context, String pubkey) async {
+  Future<void> _navigateToUserDetail(
+      BuildContext context, String pubkey) async {
     // Get user info
     UserDBISAR? user = await Account.sharedInstance.getUserInfo(pubkey);
     if (user == null) {
@@ -196,9 +308,17 @@ class OxChatHome extends OXFlutterModule {
     try {
       final uri = Uri.parse(relayUrl);
       final host = uri.host;
-      return host.replaceAll('relay.', '').replaceAll('www.', '').split('.').first;
+      return host
+          .replaceAll('relay.', '')
+          .replaceAll('www.', '')
+          .split('.')
+          .first;
     } catch (e) {
-      return relayUrl.replaceAll('wss://', '').replaceAll('ws://', '').split('/').first;
+      return relayUrl
+          .replaceAll('wss://', '')
+          .replaceAll('ws://', '')
+          .split('/')
+          .first;
     }
   }
 

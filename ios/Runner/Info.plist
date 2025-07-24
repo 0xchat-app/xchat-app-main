@@ -249,6 +249,11 @@
 		</array>
 		</dict>
 	</array>
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:0xchat.com</string>
+		<string>applinks:www.0xchat.com</string>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>LSApplicationQueriesSchemes</key>
