@@ -407,40 +407,6 @@ extension ChatMessageSendEx on ChatGeneralHandler {
     }
   }
 
-  Future<File?> encryptFile({
-    required File origin,
-    required String? encryptedKey,
-    required String? encryptedNonce,
-  }) async {
-    if (encryptedKey == null && encryptedNonce == null) return origin;
-
-    final fileName = '${Uuid().v1()}.${origin.path.getFileExtension()}';
-    File? encryptedFile;
-    String directoryPath = '';
-
-    if (Platform.isAndroid) {
-      Directory? externalStorageDirectory = await getExternalStorageDirectory();
-      if (externalStorageDirectory == null) {
-        return null;
-      }
-      directoryPath = externalStorageDirectory.path;
-    } else if (Platform.isIOS || Platform.isMacOS) {
-      Directory temporaryDirectory = await getTemporaryDirectory();
-      directoryPath = temporaryDirectory.path;
-    }
-    
-    final cacheManager = await CLCacheManager.getCircleCacheManager(CacheFileType.image);
-    encryptedFile = await cacheManager.store.fileSystem.createFile(fileName);
-    await AesEncryptUtils.encryptFileInIsolate(
-      origin,
-      encryptedFile,
-      encryptedKey ?? '',
-      nonce: encryptedNonce,
-      mode: AESMode.gcm,
-    );
-    return encryptedFile;
-  }
-
   Future sendImageMessage({
     BuildContext? context,
     String? fileId,
@@ -545,7 +511,11 @@ extension ChatMessageSendEx on ChatGeneralHandler {
 
             if (!isFromCache) {
               final cacheManager = await CLCacheManager.getCircleCacheManager(CacheFileType.image);
-              imageFile = await cacheManager.putFile(imageURL, imageFile!.readAsBytesSync());
+              imageFile = await cacheManager.putFile(
+                imageURL,
+                imageFile!.readAsBytesSync(),
+                fileExtension: imageFile!.path.getFileExtension(),
+              );
             }
 
             sendImageMessageWithURL(
@@ -990,5 +960,39 @@ extension ChatMessageSendUtileEx on ChatGeneralHandler {
     );
 
     return updatedUri.toString();
+  }
+
+  Future<File?> encryptFile({
+    required File origin,
+    required String? encryptedKey,
+    required String? encryptedNonce,
+  }) async {
+    if (encryptedKey == null && encryptedNonce == null) return origin;
+
+    final fileName = '${Uuid().v1()}.${origin.path.getFileExtension()}';
+    File? encryptedFile;
+    String directoryPath = '';
+
+    if (Platform.isAndroid) {
+      Directory? externalStorageDirectory = await getExternalStorageDirectory();
+      if (externalStorageDirectory == null) {
+        return null;
+      }
+      directoryPath = externalStorageDirectory.path;
+    } else if (Platform.isIOS || Platform.isMacOS) {
+      Directory temporaryDirectory = await getTemporaryDirectory();
+      directoryPath = temporaryDirectory.path;
+    }
+
+    final cacheManager = await CLCacheManager.getCircleCacheManager(CacheFileType.image);
+    encryptedFile = await cacheManager.store.fileSystem.createFile(fileName);
+    await AesEncryptUtils.encryptFileInIsolate(
+      origin,
+      encryptedFile,
+      encryptedKey ?? '',
+      nonce: encryptedNonce,
+      mode: AESMode.gcm,
+    );
+    return encryptedFile;
   }
 }
