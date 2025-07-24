@@ -97,7 +97,7 @@ class OxChatHome extends OXFlutterModule {
 
     try {
       final keypackage = uri.queryParameters['keypackage'];
-      final pubkey = uri.queryParameters['pubkey'];
+      String? pubkey = uri.queryParameters['pubkey'];
       final eventid = uri.queryParameters['eventid'];
       final relay = uri.queryParameters['relay'];
 
@@ -139,10 +139,15 @@ class OxChatHome extends OXFlutterModule {
         );
       } else if (eventid != null) {
         // Handle permanent invite link
-        success = await KeyPackageManager.handlePermanentInviteLink(
+        final result = await KeyPackageManager.handlePermanentInviteLink(
           eventId: eventid,
           relays: [relayUrl],
         );
+        success = result['success'] as bool;
+        // For permanent invites, we can get pubkey from the result
+        if (success && pubkey == null) {
+          pubkey = result['pubkey'] as String?;
+        }
       }
 
       if (success) {
