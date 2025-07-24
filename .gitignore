@@ -100,3 +100,4 @@ build/
 pubspec.lock
 Podfile.lock
 /bitchat-main
+.vscode/settings.json

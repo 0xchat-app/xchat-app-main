@@ -87,8 +87,8 @@ class SettingSliderState extends State<SettingSlider> {
         onTap: keysItemOnTap,
       ),
       LabelItemModel(
-        icon: ListViewIcon.data(Icons.qr_code),
-        title: 'Share QR Code',
+        icon: ListViewIcon.data(Icons.share),
+        title: Localized.text('ox_usercenter.invite'),
         onTap: inviteItemOnTap,
       ),
     ];
