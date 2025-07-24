@@ -172,7 +172,7 @@ class UploadManager {
     );
   }
 
-  Future<void> uploadFile({
+  Future<(UploadResult, bool isFromCache)> uploadFile({
     required FileType fileType,
     required String filePath,
     required uploadId,
@@ -180,13 +180,11 @@ class UploadManager {
     String? encryptedKey,
     String? encryptedNonce,
     bool autoStoreImage = true,
-    Function(UploadResult, bool isFromCache)? completeCallback,
   }) async {
     final cacheKey = _cacheKey(uploadId, receivePubkey);
-    final result = uploadResultMap[cacheKey];
-    if (result != null && result.isSuccess) {
-      completeCallback?.call(result, true);
-      return;
+    final cacheResult = uploadResultMap[cacheKey];
+    if (cacheResult != null && cacheResult.isSuccess) {
+      return (cacheResult, true);
     }
 
     final streamController = prepareUploadStream(uploadId, receivePubkey);
@@ -194,7 +192,7 @@ class UploadManager {
     uploadResultMap.remove(cacheKey);
 
     final file = File(filePath);
-    UploadUtils.uploadFile(
+    final result = await UploadUtils.uploadFile(
       file: file,
       filename: file.path.getFileName() ?? '${Uuid().v1()}.${filePath.getFileExtension()}',
       fileType: fileType,
@@ -204,10 +202,10 @@ class UploadManager {
       onProgress: (progress) {
         streamController.add(progress);
       },
-    ).then((result) {
-      uploadResultMap[cacheKey] = result;
-      completeCallback?.call(result, false);
-    });
+    );
+
+    uploadResultMap[cacheKey] = result;
+    return (result, false);
   }
 
   Stream<double>? getUploadProgress(String uploadId, String? pubkey) {

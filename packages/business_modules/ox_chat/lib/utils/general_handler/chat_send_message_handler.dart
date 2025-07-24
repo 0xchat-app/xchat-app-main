@@ -133,7 +133,7 @@ extension ChatMessageSendEx on ChatGeneralHandler {
     );
   }
 
-  Future _sendMessageHandler({
+  Future<types.Message?> _sendMessageHandler({
     BuildContext? context,
     required String? content,
     required MessageType? messageType,
@@ -142,7 +142,6 @@ extension ChatMessageSendEx on ChatGeneralHandler {
     types.Message? resendMessage,
     ChatSendingType sendingType = ChatSendingType.remote,
     String? replaceMessageId,
-    Function(types.Message)? sendActionFinishHandler,
   }) async {
     types.Message? message;
     int tempCreateTime = DateTime.now().millisecondsSinceEpoch;
@@ -166,7 +165,7 @@ extension ChatMessageSendEx on ChatGeneralHandler {
         decryptNonce: decryptNonce,
       );
     }
-    if (message == null) return;
+    if (message == null) return null;
 
     if (replaceMessageId != null) {
       final replaceMessage = dataController.getMessage(replaceMessageId);
@@ -179,14 +178,14 @@ extension ChatMessageSendEx on ChatGeneralHandler {
     if (resendMessage == null) {
       message = await tryPrepareSendFileMessage(context, message);
     }
-    if (message == null) return;
+    if (message == null) return null;
 
     if (sendingType == ChatSendingType.memory) {
       tempMessageSet.add(message);
     }
 
     var sendFinish = OXValue(false);
-    final errorMsg = await ChatSendMessageHelper.sendMessage(
+    final sentMessage = await ChatSendMessageHelper.sendMessage(
       session: session,
       message: message,
       sendingType: sendingType,
@@ -201,19 +200,18 @@ extension ChatMessageSendEx on ChatGeneralHandler {
         sendFinish: sendFinish,
         replaceMessageId: replaceMessageId,
       ),
-      sendActionFinishHandler: (message) {
-        _sendActionFinishHandler(
-          message: message,
-          sendFinish: sendFinish,
-          sendingType: sendingType,
-          replaceMessageId: replaceMessageId,
-        );
-        sendActionFinishHandler?.call(message);
-      },
     );
-    if (errorMsg != null && errorMsg.isNotEmpty) {
-      CommonToast.instance.show(context, errorMsg);
+    if (sentMessage == null) {
+      CommonToast.instance.show(context, 'send message fail');
+    } else {
+      _sendActionFinishHandler(
+        message: sentMessage,
+        sendFinish: sendFinish,
+        sendingType: sendingType,
+        replaceMessageId: replaceMessageId,
+      );
     }
+    return sentMessage;
   }
 
   Future _sendEventHandler({
@@ -472,7 +470,7 @@ extension ChatMessageSendEx on ChatGeneralHandler {
     }
 
     UploadManager.shared.prepareUploadStream(fileId, otherUser?.pubKey);
-    await _sendMessageHandler(
+    final sendMessage = await _sendMessageHandler(
       context: context,
       content: content,
       messageType: MessageType.template,
@@ -480,56 +478,55 @@ extension ChatMessageSendEx on ChatGeneralHandler {
       sendingType: ChatSendingType.store,
       decryptSecret: encryptedKey,
       decryptNonce: encryptedNonce,
-      sendActionFinishHandler: (sendMessage) {
-        UploadManager.shared.uploadFile(
-          fileType: FileType.image,
-          filePath: imageFile!.path,
-          uploadId: fileId,
-          receivePubkey: otherUser?.pubKey ?? '',
-          encryptedKey: encryptedKey,
-          encryptedNonce: encryptedNonce,
-          autoStoreImage: false,
-          completeCallback: (uploadResult, isFromCache) async {
-            var imageURL = uploadResult.url;
-            if (!uploadResult.isSuccess || imageURL.isEmpty) {
-              final status = types.Status.error;
-              dataController.updateMessage(sendMessage.copyWith(
-                status: status,
-              ));
-              ChatMessageHelper.updateMessageWithMessageId(
-                messageId: sendMessage.id,
-                status: status,
-              );
-              return;
-            }
+    );
+    if (sendMessage == null) return;
 
-            imageURL = generateUrlWithInfo(
-              originalUrl: imageURL,
-              width: imageWidth,
-              height: imageHeight,
-            );
+    final (uploadResult, isFromCache) = await UploadManager.shared.uploadFile(
+      fileType: FileType.image,
+      filePath: imageFile.path,
+      uploadId: fileId,
+      receivePubkey: otherUser?.pubKey ?? '',
+      encryptedKey: encryptedKey,
+      encryptedNonce: encryptedNonce,
+      autoStoreImage: false,
+    );
 
-            if (!isFromCache) {
-              final cacheManager = await CLCacheManager.getCircleCacheManager(CacheFileType.image);
-              imageFile = await cacheManager.putFile(
-                imageURL,
-                imageFile!.readAsBytesSync(),
-                fileExtension: imageFile!.path.getFileExtension(),
-              );
-            }
+    var imageURL = uploadResult.url;
+    if (!uploadResult.isSuccess || imageURL.isEmpty) {
+      final status = types.Status.error;
+      dataController.updateMessage(sendMessage.copyWith(
+        status: status,
+      ));
+      ChatMessageHelper.updateMessageWithMessageId(
+        messageId: sendMessage.id,
+        status: status,
+      );
+      return;
+    }
 
-            sendImageMessageWithURL(
-              imageURL: imageURL,
-              imagePath: imageFile?.path,
-              imageWidth: imageWidth,
-              imageHeight: imageHeight,
-              encryptedKey: encryptedKey,
-              encryptedNonce: encryptedNonce,
-              replaceMessageId: sendMessage.id,
-            );
-          },
-        );
-      },
+    imageURL = generateUrlWithInfo(
+      originalUrl: imageURL,
+      width: imageWidth,
+      height: imageHeight,
+    );
+
+    if (!isFromCache) {
+      final cacheManager = await CLCacheManager.getCircleCacheManager(CacheFileType.image);
+      imageFile = await cacheManager.putFile(
+        imageURL,
+        imageFile.readAsBytesSync(),
+        fileExtension: imageFile.path.getFileExtension(),
+      );
+    }
+
+    sendImageMessageWithURL(
+      imageURL: imageURL,
+      imagePath: imageFile.path,
+      imageWidth: imageWidth,
+      imageHeight: imageHeight,
+      encryptedKey: encryptedKey,
+      encryptedNonce: encryptedNonce,
+      replaceMessageId: sendMessage.id,
     );
   }
 
@@ -726,62 +723,61 @@ extension ChatMessageSendEx on ChatGeneralHandler {
     if (content.isEmpty) return;
 
     UploadManager.shared.prepareUploadStream(fileId, otherUser?.pubKey);
-    await _sendMessageHandler(
+    final sendMessage = await _sendMessageHandler(
       context: context,
       content: content,
       messageType: MessageType.template,
       sendingType: ChatSendingType.store,
       decryptSecret: encryptedKey,
       decryptNonce: encryptedNonce,
-      sendActionFinishHandler: (sendMessage) {
-        UploadManager.shared.uploadFile(
-          fileType: FileType.video,
-          filePath: videoPath!,
-          uploadId: fileId,
-          receivePubkey: otherUser?.pubKey ?? '',
-          encryptedKey: encryptedKey,
-          encryptedNonce: encryptedNonce,
-          completeCallback: (uploadResult, isFromCache) async {
-            var videoURL = uploadResult.url;
-            if (!uploadResult.isSuccess || videoURL.isEmpty) {
-              final status = types.Status.error;
-              dataController.updateMessage(sendMessage.copyWith(
-                status: status,
-              ));
-              ChatMessageHelper.updateMessageWithMessageId(
-                messageId: sendMessage.id,
-                status: status,
-              );
-              return;
-            }
+    );
+    if (sendMessage == null) return;
 
-            videoURL = generateUrlWithInfo(
-              originalUrl: videoURL,
-              width: imageWidth,
-              height: imageHeight,
-            );
+    final (uploadResult, isFromCache) = await UploadManager.shared.uploadFile(
+      fileType: FileType.video,
+      filePath: videoPath,
+      uploadId: fileId,
+      receivePubkey: otherUser?.pubKey ?? '',
+      encryptedKey: encryptedKey,
+      encryptedNonce: encryptedNonce,
+    );
 
-            if (snapshotPath != null && snapshotPath.isNotEmpty && !isFromCache) {
-              VideoDataManager.shared.putThumbnailToCacheWithURL(
-                videoURL: videoURL,
-                thumbnailPath: snapshotPath,
-              );
-            }
+    videoURL = uploadResult.url;
+    if (!uploadResult.isSuccess || videoURL.isEmpty) {
+      final status = types.Status.error;
+      dataController.updateMessage(sendMessage.copyWith(
+        status: status,
+      ));
+      ChatMessageHelper.updateMessageWithMessageId(
+        messageId: sendMessage.id,
+        status: status,
+      );
+      return;
+    }
 
-            sendVideoMessageWithURL(
-              videoURL: videoURL,
-              fileId: fileId ?? '',
-              videoPath: videoPath,
-              snapshotPath: snapshotPath,
-              imageWidth: imageWidth,
-              imageHeight: imageHeight,
-              replaceMessageId: sendMessage.id,
-              encryptedKey: encryptedKey,
-              encryptedNonce: encryptedNonce
-            );
-          },
-        );
-      },
+    videoURL = generateUrlWithInfo(
+      originalUrl: videoURL,
+      width: imageWidth,
+      height: imageHeight,
+    );
+
+    if (snapshotPath != null && snapshotPath.isNotEmpty && !isFromCache) {
+      VideoDataManager.shared.putThumbnailToCacheWithURL(
+        videoURL: videoURL,
+        thumbnailPath: snapshotPath,
+      );
+    }
+
+    sendVideoMessageWithURL(
+        videoURL: videoURL,
+        fileId: fileId,
+        videoPath: videoPath,
+        snapshotPath: snapshotPath,
+        imageWidth: imageWidth,
+        imageHeight: imageHeight,
+        replaceMessageId: sendMessage.id,
+        encryptedKey: encryptedKey,
+        encryptedNonce: encryptedNonce
     );
   }
 
@@ -971,18 +967,6 @@ extension ChatMessageSendUtileEx on ChatGeneralHandler {
 
     final fileName = '${Uuid().v1()}.${origin.path.getFileExtension()}';
     File? encryptedFile;
-    String directoryPath = '';
-
-    if (Platform.isAndroid) {
-      Directory? externalStorageDirectory = await getExternalStorageDirectory();
-      if (externalStorageDirectory == null) {
-        return null;
-      }
-      directoryPath = externalStorageDirectory.path;
-    } else if (Platform.isIOS || Platform.isMacOS) {
-      Directory temporaryDirectory = await getTemporaryDirectory();
-      directoryPath = temporaryDirectory.path;
-    }
 
     final cacheManager = await CLCacheManager.getCircleCacheManager(CacheFileType.image);
     encryptedFile = await cacheManager.store.fileSystem.createFile(fileName);
