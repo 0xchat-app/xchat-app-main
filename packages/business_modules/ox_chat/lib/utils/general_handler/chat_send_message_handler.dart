@@ -259,23 +259,18 @@ extension ChatMessageSendEx on ChatGeneralHandler {
     // Get the session model and update its lastActivityTime
     final sessionModel = OXChatBinding.sharedInstance.getSessionModel(session.chatId);
     if (sessionModel != null) {
-      // Update session with the new message time
-      if (sessionModel.createTime < message.createdAt) {
-        sessionModel.createTime = message.createdAt;
-      }
-      if (sessionModel.lastActivityTime < message.createdAt) {
-        sessionModel.lastActivityTime = message.createdAt;
-      }
-      sessionModel.content = message.contentString();
-      
-      // Save to database
-      ChatSessionModelISAR.saveChatSessionModelToDB(sessionModel);
-      
       // Trigger session list update through OXChatBinding
       OXChatBinding.sharedInstance.updateChatSession(
         session.chatId,
-        lastActivityTime: message.createdAt,
-        content: message.contentString(),
+        lastMessageTime: sessionModel.createTime < message.createdAt
+            ? message.createdAt : null,
+        lastActivityTime: sessionModel.lastActivityTime < message.createdAt
+            ? message.createdAt : null,
+        content: ChatMessageHelper.getMessagePreviewText(
+          message.content,
+          message.dbMessageType,
+          message.author.id,
+        ),
       );
     }
   }

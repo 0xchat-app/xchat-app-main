@@ -36,6 +36,7 @@ class OXChatBinding {
     int? messageKind,
     bool? isMentioned,
     int? expiration,
+    int? lastMessageTime,
     int? lastActivityTime,
   })? updateChatSessionFn;
 
@@ -50,6 +51,7 @@ class OXChatBinding {
     int? messageKind,
     bool? isMentioned,
     int? expiration,
+    int? lastMessageTime,
     int? lastActivityTime,
   }) async => await updateChatSessionFn?.call(
     chatId,
@@ -63,6 +65,7 @@ class OXChatBinding {
     messageKind: messageKind,
     isMentioned: isMentioned,
     expiration: expiration,
+    lastMessageTime: lastMessageTime,
     lastActivityTime: lastActivityTime,
   ) ?? true;
 
