@@ -13,6 +13,7 @@ import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
+import 'package:ox_common/business_interface/ox_usercenter/interface.dart';
 import 'package:ox_common/utils/session_helper.dart';
 import '../page/session/chat_message_page.dart';
 import '../page/session/key_package_selection_dialog.dart';
@@ -290,7 +291,26 @@ class ChatSessionUtils {
 
       if (groupDB == null) {
         await OXLoading.dismiss();
-        CommonToast.instance.show(context, Localized.text('ox_chat.create_group_fail_tips'));
+        // Show dialog asking user to invite friends
+        final shouldInvite = await CLAlertDialog.show<bool>(
+          context: context,
+          title: Localized.text('ox_chat.no_available_keypackages_title'),
+          content: Localized.text('ox_chat.no_available_keypackages_content'),
+          actions: [
+            CLAlertAction.cancel(),
+            CLAlertAction<bool>(
+              label: Localized.text('ox_chat.invite_friends'),
+              value: true,
+              isDefaultAction: true,
+            ),
+          ],
+        );
+        
+        if (shouldInvite == true) {
+          // Navigate to invite friends page
+          OXUserCenterInterface.pushQRCodeDisplayPage(context);
+        }
+        
         return false;
       }
 
@@ -323,6 +343,11 @@ class ChatSessionUtils {
     required String pubkey,
     required List<KeyPackageEvent> availableKeyPackages,
   }) async {
+    // Check if no key packages are available
+    if (availableKeyPackages.isEmpty) {
+      return null;
+    }
+    
     // For secret chats, we can use the same key package selection logic
     // If only one key package is available, return it directly
     if (availableKeyPackages.length == 1) {

@@ -157,6 +157,22 @@ class _KeyPackageSelectionDialogState extends State<KeyPackageSelectionDialog> {
           selected$: selectedKeyPackage$,
         ),
     ).toList();
+    
+    // If no key packages available, show empty state
+    if (data.isEmpty) {
+      return Container(
+        constraints: BoxConstraints.loose(
+          Size(double.infinity, 100.px),
+        ),
+        child: Center(
+          child: CLText.bodyMedium(
+            Localized.text('ox_chat.no_keypackages_available'),
+            colorToken: ColorToken.onSurfaceVariant,
+          ),
+        ),
+      );
+    }
+    
     return Container(
       constraints: BoxConstraints.loose(
         Size(double.infinity, 300.px),
