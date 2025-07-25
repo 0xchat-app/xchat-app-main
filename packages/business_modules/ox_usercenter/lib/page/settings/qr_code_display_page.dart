@@ -1,8 +1,6 @@
-import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:chatcore/chat-core.dart';
@@ -211,58 +209,18 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
       child: Column(
         children: [
           // One-time invite button
-          if (Platform.isIOS) ...[
-            // iOS style buttons
-            SizedBox(
-              width: double.infinity,
-              child: CupertinoButton(
-                color: CupertinoColors.systemBlue,
-                borderRadius: BorderRadius.circular(12.px),
-                padding: EdgeInsets.symmetric(vertical: 16.px),
-                onPressed: () => _showOneTimeConfirmDialog(),
-                child: Text(
-                  Localized.text('ox_usercenter.generate_one_time_invite'),
-                  style: TextStyle(
-                    color: CupertinoColors.white,
-                    fontSize: 16.px,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 12.px),
-            // Permanent invite button
-            SizedBox(
-              width: double.infinity,
-              child: CupertinoButton(
-                color: CupertinoColors.systemGrey6,
-                borderRadius: BorderRadius.circular(12.px),
-                padding: EdgeInsets.symmetric(vertical: 16.px),
-                onPressed: () => _showPermanentConfirmDialog(),
-                child: Text(
-                  Localized.text('ox_usercenter.generate_permanent_invite'),
-                  style: TextStyle(
-                    color: CupertinoColors.systemBlue,
-                    fontSize: 16.px,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-          ] else ...[
-            // Android style buttons
-            CLButton.filled(
-              text: Localized.text('ox_usercenter.generate_one_time_invite'),
-              onTap: () => _showOneTimeConfirmDialog(),
-              expanded: true,
-            ),
-            SizedBox(height: 12.px),
-            CLButton.outlined(
-              text: Localized.text('ox_usercenter.generate_permanent_invite'),
-              onTap: () => _showPermanentConfirmDialog(),
-              expanded: true,
-            ),
-          ],
+          CLButton.filled(
+            text: Localized.text('ox_usercenter.generate_one_time_invite'),
+            onTap: () => _showOneTimeConfirmDialog(),
+            expanded: true,
+          ),
+          SizedBox(height: 12.px),
+          // Permanent invite button
+          CLButton.outlined(
+            text: Localized.text('ox_usercenter.generate_permanent_invite'),
+            onTap: () => _showPermanentConfirmDialog(),
+            expanded: true,
+          ),
         ],
       ),
     );
@@ -272,15 +230,11 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
     return Container(
       padding: EdgeInsets.all(24.px),
       decoration: BoxDecoration(
-        color: Platform.isIOS 
-            ? CupertinoColors.systemBackground
-            : ColorToken.surface.of(context),
+        color: ColorToken.surface.of(context),
         borderRadius: BorderRadius.circular(16.px),
         border: Border.all(
-          color: Platform.isIOS 
-              ? CupertinoColors.separator
-              : ColorToken.onSurfaceVariant.of(context).withValues(alpha: 0.1),
-          width: Platform.isIOS ? 0.5.px : 1.px,
+          color: ColorToken.onSurfaceVariant.of(context).withValues(alpha: 0.1),
+          width: 1.px,
         ),
       ),
       child: Column(
@@ -290,27 +244,14 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
 
           // SizedBox(height: 16.px),
 
-          // Description - Platform adaptive text style
-          if (Platform.isIOS) ...[
-            Text(
-              currentInviteLink == null
-                  ? Localized.text('ox_usercenter.click_to_generate_invite')
-                  : Localized.text('ox_usercenter.scan_qr_to_find_me'),
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: CupertinoColors.secondaryLabel,
-                fontSize: 14.px,
-              ),
-            ),
-          ] else ...[
-            CLText.bodyMedium(
-              currentInviteLink == null
-                  ? Localized.text('ox_usercenter.click_to_generate_invite')
-                  : Localized.text('ox_usercenter.scan_qr_to_find_me'),
-              textAlign: TextAlign.center,
-              colorToken: ColorToken.onSurfaceVariant,
-            ),
-          ],
+          // Description text
+          CLText.bodyMedium(
+            currentInviteLink == null
+                ? Localized.text('ox_usercenter.click_to_generate_invite')
+                : Localized.text('ox_usercenter.scan_qr_to_find_me'),
+            textAlign: TextAlign.center,
+            colorToken: ColorToken.onSurfaceVariant,
+          ),
         ],
       ),
     );
@@ -337,42 +278,25 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
         width: 240.px,
         height: 240.px,
         decoration: BoxDecoration(
-          color: Platform.isIOS 
-              ? CupertinoColors.systemGrey6
-              : ColorToken.surfaceContainer.of(context),
+          color: ColorToken.surfaceContainer.of(context),
           borderRadius: BorderRadius.circular(12.px),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Platform.isIOS ? CupertinoIcons.qrcode : Icons.qr_code_2,
+              Icons.qr_code_2,
               size: 64.px,
-              color: Platform.isIOS 
-                  ? CupertinoColors.systemGrey
-                  : ColorToken.onSurfaceVariant.of(context),
+              color: ColorToken.onSurfaceVariant.of(context),
             ),
             SizedBox(height: 16.px),
-            if (Platform.isIOS) ...[
-                              Text(
-                  currentInviteLink == null 
-                      ? Localized.text('ox_usercenter.empty_invite_link')
-                      : Localized.text('ox_usercenter.qr_generation_failed'),
-                style: TextStyle(
-                  color: CupertinoColors.systemGrey,
-                  fontSize: 14.px,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ] else ...[
-              CLText.bodyMedium(
-                currentInviteLink == null 
-                    ? Localized.text('ox_usercenter.empty_invite_link')
-                    : Localized.text('ox_usercenter.qr_generation_failed'),
-                colorToken: ColorToken.onSurfaceVariant,
-                textAlign: TextAlign.center,
-              ),
-            ],
+            CLText.bodyMedium(
+              currentInviteLink == null 
+                  ? Localized.text('ox_usercenter.empty_invite_link')
+                  : Localized.text('ox_usercenter.qr_generation_failed'),
+              colorToken: ColorToken.onSurfaceVariant,
+              textAlign: TextAlign.center,
+            ),
           ],
         ),
       );
@@ -529,106 +453,20 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
   }
 
   void _showShareOptions() {
-    if (Platform.isIOS) {
-      // iOS style
-      showCupertinoModalPopup(
-        context: context,
-        builder: (context) => CupertinoActionSheet(
-          title: Text(Localized.text('ox_usercenter.select_operation')),
-          actions: [
-            CupertinoActionSheetAction(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _saveQRCode();
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(width: 8.px),
-                  Text(Localized.text('ox_usercenter.save_qr_code')),
-                ],
-              ),
-            ),
-            CupertinoActionSheetAction(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _shareInvite();
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(width: 8.px),
-                  Text(Localized.text('ox_usercenter.share_invite_link')),
-                ],
-              ),
-            ),
-          ],
-          cancelButton: CupertinoActionSheetAction(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(Localized.text('ox_usercenter.cancel')),
-          ),
+    CLBottomSheet.show(
+      context: context,
+      title: Localized.text('ox_usercenter.select_operation'),
+      actions: [
+        CLBottomSheetAction(
+          label: Localized.text('ox_usercenter.save_qr_code'),
+          onTap: _saveQRCode,
         ),
-      );
-    } else {
-      // Android style
-      showModalBottomSheet(
-        context: context,
-        backgroundColor: Colors.transparent,
-        builder: (context) => Container(
-          decoration: BoxDecoration(
-            color: ColorToken.surface.of(context),
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20.px),
-              topRight: Radius.circular(20.px),
-            ),
-          ),
-          child: SafeArea(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Handle bar
-                Container(
-                  margin: EdgeInsets.only(top: 12.px),
-                  width: 40.px,
-                  height: 4.px,
-                  decoration: BoxDecoration(
-                    color: ColorToken.onSurfaceVariant.of(context).withValues(alpha: 0.3),
-                    borderRadius: BorderRadius.circular(2.px),
-                  ),
-                ),
-                
-                SizedBox(height: 20.px),
-                
-                // Options
-                ListTile(
-                  title: CLText.bodyLarge(
-                    Localized.text('ox_usercenter.save_qr_code'),
-                    colorToken: ColorToken.onSurface,
-                  ),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    _saveQRCode();
-                  },
-                ),
-                
-                ListTile(
-                  title: CLText.bodyLarge(
-                    Localized.text('ox_usercenter.share_invite_link'),
-                    colorToken: ColorToken.onSurface,
-                  ),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    _shareInvite();
-                  },
-                ),
-                
-                SizedBox(height: 20.px),
-              ],
-            ),
-          ),
+        CLBottomSheetAction(
+          label: Localized.text('ox_usercenter.share_invite_link'),
+          onTap: _shareInvite,
         ),
-      );
-    }
+      ],
+    );
   }
 
   Future<void> _shareInvite() async {
@@ -647,95 +485,43 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
   }
 
   void _showOneTimeConfirmDialog() {
-    if (Platform.isIOS) {
-      showCupertinoDialog(
-        context: context,
-        builder: (context) => CupertinoAlertDialog(
-          title: Text(Localized.text('ox_usercenter.one_time_keypackage_confirm_title')),
-          content: Text(Localized.text('ox_usercenter.one_time_keypackage_confirm_content')),
-          actions: [
-            CupertinoDialogAction(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(Localized.text('ox_usercenter.cancel')),
-            ),
-            CupertinoDialogAction(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _generateInviteLink(InviteLinkType.oneTime);
-              },
-              child: Text(Localized.text('ox_usercenter.confirm')),
-            ),
-          ],
+    CLAlertDialog.show<bool>(
+      context: context,
+      title: Localized.text('ox_usercenter.one_time_keypackage_confirm_title'),
+      content: Localized.text('ox_usercenter.one_time_keypackage_confirm_content'),
+      actions: [
+        CLAlertAction.cancel(),
+        CLAlertAction<bool>(
+          label: Localized.text('ox_usercenter.confirm'),
+          value: true,
+          isDefaultAction: true,
         ),
-      );
-    } else {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text(Localized.text('ox_usercenter.one_time_keypackage_confirm_title')),
-          content: Text(Localized.text('ox_usercenter.one_time_keypackage_confirm_content')),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(Localized.text('ox_usercenter.cancel')),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _generateInviteLink(InviteLinkType.oneTime);
-              },
-              child: Text(Localized.text('ox_usercenter.confirm')),
-            ),
-          ],
-        ),
-      );
-    }
+      ],
+    ).then((value) {
+      if (value == true) {
+        _generateInviteLink(InviteLinkType.oneTime);
+      }
+    });
   }
 
   void _showPermanentConfirmDialog() {
-    if (Platform.isIOS) {
-      showCupertinoDialog(
-        context: context,
-        builder: (context) => CupertinoAlertDialog(
-          title: Text(Localized.text('ox_usercenter.permanent_keypackage_confirm_title')),
-          content: Text(Localized.text('ox_usercenter.permanent_keypackage_confirm_content')),
-          actions: [
-            CupertinoDialogAction(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(Localized.text('ox_usercenter.cancel')),
-            ),
-            CupertinoDialogAction(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _generateInviteLink(InviteLinkType.permanent);
-              },
-              child: Text(Localized.text('ox_usercenter.confirm')),
-            ),
-          ],
+    CLAlertDialog.show<bool>(
+      context: context,
+      title: Localized.text('ox_usercenter.permanent_keypackage_confirm_title'),
+      content: Localized.text('ox_usercenter.permanent_keypackage_confirm_content'),
+      actions: [
+        CLAlertAction.cancel(),
+        CLAlertAction<bool>(
+          label: Localized.text('ox_usercenter.confirm'),
+          value: true,
+          isDefaultAction: true,
         ),
-      );
-    } else {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text(Localized.text('ox_usercenter.permanent_keypackage_confirm_title')),
-          content: Text(Localized.text('ox_usercenter.permanent_keypackage_confirm_content')),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(Localized.text('ox_usercenter.cancel')),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _generateInviteLink(InviteLinkType.permanent);
-              },
-              child: Text(Localized.text('ox_usercenter.confirm')),
-            ),
-          ],
-        ),
-      );
-    }
+      ],
+    ).then((value) {
+      if (value == true) {
+        _generateInviteLink(InviteLinkType.permanent);
+      }
+    });
   }
 
 

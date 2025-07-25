@@ -10,6 +10,7 @@ export 'src/component/alert_dialog.dart';
 export 'src/component/app.dart';
 export 'src/component/app_bar.dart';
 export 'src/component/banner_carousel.dart';
+export 'src/component/bottom_sheet.dart';
 export 'src/component/button.dart';
 export 'src/component/checkbox.dart';
 export 'src/component/dialog.dart';
