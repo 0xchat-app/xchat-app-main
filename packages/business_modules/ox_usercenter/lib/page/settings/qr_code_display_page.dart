@@ -271,7 +271,7 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
     return Container(
       padding: EdgeInsets.all(24.px),
       decoration: BoxDecoration(
-        color: ColorToken.surface.of(context),
+        color: ColorToken.surface.of(context).withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(16.px),
         border: Border.all(
           color: ColorToken.onSurfaceVariant.of(context).withValues(alpha: 0.1),
@@ -282,12 +282,12 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
         children: [
           // User Header
           _buildUserHeader(),
-          // SizedBox(height: 24.px),
+          SizedBox(height: 24.px),
           
           // QR Code
           _buildQRCode(),
 
-          // SizedBox(height: 16.px),
+          SizedBox(height: 16.px),
 
           // Description text
           CLText.bodyMedium(
@@ -302,15 +302,13 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
     );
   }
 
-
-
-
-
   Widget _buildQRCode() {
     return Container(
       padding: EdgeInsets.all(16.px),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: qrImage == null
+            ? ColorToken.surfaceContainer.of(context)
+            : Colors.white,
         borderRadius: BorderRadius.circular(16.px),
       ),
       child: _buildStyledQRCode(),
@@ -322,10 +320,6 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
       return Container(
         width: 240.px,
         height: 240.px,
-        decoration: BoxDecoration(
-          color: ColorToken.surfaceContainer.of(context),
-          borderRadius: BorderRadius.circular(12.px),
-        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
