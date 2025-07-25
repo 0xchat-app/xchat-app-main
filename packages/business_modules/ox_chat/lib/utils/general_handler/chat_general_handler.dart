@@ -16,8 +16,8 @@ import 'package:ox_chat/utils/message_parser/define.dart';
 import 'package:ox_chat/utils/send_message/chat_send_message_helper.dart';
 import 'package:ox_chat/widget/chat_send_image_prepare_dialog.dart';
 import 'package:ox_common/business_interface/ox_chat/call_message_type.dart';
+import 'package:ox_common/business_interface/ox_chat/utils.dart';
 import 'package:ox_common/component.dart';
-import 'package:ox_common/login/account_path_manager.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/login/login_models.dart';
 import 'package:ox_common/ox_common.dart';
@@ -54,7 +54,6 @@ import 'package:ox_common/business_interface/ox_calling/interface.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/permission_utils.dart';
-import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/widgets/common_hint_dialog.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_common/widgets/common_loading.dart';
@@ -62,8 +61,6 @@ import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:nostr_core_dart/nostr.dart';
-import 'package:path/path.dart' as Path;
-import 'package:path_provider/path_provider.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:ox_usercenter/page/settings/file_server_page.dart';
 import 'package:ox_common/utils/file_server_helper.dart';
@@ -73,6 +70,11 @@ import 'chat_highlight_message_handler.dart';
 import 'message_data_controller.dart';
 
 part 'chat_send_message_handler.dart';
+
+enum DeleteOption {
+  local,
+  remote,
+}
 
 class ChatGeneralHandler {
 
@@ -528,41 +530,164 @@ extension ChatMenuHandlerEx on ChatGeneralHandler {
   void _deleteMenuItemPressHandler(BuildContext context, types.Message message) async {
     final messageId = message.remoteId;
     if (messageId == null || messageId.isEmpty) {
+      // For messages without remoteId, only local deletion is possible
       messageDeleteHandler(message);
       return;
     }
 
-    // General
-    _performDeleteAction(
+    // Show CLPicker with deletion options
+    final deleteOption = await CLPicker.show<DeleteOption>(
       context: context,
-      message: message,
-      deleteAction: () => Messages.deleteMessageFromRelay(messageId, ''),
+      title: Localized.text('ox_chat.message_delete_hint'),
+      items: _buildDeleteOptions(message),
     );
+
+    if (deleteOption != null) {
+      await _performDeleteAction(context, message, deleteOption);
+    }
   }
 
-  void _performDeleteAction({
-    required BuildContext context,
-    required types.Message message,
-    required Future<OKEvent> Function() deleteAction,
-  }) async {
-    BuildContext? tempContext;
-    final result = await OXCommonHintDialog.showConfirmDialog(
-      context,
-      content: Localized.text('ox_chat.message_delete_hint'),
-      onDialogContextCreated: (BuildContext dialogContext) {
-        tempContext = dialogContext;
-      },
-    );
-    if (result) {
-      OXLoading.show();
-      OKEvent event = await deleteAction(); //await Messages.deleteMessageFromRelay(messageId, '');
-      OXLoading.dismiss();
-      if (event.status) {
-        OXNavigator.pop(tempContext);
-        messageDeleteHandler(message);
-      } else {
-        CommonToast.instance.show(context, event.message);
+  List<CLPickerItem<DeleteOption>> _buildDeleteOptions(types.Message message) {
+    final options = <CLPickerItem<DeleteOption>>[];
+    
+    // Always show "Delete for me" option
+    options.add(CLPickerItem<DeleteOption>(
+      label: Localized.text('ox_chat.delete_message_me_action_mode'),
+      value: DeleteOption.local,
+      isDestructive: true,
+    ));
+    
+    // For private chats, show "Delete for me and [other person's name]"
+    if (session.isSingleChat) {
+      final otherName = _getOtherPersonName();
+      final localizedText = Localized.text('ox_chat.delete_message_me_and_other_action_mode');
+      final finalText = localizedText.replaceAll(r'${otherName}', otherName);
+      options.add(CLPickerItem<DeleteOption>(
+        label: finalText,
+        value: DeleteOption.remote,
+        isDestructive: true,
+      ));
+    } else {
+      if (_canDeleteRemotely(message)) {
+        // For group chats, show "Delete for everyone"
+        options.add(CLPickerItem<DeleteOption>(
+          label: Localized.text('ox_chat.delete_message_everyone_action_mode'),
+          value: DeleteOption.remote,
+          isDestructive: true,
+        ));
       }
+    }
+    
+    return options;
+  }
+  
+  String _getOtherPersonName() {
+    // Get the other person's name in private chat
+    if (session.isSingleChat) {
+      final otherPubkey = session.getOtherPubkey;
+      final contact = Account.sharedInstance.getUserInfo(otherPubkey);
+      if (contact is UserDBISAR) {
+        return contact.getUserShowName();
+      }
+      return otherPubkey;
+    }
+    return '';
+  }
+
+  bool _canDeleteRemotely(types.Message message) {
+    // If it's own message, can always delete remotely
+    if (message.isMe) {
+      return true;
+    }
+
+    // Check if it's a group chat and user has admin permissions
+    if (session.chatType == ChatType.chatGroup && session.groupId != null) {
+      return _hasGroupDeletePermission(session.groupId!);
+    }
+
+    // For other chat types, non-owners cannot delete others' messages remotely
+    return false;
+  }
+
+  bool _hasGroupDeletePermission(String groupId) {
+    // Check if current user is group owner
+    final currentUser = Account.sharedInstance.me;
+    if (currentUser == null) return false;
+
+    final group = Groups.sharedInstance.groups[groupId]?.value;
+    if (group == null) return false;
+
+    // Group owner can delete any message
+    if (group.owner == currentUser.pubKey) {
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<void> _performDeleteAction(BuildContext context, types.Message message, DeleteOption option) async {
+    OXLoading.show();
+    
+    try {
+      switch (option) {
+        case DeleteOption.local:
+          await _deleteMessageLocally(message);
+          break;
+        case DeleteOption.remote:
+          await _deleteMessageRemotely(context, message);
+          break;
+      }
+    } catch (e) {
+      CommonToast.instance.show(context, 'Delete failed: $e');
+    } finally {
+      OXLoading.dismiss();
+    }
+  }
+
+  Future<void> _deleteMessageLocally(types.Message message) async {
+    // Delete message from local database only
+    final messageId = message.remoteId ?? '';
+    if (messageId.isNotEmpty) {
+      // Check if it's an MLS group and use the appropriate deletion method
+      if (session.chatType == ChatType.chatGroup && session.groupId != null) {
+        final group = Groups.sharedInstance.groups[session.groupId!]?.value;
+        if (group != null && group.isMLSGroup) {
+          await Groups.sharedInstance.deleteMLSGroupMessages([messageId], group, requestDeleteForAll: false);
+        } else {
+          await Messages.deleteMessagesFromDB(messageIds: [messageId], notify: false);
+        }
+      } else {
+        await Messages.deleteMessagesFromDB(messageIds: [messageId], notify: false);
+      }
+    }
+    
+    // Remove from UI
+    messageDeleteHandler(message);
+  }
+
+  Future<void> _deleteMessageRemotely(BuildContext context, types.Message message) async {
+    final messageId = message.remoteId;
+    if (messageId == null || messageId.isEmpty) {
+      throw Exception('Message has no remote ID');
+    }
+
+    // Check if it's an MLS group and use the appropriate deletion method
+    if (session.chatType == ChatType.chatGroup && session.groupId != null) {
+      final group = Groups.sharedInstance.groups[session.groupId!]?.value;
+      if (group != null && group.isMLSGroup) {
+        await Groups.sharedInstance.deleteMLSGroupMessages([messageId], group, requestDeleteForAll: true);
+        messageDeleteHandler(message);
+        return;
+      }
+    }
+
+    // For non-MLS groups or other chat types, use the existing method
+    final result = await Messages.deleteMessageFromRelay(messageId, '');
+    
+    if (result.status) {
+      messageDeleteHandler(message);
+    } else {
+      throw Exception(result.message);
     }
   }
 

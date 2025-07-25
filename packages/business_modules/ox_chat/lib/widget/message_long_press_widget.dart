@@ -87,12 +87,12 @@ class MessageLongPressWidgetState extends State<MessageLongPressWidget> {
         AssetImageData('icon_quote.png', package: 'ox_chat'),
         MessageLongPressEventType.quote,
       ),
-      if (message.isMe)
-        ItemModel(
-          Localized.text('ox_chat.message_menu_delete'),
-          AssetImageData('icon_delete.png', package: 'ox_common'),
-          MessageLongPressEventType.delete,
-        ),
+      // Show delete option for all messages, not just own messages
+      ItemModel(
+        Localized.text('ox_chat.message_menu_delete'),
+        AssetImageData('icon_delete.png', package: 'ox_common'),
+        MessageLongPressEventType.delete,
+      ),
     ]);
   }
 
