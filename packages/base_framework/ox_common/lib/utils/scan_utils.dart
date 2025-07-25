@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:ox_common/const/common_constant.dart';
 import 'package:ox_cache_manager/ox_cache_manager.dart';
 import 'package:ox_common/login/login_manager.dart';
+import 'package:ox_common/login/login_models.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/custom_uri_helper.dart';
 import 'package:ox_common/widgets/common_hint_dialog.dart';
@@ -103,85 +104,157 @@ extension ScanAnalysisHandlerEx on ScanUtils {
         return;
       }
 
-      // Check if we need to join a circle based on relay
+      // Check circle handling based on relay
       final relayUrl = relay;
       final currentCircle = LoginManager.instance.currentCircle;
-      bool needToJoinCircle = false;
-
-      if (currentCircle != null) {
-        if (currentCircle.relayUrl != relayUrl &&
-            currentCircle.relayUrl.replaceFirst(RegExp(r'/+$'), '') !=
-                relayUrl.replaceFirst(RegExp(r'/+$'), '')) {
-          needToJoinCircle = true;
-        }
-      } else {
-        needToJoinCircle = true;
+      final account = LoginManager.instance.currentState.account;
+      
+      if (account == null) {
+        CommonToast.instance.show(context, 'No account logged in');
+        return;
       }
 
-      // If we need to join a circle, show dialog first
-      if (needToJoinCircle) {
-        final agreeJoin = await _showJoinCircleDialogFromScan(context, [relayUrl], pubkey ?? '');
-        if (agreeJoin != true) {
+      // Normalize relay URLs for comparison (remove trailing slashes)
+      final normalizedRelayUrl = relayUrl.replaceFirst(RegExp(r'/+$'), '');
+      final normalizedCurrentRelayUrl = currentCircle?.relayUrl.replaceFirst(RegExp(r'/+$'), '') ?? '';
+
+      // Case 1: If it's the current circle, proceed directly
+      if (currentCircle != null && normalizedCurrentRelayUrl == normalizedRelayUrl) {
+        // Current circle matches, proceed with invite processing
+        await _processInviteLink(context, keypackage, pubkey, eventid, relayUrl);
+        return;
+      }
+
+      // Case 2: Check if target circle exists in account's circle list
+      Circle? targetCircle;
+      for (final circle in account.circles) {
+        final normalizedCircleRelayUrl = circle.relayUrl.replaceFirst(RegExp(r'/+$'), '');
+        if (normalizedCircleRelayUrl == normalizedRelayUrl) {
+          targetCircle = circle;
+          break;
+        }
+      }
+
+      if (targetCircle != null) {
+        // Circle exists in account, show switch confirmation dialog
+        final agreeSwitch = await _showSwitchCircleDialogFromScan(context, targetCircle, pubkey ?? '');
+        if (agreeSwitch != true) {
           return;
         }
-      }
-
-      // Process the invite link
-      bool success = false;
-      String? senderPubkey = pubkey; // For one-time invites
-      
-      if (keypackage != null && pubkey != null) {
-        // Decompress keypackage data if it's compressed
-        String decompressedKeyPackage = keypackage;
-        if (keypackage.startsWith('CMP:')) {
-          try {
-            final decompressed = await CompressionUtils.decompressWithPrefix(keypackage);
-            if (decompressed != null) {
-              decompressedKeyPackage = decompressed!;
-              print('Successfully decompressed keypackage data');
-            } else {
-              print('Failed to decompress keypackage data, using original');
-            }
-          } catch (e) {
-            print('Error decompressing keypackage: $e');
-          }
+        
+        // Switch to the target circle
+        final switchResult = await _switchToCircleFromScan(context, targetCircle);
+        if (!switchResult) {
+          return;
         }
         
-        // Handle one-time invite link
-        success = await KeyPackageManager.handleOneTimeInviteLink(
-          encodedKeyPackage: decompressedKeyPackage,
-          senderPubkey: pubkey,
-          relays: [relayUrl],
-        );
-      } else if (eventid != null) {
-        // Handle permanent invite link
-        final result = await KeyPackageManager.handlePermanentInviteLink(
-          eventId: eventid,
-          relays: [relayUrl],
-        );
-        
-        success = result['success'] as bool;
-        senderPubkey = result['pubkey'] as String?;
+        // Process the invite link after switching
+        await _processInviteLink(context, keypackage, pubkey, eventid, relayUrl);
+        return;
       }
 
-      if (success) {
-        // Navigate to sender's profile page
-        if (senderPubkey != null) {
-          // Navigate to user detail page
-          await Future.delayed(Duration(milliseconds: 300));
-          OXNavigator.popToRoot(context);
-          await Future.delayed(Duration(milliseconds: 300));
-          await _navigateToUserDetailFromScan(context, senderPubkey);
-        } else {
-          CommonToast.instance.show(context, 'Successfully processed invite link');
-        }
-      } else {
-        CommonToast.instance.show(context, 'Failed to process invite link');
+      // Case 3: Circle doesn't exist in account, proceed with join circle logic
+      final agreeJoin = await _showJoinCircleDialogFromScan(context, [relayUrl], pubkey ?? '');
+      if (agreeJoin != true) {
+        return;
       }
+
+      // Join the circle and process invite
+      await _processInviteLink(context, keypackage, pubkey, eventid, relayUrl);
     } catch (e) {
       LogUtil.e('Error handling invite link from scan: $e');
       CommonToast.instance.show(context, 'Failed to process invite link');
     }
+  }
+
+  static Future<void> _processInviteLink(BuildContext context, String? keypackage, String? pubkey, String? eventid, String relayUrl) async {
+    // Process the invite link
+    bool success = false;
+    String? senderPubkey = pubkey; // For one-time invites
+    
+    if (keypackage != null && pubkey != null) {
+      // Decompress keypackage data if it's compressed
+      String decompressedKeyPackage = keypackage;
+      if (keypackage.startsWith('CMP:')) {
+        try {
+          final decompressed = await CompressionUtils.decompressWithPrefix(keypackage);
+          if (decompressed != null) {
+            decompressedKeyPackage = decompressed!;
+            print('Successfully decompressed keypackage data');
+          } else {
+            print('Failed to decompress keypackage data, using original');
+          }
+        } catch (e) {
+          print('Error decompressing keypackage: $e');
+        }
+      }
+      
+      // Handle one-time invite link
+      success = await KeyPackageManager.handleOneTimeInviteLink(
+        encodedKeyPackage: decompressedKeyPackage,
+        senderPubkey: pubkey,
+        relays: [relayUrl],
+      );
+    } else if (eventid != null) {
+      // Handle permanent invite link
+      final result = await KeyPackageManager.handlePermanentInviteLink(
+        eventId: eventid,
+        relays: [relayUrl],
+      );
+      
+      success = result['success'] as bool;
+      senderPubkey = result['pubkey'] as String?;
+    }
+
+    if (success) {
+      // Navigate to sender's profile page
+      if (senderPubkey != null) {
+        // Navigate to user detail page
+        await Future.delayed(Duration(milliseconds: 300));
+        OXNavigator.popToRoot(context);
+        await Future.delayed(Duration(milliseconds: 300));
+        await _navigateToUserDetailFromScan(context, senderPubkey);
+      } else {
+        CommonToast.instance.show(context, 'Successfully processed invite link');
+      }
+    } else {
+      CommonToast.instance.show(context, 'Failed to process invite link');
+    }
+  }
+
+  static Future<bool> _showSwitchCircleDialogFromScan(BuildContext context, Circle targetCircle, String pubkey) async {
+    final result = await CLAlertDialog.show<bool>(
+      context: context,
+      title: 'Switch Circle',
+      content: 'This user is from circle "${targetCircle.name}" (${targetCircle.relayUrl}). Would you like to switch to this circle to chat with them?',
+      actions: [
+        CLAlertAction.cancel(),
+        CLAlertAction<bool>(
+          label: 'Switch Circle',
+          value: true,
+          isDefaultAction: true,
+        ),
+      ],
+    );
+
+    return result == true;
+  }
+
+  static Future<bool> _switchToCircleFromScan(BuildContext context, Circle targetCircle) async {
+    // Show loading
+    OXLoading.show();
+
+    // Switch to the target circle
+    final failure = await LoginManager.instance.switchToCircle(targetCircle);
+
+    OXLoading.dismiss();
+
+    if (failure != null) {
+      _showErrorDialogFromScan(context, 'Failed to switch circle: ${failure.message}');
+      return false;
+    }
+
+    return true;
   }
 
   static Future<bool> _showJoinCircleDialogFromScan(BuildContext context, List<String> relays, String pubkey) async {
