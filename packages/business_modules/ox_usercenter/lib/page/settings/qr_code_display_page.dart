@@ -11,6 +11,7 @@ import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/widgets/common_toast.dart';
+import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:share_plus/share_plus.dart';
@@ -201,7 +202,35 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
     );
   }
 
-
+  Widget _buildUserHeader() {
+    return Row(
+      children: [
+        OXUserAvatar(
+          imageUrl: userNotifier.picture ?? '',
+          size: 56.px,
+        ),
+        SizedBox(width: 16.px),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CLText.titleMedium(
+                userName,
+                maxLines: 1,
+                colorToken: ColorToken.onSurface,
+                overflow: TextOverflow.ellipsis,
+              ),
+              SizedBox(height: 4.px),
+              CLText.bodySmall(
+                userNotifier.shortEncodedPubkey,
+                colorToken: ColorToken.onSurfaceVariant,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 
   Widget _buildInviteLinkTypeSelector() {
     return Padding(
@@ -239,6 +268,10 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
       ),
       child: Column(
         children: [
+          // User Header
+          _buildUserHeader(),
+          // SizedBox(height: 24.px),
+          
           // QR Code
           _buildQRCode(),
 
