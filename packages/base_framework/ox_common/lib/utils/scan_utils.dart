@@ -18,6 +18,7 @@ import 'package:ox_common/log_util.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_models.dart';
 import 'package:nostr_core_dart/nostr.dart';
+import 'package:ox_common/utils/compression_utils.dart';
 
 class ScanUtils {
   static Future<void> analysis(BuildContext context, String url) async {
@@ -135,9 +136,25 @@ extension ScanAnalysisHandlerEx on ScanUtils {
       String? senderPubkey = pubkey; // For one-time invites
       
       if (keypackage != null && pubkey != null) {
+        // Decompress keypackage data if it's compressed
+        String decompressedKeyPackage = keypackage;
+        if (keypackage.startsWith('CMP:')) {
+          try {
+            final decompressed = await CompressionUtils.decompressWithPrefix(keypackage);
+            if (decompressed != null) {
+              decompressedKeyPackage = decompressed!;
+              print('Successfully decompressed keypackage data');
+            } else {
+              print('Failed to decompress keypackage data, using original');
+            }
+          } catch (e) {
+            print('Error decompressing keypackage: $e');
+          }
+        }
+        
         // Handle one-time invite link
         success = await KeyPackageManager.handleOneTimeInviteLink(
-          encodedKeyPackage: keypackage,
+          encodedKeyPackage: decompressedKeyPackage,
           senderPubkey: pubkey,
           relays: [relayUrl],
         );

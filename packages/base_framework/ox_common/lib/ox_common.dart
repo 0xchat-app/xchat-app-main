@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_common/log_util.dart';
 import 'package:ox_common/utils/chat_prompt_tone.dart';
+import 'package:ox_common/utils/compression_utils.dart';
 import 'package:ox_module_service/ox_module_service.dart';
 import 'package:isar/isar.dart';
 import 'package:url_launcher/url_launcher.dart';

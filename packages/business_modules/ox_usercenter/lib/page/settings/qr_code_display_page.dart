@@ -17,6 +17,7 @@ import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:ox_common/utils/permission_utils.dart';
 import 'package:ox_common/const/app_config.dart';
+import 'package:ox_common/utils/compression_utils.dart';
 
 enum QRCodeStyle {
   defaultStyle, // Default
@@ -105,11 +106,22 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
       List<String> relays = Account.sharedInstance.getCurrentCircleRelay();
       String relayUrl = relays.isNotEmpty ? relays.first : 'wss://relay.0xchat.com';
 
-      // Generate invite link
+      // Generate invite link with compression
       if (linkType == InviteLinkType.oneTime) {
         // For one-time invites, include sender's pubkey
         final senderPubkey = Account.sharedInstance.currentPubkey;
-        currentInviteLink = '${AppConfig.inviteBaseUrl}?keypackage=${Uri.encodeComponent(keyPackageEvent.encoded_key_package)}&pubkey=${Uri.encodeComponent(senderPubkey)}&relay=${Uri.encodeComponent(relayUrl)}';
+        
+        // Try to compress the keypackage data
+        String? compressedKeyPackage = await CompressionUtils.compressWithPrefix(keyPackageEvent.encoded_key_package);
+        String keyPackageParam = compressedKeyPackage ?? keyPackageEvent.encoded_key_package;
+        
+        currentInviteLink = '${AppConfig.inviteBaseUrl}?keypackage=$keyPackageParam&pubkey=${Uri.encodeComponent(senderPubkey)}&relay=${Uri.encodeComponent(relayUrl)}';
+        
+        // Log compression results
+        if (compressedKeyPackage != null) {
+          double ratio = CompressionUtils.getCompressionRatio(keyPackageEvent.encoded_key_package, compressedKeyPackage);
+          print('Keypackage compressed: ${(ratio * 100).toStringAsFixed(1)}% of original size');
+        }
       } else {
         currentInviteLink = '${AppConfig.inviteBaseUrl}?eventid=${Uri.encodeComponent(keyPackageEvent.eventId)}&relay=${Uri.encodeComponent(relayUrl)}';
       }
