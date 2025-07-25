@@ -241,18 +241,13 @@
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
 			<string>ox</string>
-					<key>CFBundleURLSchemes</key>
-		<array>
-			<string>oxchatlite</string>
-			<string>nostr</string>
-			<string>nostr+walletconnect</string>
-		</array>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>oxchatlite</string>
+				<string>nostr</string>
+				<string>nostr+walletconnect</string>
+			</array>
 		</dict>
-	</array>
-	<key>com.apple.developer.associated-domains</key>
-	<array>
-		<string>applinks:0xchat.com</string>
-		<string>applinks:www.0xchat.com</string>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>
@@ -277,6 +272,10 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>0xchat needs access to Bluetooth to discover and connect with nearby devices for peer-to-peer messaging.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>0xchat needs access to Bluetooth to discover and connect with nearby devices for peer-to-peer messaging.</string>
 	<key>NSBonjourServices</key>
 	<array>
 		<string>_dartobservatory._tcp</string>
@@ -291,10 +290,6 @@
 	<string>0xchat needs access to your album permission, to set avatar in the user center, and send pictures or video messages through the customer service function.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>0xchat needs access to your album permission, to set avatar in the user center, and send pictures or video messages through the customer service function.</string>
-	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>0xchat needs access to Bluetooth to discover and connect with nearby devices for peer-to-peer messaging.</string>
-	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>0xchat needs access to Bluetooth to discover and connect with nearby devices for peer-to-peer messaging.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
@@ -325,6 +320,11 @@
 	<true/>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:0xchat.com</string>
+		<string>applinks:www.0xchat.com</string>
+	</array>
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
 </dict>
