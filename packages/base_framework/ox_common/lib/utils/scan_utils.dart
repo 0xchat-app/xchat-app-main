@@ -5,29 +5,20 @@ import 'package:flutter/material.dart';
 import 'package:ox_common/const/common_constant.dart';
 import 'package:ox_cache_manager/ox_cache_manager.dart';
 import 'package:ox_common/login/login_manager.dart';
-import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/custom_uri_helper.dart';
 import 'package:ox_common/widgets/common_hint_dialog.dart';
+import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_common/utils//string_utils.dart';
-import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_module_service/ox_module_service.dart';
 import 'package:ox_common/log_util.dart';
 import 'package:ox_common/component.dart';
-import 'package:ox_common/login/login_models.dart';
-import 'package:nostr_core_dart/nostr.dart';
 import 'package:ox_common/utils/compression_utils.dart';
 
 class ScanUtils {
   static Future<void> analysis(BuildContext context, String url) async {
-    bool isLogin = LoginManager.instance.isLoginCircle;
-    if (!isLogin) {
-      CommonToast.instance.show(context, 'please_sign_in'.commonLocalized());
-      return;
-    }
-
     // Remove oxchatlite:// prefix if present
     if (url.startsWith('oxchatlite://')) {
       url = url.substring('oxchatlite://'.length);
@@ -99,6 +90,7 @@ extension ScanAnalysisHandlerEx on ScanUtils {
   );
 
   static Future<void> _handleInviteLinkFromScan(Uri uri, BuildContext context) async {
+    context = OXNavigator.rootContext;
     try {
       final keypackage = uri.queryParameters['keypackage'];
       final pubkey = uri.queryParameters['pubkey'];
@@ -128,7 +120,10 @@ extension ScanAnalysisHandlerEx on ScanUtils {
 
       // If we need to join a circle, show dialog first
       if (needToJoinCircle) {
-        await _showJoinCircleDialogFromScan(context, [relayUrl], pubkey ?? '');
+        final agreeJoin = await _showJoinCircleDialogFromScan(context, [relayUrl], pubkey ?? '');
+        if (agreeJoin != true) {
+          return;
+        }
       }
 
       // Process the invite link
@@ -172,6 +167,10 @@ extension ScanAnalysisHandlerEx on ScanUtils {
       if (success) {
         // Navigate to sender's profile page
         if (senderPubkey != null) {
+          // Navigate to user detail page
+          await Future.delayed(Duration(milliseconds: 300));
+          OXNavigator.popToRoot(context);
+          await Future.delayed(Duration(milliseconds: 300));
           await _navigateToUserDetailFromScan(context, senderPubkey);
         } else {
           CommonToast.instance.show(context, 'Successfully processed invite link');
@@ -185,14 +184,13 @@ extension ScanAnalysisHandlerEx on ScanUtils {
     }
   }
 
-  static Future<void> _showJoinCircleDialogFromScan(BuildContext context, List<String> relays, String pubkey) async {
+  static Future<bool> _showJoinCircleDialogFromScan(BuildContext context, List<String> relays, String pubkey) async {
     final primaryRelay = relays.isNotEmpty ? relays.first : '';
-    final relayName = _extractRelayNameFromScan(primaryRelay);
-    
+
     final result = await CLAlertDialog.show<bool>(
       context: context,
       title: 'Join Circle',
-      content: 'This user is from circle "$relayName". Would you like to join this circle to chat with them?',
+      content: 'This user is from circle "$primaryRelay". Would you like to join this circle to chat with them?',
       actions: [
         CLAlertAction.cancel(),
         CLAlertAction<bool>(
@@ -205,44 +203,27 @@ extension ScanAnalysisHandlerEx on ScanUtils {
 
     if (result == true) {
       // Join the circle
-      await _joinCircleAndNavigateFromScan(context, primaryRelay, pubkey);
+      return await _joinCircleAndNavigateFromScan(context, primaryRelay, pubkey);
     }
+
+    return false;
   }
 
-  static Future<void> _joinCircleAndNavigateFromScan(BuildContext context, String relayUrl, String pubkey) async {
-    try {
-      // Show loading
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => Center(child: CircularProgressIndicator()),
-      );
+  static Future<bool> _joinCircleAndNavigateFromScan(BuildContext context, String relayUrl, String pubkey) async {
+    // Show loading
+    OXLoading.show();
 
-      // Create circle and join
-      final circle = Circle(
-        id: _generateCircleIdFromScan(relayUrl),
-        name: _extractRelayNameFromScan(relayUrl),
-        type: CircleType.relay,
-        relayUrl: relayUrl,
-      );
+    // Join the circle
+    final failure = await LoginManager.instance.joinCircle(relayUrl);
 
-      // Join the circle
-      final failure = await LoginManager.instance.joinCircle(relayUrl);
-      
-      // Hide loading
-      Navigator.of(context).pop();
+    OXLoading.dismiss();
 
-      if (failure == null) {
-        // Navigate to user detail page
-        await _navigateToUserDetailFromScan(context, pubkey);
-      } else {
-        _showErrorDialogFromScan(context, 'Failed to join circle: ${failure.message}');
-      }
-    } catch (e) {
-      // Hide loading
-      Navigator.of(context).pop();
-      _showErrorDialogFromScan(context, 'Error joining circle: $e');
+    if (failure != null) {
+      _showErrorDialogFromScan(context, 'Failed to join circle: ${failure.message}');
+      return false;
     }
+
+    return true;
   }
 
   static Future<void> _navigateToUserDetailFromScan(BuildContext context, String pubkey) async {
@@ -271,61 +252,6 @@ extension ScanAnalysisHandlerEx on ScanUtils {
         ),
       ],
     );
-  }
-
-  static String _extractRelayNameFromScan(String relayUrl) {
-    try {
-      final uri = Uri.parse(relayUrl);
-      final host = uri.host;
-      return host.replaceAll('relay.', '').replaceAll('www.', '').split('.').first;
-    } catch (e) {
-      return relayUrl.replaceAll('wss://', '').replaceAll('ws://', '').split('/').first;
-    }
-  }
-
-  static String _generateCircleIdFromScan(String relayUrl) {
-    // Simple hash of the relay URL to create a unique ID
-    return relayUrl.hashCode.toString();
-  }
-
-  /// Get pubkey from event ID by fetching the event from relay
-  static Future<String?> _getPubkeyFromEventId(String eventId, String relayUrl) async {
-    try {
-      // Create a temporary connection to fetch the event
-      final completer = Completer<String?>();
-      
-      Connect.sharedInstance.connect(relayUrl, relayKind: RelayKind.general);
-      
-      // Wait for connection
-      await Future.delayed(Duration(seconds: 2));
-      
-      // Subscribe to the specific event
-      final filter = Filter(ids: [eventId], kinds: [443]);
-      final subscriptionId = Connect.sharedInstance.addSubscription(
-        [filter],
-        eventCallBack: (event, relay) {
-          if (event.kind == 443) {
-            completer.complete(event.pubkey);
-          }
-        },
-        eoseCallBack: (requestId, ok, relay, unCompletedRelays) {
-          if (!completer.isCompleted) {
-            completer.complete(null);
-          }
-        },
-      );
-
-      // Wait for response with timeout
-      final result = await completer.future.timeout(Duration(seconds: 10));
-      
-      // Clean up subscription
-      Connect.sharedInstance.closeRequests(subscriptionId);
-      
-      return result;
-    } catch (e) {
-      LogUtil.e('Error getting pubkey from event ID: $e');
-      return null;
-    }
   }
 
   static FutureOr<bool> _tryHandleRelaysFromMap(Map<String, dynamic> map, BuildContext context) {
@@ -376,6 +302,12 @@ extension ScanAnalysisHandlerEx on ScanUtils {
       return matches;
     },
     action: (String str, BuildContext context) async {
+      bool isLogin = LoginManager.instance.isLoginCircle;
+      if (!isLogin) {
+        CommonToast.instance.show(context, 'please_sign_in'.commonLocalized());
+        return false;
+      }
+
       final failedHandle = () {
         CommonToast.instance.show(context, 'User not found');
       };
@@ -413,7 +345,12 @@ extension ScanAnalysisHandlerEx on ScanUtils {
           str.startsWith('nostr:note') ||
           str.startsWith('note');
     },
-    action: (String str, BuildContext context) async {
+    action: (String str, BuildContext context) async {bool isLogin = LoginManager.instance.isLoginCircle;
+      if (!isLogin) {
+        CommonToast.instance.show(context, 'please_sign_in'.commonLocalized());
+        return false;
+      }
+
       final data = Channels.decodeChannel(str);
       final groupId = data?['channelId'];
       final relays = data?['relays'];
@@ -429,9 +366,14 @@ extension ScanAnalysisHandlerEx on ScanUtils {
     matcher: (String str) {
       return str.startsWith('nostr+walletconnect:');
     },
-    action: (String nwcURI, _) async {
+    action: (String nwcURI, BuildContext context) async {
+      bool isLogin = LoginManager.instance.isLoginCircle;
+      if (!isLogin) {
+        CommonToast.instance.show(context, 'please_sign_in'.commonLocalized());
+        return false;
+      }
+
       NostrWalletConnection? nwc = NostrWalletConnection.fromURI(nwcURI);
-      BuildContext context = OXNavigator.navigatorKey.currentContext!;
       OXCommonHintDialog.show(context,
         title: 'scan_find_nwc_hint'.commonLocalized(),
         content: '${nwc?.relays[0]}\n${nwc?.lud16}',
