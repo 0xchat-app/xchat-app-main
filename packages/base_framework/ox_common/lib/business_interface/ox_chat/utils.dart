@@ -9,7 +9,7 @@ extension UserDBChatEx on UserDBISAR {
     final name = (this.name ?? '').trim();
     if (nickName.isNotEmpty) return nickName;
     if (name.isNotEmpty) return name;
-    return 'unknown';
+    return shortEncodedPubkey;
   }
 
   updateWith(UserDBISAR user) {
