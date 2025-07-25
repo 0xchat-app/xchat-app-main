@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:file/file.dart' as file;
 import 'package:file/local.dart';
 import 'package:ox_common/login/account_path_manager.dart';
 import 'package:ox_common/login/login_manager.dart';
-import 'constant.dart';
+import 'package:ox_common/utils/string_utils.dart';
+import 'cache_manager.dart';
 
 class CacheManagerHelper {
   /// key: cacheKey(circleId, fileType), Value: CacheManager.config
@@ -106,6 +109,26 @@ class CacheManagerHelper {
   static bool isConfigCached(String circleId, CacheFileType fileType) {
     final cacheKey = _generateCacheKey(circleId, fileType);
     return _configCache.containsKey(cacheKey);
+  }
+
+  /// Cache a file using the appropriate CacheManager for the given file type
+  /// 
+  /// [file] - The file to be cached
+  /// [url] - The URL of the file
+  /// [fileType] - The type of file (audio, image, video, file)
+  /// Returns the cached File object
+  static Future<File> cacheFile(
+    File file,
+    String url,
+    CacheFileType fileType,
+  ) async {
+    final cacheManager = await CLCacheManager.getCircleCacheManager(fileType);
+    final fileBytes = await file.readAsBytes();
+    return cacheManager.putFile(
+      url, fileBytes,
+      fileExtension:
+      file.path.getFileExtension(),
+    );
   }
 }
 

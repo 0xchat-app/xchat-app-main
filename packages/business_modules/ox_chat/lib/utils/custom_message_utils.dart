@@ -251,12 +251,9 @@ extension VideoMessageEx on types.CustomMessage {
   String? get encryptedKey => metadata?[CustomMessageEx.metaContentKey]?[metaEncryptedKey];
   String? get encryptedNonce => metadata?[CustomMessageEx.metaContentKey]?[metaEncryptedNonce];
 
-  bool get isLocalFile => encryptedKey != null || videoPath.isNotEmpty;
-
-  bool get canOpen => isLocalFile ? videoPath.isNotEmpty : url.isNotEmpty;
+  bool get isLocalFile => videoPath.isNotEmpty;
 
   String get videoURI {
-    if (!canOpen) return '';
     return isLocalFile ? videoPath : url;
   }
 

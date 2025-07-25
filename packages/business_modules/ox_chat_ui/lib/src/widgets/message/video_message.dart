@@ -12,6 +12,8 @@ import '../state/inherited_user.dart';
 /// aspect ratios, renders blurred image as a background which is visible
 /// if the image is narrow, renders image in form of a file if aspect
 /// ratio is very small or very big.
+/// 
+@Deprecated(' Please use ChatVideoMessage from ox_chat package instead')
 class VideoMessage extends StatefulWidget {
   /// Creates an image message widget based on [types.ImageMessage].
   const VideoMessage({

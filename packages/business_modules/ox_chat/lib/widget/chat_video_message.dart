@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:ox_chat/widget/chat_image_preview_widget.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/upload/upload_utils.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/video_data_manager.dart';
@@ -33,7 +34,8 @@ class ChatVideoMessageState extends State<ChatVideoMessage> {
   String get snapshotPath => VideoMessageEx(widget.message).snapshotPath;
   String? get encryptedKey => VideoMessageEx(widget.message).encryptedKey;
   String? get encryptedNonce => VideoMessageEx(widget.message).encryptedNonce;
-  bool get canOpen => VideoMessageEx(widget.message).canOpen;
+
+  bool canOpen = false;
 
   int? width;
   int? height;
@@ -43,7 +45,6 @@ class ChatVideoMessageState extends State<ChatVideoMessage> {
   void initState() {
     super.initState();
     prepareData();
-    tryInitializeVideoMedia();
   }
   
   @override
@@ -67,6 +68,12 @@ class ChatVideoMessageState extends State<ChatVideoMessage> {
         ? null
         : UploadManager.shared.getUploadProgress(fileId, widget.receiverPubkey);
 
+    if (videoPath.isNotEmpty) {
+      canOpen = true;
+    } else if (videoURL.isNotEmpty) {
+      canOpen = snapshotPath.isNotEmpty;
+    }
+
     if (width == null || height == null) {
       try {
         final uri = Uri.parse(videoURL);
@@ -75,10 +82,11 @@ class ChatVideoMessageState extends State<ChatVideoMessage> {
         height ??= int.tryParse(query['height'] ?? query['h'] ?? '');
       } catch (_) { }
     }
+    tryInitializeVideoMedia();
   }
 
   void tryInitializeVideoMedia() async {
-    if (videoURL.isEmpty) return;
+    if (videoURL.isEmpty || snapshotPath.isNotEmpty) return;
 
     final media = await VideoDataManager.shared.fetchVideoMedia(
       videoURL: videoURL,
@@ -113,20 +121,23 @@ class ChatVideoMessageState extends State<ChatVideoMessage> {
 
   Widget buildPlayIcon() => Icon(Icons.play_circle, size: 60.px,);
 
-  Widget buildLoadingWidget() => CircularProgressIndicator(
-    strokeWidth: 5,
-    backgroundColor: Colors.white.withOpacity(0.5),
-    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-    strokeCap: StrokeCap.round,
+  Widget buildLoadingWidget() => CLProgressIndicator.circular(
+    size: 28.px,
+    color: ColorToken.secondaryContainer.of(context)
   );
 
   Widget snapshotBuilder(String imagePath) {
-    return ChatImagePreviewWidget(
-      uri: imagePath,
-      imageWidth: width,
-      imageHeight: height,
-      maxWidth: widget.messageWidth.toDouble(),
-      progressStream: stream,
+    return Container(
+      color: ColorToken.onSecondaryContainer.of(context).withValues(alpha: 1.0),
+      child: ChatImagePreviewWidget(
+        uri: imagePath,
+        imageWidth: width,
+        imageHeight: height,
+        decryptKey: encryptedKey,
+        decryptNonce: encryptedNonce,
+        maxWidth: widget.messageWidth.toDouble(),
+        progressStream: stream,
+      ),
     );
   }
 }

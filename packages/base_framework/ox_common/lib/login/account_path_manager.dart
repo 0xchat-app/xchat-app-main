@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+import 'package:uuid/uuid.dart';
+import 'login_manager.dart';
 
 /// Account path manager for handling database files and directories
 /// 
@@ -151,10 +153,10 @@ class AccountPathManager {
   /// [pubkey] User's public key
   /// [circleId] Circle ID
   /// Returns: {root}/accounts/{pubkey}/circles/{circleId}/cache/Temp/
-  static Future<String> getCircleTempCachePath(String pubkey, String circleId) async {
+  static Future<String> _getCircleTempCachePath(String pubkey, String circleId) async {
     return _getCircleCacheFilePath(pubkey, circleId, 'Temp');
   }
-
+  
   // ========== Public Path Interfaces ==========
 
   /// Get account database file path
@@ -254,7 +256,7 @@ class AccountPathManager {
         await getCircleFileCachePath(pubkey, circleId),
         await getCircleAudioCachePath(pubkey, circleId),
         await getCircleVideoCachePath(pubkey, circleId),
-        await getCircleTempCachePath(pubkey, circleId),
+        await _getCircleTempCachePath(pubkey, circleId),
       ];
       
       for (final cachePath in cachePaths) {
@@ -460,6 +462,51 @@ class AccountPathManager {
 
   // ========== Temp Folder Cleanup ==========
 
+  /// Create temporary file in current circle temp folder
+  /// 
+  /// [suffix] File extension (e.g., '.txt', '.jpg', '.mp4')
+  /// Returns: File object of the created temporary file
+  /// Throws: Exception if not logged in or no current circle
+  static Future<File> createTempFile({String fileExt = ''}) async {
+    try {
+      // Get current login state
+      final loginManager = LoginManager.instance;
+      final currentState = loginManager.currentState;
+      
+      final pubkey = loginManager.currentPubkey;
+      final circleId = currentState.currentCircle?.id;
+      
+      // Validate parameters
+      if (pubkey.isEmpty) {
+        throw Exception('Invalid pubkey');
+      }
+      
+      if (circleId == null || circleId.isEmpty) {
+        throw Exception('Invalid circle ID');
+      }
+
+      // Ensure temp folder exists
+      final tempPath = await _getCircleTempCachePath(pubkey, circleId);
+      final tempDir = Directory(tempPath);
+      if (!await tempDir.exists()) {
+        await tempDir.create(recursive: true);
+      }
+
+      // Generate random filename with UUID
+      final uuid = Uuid().v4();
+      if (fileExt.isNotEmpty) fileExt = '.$fileExt';
+      final fileName = '$uuid$fileExt';
+      final filePath = path.join(tempPath, fileName);
+
+      // Create and return the file
+      final file = File(filePath);
+      await file.create();
+      return file;
+    } catch (e) {
+      throw Exception('Failed to create temp file: $e');
+    }
+  }
+
   /// Clear temp folder for specific circle
   /// 
   /// [pubkey] User's public key
@@ -467,7 +514,7 @@ class AccountPathManager {
   /// Returns: Number of files successfully deleted
   static Future<int> clearCircleTempFolder(String pubkey, String circleId) async {
     try {
-      final tempPath = await getCircleTempCachePath(pubkey, circleId);
+      final tempPath = await _getCircleTempCachePath(pubkey, circleId);
       final dir = Directory(tempPath);
       if (!await dir.exists()) {
         return 0;

@@ -374,6 +374,19 @@ extension ChatMessageSendEx on ChatGeneralHandler {
             height: image.height,
           );
         }
+
+        await sendImageMessage(
+          context: context,
+          fileId: fileId,
+          imageFile: null,
+          imageWidth: image.width,
+          imageHeight: image.height,
+          encryptedKey: encryptedKey,
+          encryptedNonce: encryptedNonce,
+          url: imageURL,
+        );
+
+        return;
       } else {
         encryptedKey =
             fileEncryptionType == types.EncryptionType.encrypted ? createEncryptKey() : null;
@@ -385,6 +398,7 @@ extension ChatMessageSendEx on ChatGeneralHandler {
         origin: imageFile,
         encryptedKey: encryptedKey,
         encryptedNonce: encryptedNonce,
+        fileType: CacheFileType.image,
       );
       imageFile.delete();
       if (encryptedFile == null) {
@@ -613,6 +627,7 @@ extension ChatMessageSendEx on ChatGeneralHandler {
       final videoPath = videoMedia.path ?? '';
       if (videoPath.isEmpty) continue;
 
+      OXLoading.show();
       final videoFile = File(videoPath);
       final fileId = await EncodeUtils.generateMultiSampleFileKey(videoFile);
 
@@ -627,27 +642,46 @@ extension ChatMessageSendEx on ChatGeneralHandler {
         );
       }
 
-      ui.Image? thumbnailImage;
-      final bytes = await thumbnailImageFile?.readAsBytes();
-      if (bytes != null) {
-        thumbnailImage = await decodeImageFromList(bytes);
+      if (thumbnailImageFile == null) {
+        assert(false, 'thumbnailImageFile is null');
+        OXLoading.dismiss();
+        return;
       }
+
+      ui.Image? thumbnailImage;
+      final bytes = await thumbnailImageFile.readAsBytes();
+      thumbnailImage = await decodeImageFromList(bytes);
 
       String? encryptedKey;
       String? encryptedNonce;
       String? videoURL;
       final uploadResult = UploadManager.shared.getUploadResult(fileId, otherUser?.pubKey);
       if (uploadResult?.isSuccess == true) {
+        OXLoading.dismiss();
         final url = uploadResult?.url;
         encryptedKey = uploadResult?.encryptedKey;
         encryptedNonce = uploadResult?.encryptedNonce;
         if (url != null && url.isNotEmpty) {
           videoURL = generateUrlWithInfo(
             originalUrl: url,
-            width: thumbnailImage?.width,
-            height: thumbnailImage?.height,
+            width: thumbnailImage.width,
+            height: thumbnailImage.height,
           );
         }
+
+        await sendVideoMessage(
+          context: context,
+          videoPath: null,
+          videoURL: videoURL,
+          snapshotPath: null,
+          imageWidth: thumbnailImage.width,
+          imageHeight: thumbnailImage.height,
+          fileId: fileId,
+          encryptedKey: encryptedKey,
+          encryptedNonce: encryptedNonce,
+        );
+
+        return;
       } else {
         encryptedKey =
             fileEncryptionType == types.EncryptionType.encrypted ? createEncryptKey() : null;
@@ -655,16 +689,44 @@ extension ChatMessageSendEx on ChatGeneralHandler {
             fileEncryptionType == types.EncryptionType.encrypted ? createEncryptNonce() : null;
       }
 
+      final encryptedVideoFile = await encryptFile(
+        origin: videoFile,
+        encryptedKey: encryptedKey,
+        encryptedNonce: encryptedNonce,
+        fileType: CacheFileType.video,
+      );
+      videoFile.delete();
+      if (encryptedVideoFile == null) {
+        assert(false, 'encryptedVideoFile is null');
+        OXLoading.dismiss();
+        return;
+      }
+
+      final encryptedThumbnailImageFile = await encryptFile(
+        origin: thumbnailImageFile,
+        encryptedKey: encryptedKey,
+        encryptedNonce: encryptedNonce,
+        fileType: CacheFileType.image,
+      );
+      thumbnailImageFile.delete();
+      if (encryptedThumbnailImageFile == null) {
+        assert(false, 'encryptedThumbnailImageFile is null');
+        OXLoading.dismiss();
+        return;
+      }
+
+      OXLoading.dismiss();
       await sendVideoMessage(
-          context: context,
-          videoPath: videoFile.path,
-          videoURL: videoURL,
-          snapshotPath: thumbnailImageFile?.path,
-          imageWidth: thumbnailImage?.width,
-          imageHeight: thumbnailImage?.height,
-          fileId: fileId,
-          encryptedKey: encryptedKey,
-          encryptedNonce: encryptedNonce);
+        context: context,
+        videoPath: encryptedVideoFile.path,
+        videoURL: videoURL,
+        snapshotPath: encryptedThumbnailImageFile.path,
+        imageWidth: thumbnailImage.width,
+        imageHeight: thumbnailImage.height,
+        fileId: fileId,
+        encryptedKey: encryptedKey,
+        encryptedNonce: encryptedNonce,
+      );
     }
   }
 
@@ -687,8 +749,8 @@ extension ChatMessageSendEx on ChatGeneralHandler {
       imageWidth = VideoMessageEx(resendMessage).width;
       imageHeight = VideoMessageEx(resendMessage).height;
       fileId = VideoMessageEx(resendMessage).fileId;
-      encryptedKey = VideoMessageEx(resendMessage).encryptedKey;
-      encryptedNonce = VideoMessageEx(resendMessage).encryptedNonce;
+      encryptedKey = resendMessage.decryptKey;
+      encryptedNonce = resendMessage.decryptNonce;
     }
 
     if (videoURL != null && videoURL.isRemoteURL) {
@@ -762,22 +824,24 @@ extension ChatMessageSendEx on ChatGeneralHandler {
     );
 
     if (snapshotPath != null && snapshotPath.isNotEmpty && !isFromCache) {
-      VideoDataManager.shared.putThumbnailToCacheWithURL(
+      snapshotPath = (await VideoDataManager.shared.putThumbnailToCacheWithURL(
         videoURL: videoURL,
         thumbnailPath: snapshotPath,
-      );
+      )).path;
     }
+    
+    CacheManagerHelper.cacheFile(File(videoPath), videoURL, CacheFileType.video);
 
     sendVideoMessageWithURL(
-        videoURL: videoURL,
-        fileId: fileId,
-        videoPath: videoPath,
-        snapshotPath: snapshotPath,
-        imageWidth: imageWidth,
-        imageHeight: imageHeight,
-        replaceMessageId: sendMessage.id,
-        encryptedKey: encryptedKey,
-        encryptedNonce: encryptedNonce
+      videoURL: videoURL,
+      fileId: fileId,
+      videoPath: videoPath,
+      snapshotPath: snapshotPath,
+      imageWidth: imageWidth,
+      imageHeight: imageHeight,
+      replaceMessageId: sendMessage.id,
+      encryptedKey: encryptedKey,
+      encryptedNonce: encryptedNonce,
     );
   }
 
@@ -962,13 +1026,14 @@ extension ChatMessageSendUtileEx on ChatGeneralHandler {
     required File origin,
     required String? encryptedKey,
     required String? encryptedNonce,
+    required CacheFileType fileType
   }) async {
     if (encryptedKey == null && encryptedNonce == null) return origin;
 
     final fileName = '${Uuid().v1()}.${origin.path.getFileExtension()}';
     File? encryptedFile;
 
-    final cacheManager = await CLCacheManager.getCircleCacheManager(CacheFileType.image);
+    final cacheManager = await CLCacheManager.getCircleCacheManager(fileType);
     encryptedFile = await cacheManager.store.fileSystem.createFile(fileName);
     await AesEncryptUtils.encryptFileInIsolate(
       origin,

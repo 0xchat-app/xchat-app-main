@@ -8,6 +8,8 @@ import 'package:chewie/chewie.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
+import 'package:ox_common/utils/file_encryption_utils.dart';
+import 'package:ox_common/utils/string_utils.dart';
 import 'package:ox_common/utils/theme_color.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/common_image.dart';
@@ -18,16 +20,32 @@ import 'package:dio/dio.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 
 class CommonVideoPage extends StatefulWidget {
+  const CommonVideoPage({
+    super.key,
+    required this.videoUrl,
+    this.encryptedKey,
+    this.encryptedNonce,
+  });
+
   final String videoUrl;
-  const CommonVideoPage({Key? key, required this.videoUrl}) : super(key: key);
+  final String? encryptedKey;
+  final String? encryptedNonce;
 
   @override
   State<CommonVideoPage> createState() => _CommonVideoPageState();
 
-  static show(String videoUrl, {BuildContext? context}) {
+  static show(String videoUrl, {
+    BuildContext? context,
+    String? encryptedKey,
+    String? encryptedNonce,
+  }) {
     return OXNavigator.pushPage(
       context,
-      (context) => CommonVideoPage(videoUrl: videoUrl),
+      (context) => CommonVideoPage(
+        videoUrl: videoUrl,
+        encryptedKey: encryptedKey,
+        encryptedNonce: encryptedNonce,
+      ),
       fullscreenDialog: true,
       type: OXPushPageType.present,
     );
@@ -37,70 +55,177 @@ class CommonVideoPage extends StatefulWidget {
 class _CommonVideoPageState extends State<CommonVideoPage> {
   final GlobalKey<_CustomControlsState> _customControlsKey = GlobalKey<_CustomControlsState>();
   ChewieController? _chewieController;
-  late VideoPlayerController _videoPlayerController;
+  VideoPlayerController? _videoPlayerController;
   int? bufferDelay;
+
+  File? tempFile;
+  
+  // Add loading state tracking
+  String _loadingHint = 'Initializing video player';
+  bool isFailure = false;
+  Timer? _ellipsisTimer;
+  int _ellipsisCount = 0;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      initializePlayer();
+    _startEllipsisAnimation();
+    initializePlayer();
+  }
+
+  void _startEllipsisAnimation() {
+    _ellipsisTimer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+      if (mounted && !isFailure) {
+        setState(() {
+          _ellipsisCount = (_ellipsisCount + 1) % 4;
+        });
+      }
     });
+  }
+
+  String get _animatedLoadingHint {
+    if (isFailure) return _loadingHint;
+    final dots = '.' * _ellipsisCount;
+    return '$_loadingHint$dots';
+  }
+
+  Future<void> initializePlayer() async {
+    final isEncryptedVideo = widget.encryptedKey != null
+        && widget.encryptedKey!.isNotEmpty;
+    final isRemoteURL = widget.videoUrl.isRemoteURL;
+    try {
+      final typePayload = (
+        isEncryptedVideo: isEncryptedVideo,
+        isRemoteURL: isRemoteURL
+      );
+      VideoPlayerController? videoPlayerController;
+      switch (typePayload) {
+        case (isEncryptedVideo: true, isRemoteURL: false):
+          setState(() {
+            _loadingHint = 'Decrypting local video';
+          });
+          final videoFile = await decryptVideoFile(File(widget.videoUrl));
+          videoPlayerController =
+              VideoPlayerController.file(videoFile);
+          break;
+        case (isEncryptedVideo: true, isRemoteURL: true):
+          setState(() {
+            _loadingHint = 'Downloading encrypted video';
+          });
+          final manager = await CLCacheManager.getCircleCacheManager(
+            CacheFileType.video,
+          );
+          final encryptedFile = await manager.getSingleFile(widget.videoUrl);
+          setState(() {
+            _loadingHint = 'Decrypting video';
+          });
+          final videoFile = await decryptVideoFile(encryptedFile);
+          videoPlayerController =
+              VideoPlayerController.file(videoFile);
+          break;
+        case (isEncryptedVideo: false, isRemoteURL: false):
+          assert(false, 'Local videos without encryption are not supported');
+          break;
+        case (isEncryptedVideo: false, isRemoteURL: true):
+          setState(() {
+            _loadingHint = 'Loading video from network';
+          });
+          videoPlayerController =
+              VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl));
+          break;
+      }
+
+      if (videoPlayerController == null) return;
+
+      setState(() {
+        _loadingHint = 'Initializing video player';
+      });
+      _videoPlayerController = videoPlayerController;
+      await videoPlayerController.initialize();
+      prepareChewieController(videoPlayerController);
+
+      if (mounted) {
+        setState(() {});
+      }
+    } catch (e) {
+      print('Error playing audio: $e');
+      setState(() {
+        _loadingHint = 'Failed to load video';
+        isFailure = true;
+      });
+    }
+  }
+
+  Future<File> decryptVideoFile(File encryptedFile) async {
+    final decryptedFile = await FileEncryptionUtils.decryptFile(
+      encryptedFile: encryptedFile,
+      decryptKey: widget.encryptedKey!,
+      decryptNonce: widget.encryptedNonce,
+    );
+    tempFile = decryptedFile;
+    return decryptedFile;
+  }
+
+  Future<void> cacheVideo() async {
+    final cacheManager = await CLCacheManager.getCircleCacheManager(CacheFileType.video);
+    await cacheManager.downloadFile(widget.videoUrl);
+  }
+
+  void prepareChewieController(VideoPlayerController videoPlayerController) {
+    _chewieController = ChewieController(
+      customControls: CustomControls(
+        key: _customControlsKey,
+        videoPlayerController: videoPlayerController,
+        videoUrl: widget.videoUrl,
+      ),
+      showControls: true,
+      videoPlayerController: videoPlayerController,
+      hideControlsTimer: const Duration(seconds: 3),
+      autoPlay: true,
+      looping: false,
+    );
   }
 
   @override
   void dispose() {
-    OXLoading.dismiss();
-    _videoPlayerController.dispose();
+    _ellipsisTimer?.cancel();
+    _videoPlayerController?.dispose();
     _chewieController?.dispose();
+    tempFile?.delete();
     super.dispose();
-  }
-
-  void _onVideoTap() {
-    if (_videoPlayerController.value.isPlaying) {
-      _videoPlayerController.pause();
-      _customControlsKey.currentState?.showControls();
-    } else {
-      _videoPlayerController.play();
-      _customControlsKey.currentState?.showControls();
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     bool isShowVideoWidget = _chewieController != null &&
         _chewieController!.videoPlayerController.value.isInitialized;
+    final backgroundColor = ColorToken.surface.of(context);
     if (!isShowVideoWidget) {
-      OXLoading.show();
       return Container(
-        color: ThemeColor.color180,
+        color: backgroundColor,
         width: double.infinity,
         height: double.infinity,
         child: Stack(
+          fit: StackFit.expand,
           children: [
             Positioned(
-              top: 100,
+              top: 24,
               left: 24,
-              child: GestureDetector(
-                onTap: () => OXNavigator.pop(context),
-                child: Container(
-                  width: 35.px,
-                  height: 35.px,
-                  decoration: BoxDecoration(
-                    color: ThemeColor.color180,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(35.px),
+              child: SafeArea(child: buildCloseIcon()),
+            ),
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Visibility(
+                    visible: !isFailure,
+                    child: CLProgressIndicator.circular(
+                      size: 30.px
                     ),
                   ),
-                  child: Center(
-                    child: CommonImage(
-                      iconName: 'circle_close_icon.png',
-                      size: 24.px,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
+                  SizedBox(height: 20.px),
+                  CLText.labelLarge(_animatedLoadingHint),
+                ],
               ),
             ),
           ],
@@ -108,10 +233,9 @@ class _CommonVideoPageState extends State<CommonVideoPage> {
       );
     }
 
-    OXLoading.dismiss();
     Size size = MediaQuery.of(context).size;
     return Container(
-      color: ThemeColor.color180,
+      color: backgroundColor,
       child: Stack(
         children: [
           GestureDetector(
@@ -142,6 +266,26 @@ class _CommonVideoPageState extends State<CommonVideoPage> {
     );
   }
 
+  Widget buildCloseIcon() {
+    return CLButton.icon(
+      onTap: () => OXNavigator.pop(context),
+      iconName: 'circle_close_icon.png',
+      package: 'ox_common',
+      color: ColorToken.onSurface.of(context),
+    );
+  }
+
+  void _onVideoTap() {
+    if (_videoPlayerController == null) return;
+    if (_videoPlayerController!.value.isPlaying) {
+      _videoPlayerController!.pause();
+      _customControlsKey.currentState?.showControls();
+    } else {
+      _videoPlayerController!.play();
+      _customControlsKey.currentState?.showControls();
+    }
+  }
+
   void toggleFullScreen() {
     if (MediaQuery.of(context).orientation == Orientation.portrait) {
       SystemChrome.setPreferredOrientations([
@@ -154,58 +298,6 @@ class _CommonVideoPageState extends State<CommonVideoPage> {
         DeviceOrientation.portraitDown,
       ]);
     }
-  }
-
-  Future<void> initializePlayer() async {
-    try {
-      if (RegExp(r'https?:\/\/').hasMatch(widget.videoUrl)) {
-        final cacheManager = await CLCacheManager.getCircleCacheManager(CacheFileType.video);
-        final fileInfo = await cacheManager.getFileFromCache(widget.videoUrl);
-        if (fileInfo != null) {
-          _videoPlayerController = VideoPlayerController.file(fileInfo.file);
-        } else {
-          _videoPlayerController =
-              VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl));
-          cacheVideo();
-        }
-      } else {
-        File videoFile = File(widget.videoUrl);
-        _videoPlayerController = VideoPlayerController.file(videoFile);
-      }
-      await Future.wait([_videoPlayerController.initialize()]);
-      _createChewieController();
-      if (mounted) {
-        setState(() {});
-      }
-    } catch (e) {
-      print('Error playing audio: $e');
-    }
-  }
-
-  Future<void> cacheVideo() async {
-    try {
-      print('Starting cache process...');
-      final cacheManager = await CLCacheManager.getCircleCacheManager(CacheFileType.video);
-      await cacheManager.downloadFile(widget.videoUrl);
-      print('Video cached successfully');
-    } catch (e) {
-      print('Error caching video: $e');
-    }
-  }
-
-  void _createChewieController() {
-    _chewieController = ChewieController(
-      customControls: CustomControls(
-        key: _customControlsKey,
-        videoPlayerController: _videoPlayerController,
-        videoUrl: widget.videoUrl,
-      ),
-      showControls: true,
-      videoPlayerController: _videoPlayerController,
-      hideControlsTimer: const Duration(seconds: 3),
-      autoPlay: true,
-      looping: false,
-    );
   }
 }
 
@@ -408,6 +500,7 @@ class _CustomControlsState extends State<CustomControls> {
   }
 
   Widget _buildProgressBar() {
+    final tintColor = ColorToken.onSurface.of(context);
     return ValueListenableBuilder<CustomControlsOption>(
       valueListenable: customControlsStatus,
       builder: (context, value, child) {
@@ -424,8 +517,8 @@ class _CustomControlsState extends State<CustomControls> {
                 child: Text(
                   _formatDuration(
                       widget.videoPlayerController.value.position),
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: tintColor,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -447,7 +540,7 @@ class _CustomControlsState extends State<CustomControls> {
                   _formatDuration(
                       widget.videoPlayerController.value.duration),
                   style: TextStyle(
-                    color: ThemeColor.white,
+                    color: tintColor,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -495,6 +588,7 @@ class CustomVideoProgressIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tintColor = ColorToken.onSurface.of(context);
     return StreamBuilder(
       stream: controller.position.asStream(),
       builder: (context, snapshot) {
@@ -551,8 +645,8 @@ class CustomVideoProgressIndicator extends StatelessWidget {
                         child: Container(
                           width: 20,
                           height: 20,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
+                          decoration: BoxDecoration(
+                            color: tintColor,
                             shape: BoxShape.circle,
                           ),
                         ),

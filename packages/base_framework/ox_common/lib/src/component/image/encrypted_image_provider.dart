@@ -4,8 +4,7 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
-import 'package:ox_common/utils/aes_encrypt_utils.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:ox_common/utils/file_encryption_utils.dart';
 
 import 'cache_manager.dart';
 
@@ -94,7 +93,7 @@ class CLEncryptedImageProvider extends ImageProvider<_CLEncryptedImageKey> {
 
     ImmutableBuffer buffer;
     if (isEncryptFile) {
-      final Uint8List bytes = await decryptFileInMemory(
+      final Uint8List bytes = await FileEncryptionUtils.decryptFileInMemory(
         cipherFile,
         decryptKey ?? '',
         decryptNonce,
@@ -177,43 +176,5 @@ class CLEncryptedImageProvider extends ImageProvider<_CLEncryptedImageKey> {
       ));
     }
     return result;
-  }
-
-  static Future<Uint8List> decryptFileInMemory(
-      File encryptedFile,
-      String decryptKey,
-      String? decryptNonce,
-      ) async {
-    try {
-      final bytes = await AesEncryptUtils.decryptFileOnMemoryInIsolate(
-        encryptedFile,
-        decryptKey,
-        nonce: decryptNonce,
-      );
-      return Uint8List.fromList(bytes);
-    } catch (_) {
-      return Uint8List(0);
-    }
-  }
-
-  static Future<T> decryptFileAndHandle<T>({
-    required File encryptedFile,
-    required String decryptKey,
-    String? decryptNonce,
-    required Future<T> Function(File decryptedFile) handler,
-  }) async {
-    final bytes = await decryptFileInMemory(encryptedFile, decryptKey, decryptNonce);
-    final tempDir = await getTemporaryDirectory();
-    final tempFile = await File('${tempDir.path}/dec_${DateTime.now().microsecondsSinceEpoch}_${encryptedFile.uri.pathSegments.last}').create();
-    await tempFile.writeAsBytes(bytes, flush: true);
-    try {
-      return await handler(tempFile);
-    } finally {
-      if (await tempFile.exists()) {
-        try {
-          await tempFile.delete();
-        } catch (_) {}
-      }
-    }
   }
 }

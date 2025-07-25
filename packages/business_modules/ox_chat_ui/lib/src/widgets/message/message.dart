@@ -553,11 +553,7 @@ class MessageState extends State<Message> {
         messageContentWidget = widget.videoMessageBuilder?.call(
           videoMessage,
           messageWidth: contentMaxWidth,
-        ) ?? VideoMessage(
-              imageHeaders: widget.imageHeaders,
-              message: videoMessage,
-              messageWidth: contentMaxWidth,
-            );
+        ) ?? SizedBox();
         break ;
       default:
         return const SizedBox();

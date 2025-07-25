@@ -302,7 +302,11 @@ extension ChatGestureHandlerEx on ChatGeneralHandler {
 
   Future messagePressHandler(BuildContext context, types.Message message) async {
     if (message is types.VideoMessage) {
-      CommonVideoPage.show(message.videoURL);
+      CommonVideoPage.show(
+        message.videoURL,
+        encryptedKey: message.decryptKey,
+        encryptedNonce: message.decryptNonce,
+      );
     } else if (message is types.ImageMessage) {
       imageMessagePressHandler(
         messageId: message.id,
@@ -334,9 +338,15 @@ extension ChatGestureHandlerEx on ChatGeneralHandler {
           break;
         case CustomMessageType.video:
           final videoURI = VideoMessageEx(message).videoURI;
+          final encryptedKey = VideoMessageEx(message).encryptedKey;
+          final encryptedNonce = VideoMessageEx(message).encryptedNonce;
           if (videoURI.isEmpty) return ;
 
-          CommonVideoPage.show(videoURI);
+          CommonVideoPage.show(
+            videoURI,
+            encryptedKey: encryptedKey,
+            encryptedNonce: encryptedNonce,
+          );
           break;
         default:
           break;

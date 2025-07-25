@@ -3,8 +3,10 @@ import 'dart:io';
 
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_common/component.dart';
+import 'package:ox_common/login/account_path_manager.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/encode_utils.dart';
+import 'package:ox_common/utils/file_encryption_utils.dart';
 import 'package:ox_common/utils/image_picker_utils.dart';
 import 'package:ox_common/utils/string_utils.dart';
 import 'package:ox_common/utils/uplod_aliyun_utils.dart';
@@ -48,6 +50,8 @@ class VideoDataManager {
         final thumbnailFile = await _thumbnailHandler.fetchVideoThumbnail(
           videoURL: videoURL,
           videoFilePath: videoFile.path,
+          encryptedKey: encryptedKey,
+          encryptedNonce: encryptedNonce,
         );
         media.thumbPath = thumbnailFile?.path;
 
@@ -143,6 +147,8 @@ class _VideoThumbnailHandler {
   Future<File?> fetchVideoThumbnail({
     required String videoURL,
     required String videoFilePath,
+    String? encryptedKey,
+    String? encryptedNonce,
   }) async {
     final thumbnailURL = _thumbnailSnapshotURL(videoURL);
     final taskKey = _taskKeyWithVideoURL(videoURL);
@@ -156,23 +162,44 @@ class _VideoThumbnailHandler {
         if (thumbnailCacheFile != null && thumbnailCacheFile.existsSync()) return thumbnailCacheFile;
 
         // New Create
-        final videoFile = File(videoFilePath);
+        File videoFile = File(videoFilePath);
         if (!videoFile.existsSync()) return null;
 
-        final tempFile = await cacheManager.store.fileSystem.createFile(
-          '${const Uuid().v1()}.jpg',
+        File? decryptedVideoFile;
+        if (encryptedKey != null && encryptedKey.isNotEmpty) {
+          decryptedVideoFile = await FileEncryptionUtils.decryptFile(
+            encryptedFile: videoFile,
+            decryptKey: encryptedKey,
+            decryptNonce: encryptedNonce,
+          );
+          videoFile = decryptedVideoFile;
+        }
+
+        File tempFile = await AccountPathManager.createTempFile(
+          fileExt: 'jpg',
         );
-        tempFile.createSync(recursive: true);
 
-        final thumbnailFilePath = await ThreadPoolManager.sharedInstance.runAlgorithmTask(() => VideoThumbnail.thumbnailFile(
-          video: videoFilePath,
-          thumbnailPath: tempFile.path,
-          imageFormat: ImageFormat.JPEG,
-          maxWidth: (Adapt.screenW * Adapt.devicePixelRatio).toInt(),
-          quality: 100,
-        ));
+        String? thumbnailFilePath = await ThreadPoolManager.sharedInstance.runAlgorithmTask(() =>
+            VideoThumbnail.thumbnailFile(
+              video: videoFile.path,
+              thumbnailPath: tempFile.path,
+              imageFormat: ImageFormat.JPEG,
+              maxWidth: (Adapt.screenW * Adapt.devicePixelRatio).toInt(),
+              quality: 100,
+            ));
+        decryptedVideoFile?.delete();
 
-        if (thumbnailFilePath == null) return null;
+        if (thumbnailFilePath is! String) return null;
+
+        if (encryptedKey != null && encryptedKey.isNotEmpty) {
+          final encryptedThumbnail = await FileEncryptionUtils.encryptFile(
+            sourceFile: tempFile,
+            encryptKey: encryptedKey,
+            encryptNonce: encryptedNonce,
+          );
+          tempFile.delete();
+          tempFile = encryptedThumbnail;
+        }
 
         final cacheFile = await cacheManager.putFile(
           thumbnailURL,

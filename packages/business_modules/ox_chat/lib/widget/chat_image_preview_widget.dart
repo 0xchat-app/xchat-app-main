@@ -39,9 +39,6 @@ class ChatImagePreviewWidgetState extends State<ChatImagePreviewWidget> with Tic
   ImageStream? imageStream;
   Size imageSize = Size.zero;
 
-  late AnimationController _shimmerController;
-  late Animation<double> _shimmerAnimation;
-
   double get minWidth => 100.px;
   double get minHeight => 100.px;
   double get maxHeight => 300.px;
@@ -49,11 +46,6 @@ class ChatImagePreviewWidgetState extends State<ChatImagePreviewWidget> with Tic
   @override
   void initState() {
     super.initState();
-    _shimmerController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
-      vsync: this,
-    )..repeat();
-    _shimmerAnimation = Tween<double>(begin: -1.0, end: 2.0).animate(_shimmerController);
     prepareImage();
   }
 
@@ -112,7 +104,6 @@ class ChatImagePreviewWidgetState extends State<ChatImagePreviewWidget> with Tic
 
   @override
   void dispose() {
-    _shimmerController.dispose();
     imageStream?.removeListener(ImageStreamListener(updateImage));
     super.dispose();
   }

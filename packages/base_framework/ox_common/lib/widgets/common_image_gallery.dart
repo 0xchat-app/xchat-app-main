@@ -12,6 +12,7 @@ import 'package:ox_common/component.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/ox_common.dart';
 import 'package:ox_common/utils/adapt.dart';
+import 'package:ox_common/utils/file_encryption_utils.dart';
 import 'package:ox_common/utils/scan_utils.dart';
 import 'package:ox_common/utils/string_utils.dart';
 import 'package:ox_common/widgets/common_image.dart';
@@ -474,17 +475,16 @@ class _CommonImageGalleryState extends State<CommonImageGallery>
             break;
 
           case (true, true):
-            await CLEncryptedImageProvider.decryptFileAndHandle(
+            final decryptedFile = await FileEncryptionUtils.decryptFile(
               encryptedFile: imageFile,
               decryptKey: decryptKey!,
               decryptNonce: decryptNonce,
-              handler: (decryptedFile) async {
-                result = await ImageGallerySaverPlus.saveFile(
-                  decryptedFile.path,
-                  isReturnPathOfIOS: true,
-                );
-              },
             );
+            result = await ImageGallerySaverPlus.saveFile(
+              decryptedFile.path,
+              isReturnPathOfIOS: true,
+            );
+            decryptedFile.delete();
             break;
 
           case (false, false):
@@ -493,7 +493,7 @@ class _CommonImageGalleryState extends State<CommonImageGallery>
             break;
 
           case (false, true):
-            final imageData = await CLEncryptedImageProvider.decryptFileInMemory(
+            final imageData = await FileEncryptionUtils.decryptFileInMemory(
               imageFile,
               decryptKey!,
               decryptNonce,
@@ -511,7 +511,7 @@ class _CommonImageGalleryState extends State<CommonImageGallery>
       // Local image
       final imageFile = File(imageUri);
       if (decryptKey != null) {
-        final decryptData = await CLEncryptedImageProvider.decryptFileInMemory(
+        final decryptData = await FileEncryptionUtils.decryptFileInMemory(
           imageFile,
           decryptKey,
           decryptNonce,
