@@ -485,21 +485,27 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
     }
   }
 
-  void _showShareOptions() {
-    CLBottomSheet.show(
+  void _showShareOptions() async {
+    final result = await CLPicker.show<String>(
       context: context,
       title: Localized.text('ox_usercenter.select_operation'),
-      actions: [
-        CLBottomSheetAction(
+      items: [
+        CLPickerItem(
           label: Localized.text('ox_usercenter.save_qr_code'),
-          onTap: _saveQRCode,
+          value: 'save_qr_code',
         ),
-        CLBottomSheetAction(
+        CLPickerItem(
           label: Localized.text('ox_usercenter.share_invite_link'),
-          onTap: _shareInvite,
+          value: 'share_invite_link',
         ),
       ],
     );
+
+    if (result == 'save_qr_code') {
+      _saveQRCode();
+    } else if (result == 'share_invite_link') {
+      _shareInvite();
+    }
   }
 
   Future<void> _shareInvite() async {

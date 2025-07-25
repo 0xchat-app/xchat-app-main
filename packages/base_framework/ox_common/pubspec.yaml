@@ -66,7 +66,6 @@ dependencies:
   glassmorphism: ^3.0.0
   grouped_list: ^5.1.2
   rich_text_widget: ^0.2.7
-  modal_bottom_sheet: ^3.0.0-pre
   simple_gradient_text: ^1.2.4
   sliver_header_delegate: ^0.0.5
   extended_sliver: ^2.1.3
