@@ -514,10 +514,7 @@ class ChatState extends State<Chat> {
 
   @override
   Widget build(BuildContext context) {
-    final anchorMsgId = widget.anchorMsgId;
-    var scrollToAnchorMsgAction = null;
-    if (anchorMsgId != null && anchorMsgId.isNotEmpty)
-      scrollToAnchorMsgAction = () => scrollToMessage(anchorMsgId);
+    final backgroundColor = ColorToken.surface.of(context);
     return InheritedUser(
       user: widget.user,
       child: InheritedChatTheme(
@@ -527,7 +524,7 @@ class ChatState extends State<Chat> {
           child: Stack(
             children: [
               Container(
-                color: ColorToken.surface.of(context),
+                color: backgroundColor,
                 child: Column(
                   children: [
                     if (widget.customTopWidget != null)
@@ -538,57 +535,16 @@ class ChatState extends State<Chat> {
                         child: widget.customTopWidget,
                       ),
                     Flexible(
-                      child: widget.messages.isEmpty
-                          ? SizedBox.expand(
-                              child: GestureDetector(
-                                child: _emptyStateBuilder(),
-                                onTap: () {
-                                  inputUnFocus();
-                                  widget.onBackgroundTap?.call();
-                                },
-                              ),
-                            )
-                          : GestureDetector(
-                              onTap: () {
-                                inputUnFocus();
-                                widget.onBackgroundTap?.call();
-                              },
-                              child: NotificationListener<ScrollNotification>(
-                                onNotification: (notification) {
-                                  checkIfShowUnreadAnchorButton(notification);
-                                  return false;
-                                },
-                                child: ChatList(
-                                  scrollToAnchorMsgAction: scrollToAnchorMsgAction,
-                                  bottomWidget: widget.listBottomWidget,
-                                  bubbleRtlAlignment: widget.bubbleRtlAlignment!,
-                                  isFirstPage: widget.isFirstPage,
-                                  isLastPage: widget.isLastPage,
-                                  itemBuilder: (Object item, int? index) => LayoutBuilder(
-                                      builder: (
-                                    BuildContext context,
-                                    BoxConstraints constraints,
-                                  ) =>
-                                          IgnorePointer(
-                                            ignoring: !widget.isContentInteractive,
-                                            child: _messageBuilder(
-                                              item,
-                                              constraints,
-                                              index,
-                                            ),
-                                          )),
-                                  items: _chatMessages,
-                                  keyboardDismissBehavior: widget.keyboardDismissBehavior,
-                                  onEndReached: widget.onEndReached,
-                                  onEndReachedThreshold: widget.onEndReachedThreshold,
-                                  onHeadReached: widget.onHeaderReached,
-                                  scrollController: _scrollController,
-                                  scrollPhysics: widget.scrollPhysics,
-                                  typingIndicatorOptions: widget.typingIndicatorOptions,
-                                  useTopSafeAreaInset: widget.useTopSafeAreaInset ?? isMobile,
-                                ),
-                              ),
-                            ),
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onTap: () {
+                          inputUnFocus();
+                          widget.onBackgroundTap?.call();
+                        },
+                        child: widget.messages.isEmpty
+                            ? _emptyStateBuilder()
+                            : _buildChatList(),
+                      ),
                     ),
                     Visibility(
                       visible: widget.enableBottomWidget,
@@ -706,19 +662,49 @@ class ChatState extends State<Chat> {
 
   Widget _emptyStateBuilder() =>
       widget.emptyState ??
-      Container(
-        color: ThemeColor.color200,
-        alignment: Alignment.center,
-        margin: const EdgeInsets.symmetric(
-          horizontal: 24,
+      Container();
+
+  Widget _buildChatList() {
+    final anchorMsgId = widget.anchorMsgId;
+    var scrollToAnchorMsgAction = null;
+    if (anchorMsgId != null && anchorMsgId.isNotEmpty)
+      scrollToAnchorMsgAction = () => scrollToMessage(anchorMsgId);
+    return NotificationListener<ScrollNotification>(
+      onNotification: (notification) {
+        checkIfShowUnreadAnchorButton(notification);
+        return false;
+      },
+      child: ChatList(
+        scrollToAnchorMsgAction: scrollToAnchorMsgAction,
+        bottomWidget: widget.listBottomWidget,
+        bubbleRtlAlignment: widget.bubbleRtlAlignment!,
+        isFirstPage: widget.isFirstPage,
+        isLastPage: widget.isLastPage,
+        itemBuilder: (Object item, int? index) => LayoutBuilder(
+          builder: (
+              BuildContext context,
+              BoxConstraints constraints,
+              ) => IgnorePointer(
+            ignoring: !widget.isContentInteractive,
+            child: _messageBuilder(
+              item,
+              constraints,
+              index,
+            ),
+          ),
         ),
-        child: Text(
-          // widget.l10n.emptyChatPlaceholder,
-          '',
-          style: widget.theme.emptyChatPlaceholderTextStyle,
-          textAlign: TextAlign.center,
-        ),
-      );
+        items: _chatMessages,
+        keyboardDismissBehavior: widget.keyboardDismissBehavior,
+        onEndReached: widget.onEndReached,
+        onEndReachedThreshold: widget.onEndReachedThreshold,
+        onHeadReached: widget.onHeaderReached,
+        scrollController: _scrollController,
+        scrollPhysics: widget.scrollPhysics,
+        typingIndicatorOptions: widget.typingIndicatorOptions,
+        useTopSafeAreaInset: widget.useTopSafeAreaInset ?? isMobile,
+      ),
+    );
+  }
 
   /// Only scroll to first unread if there are messages and it is the first open.
   void _maybeScrollToFirstUnread() {

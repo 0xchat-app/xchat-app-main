@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
+import 'package:ox_common/login/account_path_manager.dart';
 import 'package:ox_common/scheme/scheme_helper.dart';
 import 'package:ox_common/utils/chat_prompt_tone.dart';
 import 'package:ox_common/utils/error_utils.dart';
@@ -154,6 +155,7 @@ class MainState extends State<MainApp>
     OXUserInfoManager.sharedInstance.removeObserver(this);
     WidgetsBinding.instance.removeObserver(this);
     wsSwitchStateListener.cancel();
+    AccountPathManager.clearAllTempFolders();
   }
 
   onLocaleChange() {

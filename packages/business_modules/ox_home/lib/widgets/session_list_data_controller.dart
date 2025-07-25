@@ -248,6 +248,7 @@ extension SessionDCInterface on SessionListDataController {
     int? messageKind,
     bool? isMentioned,
     int? expiration,
+    int? lastMessageTime,
     int? lastActivityTime,
   }) async {
     final viewModel = sessionCache[chatId];
@@ -265,6 +266,7 @@ extension SessionDCInterface on SessionListDataController {
     sessionModel.isMentioned = isMentioned ?? sessionModel.isMentioned;
     sessionModel.messageKind = messageKind ?? sessionModel.messageKind;
     sessionModel.expiration = expiration ?? sessionModel.expiration;
+    sessionModel.createTime = lastMessageTime ?? sessionModel.createTime;
     sessionModel.lastActivityTime = lastActivityTime ?? sessionModel.lastActivityTime;
 
     viewModel.rebuild();

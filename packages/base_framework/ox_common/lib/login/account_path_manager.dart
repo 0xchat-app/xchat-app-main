@@ -22,8 +22,10 @@ import 'package:path_provider/path_provider.dart';
 ///         │   └── {other cached files}
 ///         ├── Audio/
 ///         │   └── {audio files}
-///         └── Video/
-///             └── {video files}
+///         ├── Video/
+///         │   └── {video files}
+///         └── Temp/
+///             └── {temporary files}
 /// ```
 class AccountPathManager {
   // Private constructor to prevent instantiation
@@ -144,6 +146,15 @@ class AccountPathManager {
     return _getCircleCacheFilePath(pubkey, circleId, 'Video');
   }
 
+  /// Get circle temp cache directory path
+  /// 
+  /// [pubkey] User's public key
+  /// [circleId] Circle ID
+  /// Returns: {root}/accounts/{pubkey}/circles/{circleId}/cache/Temp/
+  static Future<String> getCircleTempCachePath(String pubkey, String circleId) async {
+    return _getCircleCacheFilePath(pubkey, circleId, 'Temp');
+  }
+
   // ========== Public Path Interfaces ==========
 
   /// Get account database file path
@@ -230,6 +241,7 @@ class AccountPathManager {
   /// - cache/File/
   /// - cache/Audio/
   /// - cache/Video/
+  /// - cache/Temp/
   static Future<bool> ensureCircleCacheExists(String pubkey, String circleId) async {
     try {
       // Ensure circle folder exists first
@@ -242,6 +254,7 @@ class AccountPathManager {
         await getCircleFileCachePath(pubkey, circleId),
         await getCircleAudioCachePath(pubkey, circleId),
         await getCircleVideoCachePath(pubkey, circleId),
+        await getCircleTempCachePath(pubkey, circleId),
       ];
       
       for (final cachePath in cachePaths) {
@@ -440,6 +453,94 @@ class AccountPathManager {
         }
       }
       return totalSize;
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  // ========== Temp Folder Cleanup ==========
+
+  /// Clear temp folder for specific circle
+  /// 
+  /// [pubkey] User's public key
+  /// [circleId] Circle ID
+  /// Returns: Number of files successfully deleted
+  static Future<int> clearCircleTempFolder(String pubkey, String circleId) async {
+    try {
+      final tempPath = await getCircleTempCachePath(pubkey, circleId);
+      final dir = Directory(tempPath);
+      if (!await dir.exists()) {
+        return 0;
+      }
+
+      int deletedCount = 0;
+      await for (final entity in dir.list()) {
+        if (entity is File) {
+          try {
+            await entity.delete();
+            deletedCount++;
+          } catch (e) {
+            // Continue with other files if deletion fails
+          }
+        }
+      }
+      return deletedCount;
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  /// Clear temp folders for specific account
+  /// 
+  /// [pubkey] User's public key
+  /// Returns: Number of files successfully deleted
+  static Future<int> clearAccountTempFolders(String pubkey) async {
+    try {
+      final accountPath = await _getAccountFolderPath(pubkey);
+      final accountDir = Directory(accountPath);
+      if (!await accountDir.exists()) {
+        return 0;
+      }
+
+      int totalDeleted = 0;
+      final circlesDir = Directory(path.join(accountPath, 'circles'));
+      if (!await circlesDir.exists()) {
+        return 0;
+      }
+
+      await for (final circleEntity in circlesDir.list()) {
+        if (circleEntity is Directory) {
+          final circleId = path.basename(circleEntity.path);
+          final deletedCount = await clearCircleTempFolder(pubkey, circleId);
+          totalDeleted += deletedCount;
+        }
+      }
+      return totalDeleted;
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  /// Clear all temp folders for all accounts
+  /// 
+  /// Returns: Number of files successfully deleted
+  static Future<int> clearAllTempFolders() async {
+    try {
+      final rootPath = await _getRootPath();
+      final accountsDir = Directory(path.join(rootPath, 'accounts'));
+      if (!await accountsDir.exists()) {
+        return 0;
+      }
+
+      int totalDeleted = 0;
+      await for (final accountEntity in accountsDir.list()) {
+        if (accountEntity is Directory) {
+          final pubkey = path.basename(accountEntity.path);
+          final deletedCount = await clearAccountTempFolders(pubkey);
+          totalDeleted += deletedCount;
+        }
+      }
+      return totalDeleted;
     } catch (e) {
       return 0;
     }

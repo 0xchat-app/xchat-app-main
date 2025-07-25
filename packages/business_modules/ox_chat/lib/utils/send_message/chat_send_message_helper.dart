@@ -14,15 +14,14 @@ typedef MessageContentCreator = FutureOr<String?> Function(
     types.Message message);
 
 class ChatSendMessageHelper {
-  static Future<String?> sendMessage({
+  static Future<types.Message?> sendMessage({
     required ChatSessionModelISAR session,
     required types.Message message,
     ChatSendingType sendingType = ChatSendingType.remote,
     MessageContentCreator? contentEncoder,
     MessageContentCreator? sourceCreator,
     String? replaceMessageId,
-    Future Function(OKEvent event, types.Message)? sendEventHandler,
-    Function(types.Message)? sendActionFinishHandler,
+    Future Function(OKEvent event, types.Message)? sendRemoteEventHandler,
   }) async {
     // prepare data
     final type = message.dbMessageType;
@@ -48,7 +47,7 @@ class ChatSendMessageHelper {
       );
 
       if (event == null) {
-        return 'send message fail';
+        return null;
       }
 
       final sourceKey = jsonEncode(event);
@@ -82,17 +81,13 @@ class ChatSendMessageHelper {
         replaceMessageId: replaceMessageId,
       );
 
-      final isWaitForSend = sendingType != ChatSendingType.remote;
-      if (isWaitForSend) {
-        sendEventHandler?.call(await sendResultEvent, sendMsg);
-      } else {
-        sendResultEvent.then((event) => sendEventHandler?.call(event, sendMsg));
+      if (sendingType == ChatSendingType.remote) {
+        sendResultEvent.then(
+          (event) => sendRemoteEventHandler?.call(event, sendMsg)
+        );
       }
     }
-
-    sendActionFinishHandler?.call(sendMsg);
-
-    return null;
+    return sendMsg;
   }
 
   static EncryptedFile? _createEncryptedFileIfNeeded(types.Message message) {
