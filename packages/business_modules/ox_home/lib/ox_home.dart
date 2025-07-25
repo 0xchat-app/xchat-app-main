@@ -148,6 +148,10 @@ class OxChatHome extends OXFlutterModule {
         if (success && pubkey == null) {
           pubkey = result['pubkey'] as String?;
         }
+      } else {
+        // No valid invite parameters found
+        CommonToast.instance.show(context, 'Invalid invite link: missing parameters');
+        return;
       }
 
       if (success) {

@@ -22,7 +22,12 @@ class SchemeHelper {
     );
     LogUtil.d("App open URL: $url");
 
-    handleAppURI(url);
+    if (url.isNotEmpty) {
+      LogUtil.d("Processing Universal Link: $url");
+      await handleAppURI(url);
+    } else {
+      LogUtil.d("No Universal Link to process");
+    }
   }
 
   static handleAppURI(String uri) async {

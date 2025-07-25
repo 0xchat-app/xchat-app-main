@@ -98,6 +98,11 @@ class MainState extends State<MainApp>
     nip46ConnectStatusInit();
 
     ThemeManager.addOnThemeChangedCallback(() => setState(() {}));
+    
+    // Handle Universal Links on app startup
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      SchemeHelper.tryHandlerForOpenAppScheme();
+    });
   }
 
   void showErrorDialogIfNeeded() async {

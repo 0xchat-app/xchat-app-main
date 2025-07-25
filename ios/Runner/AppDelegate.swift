@@ -51,6 +51,19 @@ import Flutter
         signal(SIGPIPE, SIG_IGN)
     }
     
+    // Handle Universal Links
+    override func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+        if userActivity.activityType == NSUserActivityTypeBrowsingWeb {
+            if let url = userActivity.webpageURL {
+                let userDefault = UserDefaults.standard
+                userDefault.setValue(url.absoluteString, forKey: OPENURLAPP)
+                userDefault.synchronize()
+                return true
+            }
+        }
+        return false
+    }
+    
     override func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         
         var urlStr = url.isFileURL ? AppGroupHelper.shareScheme : url.absoluteString
