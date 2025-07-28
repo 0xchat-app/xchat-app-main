@@ -241,7 +241,7 @@ class InputState extends State<Input> {
     }
     return null;
   }
-
+  
   // Unified bottom panel: takes the max height between keyboard and custom panel
   Widget _buildBottomPanel() {
     final panelHeight = _getCustomPanelHeight();
@@ -408,29 +408,32 @@ class InputState extends State<Input> {
   }
 
   Widget _buildMoreButton() {
-    final isOnInput = this.isOnInput;
-    return AnimatedAlign(
+    final moreButton = Container(
+      width: iconButtonSize,
+      height: iconButtonSize,
       alignment: Alignment.center,
-      widthFactor: isOnInput ? 0.0 : 1.0,
-      duration: animationDuration,
-      child: AnimatedScale(
-        scale: isOnInput ? 0.0 : 1.0,
-        duration: animationDuration,
-        child: AnimatedOpacity(
-          opacity: isOnInput ? 0.0 : 1.0,
-          duration: animationDuration,
-          child: CommonIconButton(
-            onPressed: () {
-              changeInputType(InputType.inputTypeMore);
-            },
-            iconName: 'chat_more_icon.png',
-            size: iconButtonSize,
-            iconSize: iconSize,
-            color: ColorToken.onSurface.of(context),
-            package: 'ox_chat_ui',
-          ),
-        ),
+      child: CLIcon(
+        iconName: 'chat_more_icon.png',
+        size: iconSize,
+        color: ColorToken.onSurface.of(context),
+        package: 'ox_chat_ui',
       ),
+    );
+
+    return CLPopupMenu<String>(
+      items: widget.items.map((item) => CLPopupMenuItem<String>(
+        value: item.id,
+        title: item.title(),
+        icon: CLIcon(
+          icon: item.icon,
+          size: 20,
+          color: ColorToken.onSurface.of(context),
+        ),
+        onTap: () => item.action(context),
+      )).toList(),
+      color: ColorToken.surface.of(context),
+      scaleDirection: Alignment.bottomLeft,
+      child: moreButton,
     );
   }
 

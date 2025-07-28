@@ -1,4 +1,5 @@
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_chat/widget/message_long_press_widget.dart';
 import 'package:ox_chat_ui/ox_chat_ui.dart';
@@ -87,7 +88,7 @@ extension InputMoreItemEx on InputMoreItem {
       InputMoreItem(
         id: 'album',
         title: () => Localized.text('ox_chat_ui.input_more_album'),
-        iconName: 'chat_photo_more.png',
+        icon: CupertinoIcons.photo,
         action: (context) {
           handler.albumPressHandler(context, 1);
         },
@@ -97,7 +98,7 @@ extension InputMoreItemEx on InputMoreItem {
       InputMoreItem(
         id: 'camera',
         title: () => Localized.text('ox_chat_ui.input_more_camera'),
-        iconName: 'chat_camera_more.png',
+        icon: CupertinoIcons.camera,
         action: (context) {
           handler.cameraPressHandler(context);
         },
@@ -107,7 +108,7 @@ extension InputMoreItemEx on InputMoreItem {
       InputMoreItem(
         id: 'video',
         title: () => Localized.text('ox_chat_ui.input_more_video'),
-        iconName: 'chat_video_icon.png',
+        icon: CupertinoIcons.video_camera,
         action: (context) {
           handler.albumPressHandler(context, 2);
         },
