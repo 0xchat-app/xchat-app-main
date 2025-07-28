@@ -77,8 +77,14 @@ class OxChatHome extends OXFlutterModule {
     try {
       final uri = Uri.parse(url);
 
+      // Check both path and fragment for invite links
+      String fullPath = uri.path;
+      if (uri.fragment.isNotEmpty && uri.fragment.startsWith('/')) {
+        fullPath = uri.fragment;
+      }
+
       // Handle invite links
-      if (uri.path == '/lite/invite') {
+      if (fullPath == '/lite/invite') {
         await _handleInviteLink(uri);
         return;
       }
