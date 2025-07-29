@@ -7,15 +7,15 @@ import 'package:ox_common/utils/list_extension.dart';
 import 'package:ox_common/widgets/common_image.dart';
 
 class InputMoreItem {
-  const InputMoreItem({required this.id, required this.title, required this.iconName, required this.action,});
+  const InputMoreItem({required this.id, required this.title, required this.icon, required this.action,});
   final String id;
   final String Function() title;
-  final String iconName;
+  final IconData? icon;
   final Function(BuildContext context) action;
 }
 
 class InputMoreEmptyItem extends InputMoreItem {
-  InputMoreEmptyItem() : super(id: '', title: () => '', iconName: '', action: (_) {});
+  InputMoreEmptyItem() : super(id: '', title: () => '', icon: null, action: (_) {});
 }
 
 class InputMorePage extends StatefulWidget {
@@ -94,8 +94,8 @@ class _InputMorePageState extends State<InputMorePage> {
             ),
             margin: iconPadding,
             alignment: Alignment.center,
-            child: CommonImage(
-              iconName: item.iconName,
+            child: CLIcon(
+              icon: item.icon,
               size: 24.px,
               package: 'ox_chat_ui',
             ),
