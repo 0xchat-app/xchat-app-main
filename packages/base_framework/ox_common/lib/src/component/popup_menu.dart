@@ -68,6 +68,8 @@ class CLPopupMenu<T> extends StatelessWidget {
     this.scaleDirection,
   });
 
+  Offset get defaultOffset => const Offset(0, 8.0);
+
   @override
   Widget build(BuildContext context) {
     if (PlatformStyle.isUseMaterial) {
@@ -87,7 +89,7 @@ class CLPopupMenu<T> extends StatelessWidget {
       shadowColor: shadowColor,
       surfaceTintColor: surfaceTintColor,
       enableFeedback: enableFeedback,
-      offset: offset ?? const Offset(0, 8.0),
+      offset: offset ?? defaultOffset,
       color: color,
       itemBuilder: (context) => items.map((item) {
         return PopupMenuItem<T>(
@@ -122,24 +124,27 @@ class CLPopupMenu<T> extends StatelessWidget {
     const estimatedMenuItemHeight = 44.0;
     final estimatedMenuHeight = items.length * estimatedMenuItemHeight;
     
+    // Use the same default offset as Material design
+    final effectiveOffset = offset ?? defaultOffset;
+    
     // Calculate position and direction based on whether scaleDirection is provided
-    double left = buttonPosition.dx;
-    double top = buttonPosition.dy + buttonSize.height + 8.0; // Default: below button
+    double left = buttonPosition.dx + effectiveOffset.dx;
+    double top = buttonPosition.dy + buttonSize.height + effectiveOffset.dy; // Default: below button
     Alignment direction = scaleDirection ?? Alignment.topLeft; // Default: expand downward
     
     if (scaleDirection != null) {
       // Use provided direction to determine position
       if (scaleDirection == Alignment.bottomLeft) {
         // Upward expansion: position menu above button
-        top = buttonPosition.dy - estimatedMenuHeight - 8.0;
+        top = buttonPosition.dy - estimatedMenuHeight - effectiveOffset.dy;
       } else if (scaleDirection == Alignment.topRight) {
         // Leftward expansion: position menu to the left of button
-        left = buttonPosition.dx - estimatedMenuWidth - 8.0;
-        top = buttonPosition.dy;
+        left = buttonPosition.dx - estimatedMenuWidth - effectiveOffset.dx;
+        top = buttonPosition.dy + effectiveOffset.dy;
       } else if (scaleDirection == Alignment.topLeft) {
         // Rightward expansion: position menu to the right of button
-        left = buttonPosition.dx + buttonSize.width + 8.0;
-        top = buttonPosition.dy;
+        left = buttonPosition.dx + buttonSize.width + effectiveOffset.dx;
+        top = buttonPosition.dy + effectiveOffset.dy;
       }
       // For downward expansion (Alignment.topLeft), use default position
     } else {
@@ -149,7 +154,7 @@ class CLPopupMenu<T> extends StatelessWidget {
       }
       
       if (top + estimatedMenuHeight > screenSize.height) {
-        top = buttonPosition.dy - estimatedMenuHeight - 8.0;
+        top = buttonPosition.dy - estimatedMenuHeight - effectiveOffset.dy;
       }
       
       if (left < 16.0) {
@@ -278,7 +283,7 @@ class _CupertinoPopupMenuState<T> extends State<_CupertinoPopupMenu<T>>
       end: 1.0,
     ).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeOutBack,
+      curve: Cubic(0.175, 0.885, 0.32, 1.075),
     ));
 
     _opacityAnimation = Tween<double>(

@@ -264,22 +264,17 @@ class InputState extends State<Input> {
         textDirection: TextDirection.ltr,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          _buildMoreButton().setPaddingOnly(
-            left: generalHorizontal,
-            top: iconButtonVertical,
-            bottom: iconButtonVertical,
-          ),
-          _buildEmojiButton().setPaddingOnly(
-            right: generalHorizontal,
-            top: iconButtonVertical,
-            bottom: iconButtonVertical,
-          ),
+          _buildMoreButton(EdgeInsets.symmetric(
+              vertical: iconButtonVertical,
+              horizontal: generalHorizontal,
+          )),
           Expanded(
             child: Container(
               decoration: BoxDecoration(
                 color: ColorToken.surfaceContainerHigh.of(context),
                 borderRadius: BorderRadius.circular(28.px),
               ),
+              margin: EdgeInsets.only(right: containerHorPadding),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -307,7 +302,7 @@ class InputState extends State<Input> {
                   ),
                 ],
               ),
-            ).setPaddingOnly(right: containerHorPadding),
+            ),
           ),
         ],
       ),
@@ -412,6 +407,10 @@ class InputState extends State<Input> {
       )).toList(),
       color: ColorToken.surface.of(context),
       scaleDirection: Alignment.bottomLeft,
+      offset: Offset(
+        padding.left + (iconButtonSize - iconSize) / 2,
+        -padding.bottom,
+      ),
       child: moreButton,
     );
   }
