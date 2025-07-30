@@ -20,9 +20,13 @@ class SchemeHelper {
     String url = await OXCommon.channelPreferences.invokeMethod(
       'getAppOpenURL',
     );
+    LogUtil.d("App open URL: $url");
 
     if (url.isNotEmpty) {
+      LogUtil.d("Processing Universal Link: $url");
       await handleAppURI(url);
+    } else {
+      LogUtil.d("No Universal Link to process");
     }
   }
 
@@ -36,16 +40,9 @@ class SchemeHelper {
     if (AppConfig.supportedDomains.any((domain) => uri.contains(domain))) {
       final uriObj = Uri.parse(uri);
       final path = uriObj.path;
-      final fragment = uriObj.fragment;
-      
-      // Check both path and fragment for /lite paths
-      String fullPath = path;
-      if (fragment.isNotEmpty && fragment.startsWith('/')) {
-        fullPath = fragment;
-      }
       
       // Only handle /lite paths
-      if (fullPath.startsWith('/lite')) {
+      if (path.startsWith('/lite')) {
         // This is a supported path, handle it
         if (defaultHandler != null) {
           final handler = defaultHandler!;
@@ -54,6 +51,7 @@ class SchemeHelper {
         return;
       } else {
         // This is not a supported path, ignore it
+        LogUtil.d('Lite app ignoring non-lite path: $path');
         return;
       }
     }
