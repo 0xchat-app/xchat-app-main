@@ -580,12 +580,12 @@ impl PlatformMenuContext {
                 // nil which will cause UIKit to draw round corner shadow matching the view
                 // clip rect. The duration doesn't seem to matter, it just need to be called
                 // before the transition so that UIKit picks it out.
-                let parameters_clone = parameters.clone();
-                RunLoop::current()
-                    .schedule(Duration::from_millis(10), move || {
-                        parameters_clone.setShadowPath(None);
-                    })
-                    .detach();
+                // let parameters_clone = parameters.clone();
+                // RunLoop::current()
+                //     .schedule(Duration::from_millis(10), move || {
+                //         parameters_clone.setShadowPath(None);
+                //     })
+                //     .detach();
 
                 parameters.setBackgroundColor(Some(&UIColor::clearColor()));
 
