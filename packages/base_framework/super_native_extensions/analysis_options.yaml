@@ -1,0 +1,10 @@
+include: package:flutter_lints/flutter.yaml
+
+# Additional information about this file can be found at
+# https://dart.dev/guides/language/analysis-options
+
+linter:
+  rules:
+    prefer_relative_imports: true
+    # TODO(knopp): re-enable when in stable
+    # invalid_runtime_check_with_js_interop_types: true
