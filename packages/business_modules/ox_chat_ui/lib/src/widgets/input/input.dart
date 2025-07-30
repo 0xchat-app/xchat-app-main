@@ -16,7 +16,6 @@ import '../../models/input_clear_mode.dart';
 import '../../models/send_button_visibility_mode.dart';
 import '../state/inherited_chat_theme.dart';
 import 'attachment_button.dart';
-import 'input_face_page.dart';
 import 'input_more_page.dart';
 import 'input_text_field_controller.dart';
 import 'input_voice_page.dart';
@@ -115,8 +114,7 @@ class InputState extends State<Input> {
     },
   );
   bool get isOnInput =>
-      (inputType == InputType.inputTypeText && _inputFocusNode.hasFocus)
-      || inputType == InputType.inputTypeEmoji;
+      (inputType == InputType.inputTypeText && _inputFocusNode.hasFocus);
   bool _sendButtonVisible = false;
   late TextEditingController _textController;
 
@@ -210,11 +208,9 @@ class InputState extends State<Input> {
     child: widget.inputBottomView,
   );
 
-  // Calculate height of custom panels (emoji / more / voice)
+  // Calculate height of custom panels (more / voice)
   double _getCustomPanelHeight() {
     switch (inputType) {
-      case InputType.inputTypeEmoji:
-        return 360;
       case InputType.inputTypeMore:
       case InputType.inputTypeVoice:
         return 202;
@@ -229,8 +225,6 @@ class InputState extends State<Input> {
   Widget? _getCustomPanelWidget() {
     if (inputType == InputType.inputTypeMore) {
       return InputMorePage(items: widget.items);
-    } else if (inputType == InputType.inputTypeEmoji) {
-      return InputFacePage(textController: _textController);
     } else if (inputType == InputType.inputTypeVoice) {
       return InputVoicePage(
         onPressed: (_path, duration) {
@@ -387,36 +381,21 @@ class InputState extends State<Input> {
         iconSize: iconSize,
       );
 
-  Widget _buildEmojiButton() {
-    final isEmojiMode = inputType == InputType.inputTypeEmoji;
-    return CommonIconButton(
-      onPressed: () {
-        if (isEmojiMode) {
-          // Switch from emoji to keyboard input
-          _inputFocusNode.requestFocus();
-        } else {
-          // Switch to emoji input
-          changeInputType(InputType.inputTypeEmoji);
-        }
-      },
-      iconName: isEmojiMode ? 'icon_chat_keyboard.png' : 'chat_emoti_icon.png',
-      size: iconButtonSize,
-      iconSize: iconSize,
-      color: ColorToken.onSurface.of(context),
-      package: 'ox_chat_ui',
-    );
-  }
 
-  Widget _buildMoreButton() {
-    final moreButton = Container(
-      width: iconButtonSize,
-      height: iconButtonSize,
-      alignment: Alignment.center,
-      child: CLIcon(
-        iconName: 'chat_more_icon.png',
-        size: iconSize,
-        color: ColorToken.onSurface.of(context),
-        package: 'ox_chat_ui',
+
+  Widget _buildMoreButton(EdgeInsets padding) {
+    final moreButton = Padding(
+      padding: padding,
+      child: Container(
+        width: iconButtonSize,
+        height: iconButtonSize,
+        alignment: Alignment.center,
+        child: CLIcon(
+          iconName: 'chat_more_icon.png',
+          size: iconSize,
+          color: ColorToken.onSurface.of(context),
+          package: 'ox_chat_ui',
+        ),
       ),
     );
 
@@ -557,7 +536,6 @@ class InputOptions {
 enum InputType {
   inputTypeDefault,
   inputTypeText,
-  inputTypeEmoji,
   inputTypeMore,
   inputTypeVoice,
 }
