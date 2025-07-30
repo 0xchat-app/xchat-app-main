@@ -1,13 +1,17 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:ox_common/component.dart';
+import 'package:chatcore/chat-core.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/login/login_models.dart';
-import 'package:ox_common/navigator/navigator.dart';
-import 'package:ox_common/page/circle_introduction_page.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/ping_utils.dart';
 import 'package:ox_localizable/ox_localizable.dart';
+import 'package:ox_common/utils/compression_utils.dart';
+import 'package:ox_module_service/ox_module_service.dart';
+import 'package:ox_common/component.dart';
+import 'package:ox_common/navigator/navigator.dart';
+import 'package:ox_common/page/circle_introduction_page.dart';
+import 'package:ox_common/utils/scan_utils.dart';
 
 /// Predefined circle configuration
 class _CircleConfig {
@@ -215,6 +219,11 @@ class CircleJoinUtils {
       BuildContext context, String input, CircleType defaultCircleType) async {
     final trimmedInput = input.trim();
 
+    // Check if input is an invite link
+    if (trimmedInput.startsWith('https://0xchat.com/lite/invite') || trimmedInput.startsWith('https://www.0xchat.com/lite/invite')) {
+      return await _processInviteLink(context, trimmedInput);
+    }
+
     // Determine CircleConfig based on input
     _CircleConfig circleConfig = _getCircleConfig(trimmedInput) ??
         _CircleConfig(relayUrl: trimmedInput, type: CircleType.relay);
@@ -239,6 +248,22 @@ class CircleJoinUtils {
     }
 
     return true;
+  }
+
+  /// Process invite link input
+  static Future<bool> _processInviteLink(BuildContext context, String inviteLink) async {
+    try {
+        // Use post frame callback to ensure navigation happens after current frame
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final globalContext = OXNavigator.navigatorKey.currentContext;
+          if (globalContext != null) {
+            ScanUtils.analysis(globalContext, inviteLink);
+          }
+        });
+        return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   /// Check if circle already exists based on circle type
