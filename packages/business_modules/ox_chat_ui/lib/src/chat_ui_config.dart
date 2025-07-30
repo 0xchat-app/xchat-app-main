@@ -30,6 +30,14 @@ class ChatUIConfig {
     CustomPopupMenuController controller
   )? longPressWidgetBuilder;
 
+  /// Create a widget wrapper for context menu (new approach with super_context_menu)
+  /// This takes priority over longPressWidgetBuilder if provided
+  final Widget Function(
+    BuildContext context,
+    types.Message message,
+    Widget child
+  )? contextMenuBuilder;
+
   /// Build a custom status widgets.
   final Widget Function(types.Message message, {required BuildContext context})? customStatusBuilder;
 
@@ -62,6 +70,7 @@ class ChatUIConfig {
     this.avatarBuilder,
     this.customMessageBuilder,
     this.longPressWidgetBuilder,
+    this.contextMenuBuilder,
     this.customStatusBuilder,
     this.codeBlockBuilder,
     this.moreButtonBuilder,

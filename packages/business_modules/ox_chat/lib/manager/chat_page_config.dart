@@ -4,14 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:ox_chat/widget/message_long_press_widget.dart';
 import 'package:ox_chat_ui/ox_chat_ui.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-import 'package:chatcore/chat-core.dart';
 import 'package:ox_chat/utils/general_handler/chat_general_handler.dart';
-import 'package:ox_chat/utils/chat_log_utils.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/platform_utils.dart';
 import 'package:ox_common/utils/theme_color.dart';
 import 'package:ox_common/widgets/common_image_gallery.dart';
-import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:photo_view/photo_view.dart' show PhotoViewComputedScale;
 
@@ -19,24 +16,20 @@ class ChatPageConfig {
 
   static const messagesPerPage = 15;
 
-  /// Menu item by message long pressed
-  Widget longPressWidgetBuilder({
+  /// New context menu builder using super_context_menu (preferred)
+  Widget contextMenuBuilder({
     required BuildContext context,
     required types.Message message,
-    required CustomPopupMenuController controller,
+    required Widget child,
     required ChatGeneralHandler handler,
   }) {
-    return MessageLongPressWidget(
-      pageContext: context,
+    return MessageLongPressMenu.buildContextMenuWidget(
+      context: context,
       message: message,
-      controller: controller,
       handler: handler,
-      backgroundColor: longPressMenuBackgroundColor,
+      child: child,
     );
   }
-
-  /// Background color for long press menu
-  Color? get longPressMenuBackgroundColor => const Color(0xFF2A2A2A);
 
   ImageGalleryOptions get imageGalleryOptions =>
       ImageGalleryOptions(

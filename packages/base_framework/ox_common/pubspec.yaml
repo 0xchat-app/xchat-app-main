@@ -118,6 +118,8 @@ dev_dependencies:
 dependency_overrides:
   bitchat_flutter_plugin:
     path: ../../bitchat-flutter-plugin
+  super_native_extensions:
+    path: ../super_native_extensions
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

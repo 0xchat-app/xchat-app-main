@@ -344,21 +344,34 @@ class MessageState extends State<Message> {
               widget.emojiEnlargementBehavior,
               widget.message as types.TextMessage,
             );
-    final bubbleWithPopupMenu = CustomPopupMenu(
-      controller: _popController,
-      widgetKey: _bubbleKey,
-      arrowColor: const Color(0xFF2A2A2A),
-      menuBuilder: _buildLongPressMenu,
-      pressType: PressType.longPress,
-      horizontalMargin: horizontalPadding,
-      verticalMargin: 0,
-      child: _bubbleBuilder(
+    
+    // Legacy approach: use CustomPopupMenu if no contextMenuBuilder
+    final Widget bubbleWidget;
+    if (widget.uiConfig.contextMenuBuilder == null) {
+      bubbleWidget = CustomPopupMenu(
+        controller: _popController,
+        widgetKey: _bubbleKey,
+        arrowColor: const Color(0xFF2A2A2A),
+        menuBuilder: _buildLongPressMenu,
+        pressType: PressType.longPress,
+        horizontalMargin: horizontalPadding,
+        verticalMargin: 0,
+        child: _bubbleBuilder(
+          context,
+          borderRadius.resolve(Directionality.of(context)),
+          currentUserIsAuthor,
+          enlargeEmojis,
+        ),
+      );
+    } else {
+      // New approach: context menu will be applied inside _bubbleBuilder
+      bubbleWidget = _bubbleBuilder(
         context,
         borderRadius.resolve(Directionality.of(context)),
         currentUserIsAuthor,
         enlargeEmojis,
-      ),
-    );
+      );
+    }
 
     final bubbleWithName = Column(
       crossAxisAlignment: currentUserIsAuthor
@@ -367,13 +380,15 @@ class MessageState extends State<Message> {
       children: [
         if (widget.showName)
           UserName(author: widget.message.author),
-        bubbleWithPopupMenu,
+        bubbleWidget,
       ],
     );
 
     return GestureDetector(
       onDoubleTap: () => widget.onMessageDoubleTap?.call(context, widget.message),
-      onLongPress: () => widget.onMessageLongPress?.call(context, widget.message),
+      onLongPress: widget.uiConfig.contextMenuBuilder != null 
+          ? null  // Disable gesture detector long press when using contextMenuBuilder
+          : () => widget.onMessageLongPress?.call(context, widget.message),
       onTap: () => widget.onMessageTap?.call(context, widget.message),
       child: widget.onMessageVisibilityChanged != null
           ? _buildWithVisibilityDetector(child: bubbleWithName)
@@ -433,11 +448,43 @@ class MessageState extends State<Message> {
           borderRadius: borderRadius,
           color: currentUserIsAuthor
               ? ColorToken.primary.of(context)
-              : ColorToken.surfaceContainer.of(context),
+              : ColorToken.secondaryContainer.of(context).withValues(alpha: 1.0),
         ) : null,
         child: ClipRRect(
           borderRadius: borderRadius,
           child: _messageBuilder(context, borderRadius),
+        ),
+      );
+    }
+
+    // Apply context menu only to the bubble content if contextMenuBuilder is provided
+    if (widget.uiConfig.contextMenuBuilder != null) {
+      bubble = widget.uiConfig.contextMenuBuilder!(
+        context,
+        widget.message,
+        bubble,
+      );
+    }
+
+    Widget bubbleWithReply;
+    if (widget.message.repliedMessageId == null || widget.message.repliedMessageId!.isEmpty) {
+      bubbleWithReply = Flexible(child: bubble);
+    } else {
+      bubbleWithReply = Flexible(
+        child: IntrinsicWidth(
+          child: Column(
+            crossAxisAlignment: currentUserIsAuthor ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            children: [
+              bubble,
+              Align(
+                alignment: Alignment.centerLeft,
+                child: widget.uiConfig.repliedMessageBuilder?.call(
+                  widget.message,
+                  messageWidth: contentMaxWidth,
+                ),
+              ),
+            ],
+          ),
         ),
       );
     }
@@ -448,26 +495,7 @@ class MessageState extends State<Message> {
       children: [
         if (currentUserIsAuthor)
           _buildStatusWidget().setPaddingOnly(right: statusPadding),
-        if (widget.message.repliedMessageId == null || widget.message.repliedMessageId!.isEmpty)
-          Flexible(child: bubble,)
-        else
-          Flexible(
-            child: IntrinsicWidth(
-              child: Column(
-                crossAxisAlignment: currentUserIsAuthor ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-                children: [
-                  bubble,
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: widget.uiConfig.repliedMessageBuilder?.call(
-                      widget.message,
-                      messageWidth: contentMaxWidth,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+        bubbleWithReply,
         if (!currentUserIsAuthor)
           _buildStatusWidget().setPaddingOnly(left: statusPadding),
       ],

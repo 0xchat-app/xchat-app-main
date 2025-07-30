@@ -193,10 +193,10 @@ class CommonChatWidgetState extends State<CommonChatWidget> {
                     handler.mentionHandler?.addMentionText(user);
                 },
               ),
-              longPressWidgetBuilder: (context, message, controller) => pageConfig.longPressWidgetBuilder(
+              contextMenuBuilder: (context, message, child) => pageConfig.contextMenuBuilder(
                 context: context,
                 message: message,
-                controller: controller,
+                child: child,
                 handler: handler,
               ),
               customMessageBuilder: ({
