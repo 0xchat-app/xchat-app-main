@@ -49,14 +49,16 @@ class TookKit{
     return bytes.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
   }
 
-  static Future<void> copyKey(BuildContext context, String keyContent) async {
+  static Future<void> copyKey(BuildContext context, String keyContent, [String? toastMsg]) async {
     await Clipboard.setData(
       ClipboardData(
         text: keyContent,
       ),
     );
-    await CommonToast.instance
-        .show(context, 'copied_to_clipboard'.commonLocalized());
+    toastMsg ??= 'copied_to_clipboard'.commonLocalized();
+    if (toastMsg.isNotEmpty) {
+      await CommonToast.instance.show(context, toastMsg);
+    }
   }
 
   static Future<void> vibrateEffect() async {

@@ -33,6 +33,7 @@ import 'package:ox_common/utils/ox_chat_binding.dart';
 import 'package:ox_common/utils/platform_utils.dart';
 import 'package:ox_common/utils/string_utils.dart';
 import 'package:ox_common/utils/custom_uri_helper.dart';
+import 'package:ox_common/utils/took_kit.dart';
 import 'package:ox_common/utils/video_data_manager.dart';
 import 'package:ox_common/widgets/common_image_gallery.dart';
 import 'package:ox_common/widgets/common_long_content_page.dart';
@@ -500,7 +501,7 @@ extension ChatMenuHandlerEx on ChatGeneralHandler {
   void menuItemPressHandler(BuildContext context, types.Message message, MessageLongPressEventType type) {
     switch (type) {
       case MessageLongPressEventType.copy:
-        _copyMenuItemPressHandler(message);
+        _copyMenuItemPressHandler(context, message);
         break;
       case MessageLongPressEventType.delete:
         _deleteMenuItemPressHandler(context, message);
@@ -520,9 +521,9 @@ extension ChatMenuHandlerEx on ChatGeneralHandler {
   }
 
   /// Handles the press event for the "Copy" button in a menu item.
-  void _copyMenuItemPressHandler(types.Message message) async {
+  void _copyMenuItemPressHandler(BuildContext context, types.Message message) async {
     if (message is types.TextMessage) {
-      Clipboard.setData(ClipboardData(text: message.text));
+      TookKit.copyKey(context, message.text, '');
     }
   }
 

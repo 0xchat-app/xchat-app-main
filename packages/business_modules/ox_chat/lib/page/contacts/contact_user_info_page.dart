@@ -4,6 +4,7 @@ import 'package:chatcore/chat-core.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/string_utils.dart';
+import 'package:ox_common/utils/took_kit.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_common/widgets/common_toast.dart';
@@ -158,10 +159,9 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
   }
 
   void _copyToClipboard(String text, String label) {
-    Clipboard.setData(ClipboardData(text: text));
-    if (!mounted) return;
-    CommonToast.instance.show(
-      context, 
+    TookKit.copyKey(
+      context,
+      text,
       '$label ${Localized.text('ox_common.copied_to_clipboard')}',
     );
   }
