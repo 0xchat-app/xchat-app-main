@@ -59,7 +59,7 @@ class CLAlertDialog {
         context: context,
         barrierDismissible: barrierDismissible,
         builder: (ctx) => AlertDialog(
-          title: CLText(displayTitle),
+          title: _buildTitle(displayTitle),
           content: CLText.bodyMedium(content),
           actions: _materialActions(ctx, actions),
         ),
@@ -70,7 +70,7 @@ class CLAlertDialog {
       context: context,
       barrierDismissible: barrierDismissible,
       builder: (ctx) => CupertinoAlertDialog(
-        title: CLText(displayTitle),
+        title: _buildTitle(displayTitle),
         content: Padding(
           padding: const EdgeInsets.only(top: 8.0),
           child: CLText.bodyMedium(content),
@@ -96,7 +96,7 @@ class CLAlertDialog {
         context: context,
         barrierDismissible: barrierDismissible,
         builder: (ctx) => AlertDialog(
-          title: CLText(displayTitle),
+          title: _buildTitle(displayTitle),
           content: content,
           actions: _materialActions(ctx, actions),
         ),
@@ -107,7 +107,7 @@ class CLAlertDialog {
       context: context,
       barrierDismissible: barrierDismissible,
       builder: (ctx) => CupertinoAlertDialog(
-        title: CLText(displayTitle),
+        title: _buildTitle(displayTitle),
         content: Padding(
           padding: const EdgeInsets.only(top: 8.0),
           child: content,
@@ -117,7 +117,22 @@ class CLAlertDialog {
     );
   }
 
-  /// Build Material buttons.
+  static Widget _buildTitle(String title) {
+    if (PlatformStyle.isUseMaterial) {
+      return CLText(
+        title,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+      );
+    } else {
+      return CLText(
+        title,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      );
+    }
+  }
+
   static List<Widget> _materialActions<T>(
     BuildContext ctx,
     List<CLAlertAction<T>> models,
@@ -133,7 +148,6 @@ class CLAlertDialog {
         .toList();
   }
 
-  /// Build Cupertino buttons.
   static List<Widget> _cupertinoActions<T>(
     BuildContext ctx,
     List<CLAlertAction<T>> models,
