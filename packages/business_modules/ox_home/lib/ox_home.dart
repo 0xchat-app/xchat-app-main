@@ -2,17 +2,13 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:chatcore/chat-core.dart';
-import 'package:nostr_core_dart/nostr.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/scheme/scheme_helper.dart';
-import 'package:ox_common/utils/custom_uri_helper.dart';
 import 'package:ox_common/utils/scan_utils.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/login/login_models.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_module_service/ox_module_service.dart';
-import 'package:ox_common/log_util.dart';
-import 'package:ox_common/widgets/common_toast.dart';
 
 
 class OxChatHome extends OXFlutterModule {
@@ -41,7 +37,7 @@ class OxChatHome extends OXFlutterModule {
 
     // Handle Universal Links
     if (action == 'universal_lite') {
-      await handleUniversalLink(scheme);
+      await ScanUtils.analysis(context, scheme);
       return;
     }
 
@@ -66,108 +62,6 @@ class OxChatHome extends OXFlutterModule {
     } else {
       // Use existing ScanUtils for other schemes
       ScanUtils.analysis(context, nostrString);
-    }
-  }
-
-  /// Handle Universal Links from https://0xchat.com/lite
-  Future<void> handleUniversalLink(String url) async {
-    BuildContext? context = OXNavigator.navigatorKey.currentContext;
-    if (context == null) return;
-
-    try {
-      final uri = Uri.parse(url);
-
-      // Handle invite links
-      if (uri.path == '/lite/invite') {
-        await _handleInviteLink(uri);
-        return;
-      }
-
-      // Handle other paths as needed
-      LogUtil.d('Unhandled Universal Link: $url');
-    } catch (e) {
-      LogUtil.e('Error handling Universal Link: $e');
-    }
-  }
-
-  /// Handle invite links from Universal Links
-  Future<void> _handleInviteLink(Uri uri) async {
-    BuildContext? context = OXNavigator.navigatorKey.currentContext;
-    if (context == null) return;
-
-    try {
-      final keypackage = uri.queryParameters['keypackage'];
-      String? pubkey = uri.queryParameters['pubkey'];
-      final eventid = uri.queryParameters['eventid'];
-      final relay = uri.queryParameters['relay'];
-
-      // Check if relay is provided
-      if (relay == null || relay.isEmpty) {
-        CommonToast.instance.show(context, 'Invalid invite link: missing relay');
-        return;
-      }
-
-      // Check if we need to join a circle based on relay
-      final relayUrl = relay;
-      final currentCircle = LoginManager.instance.currentCircle;
-      bool needToJoinCircle = false;
-
-      if (currentCircle != null) {
-        if (currentCircle.relayUrl != relayUrl &&
-            currentCircle.relayUrl.replaceFirst(RegExp(r'/+$'), '') !=
-                relayUrl.replaceFirst(RegExp(r'/+$'), '')) {
-          needToJoinCircle = true;
-        }
-      } else {
-        needToJoinCircle = true;
-      }
-
-      // If we need to join a circle, show dialog first
-      if (needToJoinCircle) {
-        await _showJoinCircleDialog(context, [relayUrl], pubkey ?? '');
-        // Note: _showJoinCircleDialog handles the circle joining logic internally
-      }
-
-      // Process the invite link
-      bool success = false;
-      if (keypackage != null && pubkey != null) {
-        // Handle one-time invite link
-        success = await KeyPackageManager.handleOneTimeInviteLink(
-          encodedKeyPackage: keypackage,
-          senderPubkey: pubkey,
-          relays: [relayUrl],
-        );
-      } else if (eventid != null) {
-        // Handle permanent invite link
-        final result = await KeyPackageManager.handlePermanentInviteLink(
-          eventId: eventid,
-          relays: [relayUrl],
-        );
-        success = result['success'] as bool;
-        // For permanent invites, we can get pubkey from the result
-        if (success && pubkey == null) {
-          pubkey = result['pubkey'] as String?;
-        }
-      } else {
-        // No valid invite parameters found
-        CommonToast.instance.show(context, 'Invalid invite link: missing parameters');
-        return;
-      }
-
-      if (success) {
-        // Navigate to sender's profile page
-        if (pubkey != null) {
-          await _navigateToUserDetail(context, pubkey);
-        } else {
-          CommonToast.instance
-              .show(context, 'Successfully processed invite link');
-        }
-      } else {
-        CommonToast.instance.show(context, 'Failed to process invite link');
-      }
-    } catch (e) {
-      LogUtil.e('Error handling invite link: $e');
-      CommonToast.instance.show(context, 'Failed to process invite link');
     }
   }
 
