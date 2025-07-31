@@ -324,7 +324,7 @@
   "str_group_admin_permission_success_toast": "Berechtigung erfolgreich geändert.",
   "str_dm_auto_delete_hint": "Nachrichten werden nach ${time} automatisch gelöscht",
   "delete_message_me_action_mode": "Für mich löschen",
-  "delete_message_everyone_action_mode": "Für alle löschen",
+  "delete_message_everyone_action_mode": "Löschen für alle anfordern",
   "str_group_admin_permission_add_fail_toast": "Berechtigung kann nicht hinzugefügt werden.",
   "str_title_new_message": "Neue Nachricht",
   "str_mark_as_unread": "Als ungelesen markieren",

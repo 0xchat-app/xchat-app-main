@@ -321,7 +321,7 @@
   "str_group_admin_permission_success_toast": "Atļauja veiksmīgi mainīta.",
   "str_dm_auto_delete_hint": "Ziņas tiek automātiski dzēstas pēc ${time}",
   "delete_message_me_action_mode": "Dzēst man",
-  "delete_message_everyone_action_mode": "Dzēst visiem",
+  "delete_message_everyone_action_mode": "Pieprasīt dzēšanu visiem",
   "str_group_admin_permission_add_fail_toast": "Atļauju nevar pievienot.",
   "str_title_new_message": "Jauna Ziņa",
   "str_mark_as_unread": "Atzīmēt kā nelasītu",

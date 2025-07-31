@@ -321,7 +321,7 @@
   "str_group_admin_permission_success_toast": "Разрешение успешно изменено.",
   "str_dm_auto_delete_hint": "Сообщения автоматически удаляются через ${time}",
   "delete_message_me_action_mode": "Удалить для меня",
-  "delete_message_everyone_action_mode": "Удалить для всех",
+  "delete_message_everyone_action_mode": "Запросить удаление для всех",
   "str_group_admin_permission_add_fail_toast": "Не удалось добавить разрешение.",
   "str_title_new_message": "Новое сообщение",
   "str_mark_as_unread": "Отметить как непрочитанное",

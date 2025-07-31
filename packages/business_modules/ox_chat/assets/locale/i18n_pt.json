@@ -320,7 +320,7 @@
   "str_group_admin_permission_success_toast": "Permissão alterada com sucesso.",
   "str_dm_auto_delete_hint": "Mensagens excluídas automaticamente após ${time}",
   "delete_message_me_action_mode": "Excluir para mim",
-  "delete_message_everyone_action_mode": "Excluir para todos",
+  "delete_message_everyone_action_mode": "Solicitar exclusão para todos",
   "str_group_admin_permission_add_fail_toast": "Não é possível adicionar a permissão.",
   "str_title_new_message": "Nova Mensagem",
   "str_mark_as_unread": "Marcar como não lido",

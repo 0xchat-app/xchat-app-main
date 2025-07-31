@@ -321,7 +321,7 @@
   "str_group_admin_permission_success_toast": "Η άδεια άλλαξε με επιτυχία.",
   "str_dm_auto_delete_hint": "Τα μηνύματα διαγράφονται αυτόματα μετά από ${time}",
   "delete_message_me_action_mode": "Διαγραφή για μένα",
-  "delete_message_everyone_action_mode": "Διαγραφή για όλους",
+  "delete_message_everyone_action_mode": "Αίτημα διαγραφής για όλους",
   "str_group_admin_permission_add_fail_toast": "Δεν μπορεί να προστεθεί η άδεια.",
   "str_title_new_message": "Νέο Μήνυμα",
   "str_mark_as_unread": "Σήμανση ως μη αναγνωσμένο",

@@ -321,7 +321,7 @@
   "str_group_admin_permission_success_toast": "دسترسی ها با موفقیت تغییر کرد.",
   "str_dm_auto_delete_hint": "پیام‌ها پس از ${time} به‌طور خودکار پاک می‌شوند",
   "delete_message_me_action_mode": "پاک کردن برای من",
-  "delete_message_everyone_action_mode": "پاک کردن برای همه",
+  "delete_message_everyone_action_mode": "درخواست پاک کردن برای همه",
   "str_group_admin_permission_add_fail_toast": "دسترسی ها نمی‌تواند اضافه شود.",
   "str_title_new_message": "پیام جدید",
   "str_mark_as_unread": "علامت‌گذاری به عنوان نخوانده",

@@ -321,7 +321,7 @@
   "str_group_admin_permission_success_toast": "अनुमति सफलतापूर्वक बदली गई।",
   "str_dm_auto_delete_hint": "संदेश ${time} के बाद स्वचालित रूप से हटा दिए जाते हैं",
   "delete_message_me_action_mode": "मेरे लिए हटाएँ",
-  "delete_message_everyone_action_mode": "सभी के लिए हटाएँ",
+  "delete_message_everyone_action_mode": "सभी के लिए हटाने का अनुरोध करें",
   "str_group_admin_permission_add_fail_toast": "अनुमति जोड़ी नहीं जा सकती।",
   "str_title_new_message": "नया संदेश",
   "str_mark_as_unread": "अपठित के रूप में चिह्नित करें",

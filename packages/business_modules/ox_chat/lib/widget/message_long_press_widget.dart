@@ -30,15 +30,15 @@ class MessageLongPressMenu {
     }
     
     // Report action
-    menuItems.add(
-      MenuAction(
-        title: Localized.text('ox_chat.message_menu_report'),
-        image: MenuImage.icon(CupertinoIcons.exclamationmark_circle),
-        callback: () {
-          handler.menuItemPressHandler(context, message, MessageLongPressEventType.report);
-        },
-      ),
-    );
+    // menuItems.add(
+    //   MenuAction(
+    //     title: Localized.text('ox_chat.message_menu_report'),
+    //     image: MenuImage.icon(CupertinoIcons.exclamationmark_circle),
+    //     callback: () {
+    //       handler.menuItemPressHandler(context, message, MessageLongPressEventType.report);
+    //     },
+    //   ),
+    // );
     
     // Quote action
     menuItems.add(
