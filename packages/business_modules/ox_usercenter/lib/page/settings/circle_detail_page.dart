@@ -55,8 +55,7 @@ class CircleDetailPage extends StatelessWidget {
 
   Widget _buildMenuButton(BuildContext context) {
     return CLButton.icon(
-      isAppBarAction: true,
-      child: const CLIcon(icon: CupertinoIcons.ellipsis),
+      icon: CupertinoIcons.ellipsis,
       onTap: () async {
         final action = await CLPicker.show<_MenuAction>(
           context: context,

@@ -53,11 +53,7 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
         title: Localized.text('ox_chat.user_detail'),
         actions: [
           CLButton.icon(
-            isAppBarAction: true,
-            child: Icon(
-              _isRefreshing ? Icons.refresh : Icons.refresh_outlined,
-              color: _isRefreshing ? Colors.grey : null,
-            ),
+            icon: _isRefreshing ? Icons.refresh : Icons.refresh_outlined,
             onTap: _isRefreshing ? null : refreshUserProfile,
           ),
         ],

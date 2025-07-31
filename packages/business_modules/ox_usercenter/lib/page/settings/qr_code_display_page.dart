@@ -163,19 +163,10 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
         previousPageTitle: widget.previousPageTitle,
         actions: widget.otherUser == null ? <Widget>[
           // Share button with proper alignment
-          Transform.translate(
-            offset: Offset(0, -2.px),
-            child: IconButton(
-              onPressed: currentInviteLink != null ? _showShareOptions : null,
-              icon: Icon(
-                Icons.share,
-                color: currentInviteLink != null 
-                    ? ColorToken.primary.of(context)
-                    : ColorToken.onSurfaceVariant.of(context),
-                size: 24.px,
-              ),
-              tooltip: Localized.text('ox_usercenter.share_invite_link'),
-            ),
+          CLButton.icon(
+            onTap: currentInviteLink != null ? _showShareOptions : null,
+            tooltip: Localized.text('ox_usercenter.share_invite_link'),
+            icon: Icons.share
           ),
         ] : <Widget>[],
       ),

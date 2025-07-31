@@ -45,11 +45,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
         previousPageTitle: widget.previousPageTitle,
         actions: [
           CLButton.icon(
-            isAppBarAction: true,
-            child: Icon(
-              _isRefreshing ? Icons.refresh : Icons.refresh_outlined,
-              color: _isRefreshing ? Colors.grey : null,
-            ),
+            icon: _isRefreshing ? Icons.refresh : Icons.refresh_outlined,
             onTap: _isRefreshing ? null : refreshProfile,
           ),
         ],

@@ -9,11 +9,13 @@ class CLIconButton extends StatelessWidget {
     required this.child,
     required this.size,
     this.onTap,
+    this.tooltip,
   });
 
   final Widget child;
   final double size;
   final VoidCallback? onTap;
+  final String? tooltip;
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +36,7 @@ class CLIconButton extends StatelessWidget {
           minHeight: size,
         ),
         alignment: Alignment.center,
+        tooltip: tooltip,
         icon: child,
       ),
     );
