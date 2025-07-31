@@ -8,7 +8,7 @@ import 'package:ox_common/utils/widget_tool.dart';
 class CLPopupMenuItem<T> {
   final T value;
   final String title;
-  final Widget? icon;
+  final IconData? icon;
   final bool enabled;
   final VoidCallback? onTap;
 
@@ -19,21 +19,6 @@ class CLPopupMenuItem<T> {
     this.enabled = true,
     this.onTap,
   });
-
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Expanded(
-          child: CLText.bodyMedium(
-            title,
-          ),
-        ),
-        if (icon != null)
-          icon!.setPaddingOnly(left: 12)
-      ],
-    );
-  }
 }
 
 class CLPopupMenu<T> extends StatelessWidget {
@@ -50,6 +35,7 @@ class CLPopupMenu<T> extends StatelessWidget {
   final Offset? offset;
   final Color? color;
   final Alignment? scaleDirection;
+  final double itemHeight;
 
   const CLPopupMenu({
     super.key,
@@ -66,52 +52,25 @@ class CLPopupMenu<T> extends StatelessWidget {
     this.offset,
     this.color,
     this.scaleDirection,
+    this.itemHeight = 44.0,
   });
 
   Offset get defaultOffset => const Offset(0, 8.0);
 
   @override
   Widget build(BuildContext context) {
-    if (PlatformStyle.isUseMaterial) {
-      return _buildMaterialPopupMenu(context);
-    } else {
-      return _buildCupertinoPopupMenu(context);
-    }
+    return _buildPopupMenu(context);
   }
 
-  Widget _buildMaterialPopupMenu(BuildContext context) {
-    return PopupMenuButton<T>(
-      initialValue: initialValue,
-      onSelected: onSelected,
-      onCanceled: onCanceled,
-      tooltip: tooltip,
-      padding: padding ?? const EdgeInsets.symmetric(horizontal: 8.0),
-      shadowColor: shadowColor,
-      surfaceTintColor: surfaceTintColor,
-      enableFeedback: enableFeedback,
-      offset: offset ?? defaultOffset,
-      color: color,
-      itemBuilder: (context) => items.map((item) {
-        return PopupMenuItem<T>(
-          value: item.value,
-          enabled: item.enabled,
-          onTap: item.onTap,
-          child: item.build(context),
-        );
-      }).toList(),
-      child: child,
-    );
-  }
-
-  Widget _buildCupertinoPopupMenu(BuildContext context) {
+  Widget _buildPopupMenu(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: () => _showCupertinoPopupMenu(context),
+      onTap: () => _showPopupMenu(context),
       child: child,
     );
   }
 
-  void _showCupertinoPopupMenu(BuildContext context) {
+  void _showPopupMenu(BuildContext context) {
     final RenderBox button = context.findRenderObject() as RenderBox;
     final RenderBox overlay = Navigator.of(context).overlay!.context.findRenderObject() as RenderBox;
     
@@ -120,7 +79,7 @@ class CLPopupMenu<T> extends StatelessWidget {
     
     final screenSize = overlay.size;
     
-    const estimatedMenuWidth = 250.0;
+    final estimatedMenuWidth = PlatformStyle.isUseMaterial ? 200.0 : 250.0;
     const estimatedMenuItemHeight = 44.0;
     final estimatedMenuHeight = items.length * estimatedMenuItemHeight;
     
@@ -175,48 +134,38 @@ class CLPopupMenu<T> extends StatelessWidget {
       bool hasSpaceLeft = buttonPosition.dx - estimatedMenuWidth >= 0;
       
       if (isExpandingUpward) {
-        // Menu is positioned above button, expand upward
         direction = Alignment.bottomLeft;
       } else if (!hasSpaceBelow && hasSpaceAbove) {
-        // No space below but space above, expand upward
         direction = Alignment.bottomLeft;
       } else if (!hasSpaceRight && hasSpaceLeft) {
-        // No space on right but space on left, expand leftward
         direction = Alignment.topRight;
       } else if (!hasSpaceLeft && hasSpaceRight) {
-        // No space on left but space on right, expand rightward
         direction = Alignment.topLeft;
       } else {
-        // Default: expand downward
         direction = Alignment.topLeft;
       }
     }
 
-    // Use Overlay directly to avoid default animation of showCupertinoModalPopup
     final overlayState = Navigator.of(context).overlay!;
     late final OverlayEntry overlayEntry;
-    bool isRemoved = false; // Flag to prevent duplicate removal
-    final Completer<void> removalCompleter = Completer<void>(); // Track OverlayEntry removal
+    bool isRemoved = false;
+    final Completer<void> removalCompleter = Completer<void>();
     
     overlayEntry = OverlayEntry(
-      builder: (context) => _CupertinoPopupMenu<T>(
+      builder: (context) => _CLPopupMenu<T>(
         items: items,
         position: Offset(left, top),
         scaleDirection: direction,
         onSelected: (value) async {
-          // Wait for OverlayEntry to be completely removed before executing selection callback
           await removalCompleter.future;
-          // Use SchedulerBinding to ensure the removal is complete before executing callback
           WidgetsBinding.instance.addPostFrameCallback((_) {
             onSelected?.call(value);
           });
         },
         onCanceled: () {
-          // Safety check: ensure removal only once
           if (!isRemoved && overlayEntry.mounted) {
             isRemoved = true;
             overlayEntry.remove();
-            // Complete the removal future after OverlayEntry is removed
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (!removalCompleter.isCompleted) {
                 removalCompleter.complete();
@@ -226,7 +175,7 @@ class CLPopupMenu<T> extends StatelessWidget {
           }
         },
         maxWidth: estimatedMenuWidth,
-        itemHeight: estimatedMenuItemHeight,
+        itemHeight: itemHeight,
       ),
     );
     
@@ -234,8 +183,7 @@ class CLPopupMenu<T> extends StatelessWidget {
   }
 }
 
-/// Cupertino popup menu implementation
-class _CupertinoPopupMenu<T> extends StatefulWidget {
+class _CLPopupMenu<T> extends StatefulWidget {
   final List<CLPopupMenuItem<T>> items;
   final Offset position;
   final Alignment scaleDirection;
@@ -244,7 +192,7 @@ class _CupertinoPopupMenu<T> extends StatefulWidget {
   final double maxWidth;
   final double itemHeight;
 
-  const _CupertinoPopupMenu({
+  const _CLPopupMenu({
     required this.items,
     required this.position,
     required this.scaleDirection,
@@ -255,10 +203,10 @@ class _CupertinoPopupMenu<T> extends StatefulWidget {
   });
 
   @override
-  State<_CupertinoPopupMenu<T>> createState() => _CupertinoPopupMenuState<T>();
+  State<_CLPopupMenu<T>> createState() => _CLPopupMenuState<T>();
 }
 
-class _CupertinoPopupMenuState<T> extends State<_CupertinoPopupMenu<T>>
+class _CLPopupMenuState<T> extends State<_CLPopupMenu<T>>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
@@ -361,15 +309,37 @@ class _CupertinoPopupMenuState<T> extends State<_CupertinoPopupMenu<T>>
     return Container(
       constraints: BoxConstraints(maxWidth: widget.maxWidth),
       decoration: BoxDecoration(
-        color: CupertinoColors.systemBackground.resolveFrom(context), // iOS system material
-        borderRadius: BorderRadius.circular(14), // ≈ 14 pt, matches iOS 13+ menu/card style
-        border: Border.all(
-          color: CupertinoColors.separator.resolveFrom(context),
-          width: 0.5,
-        ),
+        color: PlatformStyle.isUseMaterial 
+            ? Theme.of(context).colorScheme.surface
+            : CupertinoColors.systemBackground.resolveFrom(context),
+        borderRadius: PlatformStyle.isUseMaterial 
+            ? BorderRadius.circular(8) // Material Design 3 menu radius
+            : BorderRadius.circular(14), // iOS 13+ menu/card style
+        border: PlatformStyle.isUseMaterial 
+            ? null // Material Design 3 doesn't use borders
+            : Border.all(
+                color: CupertinoColors.separator.resolveFrom(context),
+                width: 0.5,
+              ),
+        boxShadow: PlatformStyle.isUseMaterial 
+            ? [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.12),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.08),
+                  blurRadius: 16,
+                  offset: const Offset(0, 8),
+                ),
+              ]
+            : null,
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: PlatformStyle.isUseMaterial 
+            ? BorderRadius.circular(8)
+            : BorderRadius.circular(14),
         child: GestureDetector(
           onTapDown: (details) {
             final index = _getItemIndexFromPosition(details.localPosition);
@@ -478,13 +448,15 @@ class _CupertinoPopupMenuState<T> extends State<_CupertinoPopupMenu<T>>
   Widget _buildMenuItem(CLPopupMenuItem<T> item, {bool isLast = false, int index = 0}) {
     final isHovered = _hoveredIndex == index;
     final isPressed = _pressedIndex == index && _isPressed;
-    
+
     return Container(
       height: widget.itemHeight,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: PlatformStyle.isUseMaterial 
+          ? const EdgeInsets.symmetric(horizontal: 16, vertical: 12)
+          : const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: _getHighlightColor(isHovered, isPressed, item.enabled),
-        border: isLast ? null : Border(
+        border: isLast || PlatformStyle.isUseMaterial ? null : Border(
           bottom: BorderSide(
             color: CupertinoColors.separator.resolveFrom(context),
             width: 0.5,
@@ -493,8 +465,50 @@ class _CupertinoPopupMenuState<T> extends State<_CupertinoPopupMenu<T>>
       ),
       child: Opacity(
         opacity: item.enabled ? 1.0 : 0.5,
-        child: item.build(context),
+        child: PlatformStyle.isUseMaterial 
+            ? _buildMenuItemForMaterial(item)
+            : _buildMenuItemForCupertino(item) 
       ),
+    );
+  }
+
+  Widget _buildMenuItemForMaterial(CLPopupMenuItem<T> item) {
+    final icon = item.icon;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (icon != null)
+          CLIcon(
+            icon: icon,
+            size: 24, // Material Design 3 icon size
+            color: ColorToken.onSurface.of(context),
+          )
+        else
+          SizedBox.square(dimension: 24),
+        CLText.bodyLarge( // Material Design 3 text style
+          item.title,
+        ).setPaddingOnly(left: 16), // Material Design 3 spacing
+        Spacer(),
+      ],
+    );
+  }
+
+  Widget _buildMenuItemForCupertino(CLPopupMenuItem<T> item) {
+    final icon = item.icon;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        CLText.bodyMedium(
+          item.title,
+        ),
+        Spacer(),
+        if (icon != null)
+          CLIcon(
+            icon: icon,
+            size: 20,
+            color: ColorToken.onSurface.of(context),
+          ).setPaddingOnly(left: 12),
+      ],
     );
   }
 
@@ -511,8 +525,7 @@ class _CupertinoPopupMenuState<T> extends State<_CupertinoPopupMenu<T>>
     }
     
     // Calculate item index
-    final itemHeight = widget.itemHeight;
-    final index = (position.dy / itemHeight).floor();
+    final index = (position.dy / widget.itemHeight).floor();
     
     // Final bounds check
     if (index >= 0 && index < widget.items.length) {
@@ -526,7 +539,9 @@ class _CupertinoPopupMenuState<T> extends State<_CupertinoPopupMenu<T>>
     if (!enabled) return Colors.transparent;
     
     if (isPressed || isHovered) {
-      return CupertinoColors.systemGrey.withOpacity(0.1);
+      return PlatformStyle.isUseMaterial 
+          ? Theme.of(context).colorScheme.primary.withOpacity(0.08) // Material Design 3 highlight
+          : CupertinoColors.systemGrey.withOpacity(0.1);
     }
     
     return Colors.transparent;
@@ -548,6 +563,8 @@ class CLPopupMenuBuilder {
     bool enableFeedback = true,
     Offset? offset,
     Color? color,
+    Alignment? scaleDirection,
+    double? itemHeight,
   }) {
     return CLPopupMenu<T>(
       key: key,
@@ -563,13 +580,15 @@ class CLPopupMenuBuilder {
       enableFeedback: enableFeedback,
       offset: offset,
       color: color,
+      scaleDirection: scaleDirection,
+      itemHeight: itemHeight ?? 44.0,
     );
   }
 
   static CLPopupMenuItem<T> item<T>({
     required T value,
     required String title,
-    Widget? icon,
+    IconData? icon,
     bool enabled = true,
     VoidCallback? onTap,
   }) {

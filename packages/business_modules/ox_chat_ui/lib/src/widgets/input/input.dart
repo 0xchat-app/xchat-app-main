@@ -398,11 +398,7 @@ class InputState extends State<Input> {
       items: widget.items.map((item) => CLPopupMenuItem<String>(
         value: item.id,
         title: item.title(),
-        icon: CLIcon(
-          icon: item.icon,
-          size: 20,
-          color: ColorToken.onSurface.of(context),
-        ),
+        icon: item.icon,
         onTap: () => item.action(context),
       )).toList(),
       color: ColorToken.surface.of(context),

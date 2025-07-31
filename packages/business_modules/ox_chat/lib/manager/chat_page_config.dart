@@ -101,7 +101,7 @@ extension InputMoreItemEx on InputMoreItem {
       InputMoreItem(
         id: 'video',
         title: () => Localized.text('ox_chat_ui.input_more_video'),
-        icon: CupertinoIcons.video_camera,
+        icon: CupertinoIcons.videocam_circle,
         action: (context) {
           handler.albumPressHandler(context, 2);
         },
