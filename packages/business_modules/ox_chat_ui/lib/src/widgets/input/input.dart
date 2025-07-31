@@ -310,6 +310,7 @@ class InputState extends State<Input> {
   }
 
   Widget _buildVoiceButton() {
+    return SizedBox.square(dimension: iconButtonSize,);
     if(PlatformUtils.isDesktop) return SizedBox().setPadding(EdgeInsets.all(_itemSpacing));
     return AttachmentButton(
       isLoading: widget.isAttachmentUploading ?? false,
