@@ -92,6 +92,10 @@ extension ScanAnalysisHandlerEx on ScanUtils {
 
   static Future<void> _handleInviteLinkFromScan(Uri uri, BuildContext context) async {
     context = OXNavigator.rootContext;
+    
+    // Show loading at the beginning
+    OXLoading.show();
+    
     try {
       final keypackage = uri.queryParameters['keypackage'];
       final pubkey = uri.queryParameters['pubkey'];
@@ -100,6 +104,7 @@ extension ScanAnalysisHandlerEx on ScanUtils {
 
       // Check if relay is provided
       if (relay == null || relay.isEmpty) {
+        OXLoading.dismiss();
         CommonToast.instance.show(context, 'Invalid invite link: missing relay');
         return;
       }
@@ -110,6 +115,7 @@ extension ScanAnalysisHandlerEx on ScanUtils {
       final account = LoginManager.instance.currentState.account;
       
       if (account == null) {
+        OXLoading.dismiss();
         CommonToast.instance.show(context, 'No account logged in');
         return;
       }
@@ -136,6 +142,9 @@ extension ScanAnalysisHandlerEx on ScanUtils {
       }
 
       if (targetCircle != null) {
+        // Hide loading for dialog
+        OXLoading.dismiss();
+        
         // Circle exists in account, show switch confirmation dialog
         final agreeSwitch = await _showSwitchCircleDialogFromScan(context, targetCircle, pubkey ?? '');
         if (agreeSwitch != true) {
@@ -148,76 +157,96 @@ extension ScanAnalysisHandlerEx on ScanUtils {
           return;
         }
         
+        // Show loading again for processing
+        OXLoading.show();
+        
         // Process the invite link after switching
         await _processInviteLink(context, keypackage, pubkey, eventid, relayUrl);
         return;
       }
 
+      // Hide loading for dialog
+      OXLoading.dismiss();
+      
       // Case 3: Circle doesn't exist in account, proceed with join circle logic
       final agreeJoin = await _showJoinCircleDialogFromScan(context, [relayUrl], pubkey ?? '');
       if (agreeJoin != true) {
         return;
       }
 
+      // Show loading again for processing
+      OXLoading.show();
+      
       // Join the circle and process invite
       await _processInviteLink(context, keypackage, pubkey, eventid, relayUrl);
     } catch (e) {
+      OXLoading.dismiss();
       LogUtil.e('Error handling invite link from scan: $e');
       CommonToast.instance.show(context, 'Failed to process invite link');
     }
   }
 
   static Future<void> _processInviteLink(BuildContext context, String? keypackage, String? pubkey, String? eventid, String relayUrl) async {
-    // Process the invite link
-    bool success = false;
-    String? senderPubkey = pubkey; // For one-time invites
-    
-    if (keypackage != null && pubkey != null) {
-      // Decompress keypackage data if it's compressed
-      String decompressedKeyPackage = keypackage;
-      if (keypackage.startsWith('CMP:')) {
-        try {
-          final decompressed = await CompressionUtils.decompressWithPrefix(keypackage);
-          if (decompressed != null) {
-            decompressedKeyPackage = decompressed!;
-            print('Successfully decompressed keypackage data');
-          } else {
-            print('Failed to decompress keypackage data, using original');
+    try {
+      // Process the invite link
+      bool success = false;
+      String? senderPubkey = pubkey; // For one-time invites
+      
+      if (keypackage != null && pubkey != null) {
+        // Decompress keypackage data if it's compressed
+        String decompressedKeyPackage = keypackage;
+        if (keypackage.startsWith('CMP:')) {
+          try {
+            final decompressed = await CompressionUtils.decompressWithPrefix(keypackage);
+            if (decompressed != null) {
+              decompressedKeyPackage = decompressed!;
+              print('Successfully decompressed keypackage data');
+            } else {
+              print('Failed to decompress keypackage data, using original');
+            }
+          } catch (e) {
+            print('Error decompressing keypackage: $e');
           }
-        } catch (e) {
-          print('Error decompressing keypackage: $e');
         }
+        
+        // Handle one-time invite link
+        success = await KeyPackageManager.handleOneTimeInviteLink(
+          encodedKeyPackage: decompressedKeyPackage,
+          senderPubkey: pubkey,
+          relays: [relayUrl],
+        );
+      } else if (eventid != null) {
+        // Handle permanent invite link
+        final result = await KeyPackageManager.handlePermanentInviteLink(
+          eventId: eventid,
+          relays: [relayUrl],
+        );
+        
+        success = result['success'] as bool;
+        senderPubkey = result['pubkey'] as String?;
       }
-      
-      // Handle one-time invite link
-      success = await KeyPackageManager.handleOneTimeInviteLink(
-        encodedKeyPackage: decompressedKeyPackage,
-        senderPubkey: pubkey,
-        relays: [relayUrl],
-      );
-    } else if (eventid != null) {
-      // Handle permanent invite link
-      final result = await KeyPackageManager.handlePermanentInviteLink(
-        eventId: eventid,
-        relays: [relayUrl],
-      );
-      
-      success = result['success'] as bool;
-      senderPubkey = result['pubkey'] as String?;
-    }
 
-    if (success) {
-      // Navigate to sender's profile page
-      if (senderPubkey != null) {
-        // Navigate to user detail page
-        await Future.delayed(Duration(milliseconds: 300));
-        OXNavigator.popToRoot(context);
-        await Future.delayed(Duration(milliseconds: 300));
-        await _navigateToUserDetailFromScan(context, senderPubkey);
+      // Hide loading before navigation or showing result
+      OXLoading.dismiss();
+
+      if (success) {
+        // Navigate to sender's profile page
+        if (senderPubkey != null) {
+          // Navigate to user detail page
+          await Future.delayed(Duration(milliseconds: 300));
+          OXNavigator.popToRoot(context);
+          await Future.delayed(Duration(milliseconds: 300));
+          await _navigateToUserDetailFromScan(context, senderPubkey);
+        } else {
+          CommonToast.instance.show(context, 'Successfully processed invite link');
+        }
       } else {
-        CommonToast.instance.show(context, 'Successfully processed invite link');
+        CommonToast.instance.show(context, 'Failed to process invite link');
       }
-    } else {
+    } catch (e) {
+      // Hide loading on error
+      OXLoading.dismiss();
+      LogUtil.e('Error processing invite link: $e');
       CommonToast.instance.show(context, 'Failed to process invite link');
     }
   }
@@ -327,7 +356,7 @@ extension ScanAnalysisHandlerEx on ScanUtils {
     );
   }
 
-  static FutureOr<bool> _tryHandleRelaysFromMap(Map<String, dynamic> map, BuildContext context) {
+  static Future<bool> _tryHandleRelaysFromMap(Map<String, dynamic> map, BuildContext context) async {
     List<String> relaysList = (map['relays'] ?? []).cast<String>();
     if (relaysList.isEmpty) return true;
     final newRelay = relaysList.first.replaceFirst(RegExp(r'/+$'), '');
@@ -344,26 +373,28 @@ extension ScanAnalysisHandlerEx on ScanUtils {
     
     if (relayExists) return true;
 
-    final completer = Completer<bool>();
-    OXCommonHintDialog.show(context,
-        content: 'scan_find_not_same_hint'
-            .commonLocalized()
-            .replaceAll(r'${relay}', newRelay),
-        isRowAction: true,
-        actionList: [
-          OXCommonHintAction.cancel(onTap: () {
-            OXNavigator.pop(context);
-            completer.complete(false);
-          }),
-          OXCommonHintAction.sure(
-              text: Localized.text('ox_common.confirm'),
-              onTap: () async {
-                OXNavigator.pop(context);
-                await Connect.sharedInstance.connectRelays([newRelay], relayKind: RelayKind.temp);
-                completer.complete(true);
-              }),
-        ]);
-    return completer.future;
+    final result = await CLAlertDialog.show<bool>(
+      context: context,
+      title: '',
+      content: 'scan_find_not_same_hint'
+          .commonLocalized()
+          .replaceAll(r'${relay}', newRelay),
+      actions: [
+        CLAlertAction.cancel(),
+        CLAlertAction<bool>(
+          label: Localized.text('ox_common.confirm'),
+          value: true,
+          isDefaultAction: true,
+        ),
+      ],
+    );
+    
+    if (result == true) {
+      await Connect.sharedInstance.connectRelays([newRelay], relayKind: RelayKind.temp);
+      return true;
+    } else {
+      return false;
+    }
   }
 
   static ScanAnalysisHandler scanUserHandler = ScanAnalysisHandler(
@@ -381,31 +412,45 @@ extension ScanAnalysisHandlerEx on ScanUtils {
         return false;
       }
 
-      final failedHandle = () {
-        CommonToast.instance.show(context, 'User not found');
-      };
+      // Show loading
+      OXLoading.show();
 
-      final data = Account.decodeProfile(str);
-      
-      if (data == null || data.isEmpty) {
-        return failedHandle();
+      try {
+        final failedHandle = () {
+          OXLoading.dismiss();
+          CommonToast.instance.show(context, 'User not found');
+        };
+
+        final data = Account.decodeProfile(str);
+        
+        if (data == null || data.isEmpty) {
+          return failedHandle();
+        }
+
+        if (!await _tryHandleRelaysFromMap(data, context)) {
+          OXLoading.dismiss();
+          return true;
+        }
+
+        final pubkey = data['pubkey'] as String? ?? '';
+        
+        UserDBISAR? user = await Account.sharedInstance.getUserInfo(pubkey);
+        
+        // Hide loading
+        OXLoading.dismiss();
+        
+        if (user == null) {
+          return failedHandle();
+        }
+
+        OXModuleService.pushPage(context, 'ox_chat', 'ContactUserInfoPage', {
+          'pubkey': user.pubKey,
+        });
+      } catch (e) {
+        OXLoading.dismiss();
+        LogUtil.e('Error handling user scan: $e');
+        CommonToast.instance.show(context, 'Failed to process user scan');
       }
-
-      if (!await _tryHandleRelaysFromMap(data, context)) {
-        return true;
-      }
-
-      final pubkey = data['pubkey'] as String? ?? '';
-      
-      UserDBISAR? user = await Account.sharedInstance.getUserInfo(pubkey);
-      
-      if (user == null) {
-        return failedHandle();
-      }
-
-      OXModuleService.pushPage(context, 'ox_chat', 'ContactUserInfoPage', {
-        'pubkey': user.pubKey,
-      });
     },
   );
 
@@ -418,19 +463,33 @@ extension ScanAnalysisHandlerEx on ScanUtils {
           str.startsWith('nostr:note') ||
           str.startsWith('note');
     },
-    action: (String str, BuildContext context) async {bool isLogin = LoginManager.instance.isLoginCircle;
+    action: (String str, BuildContext context) async {
+      bool isLogin = LoginManager.instance.isLoginCircle;
       if (!isLogin) {
         CommonToast.instance.show(context, 'please_sign_in'.commonLocalized());
         return false;
       }
 
-      final data = Channels.decodeChannel(str);
-      final groupId = data?['channelId'];
-      final relays = data?['relays'];
-      final kind = data?['kind'];
-      if (data == null || groupId == null || groupId is! String || groupId.isEmpty) return true;
-      if (kind == 40 || kind == 41) {
+      // Show loading
+      OXLoading.show();
+
+      try {
+        final data = Channels.decodeChannel(str);
+        final groupId = data?['channelId'];
+        final relays = data?['relays'];
+        final kind = data?['kind'];
         
+        // Hide loading
+        OXLoading.dismiss();
+        
+        if (data == null || groupId == null || groupId is! String || groupId.isEmpty) return true;
+        if (kind == 40 || kind == 41) {
+          // Handle group/channel logic here
+        }
+      } catch (e) {
+        OXLoading.dismiss();
+        LogUtil.e('Error handling group scan: $e');
+        CommonToast.instance.show(context, 'Failed to process group scan');
       }
     },
   );
@@ -446,29 +505,55 @@ extension ScanAnalysisHandlerEx on ScanUtils {
         return false;
       }
 
-      NostrWalletConnection? nwc = NostrWalletConnection.fromURI(nwcURI);
-      OXCommonHintDialog.show(context,
-        title: 'scan_find_nwc_hint'.commonLocalized(),
-        content: '${nwc?.relays[0]}\n${nwc?.lud16}',
-        isRowAction: true,
-        actionList: [
-          OXCommonHintAction.cancel(onTap: () {
-            OXNavigator.pop(context);
-          }),
-          OXCommonHintAction.sure(
-            text: Localized.text('ox_common.confirm'),
-            onTap: () async {
-              Zaps.sharedInstance.updateNWC(nwcURI);
-              await OXCacheManager.defaultOXCacheManager
-                  .saveForeverData('${LoginManager.instance.currentPubkey}.isShowWalletSelector', false);
-              await OXCacheManager.defaultOXCacheManager
-                  .saveForeverData('${LoginManager.instance.currentPubkey}.defaultWallet', 'NWC');
-              OXNavigator.pop(context);
-              CommonToast.instance.show(context, 'Success');
-            },
-          ),
-        ],
-      );
+      // Show loading
+      OXLoading.show();
+
+      try {
+        NostrWalletConnection? nwc = NostrWalletConnection.fromURI(nwcURI);
+        
+        // Hide loading for dialog
+        OXLoading.dismiss();
+        
+        final result = await CLAlertDialog.show<bool>(
+          context: context,
+          title: 'scan_find_nwc_hint'.commonLocalized(),
+          content: '${nwc?.relays[0]}\n${nwc?.lud16}',
+          actions: [
+            CLAlertAction.cancel(),
+            CLAlertAction<bool>(
+              label: Localized.text('ox_common.confirm'),
+              value: true,
+              isDefaultAction: true,
+            ),
+          ],
+        );
+        
+        if (result == true) {
+          // Show loading for processing
+          OXLoading.show();
+          
+          try {
+            Zaps.sharedInstance.updateNWC(nwcURI);
+            await OXCacheManager.defaultOXCacheManager
+                .saveForeverData('${LoginManager.instance.currentPubkey}.isShowWalletSelector', false);
+            await OXCacheManager.defaultOXCacheManager
+                .saveForeverData('${LoginManager.instance.currentPubkey}.defaultWallet', 'NWC');
+            
+            // Hide loading
+            OXLoading.dismiss();
+            
+            CommonToast.instance.show(context, 'Success');
+          } catch (e) {
+            OXLoading.dismiss();
+            LogUtil.e('Error processing NWC: $e');
+            CommonToast.instance.show(context, 'Failed to process NWC');
+          }
+        }
+      } catch (e) {
+        OXLoading.dismiss();
+        LogUtil.e('Error handling NWC scan: $e');
+        CommonToast.instance.show(context, 'Failed to process NWC scan');
+      }
     },
   );
 }
