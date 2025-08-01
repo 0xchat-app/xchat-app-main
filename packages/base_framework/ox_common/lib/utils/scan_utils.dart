@@ -230,6 +230,11 @@ extension ScanAnalysisHandlerEx on ScanUtils {
       OXLoading.dismiss();
 
       if (success) {
+        // Record scanned keypackage ID to user if available
+        if (senderPubkey != null) {
+          await KeyPackageManager.recordScannedKeyPackageId(senderPubkey, keypackage, eventid);
+        }
+        
         // Navigate to sender's profile page
         if (senderPubkey != null) {
           // Navigate to user detail page
