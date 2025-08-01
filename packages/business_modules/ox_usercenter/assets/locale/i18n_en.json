@@ -306,5 +306,8 @@
   "one_time_keypackage_confirm_title": "Generate One-Time Link",
   "one_time_keypackage_confirm_content": "Generate a one-time link that can only be used once",
   "permanent_keypackage_confirm_title": "Generate Permanent Link",
-  "permanent_keypackage_confirm_content": "Generate a permanent link and publish it to circle relay, can be used multiple times"
+  "permanent_keypackage_confirm_content": "Generate a permanent link and publish it to circle relay, can be used multiple times",
+  "regenerate_invite_link": "Regenerate Invite Link",
+  "invite_link_regenerated": "Invite link regenerated successfully",
+  "regenerate_confirm_content": "This will delete the current invite link and create a new one. The old link will no longer work."
 }

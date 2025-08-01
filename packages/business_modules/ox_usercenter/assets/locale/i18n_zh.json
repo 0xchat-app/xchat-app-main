@@ -305,5 +305,8 @@
   "one_time_keypackage_confirm_title": "生成一次性链接",
   "one_time_keypackage_confirm_content": "生成一次性链接，只能使用一次",
   "permanent_keypackage_confirm_title": "生成永久链接",
-  "permanent_keypackage_confirm_content": "生成永久链接，然后发布到圈子中继，可以使用多次"
+  "permanent_keypackage_confirm_content": "生成永久链接，然后发布到圈子中继，可以使用多次",
+  "regenerate_invite_link": "重新生成邀请链接",
+  "invite_link_regenerated": "邀请链接重新生成成功",
+  "regenerate_confirm_content": "这将删除当前的邀请链接并创建新的链接。旧链接将不再有效。"
 }
