@@ -181,8 +181,7 @@ extension ScanAnalysisHandlerEx on ScanUtils {
       await _processInviteLink(context, keypackage, pubkey, eventid, relayUrl);
     } catch (e) {
       OXLoading.dismiss();
-      LogUtil.e('Error handling invite link from scan: $e');
-      CommonToast.instance.show(context, 'Failed to process invite link');
+      CommonToast.instance.show(context, 'Failed to process invite link 111');
     }
   }
 
@@ -191,6 +190,7 @@ extension ScanAnalysisHandlerEx on ScanUtils {
       // Process the invite link
       bool success = false;
       String? senderPubkey = pubkey; // For one-time invites
+      String? keyPackageId;
       
       if (keypackage != null && pubkey != null) {
         // Decompress keypackage data if it's compressed
@@ -210,18 +210,19 @@ extension ScanAnalysisHandlerEx on ScanUtils {
         }
         
         // Handle one-time invite link
-        success = await KeyPackageManager.handleOneTimeInviteLink(
+        keyPackageId = await KeyPackageManager.handleOneTimeInviteLink(
           encodedKeyPackage: decompressedKeyPackage,
           senderPubkey: pubkey,
           relays: [relayUrl],
         );
+        success = keyPackageId.isNotEmpty;
       } else if (eventid != null) {
         // Handle permanent invite link
         final result = await KeyPackageManager.handlePermanentInviteLink(
           eventId: eventid,
           relays: [relayUrl],
         );
-        
+        keyPackageId = result['keyPackageId'] as String?;
         success = result['success'] as bool;
         senderPubkey = result['pubkey'] as String?;
       }
@@ -229,12 +230,7 @@ extension ScanAnalysisHandlerEx on ScanUtils {
       // Hide loading before navigation or showing result
       OXLoading.dismiss();
 
-      if (success) {
-        // Record scanned keypackage ID to user if available
-        if (senderPubkey != null) {
-          await KeyPackageManager.recordScannedKeyPackageId(senderPubkey, keypackage, eventid);
-        }
-        
+      if (success) {        
         // Navigate to sender's profile page
         if (senderPubkey != null) {
           // Navigate to user detail page
@@ -242,17 +238,17 @@ extension ScanAnalysisHandlerEx on ScanUtils {
           OXNavigator.popToRoot(context);
           await Future.delayed(Duration(milliseconds: 300));
           await _navigateToUserDetailFromScan(context, senderPubkey);
+          await KeyPackageManager.recordScannedKeyPackageId(senderPubkey, keyPackageId);
         } else {
           CommonToast.instance.show(context, 'Successfully processed invite link');
         }
       } else {
-        CommonToast.instance.show(context, 'Failed to process invite link');
+        CommonToast.instance.show(context, 'Failed to process invite link 333');
       }
     } catch (e) {
       // Hide loading on error
       OXLoading.dismiss();
-      LogUtil.e('Error processing invite link: $e');
-      CommonToast.instance.show(context, 'Failed to process invite link');
+      CommonToast.instance.show(context, 'Failed to process invite link 222');
     }
   }
 
