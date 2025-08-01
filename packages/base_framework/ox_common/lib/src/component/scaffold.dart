@@ -36,20 +36,16 @@ class CLScaffold extends StatelessWidget {
     } else {
       return CupertinoPageScaffold(
         navigationBar: appBar?.buildCupertinoAppBar(context),
-        backgroundColor: backgroundColor ?? defaultCupertinoPageBgColor,
+        backgroundColor: backgroundColor ?? CupertinoColors.systemGroupedBackground.resolveFrom(context),
         resizeToAvoidBottomInset: resizeToAvoidBottomInset,
         child: safeBody,
       );
     }
   }
 
-  Color? get defaultCupertinoPageBgColor {
-    return isSectionListPage ? CupertinoColors.systemGroupedBackground : null;
-  }
-
   static Color defaultPageBgColor(BuildContext context, bool isSectionListPage) {
     if (!PlatformStyle.isUseMaterial && isSectionListPage) {
-      return CupertinoColors.systemGroupedBackground;
+      return CupertinoColors.systemGroupedBackground.resolveFrom(context);
     }
     return Theme.of(context).scaffoldBackgroundColor;
   }
