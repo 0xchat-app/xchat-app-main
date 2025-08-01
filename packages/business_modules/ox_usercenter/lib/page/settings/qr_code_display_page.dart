@@ -112,7 +112,7 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
       String relayUrl = relays.isNotEmpty ? relays.first : 'wss://relay.0xchat.com';
 
       // Generate invite link with compression
-      if (linkType == InviteLinkType.oneTime) {
+      if (linkType == InviteLinkType.oneTime || linkType == InviteLinkType.permanent) {
         // For one-time invites, include sender's pubkey
         final senderPubkey = Account.sharedInstance.currentPubkey;
         

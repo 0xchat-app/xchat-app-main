@@ -209,7 +209,7 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
       OXLoading.show();
       
       // Connect to specific relay as temp type
-      const specificRelay = 'wss://purplepag.es';
+      const specificRelay = 'wss://relay.nostr.band';
       final connectSuccess = await Connect.sharedInstance.connectRelays([specificRelay], relayKind: RelayKind.temp);
       
       if (!connectSuccess) {
