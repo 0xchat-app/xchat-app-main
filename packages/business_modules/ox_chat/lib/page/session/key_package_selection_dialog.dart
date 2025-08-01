@@ -141,22 +141,25 @@ class _KeyPackageSelectionDialogState extends State<KeyPackageSelectionDialog> {
   }
 
   Widget _buildDescription() {
+    // Since all keypackages shown here are not from 0xchat-lite
     return CLText.bodySmall(
-      Localized.text('ox_chat.select_key_package_description'),
-      colorToken: ColorToken.onSurfaceVariant,
+      Localized.text('ox_chat.other_client_keypackages_warning'),
+      colorToken: ColorToken.error,
     );
   }
 
   Widget _buildKeyPackageList() {
     // Create data list for CLSectionListView
-    data = widget.availableKeyPackages.map((keyPackage) =>
-        SelectedItemModel<String>(
-          title: keyPackage.client.isNotEmpty ? keyPackage.client : 'Unknown Client',
-          subtitle: _buildKeyPackageSubtitle(keyPackage),
-          value: keyPackage.encoded_key_package,
-          selected$: selectedKeyPackage$,
-        ),
-    ).toList();
+    data = widget.availableKeyPackages.map((keyPackage) {
+      final clientName = keyPackage.client.isNotEmpty ? keyPackage.client : 'Unknown Client';
+      
+      return SelectedItemModel<String>(
+        title: clientName,
+        subtitle: _buildKeyPackageSubtitle(keyPackage),
+        value: keyPackage.encoded_key_package,
+        selected$: selectedKeyPackage$,
+      );
+    }).toList();
     
     // If no key packages available, show empty state
     if (data.isEmpty) {
