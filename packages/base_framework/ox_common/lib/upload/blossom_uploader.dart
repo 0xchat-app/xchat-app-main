@@ -102,8 +102,8 @@ class BolssomUploader {
     try {
       var response = await dio.put(
         uploadApiPath,
-        // data: formData,
-        data: Stream.fromIterable(bytes.map((e) => [e])),
+        data: bytes,
+        // data: Stream.fromIterable(bytes.map((e) => [e])),
         options: Options(
           headers: headers,
           validateStatus: (status) {
