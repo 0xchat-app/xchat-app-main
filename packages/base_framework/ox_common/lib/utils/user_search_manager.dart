@@ -147,6 +147,7 @@ class UserSearchManager<T> {
 
   /// Perform remote search for users by pubkey or DNS
   Future<List<T>> _performRemoteSearch(String query) async {
+    return [];
     final isPubkeyFormat = query.startsWith('npub');
     final isDnsFormat = query.contains('@');
 
