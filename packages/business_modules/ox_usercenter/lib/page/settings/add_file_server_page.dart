@@ -8,7 +8,6 @@ import 'package:ox_common/upload/minio_uploader.dart';
 import 'package:ox_common/upload/nip96_info_loader.dart';
 import 'package:ox_common/upload/nip96_server_adaptation.dart';
 import 'package:ox_common/widgets/common_toast.dart';
-import 'package:ox_common/widgets/common_loading.dart';
 
 import 'package:ox_common/model/file_server_model.dart';
 import 'package:ox_common/repository/file_server_repository.dart';
@@ -31,6 +30,15 @@ class _AddFileServerPageState extends State<AddFileServerPage> {
   final _secretCtrl = TextEditingController();
   final _bucketCtrl = TextEditingController();
 
+  // Loading state for button
+  bool _isLoading = false;
+
+  // List of unsupported file servers
+  static const List<String> _unsupportedServers = [
+    'https://nostr.build',
+    'https://blossom.nostr.build',
+  ];
+
   String get _title {
     switch (widget.type) {
       case FileServerType.nip96:
@@ -39,6 +47,17 @@ class _AddFileServerPageState extends State<AddFileServerPage> {
         return Localized.text('ox_usercenter.add_blossom_server');
       case FileServerType.minio:
         return Localized.text('ox_usercenter.add_minio_server');
+    }
+  }
+
+  String get _loadingText {
+    switch (widget.type) {
+      case FileServerType.nip96:
+        return Localized.text('ox_usercenter.validating_nip96_server');
+      case FileServerType.blossom:
+        return Localized.text('ox_usercenter.validating_blossom_server');
+      case FileServerType.minio:
+        return Localized.text('ox_usercenter.validating_minio_server');
     }
   }
 
@@ -89,9 +108,11 @@ class _AddFileServerPageState extends State<AddFileServerPage> {
               bottom: 12.px,
             ),
             child: CLButton.filled(
-              text: Localized.text('ox_common.complete'),
+              text: _isLoading 
+                ? _loadingText
+                : Localized.text('ox_common.complete'),
               expanded: true,
-              onTap: _submit,
+              onTap: _isLoading ? null : _submit,
             ),
           ),
         ),
@@ -108,6 +129,7 @@ class _AddFileServerPageState extends State<AddFileServerPage> {
       validator: _validateUrl,
       keyboardType: TextInputType.url,
       textInputAction: TextInputAction.next,
+      enabled: !_isLoading,
     ));
 
     switch (widget.type) {
@@ -118,18 +140,21 @@ class _AddFileServerPageState extends State<AddFileServerPage> {
             label: Localized.text('ox_usercenter.access_key'),
             validator: _validateNotEmpty,
             textInputAction: TextInputAction.next,
+            enabled: !_isLoading,
           ),
           _buildTextFormField(
             controller: _secretCtrl,
             label: Localized.text('ox_usercenter.secret_key'),
             validator: _validateNotEmpty,
             textInputAction: TextInputAction.next,
+            enabled: !_isLoading,
           ),
           _buildTextFormField(
             controller: _bucketCtrl,
             label: Localized.text('ox_usercenter.bucket_name'),
             validator: _validateNotEmpty,
             textInputAction: TextInputAction.next,
+            enabled: !_isLoading,
           ),
         ]);
         break;
@@ -144,6 +169,7 @@ class _AddFileServerPageState extends State<AddFileServerPage> {
       validator: null,
       requiredField: false,
       textInputAction: TextInputAction.done,
+      enabled: !_isLoading,
     ));
 
     return widgets;
@@ -156,6 +182,7 @@ class _AddFileServerPageState extends State<AddFileServerPage> {
     TextInputType? keyboardType,
     bool requiredField = true,
     TextInputAction? textInputAction,
+    bool enabled = true,
   }) {
     if (PlatformStyle.isUseMaterial) {
       return Padding(
@@ -165,6 +192,7 @@ class _AddFileServerPageState extends State<AddFileServerPage> {
           decoration: InputDecoration(labelText: label),
           validator: requiredField ? (validator ?? _validateNotEmpty) : validator,
           keyboardType: keyboardType,
+          enabled: enabled,
         ),
       );
     } else {
@@ -178,6 +206,8 @@ class _AddFileServerPageState extends State<AddFileServerPage> {
         keyboardType: keyboardType,
         textInputAction: textInputAction,
         textAlign: TextAlign.end,
+        decoration: BoxDecoration(),
+        enabled: enabled,
       );
     }
   }
@@ -191,22 +221,32 @@ class _AddFileServerPageState extends State<AddFileServerPage> {
 
   String? _validateUrl(String? value) {
     if (value == null || value.trim().isEmpty) return Localized.text('ox_common.required');
-    final uri = Uri.tryParse(value.trim());
+    
+    final trimmedUrl = value.trim();
+    final uri = Uri.tryParse(trimmedUrl);
     if (uri == null || (!uri.hasScheme)) {
       return Localized.text('ox_common.invalid_url_format');
     }
+
+    // Check if the server is in the unsupported list
+    if (_unsupportedServers.contains(trimmedUrl)) {
+      return Localized.text('ox_usercenter.unsupported_server');
+    }
+
     return null;
   }
 
   Future<void> _submit() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
+    setState(() {
+      _isLoading = true;
+    });
+
     final url = _urlCtrl.text.trim();
     final name = _nameCtrl.text.trim().isNotEmpty ? _nameCtrl.text.trim() : url;
 
     try {
-      OXLoading.show();
-
       // Prevent duplicate server URLs.
       final existing = await widget.repo.watchAll().first;
       if (existing.any((e) => e.url == url)) {
@@ -262,7 +302,11 @@ class _AddFileServerPageState extends State<AddFileServerPage> {
       UploadResult result = UploadExceptionHandler.handleException(e);
       _showError(result.errorMsg ?? 'Minio Error');
     } finally {
-      OXLoading.dismiss();
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 

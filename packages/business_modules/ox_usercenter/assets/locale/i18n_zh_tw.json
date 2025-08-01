@@ -238,5 +238,9 @@
   "str_set_new_photo": "設定新照片",
   "str_font_size": "文字大小",
   "str_settings_chat": "文字大小",
-  "str_settings_chat_set": "設定"
+  "str_settings_chat_set": "設定",
+  "validating_nip96_server": "正在驗證 NIP-96 伺服器...",
+  "validating_blossom_server": "正在驗證 Blossom 伺服器...",
+  "validating_minio_server": "正在驗證 MinIO 伺服器...",
+  "unsupported_server": "此伺服器不受支援"
 }
