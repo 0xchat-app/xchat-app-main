@@ -115,6 +115,8 @@ class SessionListViewModel {
     final entity = entity$.value;
     final chatType = sessionModel.chatType;
     switch ((entity, chatType)) {
+      case (UserDBISAR _, _):
+        return true;
       case (GroupDBISAR(isDirectMessage: final dm), _):
         return dm;
       case (_, ChatType.chatSingle):

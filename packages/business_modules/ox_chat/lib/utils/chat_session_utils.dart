@@ -27,7 +27,12 @@ class ChatSessionUtils {
         valueNotifier = Account.sharedInstance.getUserNotifier(model.getOtherPubkey);
         break;
       case ChatType.chatGroup:
-        valueNotifier = Groups.sharedInstance.getPrivateGroupNotifier(model.chatId);
+        final group$ = Groups.sharedInstance.getPrivateGroupNotifier(model.chatId);
+        if (group$.value.isDirectMessage) {
+          valueNotifier = Account.sharedInstance.getUserNotifier(model.getOtherPubkey);
+        } else {
+          valueNotifier = group$;
+        }
         break;
       case ChatType.bitchatChannel:
         valueNotifier = ValueNotifier(model.chatName);
