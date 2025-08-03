@@ -4,8 +4,8 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:ox_chat/utils/chat_session_utils.dart';
 import 'package:ox_common/business_interface/ox_chat/utils.dart';
 import 'package:ox_common/component.dart';
+import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/login/login_models.dart';
-import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/avatar.dart';
@@ -15,6 +15,14 @@ import 'package:ox_localizable/ox_localizable.dart';
 
 import 'session_list_data_controller.dart';
 import 'session_view_model.dart';
+
+enum SessionDeleteAction {
+  singleDeleteForMe,
+  singleDeleteForAll,
+  clearHistory,
+  groupDeleteForMe,
+  groupDeleteForAll,
+}
 
 class SessionListWidget extends StatefulWidget {
   const SessionListWidget({
@@ -59,7 +67,7 @@ class _SessionListWidgetState extends State<SessionListWidget> {
   void _initializeController() {
     if (widget.ownerPubkey.isNotEmpty) {
       controller = SessionListDataController(widget.ownerPubkey, widget.circle);
-      controller?.initialized();
+      controller!.initialized();
       if (mounted) {
         setState(() {});
       }
@@ -169,22 +177,7 @@ class _SessionListWidgetState extends State<SessionListWidget> {
   }) {
     return CustomSlidableAction(
       onPressed: (BuildContext _) async {
-        final bool? confirmed = await CLAlertDialog.show(
-          context: context,
-          content: Localized.text('ox_chat.message_delete_tips'),
-          actions: [
-            CLAlertAction.cancel(),
-            CLAlertAction<bool>(
-              label: Localized.text('ox_common.confirm'),
-              value: true,
-              isDestructiveAction: true,
-            ),
-          ],
-        );
-
-        if (confirmed == true) {
-          controller?.deleteSession(item);
-        }
+        await _showDeleteOptions(context, item);
       },
       backgroundColor: ColorToken.error.of(context),
       child: Column(
@@ -203,6 +196,290 @@ class _SessionListWidgetState extends State<SessionListWidget> {
         ],
       ),
     );
+  }
+
+  Future<void> _showDeleteOptions(BuildContext context, SessionListViewModel item) async {
+    final isSingleChat = item.isSingleChat;
+    bool isGroupOwner = false;
+
+    final entity = item.entity$.value;
+    if (entity is GroupDBISAR) {
+      UserDBISAR? currentUser = Account.sharedInstance.me;
+      isGroupOwner = currentUser?.pubKey == entity.owner;
+    }
+    
+    if (isSingleChat) {
+      await _showPrivateChatDeleteOptions(context, item);
+    } else if (isGroupOwner) {
+      await _showGroupOwnerDeleteOptions(context, item);
+    } else {
+      await _showGroupMemberDeleteOptions(context, item);
+    }
+  }
+
+  Future<void> _showPrivateChatDeleteOptions(BuildContext context, SessionListViewModel item) async {
+    final entity = item.entity$.value;
+    String otherUserName = '';
+    
+    if (entity is UserDBISAR) {
+      otherUserName = entity.getUserShowName();
+    } else if (entity is GroupDBISAR && entity.isDirectMessage == true) {
+      UserDBISAR? otherUser = Account.sharedInstance.userCache[entity.otherPubkey]?.value;
+      otherUserName = otherUser?.getUserShowName() ?? '';
+    }
+
+    final result = await CLPicker.show<SessionDeleteAction>(
+      context: context,
+      title: Localized.text('ox_chat.delete_private_chat_title').replaceAll(r'${userName}', otherUserName),
+      items: [
+        CLPickerItem(
+          label: Localized.text('ox_chat.delete_just_for_me'),
+          value: SessionDeleteAction.singleDeleteForMe,
+          isDestructive: true,
+        ),
+        CLPickerItem(
+          label: Localized.text('ox_chat.delete_for_me_and_user').replaceAll(r'${userName}', otherUserName),
+          value: SessionDeleteAction.singleDeleteForAll,
+          isDestructive: true,
+        ),
+      ],
+    );
+
+    if (result != null) {
+      await _handleSessionDeleteAction(item, result);
+    }
+  }
+
+  Future<void> _showGroupOwnerDeleteOptions(BuildContext context, SessionListViewModel item) async {
+    String chatName = item.name;
+    final result = await CLPicker.show<SessionDeleteAction>(
+      context: context,
+      title: Localized.text('ox_chat.leave_and_delete_group_title').replaceAll(r'${chatName}', chatName),
+      items: [
+        CLPickerItem(
+          label: Localized.text('ox_chat.delete_just_for_me'),
+          value: SessionDeleteAction.groupDeleteForMe,
+          isDestructive: true,
+        ),
+        CLPickerItem(
+          label: Localized.text('ox_chat.delete_for_all_members'),
+          value: SessionDeleteAction.groupDeleteForAll,
+          isDestructive: true,
+        ),
+      ],
+    );
+
+    if (result != null) {
+      await _handleSessionDeleteAction(item, result);
+    }
+  }
+
+
+  Future<void> _showGroupMemberDeleteOptions(BuildContext context, SessionListViewModel item) async {
+    String chatName = item.name;
+    final result = await CLPicker.show<SessionDeleteAction>(
+      context: context,
+      title: Localized.text('ox_chat.leave_group_title').replaceAll(r'${chatName}', chatName),
+      items: [
+        CLPickerItem(
+          label: Localized.text('ox_chat.clear_history'),
+          value: SessionDeleteAction.clearHistory,
+        ),
+        CLPickerItem(
+          label: Localized.text('ox_chat.delete_group_item'),
+          value: SessionDeleteAction.groupDeleteForMe,
+          isDestructive: true,
+        ),
+      ],
+    );
+
+    if (result != null) {
+      await _handleSessionDeleteAction(item, result);
+    }
+  }
+
+  Future<void> _handleSessionDeleteAction(
+    SessionListViewModel item,
+    SessionDeleteAction action,
+  ) async {
+    switch (action) {
+      case SessionDeleteAction.singleDeleteForMe:
+        if (!await _confirmDeleteForMe(item)) return;
+        _deleteWithAction(item: item, action: action);
+        break;
+      case SessionDeleteAction.singleDeleteForAll:
+        if (!await _confirmDeleteForAll(item)) return;
+        _deleteWithAction(item: item, action: action);
+        break;
+      case SessionDeleteAction.clearHistory:
+        if (!await _confirmClearHistory(item)) return;
+        _deleteWithAction(item: item, action: action);
+        break;
+      case SessionDeleteAction.groupDeleteForMe:
+        if (!await _confirmLeaveGroup(item)) return;
+        _deleteWithAction(item: item, action: action);
+        break;
+      case SessionDeleteAction.groupDeleteForAll:
+        if (!await _confirmDeleteGroupForAll(item)) return;
+        _deleteWithAction(item: item, action: action);
+        break;
+    }
+  }
+
+  Future<bool> _confirmDeleteForMe(SessionListViewModel item) async {
+    final entity = item.entity$.value;
+    String otherUserName = '';
+    
+    if (entity is UserDBISAR) {
+      otherUserName = entity.getUserShowName();
+    } else if (entity is GroupDBISAR && entity.isDirectMessage == true) {
+      UserDBISAR? otherUser = Account.sharedInstance.userCache[entity.otherPubkey]?.value;
+      otherUserName = otherUser?.getUserShowName() ?? '';
+    }
+
+    final bool? confirmed = await CLAlertDialog.show(
+      context: context,
+      title: Localized.text('ox_chat.delete_private_chat_title').replaceAll(r'${userName}', otherUserName),
+      content: Localized.text('ox_chat.delete_for_me_content'),
+      actions: [
+        CLAlertAction.cancel(),
+        CLAlertAction<bool>(
+          label: Localized.text('ox_chat.delete_just_for_me'),
+          value: true,
+          isDestructiveAction: true,
+        ),
+      ],
+    );
+    return confirmed == true;
+  }
+
+  Future<bool> _confirmDeleteForAll(SessionListViewModel item) async {
+    final entity = item.entity$.value;
+    String otherUserName = '';
+    
+    if (entity is UserDBISAR) {
+      otherUserName = entity.getUserShowName();
+    } else if (entity is GroupDBISAR && entity.isDirectMessage == true) {
+      UserDBISAR? otherUser = Account.sharedInstance.userCache[entity.otherPubkey]?.value;
+      otherUserName = otherUser?.getUserShowName() ?? '';
+    }
+
+    final bool? confirmed = await CLAlertDialog.show(
+      context: context,
+      title: Localized.text('ox_chat.delete_private_chat_title').replaceAll(r'${userName}', otherUserName),
+      content: Localized.text('ox_chat.delete_for_all_content').replaceAll(r'${userName}', otherUserName),
+      actions: [
+        CLAlertAction.cancel(),
+        CLAlertAction<bool>(
+          label: Localized.text('ox_chat.delete_for_me_and_user').replaceAll(r'${userName}', otherUserName),
+          value: true,
+          isDestructiveAction: true,
+        ),
+      ],
+    );
+    return confirmed == true;
+  }
+
+  Future<bool> _confirmClearHistory(SessionListViewModel item) async {
+    final bool? confirmed = await CLAlertDialog.show(
+      context: context,
+      title: Localized.text('ox_chat.clear_history_title'),
+      content: Localized.text('ox_chat.clear_history_content'),
+      actions: [
+        CLAlertAction.cancel(),
+        CLAlertAction<bool>(
+          label: Localized.text('ox_chat.clear_history'),
+          value: true,
+          isDestructiveAction: true,
+        ),
+      ],
+    );
+    return confirmed == true;
+  }
+
+  Future<bool> _confirmLeaveGroup(SessionListViewModel item) async {
+    final bool? confirmed = await CLAlertDialog.show(
+      context: context,
+      title: Localized.text('ox_chat.leave_group_title'),
+      content: Localized.text('ox_chat.leave_group_content'),
+      actions: [
+        CLAlertAction.cancel(),
+        CLAlertAction<bool>(
+          label: Localized.text('ox_chat.delete_just_for_me'),
+          value: true,
+          isDestructiveAction: true,
+        ),
+      ],
+    );
+    return confirmed == true;
+  }
+
+  Future<bool> _confirmDeleteGroupForAll(SessionListViewModel item) async {
+    final bool? confirmed = await CLAlertDialog.show(
+      context: context,
+      title: Localized.text('ox_chat.delete_group_title'),
+      content: Localized.text('ox_chat.delete_group_content'),
+      actions: [
+        CLAlertAction.cancel(),
+        CLAlertAction<bool>(
+          label: Localized.text('ox_chat.delete_for_all_members'),
+          value: true,
+          isDestructiveAction: true,
+        ),
+      ],
+    );
+    return confirmed == true;
+  }
+
+  Future<bool> _deleteWithAction({
+    required SessionListViewModel item,
+    required SessionDeleteAction action,
+  }) async {
+    final controller = this.controller;
+    if (controller == null) return false;
+
+    final groupId = item.sessionModel.groupId;
+
+    switch (action) {
+      case SessionDeleteAction.singleDeleteForMe:
+        return controller.deleteSession(
+          viewModel: item,
+          isDeleteForRemote: false,
+        );
+      case SessionDeleteAction.singleDeleteForAll:
+        return controller.deleteSession(
+          viewModel: item,
+          isDeleteForRemote: true,
+        );
+      case SessionDeleteAction.clearHistory:
+        return controller.deleteSessionMessage(
+          viewModel: item,
+          isDeleteForRemote: false,
+        );
+      case SessionDeleteAction.groupDeleteForMe:
+        if (groupId == null || groupId.isEmpty) return false;
+        controller.deleteSession(
+          viewModel: item,
+          isDeleteForRemote: false,
+        );
+        Groups.sharedInstance.leaveGroup(
+          groupId,
+          Localized.text('ox_chat.leave_group_system_message')
+              .replaceAll(r'${name}', LoginUserNotifier.instance.name$.value),
+        );
+        return true;
+      case SessionDeleteAction.groupDeleteForAll:
+        if (groupId == null || groupId.isEmpty) return false;
+        controller.deleteSession(
+          viewModel: item,
+          isDeleteForRemote: true,
+        );
+        Groups.sharedInstance.deleteAndLeave(
+          groupId,
+          Localized.text('ox_chat.disband_group_toast'),
+        );
+        return true;
+    }
   }
 
   Widget buildItemContent(BuildContext context, SessionListViewModel item) {
@@ -364,7 +641,7 @@ class _SessionListWidgetState extends State<SessionListWidget> {
                 size: 120.px,
                 color: PlatformStyle.isUseMaterial
                     ? ColorToken.primary.of(context)
-                    : CupertinoTheme.of(context).textTheme.actionSmallTextStyle?.color,
+                    : CupertinoTheme.of(context).textTheme.actionSmallTextStyle.color,
               ),
 
               SizedBox(height: 24.px),

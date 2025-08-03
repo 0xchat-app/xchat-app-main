@@ -371,5 +371,21 @@
   "delete_group_confirm_title": "删除群组",
   "delete_group_confirm_content": "此操作将永久删除群组且无法撤销，所有群组数据将丢失。",
   "leave_group_confirm_title": "退出群组",
-  "leave_group_confirm_content": "退出后将无法接收此群组消息，需要重新邀请才能加入。"
+  "leave_group_confirm_content": "退出后将无法接收此群组消息，需要重新邀请才能加入。",
+  "delete_just_for_me": "仅删除我的会话",
+  "delete_for_me_and_user": "删除我和${userName}的会话",
+  "clear_history": "清空聊天记录",
+  "delete_chat_confirm_title": "确定要退出并删除${chatName}吗？",
+  "delete_private_chat_title": "永久删除与${userName}的聊天吗？",
+  "leave_group_title": "确定要退出${chatName}吗？",
+  "leave_and_delete_group_title": "确定要退出并删除${chatName}吗？",
+  "clear_history_title": "清空聊天记录？",
+  "delete_group_item": "删除",
+  "delete_for_all_members": "删除所有成员的聊天",
+  "delete_for_me_content": "这将只从您的设备中删除聊天记录，对方仍会保留此对话。",
+  "delete_for_all_content": "这将尝试删除您和${userName}的聊天记录，对方可能也将看不到这些消息。",
+  "clear_history_content": "此操作将删除所有消息历史记录但保留对话，此操作无法撤销。",
+  "delete_group_title": "删除群组",
+  "delete_group_content": "此操作将永久删除群组且无法撤销，所有群组数据将丢失。",
+  "leave_group_content": "退出后将无法接收此群组消息，需要重新邀请才能加入。"
 }

@@ -5,6 +5,7 @@ import 'package:chatcore/chat-core.dart';
 import 'package:isar/isar.dart';
 import 'package:ox_common/login/login_models.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
+import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_common/utils/chat_prompt_tone.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
 import 'package:ox_common/utils/ox_chat_observer.dart';
@@ -209,8 +210,17 @@ extension SessionDCInterface on SessionListDataController {
         () => sessionList$.value.map((e) => e.sessionModel).toList();
   }
 
-  Future deleteSession(SessionListViewModel viewModel) async {
+  Future<bool> deleteSession({
+    required SessionListViewModel viewModel,
+    required bool isDeleteForRemote,
+  }) async {
     final chatId = viewModel.sessionModel.chatId;
+
+    final deleteSuc = await deleteSessionMessage(
+      viewModel: viewModel,
+      isDeleteForRemote: isDeleteForRemote,
+    );
+    if (!deleteSuc) return false;
 
     final isar = DBISAR.sharedInstance.isar;
     int count = await isar.writeAsync((isar) {
@@ -219,22 +229,35 @@ extension SessionDCInterface on SessionListDataController {
           .chatIdEqualTo(chatId)
           .deleteAll();
     });
-    deleteSessionMessage(viewModel);
+
     if (count > 0) {
       _removeViewModel(viewModel);
     }
+
+    return true;
   }
 
-  Future deleteSessionMessage(SessionListViewModel viewModel) async {
+  Future<bool> deleteSessionMessage({
+    required SessionListViewModel viewModel,
+    required bool isDeleteForRemote,
+  }) async {
     final groupId = viewModel.sessionModel.groupId;
     final chatType = viewModel.sessionModel.chatType;
-    if (groupId == null) return;
-    await DBISAR.sharedInstance.isar.writeAsync((isar) {
-      isar.messageDBISARs.where()
-          .groupIdEqualTo(groupId)
-          .chatTypeEqualTo(chatType)
-          .deleteAll();
-    });
+    if (chatType != ChatType.chatGroup || groupId == null || groupId.isEmpty) return false;
+
+    final group = Groups.sharedInstance.getPrivateGroupNotifier(groupId).value;
+    List<MessageDBISAR> allMessage = (await Messages.loadMessagesFromDB(
+      groupId: groupId,
+    ))['messages'] ?? <MessageDBISAR>[];
+    final messageIds = allMessage.map((e) => e.messageId).toList();
+
+    await Groups.sharedInstance.deleteMLSGroupMessages(
+      messageIds,
+      group,
+      requestDeleteForAll: isDeleteForRemote,
+    );
+
+    return true;
   }
 
   Future<bool> updateChatSession(String chatId, {
