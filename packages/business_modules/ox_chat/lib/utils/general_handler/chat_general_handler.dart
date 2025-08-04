@@ -626,7 +626,11 @@ extension ChatMenuHandlerEx on ChatGeneralHandler {
     return false;
   }
 
-  Future<void> _performDeleteAction(BuildContext context, types.Message message, DeleteOption option) async {
+  Future<void> _performDeleteAction(
+    BuildContext context,
+    types.Message message,
+    DeleteOption option,
+  ) async {
     OXLoading.show();
     
     try {
