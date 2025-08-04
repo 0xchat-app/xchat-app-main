@@ -5,7 +5,7 @@ import 'package:ox_cache_manager/ox_cache_manager.dart';
 import 'package:ox_common/login/login_models.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/storage_key_tool.dart';
-import 'package:ox_common/widgets/common_hint_dialog.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_login/page/login_page.dart';
@@ -69,16 +69,16 @@ class _HomePageState extends State<HomePage> {
         await LoginManager.instance.logout();
         
         if (mounted) {
-          OXCommonHintDialog.show(
-            context,
+          CLAlertDialog.show(
+            context: context,
             title: Localized.text(showTitle),
             content: Localized.text(showContent),
-            actionList: [
-              OXCommonHintAction.sure(
-                  text: Localized.text('ox_common.confirm'),
-                  onTap: () {
-                    OXNavigator.pop(context);
-                  }),
+            actions: [
+              CLAlertAction<bool>(
+                label: Localized.text('ox_common.confirm'),
+                value: true,
+                isDefaultAction: true,
+              ),
             ],
           );
         }

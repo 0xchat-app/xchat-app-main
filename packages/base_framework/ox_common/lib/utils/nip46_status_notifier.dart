@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 
 import '../navigator/navigator.dart';
-import '../widgets/common_hint_dialog.dart';
+import '../component.dart';
 import '../widgets/common_toast.dart';
 
 extension NIP46ConnectionStatusEx on NIP46ConnectionStatus {
@@ -85,25 +85,24 @@ class NIP46StatusNotifier {
   }) async {
     final completer = Completer<void>();
 
-    OXCommonHintDialog.show(
-      context,
+    CLAlertDialog.show(
+      context: context,
       title: Localized.text('ox_common.tips'),
       content: status.text,
-      actionList: [
-        OXCommonHintAction.sure(
-          text: Localized.text('ox_common.confirm'),
-          onTap: () {
-            if (!completer.isCompleted) {
-              completer.complete();
-            }
-            _isDialogShowing = false;
-            OXNavigator.pop(context, true);
-          },
+      actions: [
+        CLAlertAction<bool>(
+          label: Localized.text('ox_common.confirm'),
+          value: true,
+          isDefaultAction: true,
         ),
       ],
-      isRowAction: true,
       barrierDismissible: false,
-    );
+    ).then((result) {
+      if (!completer.isCompleted) {
+        completer.complete();
+      }
+      _isDialogShowing = false;
+    });
 
     Future.delayed(duration, () {
       if (!completer.isCompleted) {
@@ -153,21 +152,15 @@ class NIP46StatusNotifier {
     final context = OXNavigator.navigatorKey.currentContext;
     if (context == null) return false;
 
-    return await OXCommonHintDialog.show(
-      context,
+    return await CLAlertDialog.show<bool>(
+      context: context,
       title: Localized.text('ox_common.tips'),
       content: content,
-      actionList: [
-        OXCommonHintAction.cancel(
-          onTap: () => OXNavigator.pop(context, false),
-        ),
-        OXCommonHintAction.sure(
-          text: Localized.text('ox_common.confirm'),
-          onTap: () => OXNavigator.pop(context, true),
-        ),
+      actions: [
+        CLAlertAction.cancel(),
+        CLAlertAction.ok(),
       ],
-      isRowAction: true,
       barrierDismissible: false,
-    );
+    ) ?? false;
   }
 }

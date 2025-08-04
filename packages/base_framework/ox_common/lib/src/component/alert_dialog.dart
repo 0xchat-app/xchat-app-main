@@ -48,7 +48,7 @@ class CLAlertDialog {
   static Future<T?> show<T>({
     required BuildContext context,
     String? title,
-    required String content,
+    String? content,
     required List<CLAlertAction<T>> actions,
     bool barrierDismissible = true,
   }) {
@@ -60,7 +60,7 @@ class CLAlertDialog {
         barrierDismissible: barrierDismissible,
         builder: (ctx) => AlertDialog(
           title: _buildTitle(displayTitle),
-          content: CLText.bodyMedium(content),
+          content: content != null ? CLText.bodyMedium(content) : null,
           actions: _materialActions(ctx, actions),
         ),
       );
@@ -71,10 +71,10 @@ class CLAlertDialog {
       barrierDismissible: barrierDismissible,
       builder: (ctx) => CupertinoAlertDialog(
         title: _buildTitle(displayTitle),
-        content: Padding(
+        content: content != null ? Padding(
           padding: const EdgeInsets.only(top: 8.0),
           child: CLText.bodyMedium(content),
-        ),
+        ) : null,
         actions: _cupertinoActions(ctx, actions),
       ),
     );

@@ -14,7 +14,7 @@ import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
 import 'package:ox_common/utils/theme_color.dart';
 import 'package:ox_common/utils/web_url_helper.dart';
-import 'package:ox_common/widgets/common_hint_dialog.dart';
+import 'package:ox_common/component.dart';
 import 'package:ox_common/widgets/common_image.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/common_loading.dart';
@@ -274,56 +274,55 @@ class _ChatChooseSharePageState extends State<ChatChooseSharePage> with ShareIte
 
   buildSendPressed(ChatSessionModelISAR sessionModel) {
     _ShareToName = ChatSessionUtils.getChatName(sessionModel);
-    OXCommonHintDialog.show(context,
+    CLAlertDialog.show<bool>(
+        context: context,
         title: Localized.text('ox_common.tips'),
         content: 'str_share_msg_confirm_content'.localized({r'${name}': _ShareToName}),
-        actionList: [
-          OXCommonHintAction.cancel(onTap: () {
-            OXNavigator.pop(context, false);
-          }),
-          OXCommonHintAction.sure(
-              text: Localized.text('ox_common.str_share'),
-              onTap: () async {
-              OXNavigator.pop(context, true);
-
-              if (widget.type == SchemeShareType.text.typeText) {
-                OXLoading.show();
-                final urlPreviewData = await WebURLHelper.getPreviewData(
-                    widget.msg,
-                    isShare: true);
-                OXLoading.dismiss();
-
-                final title = urlPreviewData?.title ?? '';
-                final link = urlPreviewData?.link ?? '';
-                if (urlPreviewData != null && title.isNotEmpty && link.isNotEmpty) {
-                  ChatMessageSendEx.sendTemplateMessage(
-                    receiverPubkey: sessionModel.chatId,
-                    title: title,
-                    subTitle: urlPreviewData.description ?? '',
-                    icon: urlPreviewData.image?.url ?? '',
-                    link: link,
-                  );
-                } else {
-                  ChatMessageSendEx.sendTextMessageHandler(
-                    sessionModel.chatId,
-                    widget.msg,
-                  );
-                }
-              } else if (widget.type == SchemeShareType.image.typeText) {
-                ChatMessageSendEx.staticSendImageMessageWithFile(
-                  receiverPubkey: sessionModel.chatId,
-                  imageFilePath: widget.path ?? '',
-                );
-              } else if (widget.type == SchemeShareType.video.typeText) {
-                ChatMessageSendEx.staticSendVideoMessageWithFile(
-                  receiverPubkey: sessionModel.chatId,
-                  videoFilePath: widget.path ?? '',
-                );
-              }
-              OXNavigator.pop(context, true);
-            },
+        actions: [
+          CLAlertAction.cancel(),
+          CLAlertAction<bool>(
+            label: Localized.text('ox_common.str_share'),
+            value: true,
+            isDefaultAction: true,
           ),
         ],
-        isRowAction: true);
+      ).then((result) async {
+        if (result == true) {
+          if (widget.type == SchemeShareType.text.typeText) {
+            OXLoading.show();
+            final urlPreviewData = await WebURLHelper.getPreviewData(
+                widget.msg,
+                isShare: true);
+            OXLoading.dismiss();
+
+            final title = urlPreviewData?.title ?? '';
+            final link = urlPreviewData?.link ?? '';
+            if (urlPreviewData != null && title.isNotEmpty && link.isNotEmpty) {
+              ChatMessageSendEx.sendTemplateMessage(
+                receiverPubkey: sessionModel.chatId,
+                title: title,
+                subTitle: urlPreviewData.description ?? '',
+                icon: urlPreviewData.image?.url ?? '',
+                link: link,
+              );
+            } else {
+              ChatMessageSendEx.sendTextMessageHandler(
+                sessionModel.chatId,
+                widget.msg,
+              );
+            }
+          } else if (widget.type == SchemeShareType.image.typeText) {
+            ChatMessageSendEx.staticSendImageMessageWithFile(
+              receiverPubkey: sessionModel.chatId,
+              imageFilePath: widget.path ?? '',
+            );
+          } else if (widget.type == SchemeShareType.video.typeText) {
+            ChatMessageSendEx.staticSendVideoMessageWithFile(
+              receiverPubkey: sessionModel.chatId,
+              videoFilePath: widget.path ?? '',
+            );
+          }
+        }
+      });
   }
 }

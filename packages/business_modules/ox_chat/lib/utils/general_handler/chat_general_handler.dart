@@ -55,7 +55,6 @@ import 'package:ox_common/business_interface/ox_calling/interface.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/permission_utils.dart';
-import 'package:ox_common/widgets/common_hint_dialog.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/model/chat_type.dart';
@@ -249,23 +248,28 @@ extension ChatGestureHandlerEx on ChatGeneralHandler {
     final status = message.status;
     switch (status) {
       case types.Status.warning:
-        await OXCommonHintDialog.show(
-          context,
+        await CLAlertDialog.show(
+          context: context,
           title: Localized.text('ox_usercenter.warn_title'),
           content: 'This message is not a gift-wrapped message.',
-          actionList: [OXCommonHintAction.sure(
-              text: 'OK')
+          actions: [
+            CLAlertAction<bool>(
+              label: 'OK',
+              value: true,
+              isDefaultAction: true,
+            ),
           ],
-          isRowAction: true,
-          showCancelButton: false,
         );
       case types.Status.error:
-        final result = await OXCommonHintDialog.showConfirmDialog(
-          context,
-          content: Localized.text('ox_chat.message_resend_hint'),
+        final result = await CLAlertDialog.show<bool>(
+          context: context,
+          title: Localized.text('ox_chat.message_resend_hint'),
+          actions: [
+            CLAlertAction.cancel(),
+            CLAlertAction.ok(),
+          ],
         );
-        if (result) {
-          OXNavigator.pop(context);
+        if (result == true) {
           resendMessage(context, message);
         }
         break ;
