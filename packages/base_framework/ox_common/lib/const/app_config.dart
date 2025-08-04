@@ -7,12 +7,12 @@ class AppConfig {
   static const String appScheme = 'oxchatlite';
   
   /// Base URL for invite links
-  static const String inviteBaseUrl = 'https://0xchat.com/lite/invite';
+  static const String inviteBaseUrl = 'https://0xchat.com/x/invite';
   
   /// Universal Links configuration
   static const List<String> supportedPaths = [
     '/lite',
-    '/lite/invite',
+    '/x/invite',
     '/lite/join',
     '/lite/profile',
   ];

@@ -29,7 +29,7 @@ class ScanUtils {
       final uri = Uri.parse(url);
       
       // Check if it's an invite link first
-      if (url.contains('0xchat.com/lite/invite') || url.contains('www.0xchat.com/lite/invite')) {
+      if (url.contains('0xchat.com/x/invite') || url.contains('www.0xchat.com/x/invite')) {
         // Keep the full URL for invite links
         // Don't modify the URL
       } else if (uri.pathSegments.isNotEmpty && uri.pathSegments.last == CustomURIHelper.nostrAction) {
@@ -71,15 +71,15 @@ extension ScanAnalysisHandlerEx on ScanUtils {
   static ScanAnalysisHandler scanInviteLinkHandler = ScanAnalysisHandler(
     matcher: (String str) {
       // Check if it's an invite link
-      return str.contains('0xchat.com/lite/invite') || 
-             str.contains('www.0xchat.com/lite/invite');
+      return str.contains('0xchat.com/x/invite') || 
+             str.contains('www.0xchat.com/x/invite');
     },
     action: (String str, BuildContext context) async {
       try {
         final uri = Uri.parse(str);
         
         // Handle invite links
-        if (uri.path == '/lite/invite') {
+        if (uri.path == '/x/invite') {
           await _handleInviteLinkFromScan(uri, context);
           return;
         }

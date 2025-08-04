@@ -141,7 +141,7 @@ class _KeyPackageSelectionDialogState extends State<KeyPackageSelectionDialog> {
   }
 
   Widget _buildDescription() {
-    // Since all keypackages shown here are not from 0xchat-lite
+    // Since all keypackages shown here are not from XChat
     return CLText.bodySmall(
       Localized.text('ox_chat.other_client_keypackages_warning'),
       colorToken: ColorToken.error,

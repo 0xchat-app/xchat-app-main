@@ -220,7 +220,7 @@ class CircleJoinUtils {
     final trimmedInput = input.trim();
 
     // Check if input is an invite link
-    if (trimmedInput.startsWith('https://0xchat.com/lite/invite') || trimmedInput.startsWith('https://www.0xchat.com/lite/invite')) {
+    if (trimmedInput.startsWith('https://0xchat.com/x/invite') || trimmedInput.startsWith('https://www.0xchat.com/x/invite')) {
       return await _processInviteLink(context, trimmedInput);
     }
 

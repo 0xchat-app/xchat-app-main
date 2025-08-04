@@ -149,7 +149,7 @@
   "no_available_keypackages_content": "没有可用的密钥包。邀请您的朋友连接？",
   "invite_friends": "邀请朋友",
   "no_keypackages_available": "没有可用的密钥包",
-  "no_oxchat_lite_keypackages_warning": "未找到0xchat-lite密钥包。这些来自其他客户端，可能无法正常沟通。",
+  "no_oxchat_lite_keypackages_warning": "未找到XChat密钥包。这些来自其他客户端，可能无法正常沟通。",
   "other_client_keypackages_warning": "警告：这些密钥包来自其他客户端。可能无法正常沟通。",
   "other_client": "其他客户端",
   "group_info": "群聊信息",
