@@ -5,6 +5,7 @@ import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/login/login_models.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
+import 'package:ox_common/utils/circle_join_utils.dart';
 import 'package:ox_common/utils/scan_utils.dart';
 import 'package:ox_common/utils/user_search_manager.dart';
 import 'package:ox_common/widgets/avatar.dart';
@@ -402,6 +403,12 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
   }
 
   void _onInviteFriends() {
+    final circle = LoginManager.instance.currentCircle;
+    if (circle == null) {
+      CircleJoinUtils.showJoinCircleGuideDialog(context: OXNavigator.rootContext);
+      return;
+    }
+    
     OXNavigator.pushPage(
       context, 
       (context) => const QRCodeDisplayPage(),

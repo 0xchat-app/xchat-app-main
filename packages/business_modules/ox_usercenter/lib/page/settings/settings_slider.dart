@@ -279,8 +279,7 @@ class SettingSliderState extends State<SettingSlider> {
   void inviteItemOnTap() {
     final circle = LoginManager.instance.currentCircle;
     if (circle == null) {
-      // Show guide dialog when no circle
-      _showJoinCircleDialog();
+      CircleJoinUtils.showJoinCircleGuideDialog(context: OXNavigator.rootContext);
       return;
     }
     
@@ -303,16 +302,11 @@ class SettingSliderState extends State<SettingSlider> {
   void profileItemOnTap() {
     final circle = LoginManager.instance.currentCircle;
     if (circle == null) {
-      // Show guide dialog when no circle
-      _showJoinCircleDialog();
+      CircleJoinUtils.showJoinCircleGuideDialog(context: OXNavigator.rootContext);
       return;
     }
     
     OXNavigator.pushPage(context, (_) => ProfileSettingsPage(previousPageTitle: title,));
-  }
-  
-  void _showJoinCircleDialog() async {
-    await CircleJoinUtils.showJoinCircleGuideDialog(context: OXNavigator.rootContext);
   }
 
   void themeItemOnTap() {
