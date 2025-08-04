@@ -41,15 +41,22 @@ class MessageLongPressMenu {
     // );
     
     // Quote action
-    menuItems.add(
-      MenuAction(
-        title: Localized.text('ox_chat.message_menu_quote'),
-        image: MenuImage.icon(CupertinoIcons.reply),
-        callback: () {
-          handler.menuItemPressHandler(context, message, MessageLongPressEventType.quote);
-        },
-      ),
-    );
+    if (message.status != types.Status.error
+        && message.status != types.Status.sending) {
+      menuItems.add(
+        MenuAction(
+          title: Localized.text('ox_chat.message_menu_quote'),
+          image: MenuImage.icon(CupertinoIcons.reply),
+          callback: () {
+            handler.menuItemPressHandler(
+              context,
+              message,
+              MessageLongPressEventType.quote,
+            );
+          },
+        ),
+      );
+    }
     
     // Delete action with red color
     menuItems.add(
