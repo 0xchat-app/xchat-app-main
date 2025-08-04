@@ -152,6 +152,7 @@ class _SessionListWidgetState extends State<SessionListWidget> {
         await ChatSessionUtils.setChatMute(item.sessionModel, !isMute);
         item.rebuild();
       },
+      padding: EdgeInsets.zero,
       backgroundColor: ColorToken.primaryContainer.of(context),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -179,6 +180,7 @@ class _SessionListWidgetState extends State<SessionListWidget> {
       onPressed: (BuildContext _) async {
         await _showDeleteOptions(context, item);
       },
+      padding: EdgeInsets.zero,
       backgroundColor: ColorToken.error.of(context),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -262,7 +264,7 @@ class _SessionListWidgetState extends State<SessionListWidget> {
           isDestructive: true,
         ),
         CLPickerItem(
-          label: Localized.text('ox_chat.delete_for_all_members'),
+          label: Localized.text('ox_chat.delete_all'),
           value: SessionDeleteAction.groupDeleteForAll,
           isDestructive: true,
         ),
@@ -339,12 +341,11 @@ class _SessionListWidgetState extends State<SessionListWidget> {
 
     final bool? confirmed = await CLAlertDialog.show(
       context: context,
-      title: Localized.text('ox_chat.delete_private_chat_title').replaceAll(r'${userName}', otherUserName),
       content: Localized.text('ox_chat.delete_for_me_content'),
       actions: [
         CLAlertAction.cancel(),
         CLAlertAction<bool>(
-          label: Localized.text('ox_chat.delete_just_for_me'),
+          label: Localized.text('ox_chat.delete'),
           value: true,
           isDestructiveAction: true,
         ),
@@ -366,12 +367,11 @@ class _SessionListWidgetState extends State<SessionListWidget> {
 
     final bool? confirmed = await CLAlertDialog.show(
       context: context,
-      title: Localized.text('ox_chat.delete_private_chat_title').replaceAll(r'${userName}', otherUserName),
       content: Localized.text('ox_chat.delete_for_all_content').replaceAll(r'${userName}', otherUserName),
       actions: [
         CLAlertAction.cancel(),
         CLAlertAction<bool>(
-          label: Localized.text('ox_chat.delete_for_me_and_user').replaceAll(r'${userName}', otherUserName),
+          label: Localized.text('ox_chat.delete_all'),
           value: true,
           isDestructiveAction: true,
         ),
@@ -383,7 +383,6 @@ class _SessionListWidgetState extends State<SessionListWidget> {
   Future<bool> _confirmClearHistory(SessionListViewModel item) async {
     final bool? confirmed = await CLAlertDialog.show(
       context: context,
-      title: Localized.text('ox_chat.clear_history_title'),
       content: Localized.text('ox_chat.clear_history_content'),
       actions: [
         CLAlertAction.cancel(),
@@ -400,12 +399,11 @@ class _SessionListWidgetState extends State<SessionListWidget> {
   Future<bool> _confirmLeaveGroup(SessionListViewModel item) async {
     final bool? confirmed = await CLAlertDialog.show(
       context: context,
-      title: Localized.text('ox_chat.leave_group_title'),
       content: Localized.text('ox_chat.leave_group_content'),
       actions: [
         CLAlertAction.cancel(),
         CLAlertAction<bool>(
-          label: Localized.text('ox_chat.delete_just_for_me'),
+          label: Localized.text('ox_chat.delete'),
           value: true,
           isDestructiveAction: true,
         ),
@@ -417,12 +415,11 @@ class _SessionListWidgetState extends State<SessionListWidget> {
   Future<bool> _confirmDeleteGroupForAll(SessionListViewModel item) async {
     final bool? confirmed = await CLAlertDialog.show(
       context: context,
-      title: Localized.text('ox_chat.delete_group_title'),
       content: Localized.text('ox_chat.delete_group_content'),
       actions: [
         CLAlertAction.cancel(),
         CLAlertAction<bool>(
-          label: Localized.text('ox_chat.delete_for_all_members'),
+          label: Localized.text('ox_chat.delete_all'),
           value: true,
           isDestructiveAction: true,
         ),
