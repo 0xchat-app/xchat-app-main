@@ -12,7 +12,6 @@ import 'package:ox_localizable/ox_localizable.dart';
 import 'avatar_display_page.dart';
 import 'bio_settings_page.dart';
 import 'nickname_settings_page.dart';
-import 'qr_code_display_page.dart';
 
 class ProfileSettingsPage extends StatefulWidget {
   const ProfileSettingsPage({
@@ -72,6 +71,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
                 ),
                 title: 'Bio',
                 value$: userNotifier.bio$,
+                overflow: TextOverflow.fade,
                 onTap: bioOnTap,
               ),
             ],
@@ -133,8 +133,6 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
   void bioOnTap() {
     OXNavigator.pushPage(context, (_) => BioSettingsPage());
   }
-
-
 
   void refreshProfile() async {
     if (_isRefreshing) return;

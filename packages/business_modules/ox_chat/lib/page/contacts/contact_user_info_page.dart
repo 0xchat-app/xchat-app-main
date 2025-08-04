@@ -133,6 +133,7 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
       ),
       title: Localized.text('ox_chat.bio'),
       value$: ValueNotifier(userBio.isEmpty ? Localized.text('ox_chat.no_bio') : userBio),
+      overflow: TextOverflow.fade,
       onTap: null,
     );
   }
