@@ -382,6 +382,7 @@
   "leave_and_delete_group_title": "Are you sure you want to leave and delete ${chatName}?",
   "clear_history_title": "Clear chat history?",
   "delete_group_item": "Delete",
+  "delete_for_all_members": "Delete for all members",
   "delete_all": "Delete all",
   "delete_for_me_content": "This will only delete the chat from your device. The other person will still have the conversation.",
   "delete_for_all_content": "This will attempt to delete the chat for both you and ${userName}. They may not see the messages anymore.",

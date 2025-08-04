@@ -373,6 +373,7 @@
   "leave_and_delete_group_title": "確定要退出並刪除${chatName}嗎？",
   "clear_history_title": "清空聊天記錄？",
   "delete_group_item": "刪除",
+  "delete_for_all_members": "刪除所有成員的聊天",
   "delete_all": "刪除全部",
   "delete_for_me_content": "這將只從您的設備中刪除聊天記錄，對方仍會保留此對話。",
   "delete_for_all_content": "這將嘗試刪除您和${userName}的聊天記錄，對方可能也將看不到這些訊息。",

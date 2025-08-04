@@ -264,7 +264,7 @@ class _SessionListWidgetState extends State<SessionListWidget> {
           isDestructive: true,
         ),
         CLPickerItem(
-          label: Localized.text('ox_chat.delete_all'),
+          label: Localized.text('ox_chat.delete_for_all_members'),
           value: SessionDeleteAction.groupDeleteForAll,
           isDestructive: true,
         ),
