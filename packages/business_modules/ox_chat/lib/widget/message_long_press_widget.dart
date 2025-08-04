@@ -41,8 +41,7 @@ class MessageLongPressMenu {
     // );
     
     // Quote action
-    if (message.status != types.Status.error
-        && message.status != types.Status.sending) {
+    if (message.canReply) {
       menuItems.add(
         MenuAction(
           title: Localized.text('ox_chat.message_menu_quote'),

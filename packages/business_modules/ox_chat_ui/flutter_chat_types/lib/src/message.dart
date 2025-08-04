@@ -165,6 +165,8 @@ abstract class Message extends Equatable {
   /// Whether this message is sent by the current user
   final bool isMe;
 
+  bool get canReply => status != Status.error && status != Status.sending;
+
   /// Creates a copy of the message with an updated data.
   Message copyWith({
     User? author,

@@ -242,7 +242,9 @@ class MessageState extends State<Message> {
       ),
     );
 
-    if (!PlatformUtils.isDesktop && widget.replySwipeTriggerCallback != null) {
+    if (!PlatformUtils.isDesktop
+        && widget.replySwipeTriggerCallback != null
+        && widget.message.canReply) {
       content = _SwipeToReply(
         revealIconBuilder: (progress) => Opacity(
           opacity: progress,
