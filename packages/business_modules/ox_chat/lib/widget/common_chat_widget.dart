@@ -12,10 +12,12 @@ import 'package:ox_chat/utils/general_handler/message_data_controller.dart';
 import 'package:ox_chat_ui/ox_chat_ui.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
+import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/chat_prompt_tone.dart';
 import 'package:ox_common/utils/extension.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
+import 'package:ox_common/utils/ox_chat_observer.dart';
 import 'package:ox_common/utils/platform_utils.dart';
 import 'package:ox_common/utils/web_url_helper.dart';
 import 'package:ox_common/widgets/avatar.dart';
@@ -24,7 +26,6 @@ import 'package:scroll_to_index/scroll_to_index.dart';
 import '../utils/general_handler/chat_highlight_message_handler.dart';
 
 class CommonChatWidget extends StatefulWidget {
-
   CommonChatWidget({
     required this.handler,
     this.title,
@@ -40,7 +41,7 @@ class CommonChatWidget extends StatefulWidget {
 
   final ChatGeneralHandler handler;
 
-  dynamic title;
+  final String? title;
   final List<Widget> actions;
   final bool showUserNames;
 
@@ -55,7 +56,7 @@ class CommonChatWidget extends StatefulWidget {
   State<StatefulWidget> createState() => CommonChatWidgetState();
 }
 
-class CommonChatWidgetState extends State<CommonChatWidget> {
+class CommonChatWidgetState extends State<CommonChatWidget> with OXChatObserver {
 
   ChatGeneralHandler get handler => widget.handler;
   ChatSessionModelISAR get session => handler.session;
@@ -106,6 +107,8 @@ class CommonChatWidgetState extends State<CommonChatWidget> {
         unreadCount: 0,
       );
     });
+
+    OXChatBinding.sharedInstance.addObserver(this);
   }
 
   void tryInitDraft() {
@@ -134,6 +137,7 @@ class CommonChatWidgetState extends State<CommonChatWidget> {
 
   @override
   void dispose() {
+    OXChatBinding.sharedInstance.removeObserver(this);
     PromptToneManager.sharedInstance.isCurrencyChatPage = null;
     OXChatBinding.sharedInstance.msgIsReaded = null;
     ChatDraftManager.shared.updateSessionDraft(session.chatId);
@@ -407,5 +411,15 @@ class CommonChatWidgetState extends State<CommonChatWidget> {
     );
 
     isShowScrollToBottomWidget$.safeUpdate(false);
+  }
+
+  @override
+  void deleteSessionCallback(List<String> chatIds) async {
+    chatIds = chatIds.where((e) => e.isNotEmpty).toList();
+    if (chatIds.isEmpty) return;
+
+    if (chatIds.contains(session.chatId) && mounted) {
+      OXNavigator.popToRoot(context);
+    }
   }
 }
