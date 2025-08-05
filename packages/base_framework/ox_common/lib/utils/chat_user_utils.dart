@@ -42,7 +42,7 @@ class ChatUserUtils {
     final uniqueUsers = <UserDBISAR>[];
 
     for (final user in users) {
-      if (user.pubKey != myPubkey && !seenPubkeys.contains(user.pubKey)) {
+      if (!seenPubkeys.contains(user.pubKey)) {
         uniqueUsers.add(user);
         seenPubkeys.add(user.pubKey);
       }
