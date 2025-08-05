@@ -209,6 +209,7 @@ extension ChatMessageBuilderCustomEx on ChatMessageBuilder {
     BorderRadius borderRadius,
     String? receiverPubkey,
     bool isMe,
+    bool isSelfChat,
   ) {
     final uri = ImageSendingMessageEx(message).uri;
     final url = ImageSendingMessageEx(message).url;
@@ -217,9 +218,14 @@ extension ChatMessageBuilderCustomEx on ChatMessageBuilder {
     var height = ImageSendingMessageEx(message).height;
     final encryptedKey = ImageSendingMessageEx(message).encryptedKey;
     final encryptedNonce = ImageSendingMessageEx(message).encryptedNonce;
-    final stream = fileId.isEmpty || url.isNotEmpty || message.status == types.Status.error
-        ? null
-        : UploadManager.shared.getUploadProgress(fileId, receiverPubkey);
+    Stream<double>? stream;
+    if (isSelfChat) {
+      stream = null;
+    } else if (fileId.isEmpty || url.isNotEmpty || message.status == types.Status.error) {
+      stream = null;
+    } else {
+      stream = UploadManager.shared.getUploadProgress(fileId, receiverPubkey);
+    }
 
     if (width == null || height == null) {
       try {
@@ -254,6 +260,7 @@ extension ChatMessageBuilderCustomEx on ChatMessageBuilder {
     String? receiverPubkey,
     bool isMe,
     Function(types.Message newMessage)? messageUpdateCallback,
+    bool isSelfChat,
   ) {
     return ClipRRect(
       borderRadius: borderRadius,
@@ -261,6 +268,7 @@ extension ChatMessageBuilderCustomEx on ChatMessageBuilder {
         message: message,
         messageWidth: messageWidth,
         receiverPubkey: receiverPubkey,
+        isSelfChat: isSelfChat,
         messageUpdateCallback: messageUpdateCallback,
       ),
     );

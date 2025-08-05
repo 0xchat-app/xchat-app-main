@@ -208,6 +208,7 @@ class ChatMessageBuilder {
     required BorderRadius borderRadius,
     String? receiverPubkey,
     Function(types.Message newMessage)? messageUpdateCallback,
+    required bool isSelfChat,
   }) {
     final isMe = message.isMe;
     final type = message.customType;
@@ -224,6 +225,7 @@ class ChatMessageBuilder {
           borderRadius,
           receiverPubkey,
           isMe,
+          isSelfChat,
         );
       case CustomMessageType.video:
         return ChatMessageBuilderCustomEx._buildVideoMessage(
@@ -233,6 +235,7 @@ class ChatMessageBuilder {
           receiverPubkey,
           isMe,
           messageUpdateCallback,
+          isSelfChat,
         );
       default:
         return SizedBox();

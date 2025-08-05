@@ -85,6 +85,8 @@ class ChatSendMessageHelper {
         sendResultEvent.then(
           (event) => sendRemoteEventHandler?.call(event, sendMsg)
         );
+      } else if (sendingType == ChatSendingType.store) {
+        await sendResultEvent;
       }
     }
     return sendMsg;

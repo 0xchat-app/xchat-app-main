@@ -215,6 +215,7 @@ class CommonChatWidgetState extends State<CommonChatWidget> with OXChatObserver 
                 messageUpdateCallback: (newMessage) {
                   dataController.updateMessage(newMessage);
                 },
+                isSelfChat: handler.session.isSelfChat,
               ),
               repliedMessageBuilder: (types.Message message, {required int messageWidth}) =>
                   ChatMessageBuilder.buildRepliedMessageView(

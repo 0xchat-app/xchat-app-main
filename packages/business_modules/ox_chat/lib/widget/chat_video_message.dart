@@ -14,12 +14,14 @@ class ChatVideoMessage extends StatefulWidget {
     required this.message,
     required this.messageWidth,
     required this.receiverPubkey,
+    this.isSelfChat = false,
     this.messageUpdateCallback,
   });
 
   final types.CustomMessage message;
   final int messageWidth;
   final String? receiverPubkey;
+  final bool isSelfChat;
   final Function(types.Message newMessage)? messageUpdateCallback;
 
   @override
@@ -64,9 +66,13 @@ class ChatVideoMessageState extends State<ChatVideoMessage> {
 
     width = VideoMessageEx(message).width;
     height = VideoMessageEx(message).height;
-    stream = fileId.isEmpty || videoURL.isNotEmpty || widget.message.status == types.Status.error
-        ? null
-        : UploadManager.shared.getUploadProgress(fileId, widget.receiverPubkey);
+    if (widget.isSelfChat) {
+      stream = null;
+    } else if (fileId.isEmpty || videoURL.isNotEmpty || widget.message.status == types.Status.error) {
+      stream = null;
+    } else {
+      stream = UploadManager.shared.getUploadProgress(fileId, widget.receiverPubkey);
+    }
 
     if (videoPath.isNotEmpty) {
       canOpen = true;

@@ -143,6 +143,10 @@ extension ChatMessageSendEx on ChatGeneralHandler {
     ChatSendingType sendingType = ChatSendingType.remote,
     String? replaceMessageId,
   }) async {
+    if (session.isSelfChat && sendingType == ChatSendingType.remote) {
+      sendingType = ChatSendingType.store;
+    }
+
     types.Message? message;
     int tempCreateTime = DateTime.now().millisecondsSinceEpoch;
     if (resendMessage != null) {
@@ -257,6 +261,8 @@ extension ChatMessageSendEx on ChatGeneralHandler {
     if (sendingType == ChatSendingType.remote) {
       // If the message is not sent within a short period of time, change the status to the sending state
       _setMessageSendingStatusIfNeeded(sendFinish, message);
+    } else if (session.isSelfChat) {
+      _updateMessageStatus(message, types.Status.sent);
     }
   }
 
@@ -295,6 +301,10 @@ extension ChatMessageSendEx on ChatGeneralHandler {
       status: status,
     );
     dataController.updateMessage(updatedMessage);
+    ChatMessageHelper.updateMessageWithMessageId(
+      messageId: updatedMessage.remoteId!,
+      status: status,
+    );
   }
 
   FutureOr<String?> messageContentEncoder(types.Message message) {
@@ -494,6 +504,8 @@ extension ChatMessageSendEx on ChatGeneralHandler {
       decryptNonce: encryptedNonce,
     );
     if (sendMessage == null) return;
+
+    if (session.isSelfChat) return;
 
     final (uploadResult, isFromCache) = await UploadManager.shared.uploadFile(
       fileType: FileType.image,
@@ -794,6 +806,8 @@ extension ChatMessageSendEx on ChatGeneralHandler {
       decryptNonce: encryptedNonce,
     );
     if (sendMessage == null) return;
+
+    if (session.isSelfChat) return;
 
     final (uploadResult, isFromCache) = await UploadManager.shared.uploadFile(
       fileType: FileType.video,
