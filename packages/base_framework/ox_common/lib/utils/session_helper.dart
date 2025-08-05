@@ -95,19 +95,25 @@ class SessionHelper {
       
       final members = await Groups.sharedInstance.getAllGroupMembers(groupId);
       
-      if (members.length != 2) return;
-      
+      if (members.length > 2) return;
+
       final currentUserPubkey = LoginManager.instance.currentPubkey;
       if (currentUserPubkey.isEmpty) return;
-      
+
       String? receiverPubkey;
-      for (final member in members) {
-        if (member.pubKey != currentUserPubkey) {
-          receiverPubkey = member.pubKey;
-          break;
+
+      // self-chat
+      if (members.length == 1 && members.first.pubKey == currentUserPubkey) {
+        receiverPubkey = currentUserPubkey;
+      } else if (members.length == 1) {
+        for (final member in members) {
+          if (member.pubKey != currentUserPubkey) {
+            receiverPubkey = member.pubKey;
+            break;
+          }
         }
       }
-      
+
       if (receiverPubkey != null && receiverPubkey.isNotEmpty) {
         sessionModel.receiver = receiverPubkey;
       }

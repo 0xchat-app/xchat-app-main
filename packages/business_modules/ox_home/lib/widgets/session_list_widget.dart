@@ -17,6 +17,7 @@ import 'session_list_data_controller.dart';
 import 'session_view_model.dart';
 
 enum SessionDeleteAction {
+  selfChatDelete,
   singleDeleteForMe,
   singleDeleteForAll,
   clearHistory,
@@ -209,13 +210,36 @@ class _SessionListWidgetState extends State<SessionListWidget> {
       UserDBISAR? currentUser = Account.sharedInstance.me;
       isGroupOwner = currentUser?.pubKey == entity.owner;
     }
-    
-    if (isSingleChat) {
+
+    if (item.sessionModel.isSelfChat) {
+      await _showSelfChatDeleteOptions(context, item);
+    } else if (isSingleChat) {
       await _showPrivateChatDeleteOptions(context, item);
     } else if (isGroupOwner) {
       await _showGroupOwnerDeleteOptions(context, item);
     } else {
       await _showGroupMemberDeleteOptions(context, item);
+    }
+  }
+
+  Future<void> _showSelfChatDeleteOptions(BuildContext context, SessionListViewModel item) async {
+    final result = await CLPicker.show<SessionDeleteAction>(
+      context: context,
+      items: [
+        CLPickerItem(
+          label: Localized.text('ox_chat.clear_history'),
+          value: SessionDeleteAction.clearHistory,
+        ),
+        CLPickerItem(
+          label: Localized.text('ox_chat.delete'),
+          value: SessionDeleteAction.selfChatDelete,
+          isDestructive: true,
+        ),
+      ],
+    );
+
+    if (result != null) {
+      await _handleSessionDeleteAction(item, result);
     }
   }
 
@@ -304,27 +328,42 @@ class _SessionListWidgetState extends State<SessionListWidget> {
     SessionDeleteAction action,
   ) async {
     switch (action) {
+      case SessionDeleteAction.selfChatDelete:
+        if (!await _confirmDeleteSelfChat(item)) return;
+        break;
       case SessionDeleteAction.singleDeleteForMe:
         if (!await _confirmDeleteForMe(item)) return;
-        _deleteWithAction(item: item, action: action);
         break;
       case SessionDeleteAction.singleDeleteForAll:
         if (!await _confirmDeleteForAll(item)) return;
-        _deleteWithAction(item: item, action: action);
         break;
       case SessionDeleteAction.clearHistory:
         if (!await _confirmClearHistory(item)) return;
-        _deleteWithAction(item: item, action: action);
         break;
       case SessionDeleteAction.groupDeleteForMe:
         if (!await _confirmLeaveGroup(item)) return;
-        _deleteWithAction(item: item, action: action);
         break;
       case SessionDeleteAction.groupDeleteForAll:
         if (!await _confirmDeleteGroupForAll(item)) return;
-        _deleteWithAction(item: item, action: action);
         break;
     }
+    _deleteWithAction(item: item, action: action);
+  }
+
+  Future<bool> _confirmDeleteSelfChat(SessionListViewModel item) async {
+    final bool? confirmed = await CLAlertDialog.show(
+      context: context,
+      content: Localized.text('ox_chat.delete_self_chat_content'),
+      actions: [
+        CLAlertAction.cancel(),
+        CLAlertAction<bool>(
+          label: Localized.text('ox_chat.delete'),
+          value: true,
+          isDestructiveAction: true,
+        ),
+      ],
+    );
+    return confirmed == true;
   }
 
   Future<bool> _confirmDeleteForMe(SessionListViewModel item) async {
@@ -425,15 +464,26 @@ class _SessionListWidgetState extends State<SessionListWidget> {
     if (controller == null) return false;
 
     final groupId = item.sessionModel.groupId;
+    if (groupId == null || groupId.isEmpty) return false;
 
     switch (action) {
+      case SessionDeleteAction.selfChatDelete:
+        await controller.deleteSession(
+          viewModel: item,
+          isDeleteForRemote: false,
+        );
+        await Groups.sharedInstance.leaveGroup(
+          groupId,
+          Localized.text('ox_chat.leave_group_system_message')
+              .replaceAll(r'${name}', LoginUserNotifier.instance.name$.value),
+        );
+        return true;
       case SessionDeleteAction.singleDeleteForMe:
         return controller.deleteSession(
           viewModel: item,
           isDeleteForRemote: false,
         );
       case SessionDeleteAction.singleDeleteForAll:
-        if (groupId == null || groupId.isEmpty) return false;
         await Groups.sharedInstance.leaveGroup(
           groupId,
           Localized.text('ox_chat.leave_group_system_message')
@@ -446,7 +496,6 @@ class _SessionListWidgetState extends State<SessionListWidget> {
           isDeleteForRemote: false,
         );
       case SessionDeleteAction.groupDeleteForMe:
-        if (groupId == null || groupId.isEmpty) return false;
         await Groups.sharedInstance.leaveGroup(
           groupId,
           Localized.text('ox_chat.leave_group_system_message')
@@ -454,7 +503,6 @@ class _SessionListWidgetState extends State<SessionListWidget> {
         );
         return true;
       case SessionDeleteAction.groupDeleteForAll:
-        if (groupId == null || groupId.isEmpty) return false;
         Groups.sharedInstance.deleteAndLeave(
           groupId,
           Localized.text('ox_chat.disband_group_toast'),

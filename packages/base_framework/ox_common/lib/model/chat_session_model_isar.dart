@@ -86,6 +86,11 @@ class ChatSessionModelISAR {
     return this.sender != LoginManager.instance.currentPubkey ? this.sender : this.receiver;
   }
 
+  @ignore
+  bool get isSelfChat {
+    return sender == LoginManager.instance.currentPubkey && sender == receiver;
+  }
+
   static ChatSessionModelISAR fromMap(Map<String, Object?> map) {
     return _chatSessionModelFromMap(map);
   }

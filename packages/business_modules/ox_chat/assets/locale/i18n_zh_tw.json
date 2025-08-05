@@ -375,6 +375,7 @@
   "delete_group_item": "刪除",
   "delete_for_all_members": "刪除所有成員的聊天",
   "delete_all": "刪除全部",
+  "delete_self_chat_content": "這將從您的設備中刪除聊天記錄。",
   "delete_for_me_content": "這將只從您的設備中刪除聊天記錄，對方仍會保留此對話。",
   "delete_for_all_content": "這將嘗試刪除您和${userName}的聊天記錄，對方可能也將看不到這些訊息。",
   "clear_history_content": "此操作將刪除所有訊息歷史記錄但保留對話，此操作無法撤銷。",
