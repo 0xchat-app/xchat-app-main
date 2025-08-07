@@ -271,19 +271,24 @@
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
 	</dict>
-	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>XChat needs access to Bluetooth to discover and connect with nearby devices for peer-to-peer messaging.</string>
-	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>XChat needs access to Bluetooth to discover and connect with nearby devices for peer-to-peer messaging.</string>
 	<key>NSBonjourServices</key>
 	<array>
-		<string>_dartobservatory._tcp</string>
+		<string>_http._tcp</string>
+		<string>_dartping._udp</string>
 	</array>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>XChat requires access to Bluetooth to connect with nearby devices for file sharing and data synchronization.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>XChat requires access to Bluetooth to connect with nearby devices for file sharing and data synchronization.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>XChat requires access to your camera, for scanning the QR code in the user center, taking photos or shooting videos for customer service functions.</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>0xchat requires access to your face information for face unlock</string>
+	<string>XChat requires access to your face information for face unlock</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>XChat needs Local Network permission to find local devices</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>XChat requires access to your microphone, to send voice messages for customer service.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
