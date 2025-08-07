@@ -109,7 +109,13 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
 
       // Get relay URL
       List<String> relays = Account.sharedInstance.getCurrentCircleRelay();
-      String relayUrl = relays.isNotEmpty ? relays.first : 'wss://relay.0xchat.com';
+      String? relayUrl = relays.firstOrNull;
+      if (relayUrl == null || relayUrl.isEmpty) {
+        await OXLoading.dismiss();
+        CommonToast.instance.show(context, 'Error circle info');
+        OXNavigator.pop(context);
+        return;
+      }
 
       // Generate invite link with compression
       if (linkType == InviteLinkType.oneTime || linkType == InviteLinkType.permanent) {
@@ -278,9 +284,7 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
 
           // Description text
           CLText.bodyMedium(
-            currentInviteLink == null
-                ? Localized.text('ox_usercenter.generating_invite_link')
-                : Localized.text('ox_usercenter.scan_qr_to_find_me'),
+            Localized.text('ox_usercenter.scan_qr_to_find_me'),
             textAlign: TextAlign.center,
             colorToken: ColorToken.onSurfaceVariant,
           ),
