@@ -40,5 +40,13 @@
   "str_login_with_copy_url": "复制URI",
   "login_with_aegis" : "使用Aegis登录",
   "wait_link_service" : "等待链接中，或者检查签名app是否提示需要授权！",
-  "generate_new_key": "生成新密钥"
+  "generate_new_key": "生成新密钥",
+  "carousel_title_1": "端到端加密",
+  "carousel_text_1": "只有您和收件人可以阅读消息，其他人无法查看。",
+  "carousel_title_2": "去中心化网络",
+  "carousel_text_2": "没有中央服务器，没有控制，只有私密通信。",
+  "carousel_title_3": "加密本地存储",
+  "carousel_text_3": "聊天记录经过加密并存储在您的设备上。",
+  "carousel_title_4": "匿名消息",
+  "carousel_text_4": "无需手机号，无需邮箱，纯粹的匿名性。"
 }

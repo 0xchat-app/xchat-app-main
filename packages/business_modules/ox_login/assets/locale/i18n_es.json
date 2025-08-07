@@ -40,5 +40,13 @@
   "str_login_with_copy_url": "Copiar URL",
   "login_with_aegis": "Iniciar sesión con Aegis",
   "wait_link_service": "Esperando conexión al servicio, ¡o verifica si la aplicación de firma solicita autorización!",
-  "generate_new_key": "Generar nueva clave"
+  "generate_new_key": "Generar nueva clave",
+  "carousel_title_1": "Cifrado de extremo a extremo",
+  "carousel_text_1": "Solo tú y el destinatario pueden leer los mensajes. Nadie más.",
+  "carousel_title_2": "Red descentralizada",
+  "carousel_text_2": "Sin servidores centrales. Sin control. Solo comunicación privada.",
+  "carousel_title_3": "Almacenamiento local cifrado",
+  "carousel_text_3": "Los chats están cifrados y almacenados en tu dispositivo.",
+  "carousel_title_4": "Mensajería anónima",
+  "carousel_text_4": "Sin número de teléfono. Sin correo electrónico. Solo puro anonimato."
 }

@@ -40,5 +40,13 @@
   "str_login_with_copy_url": "URL kopieren",
   "wait_link_service": "Warten auf Verbindung zum Dienst oder prüfen Sie, ob die Signierer-App eine Authentifizierung anfordert!",
   "generate_new_key": "Neuen Schlüssel generieren",
-  "login_with_aegis": "Mit Aegis anmelden"
+  "login_with_aegis": "Mit Aegis anmelden",
+  "carousel_title_1": "Ende-zu-Ende-Verschlüsselung",
+  "carousel_text_1": "Nur Sie und der Empfänger können die Nachrichten lesen. Niemand sonst.",
+  "carousel_title_2": "Dezentrales Netzwerk",
+  "carousel_text_2": "Keine zentralen Server. Keine Kontrolle. Nur private Kommunikation.",
+  "carousel_title_3": "Verschlüsselte lokale Speicherung",
+  "carousel_text_3": "Chats sind verschlüsselt und auf Ihrem Gerät gespeichert.",
+  "carousel_title_4": "Anonyme Nachrichtenübermittlung",
+  "carousel_text_4": "Keine Telefonnummer. Keine E-Mail. Nur reine Anonymität."
 }

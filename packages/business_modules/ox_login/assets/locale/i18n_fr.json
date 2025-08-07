@@ -40,5 +40,13 @@
   "str_login_with_copy_url": "Copier l'URL",
   "wait_link_service": "En attente de connexion au service, ou veuillez vérifier si l'application de signature demande une autorisation !",
   "generate_new_key": "Générer une nouvelle clé",
-  "login_with_aegis": "Se connecter avec Aegis"
+  "login_with_aegis": "Se connecter avec Aegis",
+  "carousel_title_1": "Chiffrement de bout en bout",
+  "carousel_text_1": "Seuls vous et le destinataire pouvez lire les messages. Personne d'autre.",
+  "carousel_title_2": "Réseau décentralisé",
+  "carousel_text_2": "Aucun serveur central. Aucun contrôle. Juste une communication privée.",
+  "carousel_title_3": "Stockage local chiffré",
+  "carousel_text_3": "Les chats sont chiffrés et stockés sur votre appareil.",
+  "carousel_title_4": "Messagerie anonyme",
+  "carousel_text_4": "Pas de numéro de téléphone. Pas d'e-mail. Juste une pure anonymité."
 }

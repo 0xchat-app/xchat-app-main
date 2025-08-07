@@ -40,5 +40,13 @@
   "str_login_with_copy_url": "複製URL",
   "wait_link_service": "等待連接到服務，或請檢查簽名應用程式是否提示授權！",
   "generate_new_key": "生成新密鑰",
-  "login_with_aegis": "使用 Aegis 登入"
+  "login_with_aegis": "使用 Aegis 登入",
+  "carousel_title_1": "端到端加密",
+  "carousel_text_1": "只有您和收件人可以閱讀訊息，其他人無法查看。",
+  "carousel_title_2": "去中心化網路",
+  "carousel_text_2": "沒有中央伺服器，沒有控制，只有私密通訊。",
+  "carousel_title_3": "加密本地儲存",
+  "carousel_text_3": "聊天記錄經過加密並儲存在您的裝置上。",
+  "carousel_title_4": "匿名訊息",
+  "carousel_text_4": "無需手機號，無需郵箱，純粹的匿名性。"
 }

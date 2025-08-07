@@ -40,5 +40,13 @@
   "str_login_with_copy_url": "URLをコピー",
   "wait_link_service": "サービスへの接続を待機中、または署名アプリが認証を求めているかご確認ください！",
   "generate_new_key": "新しいキーを生成",
-  "login_with_aegis": "Aegisでログイン"
+  "login_with_aegis": "Aegisでログイン",
+  "carousel_title_1": "エンドツーエンド暗号化",
+  "carousel_text_1": "あなたと受信者のみがメッセージを読むことができます。他の誰も読めません。",
+  "carousel_title_2": "分散型ネットワーク",
+  "carousel_text_2": "中央サーバーなし。制御なし。純粋にプライベートな通信のみ。",
+  "carousel_title_3": "暗号化されたローカルストレージ",
+  "carousel_text_3": "チャットは暗号化されてデバイスに保存されます。",
+  "carousel_title_4": "匿名メッセージング",
+  "carousel_text_4": "電話番号不要。メール不要。純粋な匿名性のみ。"
 }

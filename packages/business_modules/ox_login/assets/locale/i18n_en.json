@@ -40,5 +40,13 @@
   "str_login_with_copy_url": "Copy URI",
   "login_with_aegis": "Login with Aegis",
   "wait_link_service": "Waiting to connect to the service, or please check if the signing app is prompting for authorization!",
-  "generate_new_key": "Generate New Key"
+  "generate_new_key": "Generate New Key",
+  "carousel_title_1": "End-to-End Encryption",
+  "carousel_text_1": "Only you and the recipient can read the messages. No one else.",
+  "carousel_title_2": "Decentralized Network",
+  "carousel_text_2": "No central servers. No control. Just private communication.",
+  "carousel_title_3": "Encrypted Local Storage",
+  "carousel_text_3": "Chats are encrypted and stored on your device.",
+  "carousel_title_4": "Anonymous Messaging",
+  "carousel_text_4": "No phone number. No email. Just pure anonymity."
 }

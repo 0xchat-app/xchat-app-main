@@ -50,8 +50,8 @@ class _LoginPageState extends State<LoginPage> {
                 package: 'ox_login',
                 isPlatformStyle: true,
               ),
-              title: 'End-to-End Encryption',
-              text: 'Only you and the recipient can read the messages. No one else.',
+              title: Localized.text('ox_login.carousel_title_1'),
+              text: Localized.text('ox_login.carousel_text_1'),
             ),
             BannerItem(
               image: CommonImage(
@@ -60,8 +60,8 @@ class _LoginPageState extends State<LoginPage> {
                 package: 'ox_login',
                 isPlatformStyle: true,
               ),
-              title: 'Decentralized Network',
-              text: 'No central servers. No control. Just private communication.',
+              title: Localized.text('ox_login.carousel_title_2'),
+              text: Localized.text('ox_login.carousel_text_2'),
             ),
             BannerItem(
               image: CommonImage(
@@ -70,8 +70,8 @@ class _LoginPageState extends State<LoginPage> {
                 package: 'ox_login',
                 isPlatformStyle: true,
               ),
-              title: 'Encrypted Local Storage',
-              text: 'Chats are encrypted and stored on your device.',
+              title: Localized.text('ox_login.carousel_title_3'),
+              text: Localized.text('ox_login.carousel_text_3'),
             ),
             BannerItem(
               image: CommonImage(
@@ -80,11 +80,12 @@ class _LoginPageState extends State<LoginPage> {
                 package: 'ox_login',
                 isPlatformStyle: true,
               ),
-              title: 'Anonymous Messaging',
-              text: 'No phone number. No email. Just pure anonymity.',
+              title: Localized.text('ox_login.carousel_title_4'),
+              text: Localized.text('ox_login.carousel_text_4'),
             ),
           ],
           height: 460.py,
+          interval: const Duration(seconds: 3),
           padding: EdgeInsets.symmetric(horizontal: 32.px),
         ),
         const Spacer(),
