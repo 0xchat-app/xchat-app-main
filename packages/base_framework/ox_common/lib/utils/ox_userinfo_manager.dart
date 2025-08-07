@@ -90,6 +90,9 @@ class OXUserInfoManager {
     Contacts.sharedInstance.privateChatMessageUpdateCallBack = messageUpdateCallBack;
     Contacts.sharedInstance.secretChatMessageUpdateCallBack = messageUpdateCallBack;
     Groups.sharedInstance.groupMessageUpdateCallBack = messageUpdateCallBack;
+    Groups.sharedInstance.groupDeleteCallBack = (String groupId) async {
+      OXChatBinding.sharedInstance.deleteSession([groupId]);
+    };
 
     Groups.sharedInstance.groupMessageCallBack = (MessageDBISAR messageDB) async {
       OXChatBinding.sharedInstance.didReceiveMessageHandler(messageDB);

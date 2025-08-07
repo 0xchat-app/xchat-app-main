@@ -384,6 +384,7 @@
   "delete_group_item": "Delete",
   "delete_for_all_members": "Delete for all members",
   "delete_all": "Delete all",
+  "delete_self_chat_content": "This will delete the chat from your device.",
   "delete_for_me_content": "This will only delete the chat from your device. The other person will still have the conversation.",
   "delete_for_all_content": "This will attempt to delete the chat for both you and ${userName}. They may not see the messages anymore.",
   "clear_history_content": "This action will delete all message history but keep the conversation.",

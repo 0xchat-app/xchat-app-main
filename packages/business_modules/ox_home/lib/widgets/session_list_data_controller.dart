@@ -216,12 +216,6 @@ extension SessionDCInterface on SessionListDataController {
   }) async {
     final chatId = viewModel.sessionModel.chatId;
 
-    final deleteSuc = await deleteSessionMessage(
-      viewModel: viewModel,
-      isDeleteForRemote: isDeleteForRemote,
-    );
-    if (!deleteSuc) return false;
-
     final isar = DBISAR.sharedInstance.isar;
     int count = await isar.writeAsync((isar) {
       return isar.chatSessionModelISARs
@@ -234,7 +228,12 @@ extension SessionDCInterface on SessionListDataController {
       _removeViewModel(viewModel);
     }
 
-    return true;
+    final deleteSuc = await deleteSessionMessage(
+      viewModel: viewModel,
+      isDeleteForRemote: isDeleteForRemote,
+    );
+
+    return deleteSuc;
   }
 
   Future<bool> deleteSessionMessage({

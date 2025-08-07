@@ -544,12 +544,24 @@ extension ChatMenuHandlerEx on ChatGeneralHandler {
     final deleteOption = await CLPicker.show<DeleteOption>(
       context: context,
       title: Localized.text('ox_chat.message_delete_hint'),
-      items: _buildDeleteOptions(message),
+      items: session.isSelfChat
+          ? _buildSelfChatDeleteOptions()
+          : _buildDeleteOptions(message),
     );
 
     if (deleteOption != null) {
       await _performDeleteAction(context, message, deleteOption);
     }
+  }
+
+  List<CLPickerItem<DeleteOption>> _buildSelfChatDeleteOptions() {
+    return [
+      CLPickerItem<DeleteOption>(
+        label: Localized.text('ox_chat.delete'),
+        value: DeleteOption.local,
+        isDestructive: true,
+      )
+    ];
   }
 
   List<CLPickerItem<DeleteOption>> _buildDeleteOptions(types.Message message) {
@@ -728,13 +740,7 @@ extension ChatInputMoreHandlerEx on ChatGeneralHandler {
   // type: 1 - image, 2 - video
   Future albumPressHandler(BuildContext context, int type) async {
     // Ensure file server is configured before proceeding.
-    if (!await FileServerHelper.ensureFileServerConfigured(
-      context,
-      onGoToSettings: () => OXNavigator.pushPage(
-        context,
-        (_) => FileServerPage(previousPageTitle: Localized.text('ox_common.back')),
-      ),
-    )) return;
+    if (!await _ensureFileServerConfigured(context)) return;
 
     if(PlatformUtils.isDesktop){
       await _goToPhoto(context, type);
@@ -779,13 +785,7 @@ extension ChatInputMoreHandlerEx on ChatGeneralHandler {
   }
 
   Future cameraPressHandler(BuildContext context,) async {
-    if (!await FileServerHelper.ensureFileServerConfigured(
-      context,
-      onGoToSettings: () => OXNavigator.pushPage(
-        context,
-        (_) => FileServerPage(previousPageTitle: Localized.text('ox_common.back')),
-      ),
-    )) return;
+    if (!await _ensureFileServerConfigured(context)) return;
 
     _goToCamera(context);
   }
@@ -893,15 +893,20 @@ extension ChatInputHandlerEx on ChatGeneralHandler {
     if (!isConfirm) return;
 
     // Ensure file server is configured before proceeding.
-    if (!await FileServerHelper.ensureFileServerConfigured(
+    if (!await _ensureFileServerConfigured(context)) return;
+
+    sendImageMessageWithFile(context, [imageFile]);
+  }
+
+  Future<bool> _ensureFileServerConfigured(BuildContext context) async {
+    if (session.isSelfChat) return true;
+    return FileServerHelper.ensureFileServerConfigured(
       context,
       onGoToSettings: () => OXNavigator.pushPage(
         context,
         (_) => FileServerPage(previousPageTitle: Localized.text('ox_common.back')),
       ),
-    )) return;
-
-    sendImageMessageWithFile(context, [imageFile]);
+    );
   }
 
   void _pasteTextActionHandler() async {

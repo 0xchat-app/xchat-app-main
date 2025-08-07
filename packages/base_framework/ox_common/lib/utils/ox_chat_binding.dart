@@ -99,7 +99,7 @@ class OXChatBinding {
     }
   }
 
-  Future<int> deleteSession(List<String> chatIds, {bool isStranger = false}) async {
+  Future<int> deleteSession(List<String> chatIds) async {
     for (OXChatObserver observer in _observers) {
       observer.deleteSessionCallback(chatIds);
     }
