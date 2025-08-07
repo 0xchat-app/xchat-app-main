@@ -34,8 +34,8 @@
   "str_login_with_nip46": "Bejelentkezés Nip46-tal",
   "str_enter_nip46_login_hint": "Adja meg a Nip46 linket a bejelentkezéshez:",
   "str_login_with_qrcode": "Bejelentkezés QR-kóddal",
-  "str_login_with_qrcode_hint": "Jelentkezzen be a 0xchat-ba QR-kód használatával",
-  "str_login_with_qrcode_description": "1 Nyissa meg a 0xchat alkalmazást a telefonján\n2 Menjen a Hozzáadás > Beolvasás menüpontra\n3 Irányítsa a telefonját erre a képernyőre a bejelentkezés megerősítéséhez",
+  "str_login_with_qrcode_hint": "Jelentkezzen be a XChat-ba QR-kód használatával",
+  "str_login_with_qrcode_description": "1 Nyissa meg a XChat alkalmazást a telefonján\n2 Menjen a Hozzáadás > Beolvasás menüpontra\n3 Irányítsa a telefonját erre a képernyőre a bejelentkezés megerősítéséhez",
   "str_login_with_account": "Bejelentkezés fiókkal",
   "str_login_with_copy_url": "URL másolása"
 }

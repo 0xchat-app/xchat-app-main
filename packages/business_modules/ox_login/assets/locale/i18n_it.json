@@ -34,8 +34,8 @@
   "str_login_with_nip46": "Accedi con Nip46",
   "str_enter_nip46_login_hint": "Inserisci il link Nip46 per accedere:",
   "str_login_with_qrcode": "Accedi con QR Code",
-  "str_login_with_qrcode_hint": "Accedi a 0xchat utilizzando un QR Code",
-  "str_login_with_qrcode_description": "1 Apri 0xchat sul tuo telefono\n2 Vai su Aggiungi > Scansiona\n3 Punta il tuo telefono verso questo schermo per confermare l'accesso",
+  "str_login_with_qrcode_hint": "Accedi a XChat utilizzando un QR Code",
+  "str_login_with_qrcode_description": "1 Apri XChat sul tuo telefono\n2 Vai su Aggiungi > Scansiona\n3 Punta il tuo telefono verso questo schermo per confermare l'accesso",
   "str_login_with_account": "Accedi con Account",
   "str_login_with_copy_url": "Copia URL"
 }

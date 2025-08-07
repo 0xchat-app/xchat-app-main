@@ -34,8 +34,8 @@
   "str_login_with_nip46": "เข้าสู่ระบบด้วย Nip46",
   "str_enter_nip46_login_hint": "ป้อนลิงก์ Nip46 เพื่อเข้าสู่ระบบ:",
   "str_login_with_qrcode": "เข้าสู่ระบบด้วย QR Code",
-  "str_login_with_qrcode_hint": "เข้าสู่ระบบ 0xchat ด้วย QR Code",
-  "str_login_with_qrcode_description": "1 เปิด 0xchat บนโทรศัพท์ของคุณ\n2 ไปที่ เพิ่ม > สแกน\n3 ชี้โทรศัพท์ของคุณไปที่หน้าจอนี้เพื่อยืนยันการเข้าสู่ระบบ",
+  "str_login_with_qrcode_hint": "เข้าสู่ระบบ XChat ด้วย QR Code",
+  "str_login_with_qrcode_description": "1 เปิด XChat บนโทรศัพท์ของคุณ\n2 ไปที่ เพิ่ม > สแกน\n3 ชี้โทรศัพท์ของคุณไปที่หน้าจอนี้เพื่อยืนยันการเข้าสู่ระบบ",
   "str_login_with_account": "เข้าสู่ระบบด้วยบัญชี",
   "str_login_with_copy_url": "คัดลอก URL"
 }

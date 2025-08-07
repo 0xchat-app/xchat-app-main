@@ -60,7 +60,7 @@
   "import_follows": "Követők Importálása",
   "import_follows_tips": "Importáld a követőket és add hozzá őket a Kapcsolatokhoz:",
   "import_follows_no_data": "Még nincsenek követők",
-  "import_follows_success_dialog": "Sikeresen hozzáadva. Oszd meg a 0xchat-et a Kapcsolataiddal.",
+  "import_follows_success_dialog": "Sikeresen hozzáadva. Oszd meg a XChat-et a Kapcsolataiddal.",
   "str_secret_center_hint": "• Használj végponttól végpontig titkosítást (NIP-44)\n• Megakadályozza a metadata szivárgásokat (NIP-59)\n• Továbbított titoktartás (NIP-101)\n• Más eszközökön nem visszaállítható\n• Képernyőmentés detektálás\n• Az üzeneteket csak a megadott relay-re küldjük el neked/az ellenfélnek:",
   "str_other_rejected": "Elutasítva",
   "str_other_expired": "Lejárt",

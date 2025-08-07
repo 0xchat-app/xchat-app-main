@@ -34,8 +34,8 @@
   "str_login_with_nip46": "Войти через Nip46",
   "str_enter_nip46_login_hint": "Введите ссылку Nip46 для входа:",
   "str_login_with_qrcode": "Войти с помощью QR-кода",
-  "str_login_with_qrcode_hint": "Войдите в 0xchat с помощью QR-кода",
-  "str_login_with_qrcode_description": "1 Откройте 0xchat на вашем телефоне\n2 Перейдите в Добавить > Сканировать\n3 Наведите телефон на экран, чтобы подтвердить вход",
+  "str_login_with_qrcode_hint": "Войдите в XChat с помощью QR-кода",
+  "str_login_with_qrcode_description": "1 Откройте XChat на вашем телефоне\n2 Перейдите в Добавить > Сканировать\n3 Наведите телефон на экран, чтобы подтвердить вход",
   "str_login_with_account": "Войти через аккаунт",
   "str_login_with_copy_url": "Скопировать URL"
 }

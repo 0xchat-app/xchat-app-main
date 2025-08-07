@@ -60,7 +60,7 @@
   "import_follows": "Takipçileri İçe Aktar",
   "import_follows_tips": "Takipçileri içe aktar ve Kişiler olarak ekleyin:",
   "import_follows_no_data": "Henüz Takipçi Yok",
-  "import_follows_success_dialog": "Başarıyla eklendi. İletişimlerinizle 0xchat'i paylaşın.",
+  "import_follows_success_dialog": "Başarıyla eklendi. İletişimlerinizle XChat'i paylaşın.",
   "str_secret_center_hint": "• Uçtan uca şifreleme kullan (NIP-44)\n• Meta veri sızıntılarını önle (NIP-59)\n• İleri gizlilik (NIP-101)\n• Diğer cihazlarda geri alınamaz\n• Ekran görüntüsü algılama\n• Mesajlar sadece sizin/belirttiğiniz kişinin belirttiği aktarıcıya gönderilir:",
   "str_other_rejected": "Reddedildi",
   "str_other_expired": "Süresi Doldu",

@@ -60,7 +60,7 @@
   "import_follows": "Importar Seguiments",
   "import_follows_tips": "Importa seguiments i afegir-los com a Contactes:",
   "import_follows_no_data": "Encara no hi ha seguiments",
-  "import_follows_success_dialog": "Afegit amb èxit. Comparteix 0xchat amb els teus Contactes.",
+  "import_follows_success_dialog": "Afegit amb èxit. Comparteix XChat amb els teus Contactes.",
   "str_secret_center_hint": "• Usa xifrat d'extrem a extrem (NIP-44)\n• Prevenció de fuites de metadades (NIP-59)\n• Secretesa avant (NIP-101)\n• Irrecuperable en altres dispositius\n• Detecció de captures de pantalla\n• Els missatges només s'enviaran al relay que tu/especifiquis la contrapart:",
   "str_other_rejected": "Rebutjat",
   "str_other_expired": "Caducat",

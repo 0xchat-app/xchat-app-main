@@ -34,8 +34,8 @@
   "str_login_with_nip46": "Đăng nhập bằng Nip46",
   "str_enter_nip46_login_hint": "Nhập liên kết Nip46 để đăng nhập:",
   "str_login_with_qrcode": "Đăng nhập bằng Mã QR",
-  "str_login_with_qrcode_hint": "Đăng nhập vào 0xchat bằng Mã QR",
-  "str_login_with_qrcode_description": "1 Mở 0xchat trên điện thoại của bạn\n2 Chuyển đến Thêm > Quét\n3 Chỉ điện thoại của bạn vào màn hình này để xác nhận đăng nhập",
+  "str_login_with_qrcode_hint": "Đăng nhập vào XChat bằng Mã QR",
+  "str_login_with_qrcode_description": "1 Mở XChat trên điện thoại của bạn\n2 Chuyển đến Thêm > Quét\n3 Chỉ điện thoại của bạn vào màn hình này để xác nhận đăng nhập",
   "str_login_with_account": "Đăng nhập bằng tài khoản",
   "str_login_with_copy_url": "Sao chép URL"
 }

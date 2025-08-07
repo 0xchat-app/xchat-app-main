@@ -60,7 +60,7 @@
   "import_follows": "Importer des abonnements",
   "import_follows_tips": "Importer des abonnements pour les ajouter en tant que contacts :",
   "import_follows_no_data": "Pas encore d'abonnements",
-  "import_follows_success_dialog": "Ajouté avec succès. Partagez 0xchat avec vos contacts.",
+  "import_follows_success_dialog": "Ajouté avec succès. Partagez XChat avec vos contacts.",
   "str_secret_center_hint": "• Utilise un chiffrement de bout en bout (NIP-44)\n• Empêche les fuites de métadonnées (NIP-59)\n• Assure la confidentialité (NIP-101)\n• Irrecouvrable sur d'autres appareils\n• Détection de capture d'écran\n• Les messages seront envoyés uniquement au relais que vous/spécifiez :",
   "str_other_rejected": "Rejeté",
   "str_other_expired": "Expiré",

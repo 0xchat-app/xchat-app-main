@@ -60,7 +60,7 @@
   "import_follows": "Importuj obserwujących",
   "import_follows_tips": "Importuj obserwujących i dodaj ich jako Kontakty:",
   "import_follows_no_data": "Jeszcze brak obserwujących",
-  "import_follows_success_dialog": "Pomyślnie dodano. Udostępnij 0xchat swoim kontaktom.",
+  "import_follows_success_dialog": "Pomyślnie dodano. Udostępnij XChat swoim kontaktom.",
   "str_secret_center_hint": "• Użyj szyfrowania end-to-end (NIP-44)\n• Zapobiegaj wyciekom metadanych (NIP-59)\n• Poufność przekazu (NIP-101)\n• Nieodwracalny na innych urządzeniach\n• Wykrywanie zrzutów ekranu\n• Wiadomości zostaną wysłane tylko do określonego relay przez Ciebie/stronę przeciwną:",
   "str_other_rejected": "Odrzucony",
   "str_other_expired": "Wygasł",

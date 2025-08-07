@@ -60,7 +60,7 @@
   "import_follows": "Importar Seguidos",
   "import_follows_tips": "Importar seguidos e adicioná-los como Contatos:",
   "import_follows_no_data": "Sem seguidos ainda",
-  "import_follows_success_dialog": "Adicionado com sucesso. Compartilhe o 0xchat com seus Contatos.",
+  "import_follows_success_dialog": "Adicionado com sucesso. Compartilhe o XChat com seus Contatos.",
   "str_secret_center_hint": "• Utilizar criptografia ponta-a-ponta (NIP-44)\n• Prevenir vazamento de metadados (NIP-59)\n• Garantir sigilo perene (NIP-101)\n• Irrecuperável em outros dispositivos\n• Detecção de captura de tela\n• Mensagens serão enviadas apenas para o relay que você/especifique:",
   "str_other_rejected": "Rejeitado",
   "str_other_expired": "Expirado",

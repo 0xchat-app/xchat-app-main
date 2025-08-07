@@ -34,8 +34,8 @@
   "str_login_with_nip46": "Вход с Nip46",
   "str_enter_nip46_login_hint": "Въведете Nip46 връзка за вход:",
   "str_login_with_qrcode": "Вход чрез QR код",
-  "str_login_with_qrcode_hint": "Влезте в 0xchat чрез QR код",
-  "str_login_with_qrcode_description": "1 Отворете 0xchat на телефона си\n2 Отидете на Добавяне > Сканиране\n3 Насочете телефона си към този екран, за да потвърдите входа",
+  "str_login_with_qrcode_hint": "Влезте в XChat чрез QR код",
+  "str_login_with_qrcode_description": "1 Отворете XChat на телефона си\n2 Отидете на Добавяне > Сканиране\n3 Насочете телефона си към този екран, за да потвърдите входа",
   "str_login_with_account": "Вход чрез акаунт",
   "str_login_with_copy_url": "Копирайте URL"
 }

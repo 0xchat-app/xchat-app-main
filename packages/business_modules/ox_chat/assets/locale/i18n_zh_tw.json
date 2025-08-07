@@ -60,7 +60,7 @@
   "import_follows": "導入關注",
   "import_follows_tips": "導入關注並將他們添加為聯絡人：",
   "import_follows_no_data": "暫無關注",
-  "import_follows_success_dialog": "添加成功，與您的聯絡人共享0xchat",
+  "import_follows_success_dialog": "添加成功，與您的聯絡人共享XChat",
   "str_secret_center_hint": "• 使用端到端加密（NIP-44）\n• 防止元數據洩露（NIP-59）\n• 確保前向保密（NIP-101）\n• 在其他設備上不可恢復\n• 截屏檢測\n• 訊息只會發送到您或對方指定的中繼：",
   "str_other_rejected": "已拒絕",
   "str_other_expired": "已過期",

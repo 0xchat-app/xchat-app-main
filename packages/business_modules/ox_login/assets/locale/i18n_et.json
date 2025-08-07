@@ -34,8 +34,8 @@
   "str_login_with_nip46": "Logi sisse Nip46-ga",
   "str_enter_nip46_login_hint": "Sisestage Nip46 link sisselogimiseks:",
   "str_login_with_qrcode": "Logi sisse QR-koodiga",
-  "str_login_with_qrcode_hint": "Logige sisse 0xchat QR-koodiga",
-  "str_login_with_qrcode_description": "1 Avage 0xchat oma telefonis\n2 Minge Lisa > Skaneerimine\n3 Suunake oma telefon sellele ekraanile, et kinnitada sisselogimine",
+  "str_login_with_qrcode_hint": "Logige sisse XChat QR-koodiga",
+  "str_login_with_qrcode_description": "1 Avage XChat oma telefonis\n2 Minge Lisa > Skaneerimine\n3 Suunake oma telefon sellele ekraanile, et kinnitada sisselogimine",
   "str_login_with_account": "Logi sisse kontoga",
   "str_login_with_copy_url": "Kopeeri URL"
 }

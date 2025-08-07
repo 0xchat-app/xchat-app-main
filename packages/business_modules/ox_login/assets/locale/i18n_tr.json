@@ -34,8 +34,8 @@
   "str_login_with_nip46": "Nip46 ile Giriş Yap",
   "str_enter_nip46_login_hint": "Giriş yapmak için Nip46 bağlantısını girin:",
   "str_login_with_qrcode": "QR Kodu ile Giriş Yap",
-  "str_login_with_qrcode_hint": "QR Kodu kullanarak 0xchat'e giriş yapın",
-  "str_login_with_qrcode_description": "1 Telefonunuzda 0xchat'i açın\n2 Ekle > Tara'ya gidin\n3 Giriş yapmak için telefonunuzu bu ekrana yönlendirin",
+  "str_login_with_qrcode_hint": "QR Kodu kullanarak XChat'e giriş yapın",
+  "str_login_with_qrcode_description": "1 Telefonunuzda XChat'i açın\n2 Ekle > Tara'ya gidin\n3 Giriş yapmak için telefonunuzu bu ekrana yönlendirin",
   "str_login_with_account": "Hesap ile Giriş Yap",
   "str_login_with_copy_url": "URL'yi Kopyala"
 }

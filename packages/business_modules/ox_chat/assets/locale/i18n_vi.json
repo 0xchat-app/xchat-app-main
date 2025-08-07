@@ -60,7 +60,7 @@
   "import_follows": "Nhập Follows",
   "import_follows_tips": "Nhập follows và thêm họ vào liên hệ:",
   "import_follows_no_data": "Chưa có Follows",
-  "import_follows_success_dialog": "Đã thêm thành công. Chia sẻ 0xchat với liên hệ của bạn.",
+  "import_follows_success_dialog": "Đã thêm thành công. Chia sẻ XChat với liên hệ của bạn.",
   "str_secret_center_hint": "• Sử dụng mã hóa end-to-end (NIP-44)\n• Ngăn ngừa rò rỉ metadata (NIP-59)\n• Đảm bảo bí mật tiến tục (NIP-101)\n• Không thể khôi phục trên các thiết bị khác\n• Phát hiện ảnh chụp màn hình\n• Tin nhắn chỉ được gửi đến relay bạn/chúng tôi chỉ định:",
   "str_other_rejected": "Đã từ chối",
   "str_other_expired": "Đã hết hạn",

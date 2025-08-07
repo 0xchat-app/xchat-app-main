@@ -60,7 +60,7 @@
   "import_follows": "Impor Mengikuti",
   "import_follows_tips": "Impor mengikuti dan tambahkan mereka sebagai Kontak:",
   "import_follows_no_data": "Belum ada yang mengikuti",
-  "import_follows_success_dialog": "Berhasil ditambahkan. Bagikan 0xchat dengan Kontak Anda.",
+  "import_follows_success_dialog": "Berhasil ditambahkan. Bagikan XChat dengan Kontak Anda.",
   "str_secret_center_hint": "• Gunakan enkripsi end-to-end (NIP-44)\n• Cegah kebocoran metadata (NIP-59)\n• Kerahasiaan maju (NIP-101)\n• Tidak dapat dipulihkan di perangkat lain\n• Deteksi screenshot\n• Pesan hanya akan dikirim ke relay yang Anda/penerima tentukan:",
   "str_other_rejected": "Ditolak",
   "str_other_expired": "Kadaluarsa",

@@ -60,7 +60,7 @@
   "import_follows": "Importar seguidores",
   "import_follows_tips": "Importa seguidores y añádelos como contactos:",
   "import_follows_no_data": "Sin seguidores aún",
-  "import_follows_success_dialog": "Añadido exitosamente. Comparte 0xchat con tus contactos.",
+  "import_follows_success_dialog": "Añadido exitosamente. Comparte XChat con tus contactos.",
   "str_secret_center_hint": "• Usa cifrado de extremo a extremo (NIP-44)\n• Previene fugas de metadatos (NIP-59)\n• Asegura secreto hacia adelante (NIP-101)\n• Irrecuperable en otros dispositivos\n• Detección de captura de pantalla\n• Los mensajes solo se enviarán al relé que tú/el destinatario especifiquen:",
   "str_other_rejected": "Rechazado",
   "str_other_expired": "Caducado",

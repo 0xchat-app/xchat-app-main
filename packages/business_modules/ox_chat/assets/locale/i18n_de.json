@@ -60,7 +60,7 @@
   "import_follows": "Folgen importieren",
   "import_follows_tips": "Folgen importieren und als Kontakte hinzufügen:",
   "import_follows_no_data": "Noch keine Folgen",
-  "import_follows_success_dialog": "Erfolgreich hinzugefügt. Teilen Sie 0xchat mit Ihren Kontakten.",
+  "import_follows_success_dialog": "Erfolgreich hinzugefügt. Teilen Sie XChat mit Ihren Kontakten.",
   "str_secret_center_hint": "• End-to-End-Verschlüsselung verwenden (NIP-44)\n• Metadaten-Lecks verhindern (NIP-59)\n• Vorwärtsgeheimnis sicherstellen (NIP-101)\n• Auf anderen Geräten nicht wiederherstellbar\n• Screenshot-Erkennung\n• Nachrichten werden nur an das von Ihnen/dem Gegenüber angegebene Relay gesendet:",
   "str_other_rejected": "Abgelehnt",
   "str_other_expired": "Abgelaufen",

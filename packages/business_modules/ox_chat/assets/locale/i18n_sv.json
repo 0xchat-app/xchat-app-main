@@ -60,7 +60,7 @@
   "import_follows": "Importera följare",
   "import_follows_tips": "Importera följare och lägg till dem som kontakter:",
   "import_follows_no_data": "Inga följare ännu",
-  "import_follows_success_dialog": "Lagt till framgångsrikt. Dela 0xchat med dina kontakter.",
+  "import_follows_success_dialog": "Lagt till framgångsrikt. Dela XChat med dina kontakter.",
   "str_secret_center_hint": "• Använd ände-till-ände-kryptering (NIP-44)\n• Förhindra metadata-läckor (NIP-59)\n• Vidarebefordrad sekretess (NIP-101)\n• Irreversibel på andra enheter\n• Skärmdumpsdetektion\n• Meddelanden kommer bara att skickas till den relay du/motparten anger:",
   "str_other_rejected": "Avvisad",
   "str_other_expired": "Utgången",

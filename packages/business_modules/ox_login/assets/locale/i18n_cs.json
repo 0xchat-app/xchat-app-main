@@ -34,8 +34,8 @@
   "str_login_with_nip46": "Přihlásit se pomocí Nip46",
   "str_enter_nip46_login_hint": "Zadejte odkaz Nip46 pro přihlášení:",
   "str_login_with_qrcode": "Přihlášení pomocí QR kódu",
-  "str_login_with_qrcode_hint": "Přihlaste se do 0xchat pomocí QR kódu",
-  "str_login_with_qrcode_description": "1 Otevřete 0xchat na svém telefonu\n2 Přejděte na Přidat > Skenovat\n3 Nasměrujte svůj telefon na tuto obrazovku pro potvrzení přihlášení",
+  "str_login_with_qrcode_hint": "Přihlaste se do XChat pomocí QR kódu",
+  "str_login_with_qrcode_description": "1 Otevřete XChat na svém telefonu\n2 Přejděte na Přidat > Skenovat\n3 Nasměrujte svůj telefon na tuto obrazovku pro potvrzení přihlášení",
   "str_login_with_account": "Přihlásit se pomocí účtu",
   "str_login_with_copy_url": "Zkopírujte URL"
 }

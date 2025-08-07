@@ -60,7 +60,7 @@
   "import_follows": "팔로우 가져오기",
   "import_follows_tips": "팔로우를 가져와 연락처로 추가:",
   "import_follows_no_data": "아직 팔로우 없음",
-  "import_follows_success_dialog": "성공적으로 추가됨. 0xchat을 연락처와 공유하세요.",
+  "import_follows_success_dialog": "성공적으로 추가됨. XChat을 연락처와 공유하세요.",
   "str_secret_center_hint": "• 끝-끝 암호화 사용(NIP-44)\n• 메타데이터 유출 방지(NIP-59)\n• 전방 기밀성 보장(NIP-101)\n• 다른 기기에서 복구 불가\n• 스크린샷 감지\n• 메시지는 지정한 릴레이로만 전송됩니다:",
   "str_other_rejected": "거절됨",
   "str_other_expired": "만료됨",

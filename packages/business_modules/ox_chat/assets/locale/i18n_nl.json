@@ -60,7 +60,7 @@
   "import_follows": "Volgers Importeren",
   "import_follows_tips": "Importeer volgers en voeg ze toe als Contacten:",
   "import_follows_no_data": "Nog geen volgers",
-  "import_follows_success_dialog": "Succesvol toegevoegd. Deel 0xchat met je Contacten.",
+  "import_follows_success_dialog": "Succesvol toegevoegd. Deel XChat met je Contacten.",
   "str_secret_center_hint": "• Gebruik end-to-end encryptie (NIP-44)\n• Voorkom metadata lekken (NIP-59)\n• Doorsturen geheimhouding (NIP-101)\n• Niet te herstellen op andere apparaten\n• Screenshot detectie\n• Berichten worden alleen naar de relay die jij/tegenpartij opgeeft gestuurd:",
   "str_other_rejected": "Afgewezen",
   "str_other_expired": "Verlopen",

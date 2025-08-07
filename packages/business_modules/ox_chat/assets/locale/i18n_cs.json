@@ -60,7 +60,7 @@
   "import_follows": "Importovat sledování",
   "import_follows_tips": "Importovat sledování a přidat je jako Kontakty:",
   "import_follows_no_data": "Zatím žádné sledování",
-  "import_follows_success_dialog": "Úspěšně přidáno. Sdílejte 0xchat se svými Kontakty.",
+  "import_follows_success_dialog": "Úspěšně přidáno. Sdílejte XChat se svými Kontakty.",
   "str_secret_center_hint": "• Používejte šifrování od konce k cíli (NIP-44)\n• Zabraňte úniku metadat (NIP-59)\n• Dopředné utajení (NIP-101)\n• Na jiných zařízeních není možné obnovit\n• Detekce snímků obrazovky\n• Zprávy budou odeslány pouze na relay, který vy/protistrana specifikujete:",
   "str_other_rejected": "Odmítnuto",
   "str_other_expired": "Vypršelo",

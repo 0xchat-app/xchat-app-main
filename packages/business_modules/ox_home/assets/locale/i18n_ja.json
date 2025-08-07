@@ -11,5 +11,5 @@
   "join_circle_input_label": "リンク",
   "join_or_create_circle_now": "今すぐサークルを追加または作成",
   "join_circle_description": "サークルを追加するには、リレーアドレスまたは有効な招待リンクを入力してください。",
-  "unlock_advanced_model": "友達や家族とプライベートチャットを始めましょう！"
+  "unlock_advanced_model": "始める前に、サークルを作成するためにnostrリレーを追加する必要があります。"
 }

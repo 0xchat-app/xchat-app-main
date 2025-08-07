@@ -60,7 +60,7 @@
   "import_follows": "Importēt sekojumus",
   "import_follows_tips": "Importēt sekojumus un pievienot tos kā kontaktus:",
   "import_follows_no_data": "Vēl nav sekojumu",
-  "import_follows_success_dialog": "Veiksmīgi pievienots. Dalieties 0xchat ar saviem kontaktiem.",
+  "import_follows_success_dialog": "Veiksmīgi pievienots. Dalieties XChat ar saviem kontaktiem.",
   "str_secret_center_hint": "• Izmantojiet gala līdz gala šifrēšanu (NIP-44)\n• Novērst metadatu noplūdes (NIP-59)\n• Pārsūtīšanas noslēpums (NIP-101)\n• Citas ierīces neatgūstamās\n• Ekrānuzņēmuma detekcija\n• Ziņas tiks nosūtītas tikai uz jums/norādīto starpnieku:",
   "str_other_rejected": "Noraidīts",
   "str_other_expired": "Beidzies",

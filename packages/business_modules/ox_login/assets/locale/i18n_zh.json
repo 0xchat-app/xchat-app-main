@@ -34,7 +34,7 @@
   "str_login_with_nip46": "使用Nip46登录",
   "str_enter_nip46_login_hint": "输入您的Nip46链接登录：",
   "str_login_with_qrcode": "通过二维码登录",
-  "str_login_with_qrcode_hint": "通过二维码登录到0xchat",
+  "str_login_with_qrcode_hint": "通过二维码登录到XChat",
   "str_login_with_qrcode_description": "1 选择远程签名relay\n2 打开Amber App或者nsec.app网页\n3 扫二维码或者拷贝URI进行登陆",
   "str_login_with_account": "通过输入 \"bunker://\" URI 登录",
   "str_login_with_copy_url": "复制URI",

@@ -34,8 +34,8 @@
   "str_login_with_nip46": "ورود با Nip46",
   "str_enter_nip46_login_hint": "لینک Nip46 را برای ورود وارد کنید:",
   "str_login_with_qrcode": "ورود با کد QR",
-  "str_login_with_qrcode_hint": "با استفاده از کد QR وارد 0xchat شوید",
-  "str_login_with_qrcode_description": "1 0xchat را در تلفن خود باز کنید\n2 به افزودن > اسکن بروید\n3 تلفن خود را به سمت این صفحه نگه دارید تا ورود تأیید شود",
+  "str_login_with_qrcode_hint": "با استفاده از کد QR وارد XChat شوید",
+  "str_login_with_qrcode_description": "1 XChat را در تلفن خود باز کنید\n2 به افزودن > اسکن بروید\n3 تلفن خود را به سمت این صفحه نگه دارید تا ورود تأیید شود",
   "str_login_with_account": "ورود با حساب کاربری",
   "str_login_with_copy_url": "کپی کردن URL"
 }

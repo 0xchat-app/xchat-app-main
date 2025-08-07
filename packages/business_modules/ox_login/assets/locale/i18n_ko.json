@@ -34,8 +34,8 @@
   "str_login_with_nip46": "Nip46로 로그인",
   "str_enter_nip46_login_hint": "Nip46 링크를 입력하여 로그인하세요:",
   "str_login_with_qrcode": "QR코드로 로그인",
-  "str_login_with_qrcode_hint": "QR코드를 사용하여 0xchat에 로그인하세요",
-  "str_login_with_qrcode_description": "1 휴대폰에서 0xchat을 열기\n2 추가 > 스캔으로 이동\n3 이 화면을 휴대폰으로 스캔하여 로그인을 확인하세요",
+  "str_login_with_qrcode_hint": "QR코드를 사용하여 XChat에 로그인하세요",
+  "str_login_with_qrcode_description": "1 휴대폰에서 XChat을 열기\n2 추가 > 스캔으로 이동\n3 이 화면을 휴대폰으로 스캔하여 로그인을 확인하세요",
   "str_login_with_account": "계정으로 로그인",
   "str_login_with_copy_url": "URL 복사"
 }

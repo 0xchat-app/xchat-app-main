@@ -60,7 +60,7 @@
   "import_follows": "フォローをインポート",
   "import_follows_tips": "フォローをインポートして連絡先に追加：",
   "import_follows_no_data": "フォローなし",
-  "import_follows_success_dialog": "正常に追加。0xchatを連絡先と共有。",
+  "import_follows_success_dialog": "正常に追加。XChatを連絡先と共有。",
   "str_secret_center_hint": "• エンドツーエンド暗号化（NIP-44）\n• メタデータ漏洩防止（NIP-59）\n• 前方秘匿性の確保（NIP-101）\n• 他のデバイスでは復元不可\n• スクリーンショット検出\n• 指定されたリレーにのみメッセージが送信されます：",
   "str_other_rejected": "拒否された",
   "str_other_expired": "期限切れ",

@@ -60,7 +60,7 @@
   "import_follows": "Impordi järgijad",
   "import_follows_tips": "Impordi järgijad ja lisa need kontaktideks:",
   "import_follows_no_data": "Järgijaid veel ei ole",
-  "import_follows_success_dialog": "Edukalt lisatud. Jagage 0xchati oma kontaktidega.",
+  "import_follows_success_dialog": "Edukalt lisatud. Jagage XChati oma kontaktidega.",
   "str_secret_center_hint": "• Kasuta otsest krüpteerimist (NIP-44)\n• Väldi metadata lekkeid (NIP-59)\n• Edasiliikuv saladus (NIP-101)\n• Teistes seadmetes ei saa taastada\n• Ekraanipiltide tuvastamine\n• Sõnumeid saadetakse ainult teie/mõlema osapoole määratud vahendusseadmesse:",
   "str_other_rejected": "Tagasi lükatud",
   "str_other_expired": "Aegunud",
