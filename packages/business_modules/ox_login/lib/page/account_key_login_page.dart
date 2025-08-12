@@ -83,9 +83,17 @@ class _AccountKeyLoginPageState extends State<AccountKeyLoginPage> with LoginMan
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Add title and description
+        CLText.headlineSmall(
+          Localized.text('ox_login.enter_account_key_login_hint'),
+          colorToken: ColorToken.onSurface,
+        ),
+        SizedBox(height: 16.px),
+        
+        // Input field with improved placeholder
         CLTextField(
           controller: _accountKeyEditingController,
-          placeholder: 'nsec or bunker://',
+          placeholder: Localized.text('ox_login.account_key_placeholder'),
           maxLines: null,
           textInputAction: TextInputAction.done,
           onSubmitted: (_) {
@@ -95,7 +103,40 @@ class _AccountKeyLoginPageState extends State<AccountKeyLoginPage> with LoginMan
             }
           },
         ),
+        
+        SizedBox(height: 12.px),
+        
+        // Add explanation for nsec and bunker
+        Container(
+          padding: EdgeInsets.all(12.px),
+          decoration: BoxDecoration(
+            color: ColorToken.surfaceContainer.of(context),
+            borderRadius: BorderRadius.circular(8.px),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CLText.bodySmall(
+                Localized.text('ox_login.account_key_explanation_title'),
+                colorToken: ColorToken.onSurfaceVariant,
+              ),
+              SizedBox(height: 8.px),
+              CLText.bodyMedium(
+                Localized.text('ox_login.nsec_explanation'),
+                colorToken: ColorToken.onSurfaceVariant,
+              ),
+              SizedBox(height: 4.px),
+              CLText.bodyMedium(
+                Localized.text('ox_login.bunker_explanation'),
+                colorToken: ColorToken.onSurfaceVariant,
+              ),
+            ],
+          ),
+        ),
+        
         SizedBox(height: 8.px),
+        
+        // Error hint for invalid nsec
         if (!_isShowLoginBtn && inputStr.trim().startsWith('nsec') && inputStr.length >= 63)
           CLText.bodySmall(
             Localized.text('ox_login.str_nesc_invalid_hint'),

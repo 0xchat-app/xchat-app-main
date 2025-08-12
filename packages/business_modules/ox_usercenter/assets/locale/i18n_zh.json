@@ -24,7 +24,7 @@
   "donate_tips": "开源的，基于Nostr构建\r\n非盈利的，仅依靠捐款支持\uD83D\uDC97",
   "donate_title": "捐赠 & 解锁徽章",
   "notifications": "通知",
-  "notification": "通知设置",
+  "notification": "通知",
   "allow_send_notification": "允许发送通知",
   "allow_send_notification_tips": "允许发送通知给对方，打开选项之后，会发送通知临时event给XChat推送服务器，通知event只包含对方pubkey和relay信息",
   "allow_receive_notification": "允许接收通知",

@@ -25,7 +25,7 @@
   "welcome": "Welcome",
   "public_key": "Public Key",
   "private_key": "Private Key",
-  "lets_go": "Let’s go!",
+  "lets_go": "Let's go!",
   "enter_account_key_login_hint": "Use nostr key or remote signer to login:",
   "private_key_regular_failed": "Private Key regular failed",
   "pub_key_regular_failed": "Pub Key regular failed",
@@ -48,5 +48,9 @@
   "carousel_title_3": "Encrypted Local Storage",
   "carousel_text_3": "Chats are encrypted and stored on your device.",
   "carousel_title_4": "Anonymous Messaging",
-  "carousel_text_4": "No phone number. No email. Just pure anonymity."
+  "carousel_text_4": "No phone number. No email. Just pure anonymity.",
+  "account_key_placeholder": "Enter your nsec private key or bunker:// URI",
+  "account_key_explanation_title": "What can I enter?",
+  "nsec_explanation": "• nsec: Your Nostr private key (starts with 'nsec1...') - used for direct login",
+  "bunker_explanation": "• bunker://: Remote signer URI (starts with 'bunker://...') - for secure remote signing"
 }

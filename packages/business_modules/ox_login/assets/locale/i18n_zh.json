@@ -48,5 +48,9 @@
   "carousel_title_3": "加密本地存储",
   "carousel_text_3": "聊天记录经过加密并存储在您的设备上。",
   "carousel_title_4": "匿名消息",
-  "carousel_text_4": "无需手机号，无需邮箱，纯粹的匿名性。"
+  "carousel_text_4": "无需手机号，无需邮箱，纯粹的匿名性。",
+  "account_key_placeholder": "输入您的nsec私钥或bunker:// URI",
+  "account_key_explanation_title": "我可以输入什么？",
+  "nsec_explanation": "• nsec：您的Nostr私钥（以'nsec1...'开头）- 用于直接登录",
+  "bunker_explanation": "• bunker://：远程签名器URI（以'bunker://...'开头）- 用于安全远程签名"
 }
