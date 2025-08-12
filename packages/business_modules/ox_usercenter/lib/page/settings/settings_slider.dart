@@ -13,6 +13,7 @@ import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_theme/ox_theme.dart';
 import 'package:ox_usercenter/page/settings/language_settings_page.dart';
 import 'package:ox_usercenter/page/settings/theme_settings_page.dart';
+import 'package:ox_usercenter/page/settings/notification_settings_page.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import 'keys_page.dart';
@@ -118,10 +119,11 @@ class SettingSliderState extends State<SettingSlider> {
       //   ),
       // ]),
       SectionListViewItem(data: [
-        // LabelItemModel(
-        //   icon: ListViewIcon(iconName: 'icon_setting_notification.png', package: 'ox_usercenter'),
-        //   title: 'Notifications',
-        // ),
+        LabelItemModel(
+          icon: ListViewIcon(iconName: 'icon_setting_notification.png', package: 'ox_usercenter'),
+          title: Localized.text('ox_usercenter.notification'),
+          onTap: notificationItemOnTap,
+        ),
         LabelItemModel(
           icon: ListViewIcon(iconName: 'icon_setting_theme.png', package: 'ox_usercenter'),
           title: Localized.text('ox_usercenter.theme'),
@@ -311,6 +313,10 @@ class SettingSliderState extends State<SettingSlider> {
 
   void themeItemOnTap() {
     OXNavigator.pushPage(context, (_) => ThemeSettingsPage(previousPageTitle: title,));
+  }
+
+  void notificationItemOnTap() {
+    OXNavigator.pushPage(context, (_) => NotificationSettingsPage(previousPageTitle: title,));
   }
 
   void languageItemOnTap() {
