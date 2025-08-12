@@ -16,7 +16,6 @@ class OXCLaunchCoordinator: NSObject {
     
     func start(window: UIWindow) {
         registeFlutterPlugin(window: window)
-//        registeNotification()
     }
     
     func registeFlutterPlugin(window: UIWindow) {
@@ -31,24 +30,6 @@ class OXCLaunchCoordinator: NSObject {
         
         navController.setViewControllers([mainController], animated: false)
         window.rootViewController = navController
-    }
-    
-    func registeNotification() -> Void {
-        if #available(iOS 10.0, *) {
-            let notificationCenter = UNUserNotificationCenter.current()
-            notificationCenter.delegate = self
-            notificationCenter.requestAuthorization(options:[.sound, .alert, .badge]) { (granted, error) in
-                if (granted) {
-                    DispatchQueue.main.async {
-                        UIApplication.shared.registerForRemoteNotifications()
-                    }
-                    
-                }
-            }
-        }
-        else {
-            UIApplication.shared.registerUserNotificationSettings(UIUserNotificationSettings.init(types: [.sound, .alert, .badge], categories: nil))
-        }
     }
 }
 

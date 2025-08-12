@@ -90,6 +90,9 @@ dependencies:
   emoji_picker_flutter: 1.5.4
   window_manager: ^0.4.3
   fc_native_video_thumbnail: ^0.17.2
+  timezone: 0.10.1
+  flutter_local_notifications: 19.4.0
+  unifiedpush: 5.0.2
 
   chatcore:
     path: ../../0xchat-core

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_common/log_util.dart';
+import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/utils/chat_prompt_tone.dart';
 import 'package:ox_common/utils/compression_utils.dart';
 import 'package:ox_module_service/ox_module_service.dart';
@@ -15,6 +16,8 @@ import 'package:ox_common/model/chat_session_model_isar.dart';
 
 import 'login/circle_config_models.dart';
 import 'model/file_server_model.dart';
+import 'push/push_integration.dart';
+import 'utils/ox_userinfo_manager.dart';
 
 const CommonModule = 'ox_common';
 
@@ -35,6 +38,7 @@ class OXCommon extends OXFlutterModule {
     await super.setup();
     await ThreadPoolManager.sharedInstance.initialize();
     PromptToneManager.sharedInstance.setup();
+    channel.setMethodCallHandler(_platformCallHandler);
   }
 
   @override
@@ -48,6 +52,16 @@ class OXCommon extends OXFlutterModule {
   static Future<String> get platformVersion async {
     final String version = await channel.invokeMethod('getPlatformVersion');
     return version;
+  }
+
+  static Future<dynamic> _platformCallHandler(MethodCall call) async {
+    // Map<String, dynamic> callMap = Map<String, dynamic>.from(call.arguments);
+    switch (call.method) {
+      case 'savePushToken':
+        String token = call.arguments;
+        requestRegistrationID(token);
+        break;
+    }
   }
 
   static Future<String> getDatabaseFilePath(String dbName) async {
@@ -94,6 +108,17 @@ class OXCommon extends OXFlutterModule {
     assert(path.isNotEmpty);
     final String result = await channel.invokeMethod('scan_path', {'path': path});
     return result;
+  }
+
+  static Future registeNotification() async {
+    await channel.invokeMethod('registeNotification', {});
+  }
+
+  static Future<void> requestRegistrationID(String registrationID) async {
+    final isSuccess = await LoginManager.instance.savePushToken(registrationID);
+    if (!isSuccess) return;
+
+    CLPushIntegration.instance.uploadPushToken(registrationID);
   }
 
   @override

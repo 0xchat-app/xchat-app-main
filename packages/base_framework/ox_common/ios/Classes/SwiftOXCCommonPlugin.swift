@@ -6,6 +6,8 @@ import Photos
 
 public class SwiftOXCCommonPlugin: NSObject, FlutterPlugin, UINavigationControllerDelegate {
     
+    private static var channel: FlutterMethodChannel?
+    
     lazy var imagePicker: UIImagePickerController = {
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self
@@ -18,6 +20,8 @@ public class SwiftOXCCommonPlugin: NSObject, FlutterPlugin, UINavigationControll
         let channel = FlutterMethodChannel(name: "ox_common", binaryMessenger: registrar.messenger())
         let instance = SwiftOXCCommonPlugin()
         registrar.addMethodCallDelegate(instance, channel: channel)
+        
+        self.channel = channel
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -107,12 +111,43 @@ public class SwiftOXCCommonPlugin: NSObject, FlutterPlugin, UINavigationControll
                 return
             }
             result(ClipboardHelper.copyImageToClipboard(imagePath: imagePath))
+        case "registeNotification":
+            registeNotification()
+            result(nil)
         default:
             break;
         }
     }
+}
+
+// MARK: - Push
+extension SwiftOXCCommonPlugin {
+    public static func savePushToken(token: String) {
+        channel?.invokeMethod("savePushToken", arguments: token)
+    }
     
-    func getDeviceId(result:FlutterResult) {
+    private func registeNotification() -> Void {
+        if #available(iOS 10.0, *) {
+            let notificationCenter = UNUserNotificationCenter.current()
+            notificationCenter.delegate = self
+            notificationCenter.requestAuthorization(options:[.sound, .alert, .badge]) { (granted, error) in
+                if (granted) {
+                    DispatchQueue.main.async {
+                        UIApplication.shared.registerForRemoteNotifications()
+                    }
+                    
+                }
+            }
+        }
+        else {
+            UIApplication.shared.registerUserNotificationSettings(UIUserNotificationSettings.init(types: [.sound, .alert, .badge], categories: nil))
+        }
+    }
+}
+
+// MARK: - Private tools
+extension SwiftOXCCommonPlugin {
+    private func getDeviceId(result:FlutterResult) {
         if let uuid = UserDefaults.standard.string(forKey: "com.ox.super_main.uuid") {
             result(uuid)
         }
@@ -124,7 +159,7 @@ public class SwiftOXCCommonPlugin: NSObject, FlutterPlugin, UINavigationControll
         }
     }
     
-    func getImageFromCamera(allowEditing: Bool) {
+    private func getImageFromCamera(allowEditing: Bool) {
         DispatchQueue.main.async {
             self.imagePicker.mediaTypes = [kUTTypeImage as String]
             self.imagePicker.sourceType = .camera
@@ -135,7 +170,7 @@ public class SwiftOXCCommonPlugin: NSObject, FlutterPlugin, UINavigationControll
         }
     }
     
-    func getImageFromGallery(allowEditing: Bool) {
+    private func getImageFromGallery(allowEditing: Bool) {
         DispatchQueue.main.async {
             self.imagePicker.mediaTypes = [kUTTypeImage as String]
             self.imagePicker.sourceType = .photoLibrary
@@ -146,7 +181,7 @@ public class SwiftOXCCommonPlugin: NSObject, FlutterPlugin, UINavigationControll
         }
     }
     
-    func getVideoFromCamera() {
+    private func getVideoFromCamera() {
         DispatchQueue.main.async {
             self.imagePicker.mediaTypes = [kUTTypeMovie as String]
             self.imagePicker.sourceType = .camera
@@ -157,7 +192,7 @@ public class SwiftOXCCommonPlugin: NSObject, FlutterPlugin, UINavigationControll
         }
     }
     
-    func getCompressionImg(filePath:String, quality:Int, result: @escaping FlutterResult) {
+    private func getCompressionImg(filePath:String, quality:Int, result: @escaping FlutterResult) {
         guard let image = UIImage.init(contentsOfFile: filePath) else {
             return result(nil)
         }
@@ -174,7 +209,7 @@ public class SwiftOXCCommonPlugin: NSObject, FlutterPlugin, UINavigationControll
         }
     }
     
-    func saveImageToGallery(_ params:[String:Any]?,result:@escaping FlutterResult) {
+    private func saveImageToGallery(_ params:[String:Any]?,result:@escaping FlutterResult) {
         guard let param = params else {
             result("")
             return
@@ -210,7 +245,7 @@ public class SwiftOXCCommonPlugin: NSObject, FlutterPlugin, UINavigationControll
         };
     }
     
-    func callIOSSysShare(_ params:[String:Any]?,result:@escaping FlutterResult) {
+    private func callIOSSysShare(_ params:[String:Any]?,result:@escaping FlutterResult) {
         guard let param = params else {
             result("")
             return
@@ -233,7 +268,7 @@ public class SwiftOXCCommonPlugin: NSObject, FlutterPlugin, UINavigationControll
     }
     
     
-    func _nromalizedImage(image:UIImage) -> UIImage?{
+    private func _nromalizedImage(image:UIImage) -> UIImage?{
         if image.imageOrientation == .up {
             return image
         }
@@ -245,7 +280,7 @@ public class SwiftOXCCommonPlugin: NSObject, FlutterPlugin, UINavigationControll
         return normalizedImage
     }
     
-    func _scaled(image:UIImage, maxWidth:Double, maxHeight: Double) -> UIImage? {
+    private func _scaled(image:UIImage, maxWidth:Double, maxHeight: Double) -> UIImage? {
         let originWidth = Double(image.size.width)
         let originHeight = Double(image.size.height)
         

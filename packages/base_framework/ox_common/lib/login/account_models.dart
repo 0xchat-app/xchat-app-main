@@ -147,6 +147,7 @@ class AccountModel {
     required this.createdAt,
     required this.lastLoginAt,
     this.lastLoginCircleId,
+    this.pushToken,
     required this.db,
   });
 
@@ -159,6 +160,7 @@ class AccountModel {
   final int createdAt;
   final int lastLoginAt;
   String? lastLoginCircleId;   // Last logged in circle ID
+  String? pushToken;           // Push notification token
   
   late Isar db;
 
@@ -172,6 +174,7 @@ class AccountModel {
     int? createdAt,
     int? lastLoginAt,
     String? lastLoginCircleId,
+    String? pushToken,
   }) {
     return AccountModel(
       pubkey: pubkey ?? this.pubkey,
@@ -183,6 +186,7 @@ class AccountModel {
       createdAt: createdAt ?? this.createdAt,
       lastLoginAt: lastLoginAt ?? this.lastLoginAt,
       lastLoginCircleId: lastLoginCircleId ?? this.lastLoginCircleId,
+      pushToken: pushToken ?? this.pushToken,
       db: db,
     );
   }
@@ -200,6 +204,7 @@ class AccountHelper {
   static const String keyCreatedAt = 'created_at';
   static const String keyLastLoginAt = 'last_login_at';
   static const String keyLastLoginCircleId = 'last_login_circle_id';
+  static const String keyPushToken = 'push_token';
 
   /// Convert AccountModel to list of AccountDataISAR entries
   static List<AccountDataISAR> toAccountDataList(AccountModel account) {
@@ -220,6 +225,10 @@ class AccountHelper {
       result.add(AccountDataISAR.createString(keyLastLoginCircleId, account.lastLoginCircleId!)..id = db.accountDataISARs.autoIncrement());
     }
     
+    if (account.pushToken != null) {
+      result.add(AccountDataISAR.createString(keyPushToken, account.pushToken!)..id = db.accountDataISARs.autoIncrement());
+    }
+    
     return result;
   }
 
@@ -231,7 +240,7 @@ class AccountHelper {
     try {
       final accountData = await accountDb.accountDataISARs.where()
         .anyOf([keyPubkey, keyLoginType, keyEncryptedPrivKey, keyDefaultPassword, 
-               keyNostrConnectUri, keyCircles, keyCreatedAt, keyLastLoginAt, keyLastLoginCircleId],
+               keyNostrConnectUri, keyCircles, keyCreatedAt, keyLastLoginAt, keyLastLoginCircleId, keyPushToken],
                (q, String key) => q.keyNameEqualTo(key))
         .findAll();
 
@@ -282,6 +291,7 @@ class AccountHelper {
         createdAt: dataMap[keyCreatedAt] as int? ?? DateTime.now().millisecondsSinceEpoch,
         lastLoginAt: dataMap[keyLastLoginAt] as int? ?? DateTime.now().millisecondsSinceEpoch,
         lastLoginCircleId: dataMap[keyLastLoginCircleId] as String?,
+        pushToken: dataMap[keyPushToken] as String?,
         db: accountDb,
       );
     } catch (e) {
@@ -353,6 +363,13 @@ extension AccountHelperEx on AccountModel {
     if (lastLoginCircleId == circleId) return;
 
     lastLoginCircleId = circleId;
+    saveToDB();
+  }
+
+  void updatePushToken(String? token) {
+    if (pushToken == token) return;
+
+    pushToken = token;
     saveToDB();
   }
 

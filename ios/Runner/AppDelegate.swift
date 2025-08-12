@@ -1,6 +1,6 @@
 import UIKit
 import Flutter
-
+import ox_common
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -40,6 +40,7 @@ import Flutter
     override func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         let deviceTokenStr = deviceToken.map { String(format: "%02.2hhx", arguments: [$0]) }.joined()
         print(deviceTokenStr)
+        SwiftOXCCommonPlugin.savePushToken(token: deviceTokenStr)
     }
     
     override func applicationDidBecomeActive(_ application: UIApplication) {

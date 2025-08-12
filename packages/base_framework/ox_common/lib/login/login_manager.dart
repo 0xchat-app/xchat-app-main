@@ -7,6 +7,7 @@ import 'package:isar/isar.dart';
 import 'package:nostr_core_dart/nostr.dart';
 import 'package:convert/convert.dart';
 import 'package:ox_common/component.dart';
+import 'package:ox_common/push/push_integration.dart';
 import 'package:ox_common/utils/extension.dart';
 import 'package:uuid/uuid.dart';
 import '../utils/ox_chat_binding.dart';
@@ -268,8 +269,7 @@ extension LoginManagerAccount on LoginManager {
       // Try to login to last circle or first circle
       await _tryLoginLastCircle(loginState);
 
-      // Notify login success
-      _notifyLoginSuccess();
+      loginAccountSuccessHandler(account);
       return true;
 
     } catch (e) {
@@ -309,6 +309,17 @@ extension LoginManagerAccount on LoginManager {
     for (final observer in _observers) {
       observer.onLogout();
     }
+  }
+
+  Future<bool> savePushToken(String token) async {
+    if (token.isEmpty) return false;
+
+    final account = currentState.account;
+    if (account == null) return false;
+
+    account.pushToken = token;
+    await account.saveToDB();
+    return true;
   }
 
   // ============ Private Authentication Methods ============
@@ -379,8 +390,7 @@ extension LoginManagerAccount on LoginManager {
       // 6. Try to login to last circle or first circle
       await _tryLoginLastCircle(loginState);
 
-      // 7. Notify login success
-      _notifyLoginSuccess();
+      loginAccountSuccessHandler(account);
       return true;
 
     } catch (e) {
@@ -426,6 +436,14 @@ extension LoginManagerAccount on LoginManager {
     final privateKeyBytes = hex.decode(privateKey);
     final encryptedBytes = encryptPrivateKey(Uint8List.fromList(privateKeyBytes), password);
     return hex.encode(encryptedBytes);
+  }
+
+  void loginAccountSuccessHandler(AccountModel account) {
+    CLPushIntegration.instance.initialize();
+    if (account.pushToken != null) {
+      CLPushIntegration.instance.uploadPushToken(account.pushToken!);
+    }
+    _notifyLoginSuccess();
   }
 
   /// Notify login success
