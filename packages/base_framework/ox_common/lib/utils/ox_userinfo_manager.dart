@@ -134,52 +134,6 @@ class OXUserInfoManager {
     assert(false, 'Use LoginManager');
   }
 
-  Future<bool> setNotification() async {
-    assert(false, 'Deprecated Class');
-
-    bool updateNotificatin = false;
-    String deviceId = await OXCacheManager.defaultOXCacheManager.getForeverData(StorageSettingKey.KEY_PUSH_TOKEN.name, defaultValue: '');
-    String jsonString = UserConfigTool.getSetting(StorageSettingKey.KEY_NOTIFICATION_LIST.name, defaultValue: '{}');
-    final Map<String, dynamic> jsonMap = json.decode(jsonString);
-    ///4、 44 private chat;  1059 secret chat & audio video call; 42  channel message; 9735 zap; 9、10 relay group; 1、6 reply&repost; 7 like
-    List<int> kinds = [4, 44, 1059, 42, 9735, 9, 10, 1, 6, 7];
-    for (var entry in jsonMap.entries) {
-      var value = entry.value;
-      if (value is Map<String, dynamic>) {
-        if (value['id'] == CommonConstant.NOTIFICATION_PUSH_NOTIFICATIONS && !value['isSelected']){
-          kinds = [];
-          break;
-        }
-        if (value['id'] == CommonConstant.NOTIFICATION_PRIVATE_MESSAGES && !value['isSelected']) {
-          kinds.remove(4);
-          kinds.remove(44);
-          kinds.remove(1059);
-        }
-        if (value['id'] == CommonConstant.NOTIFICATION_CHANNELS && !value['isSelected']) {
-          kinds.remove(42);
-        }
-        if (value['id'] == CommonConstant.NOTIFICATION_ZAPS && !value['isSelected']) {
-          kinds.remove(9735);
-        }
-        if (value['id'] == CommonConstant.NOTIFICATION_REACTIONS && !value['isSelected']) {
-          kinds.remove(7);
-        }
-        if (value['id'] == CommonConstant.NOTIFICATION_REPLIES && !value['isSelected']) {
-          kinds.remove(1);
-          kinds.remove(6);
-        }
-        if (value['id'] == CommonConstant.NOTIFICATION_GROUPS && !value['isSelected']) {
-          kinds.remove(9);
-          kinds.remove(10);
-        }
-      }
-    }
-    OKEvent okEvent = await NotificationHelper.sharedInstance.updateNotificationDeviceId(deviceId);
-    updateNotificatin = okEvent.status;
-
-    return updateNotificatin;
-  }
-
   Future<bool> checkDNS({required UserDBISAR userDB}) async {
     String pubKey = userDB.pubKey;
     String dnsStr = userDB.dns ?? '';
@@ -202,6 +156,6 @@ class OXUserInfoManager {
   void _fetchFinishHandler(_ContactType type) {
     if (_contactFinishFlags[type] ?? false) return;
     _contactFinishFlags[type] = true;
-    if (isFetchContactFinish) setNotification();
+    // if (isFetchContactFinish) setNotification();
   }
 }

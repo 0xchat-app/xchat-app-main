@@ -5,7 +5,6 @@ import 'package:chatcore/chat-core.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
-import 'package:ox_common/utils/ox_userinfo_manager.dart';
 import 'package:ox_common/widgets/common_image.dart';
 import 'package:nostr_core_dart/nostr.dart';
 import 'package:ox_common/widgets/common_loading.dart';
@@ -147,11 +146,7 @@ class ChatSessionUtils {
         }
         break;
     }
-    OXUserInfoManager.sharedInstance.setNotification().then((value) {
-      if (value) {
-        OXChatBinding.sharedInstance.sessionUpdate();
-      }
-    });
+    OXChatBinding.sharedInstance.sessionUpdate();
   }
 
   static void leaveConfirmWidget(BuildContext context, int chatType, String groupId, {bool isGroupOwner = false, bool isGroupMember = false, bool hasDeleteGroupPermission = false}) {
@@ -190,22 +185,6 @@ class ChatSessionUtils {
         }
       }
     });
-  }
-
-  static void leaveRelayGroupFn(BuildContext context, bool hasDeleteGroupPermission, String groupId) async {
-    OXLoading.show();
-    if(hasDeleteGroupPermission){
-      await RelayGroup.sharedInstance.deleteGroup(groupId, 'delete group');
-    }
-    OKEvent event = await RelayGroup.sharedInstance.leaveGroup(groupId, 'leave group');
-    OXUserInfoManager.sharedInstance.setNotification();
-    OXLoading.dismiss();
-    if (!event.status) {
-      CommonToast.instance.show(context, event.message);
-      return;
-    }
-    CommonToast.instance.show(context, Localized.text('ox_chat.leave_group_success_toast'));
-    OXNavigator.popToRoot(context);
   }
 
   // private group
