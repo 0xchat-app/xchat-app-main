@@ -174,8 +174,7 @@ class OXUserInfoManager {
         }
       }
     }
-    List<String> relayAddressList = await Account.sharedInstance.getMyGeneralRelayList().map((e) => e.url).toList();
-    OKEvent okEvent = await NotificationHelper.sharedInstance.setNotification(deviceId, kinds, relayAddressList);
+    OKEvent okEvent = await NotificationHelper.sharedInstance.updateNotificationDeviceId(deviceId);
     updateNotificatin = okEvent.status;
 
     return updateNotificatin;

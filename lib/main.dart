@@ -229,14 +229,12 @@ class MainState extends State<MainApp>
       case AppLifecycleState.resumed:
         PromptToneManager.sharedInstance.isAppPaused = false;
         if (LoginManager.instance.isLoginCircle)
-          NotificationHelper.sharedInstance.setOnline();
         SchemeHelper.tryHandlerForOpenAppScheme();
         keepHeartBeat();
         break;
       case AppLifecycleState.paused:
         PromptToneManager.sharedInstance.isAppPaused = true;
         if (LoginManager.instance.isLoginCircle)
-          NotificationHelper.sharedInstance.setOffline();
         lastUserInteractionTime = DateTime.now().millisecondsSinceEpoch;
         break;
       default:
@@ -249,7 +247,6 @@ class MainState extends State<MainApp>
       await ThreadPoolManager.sharedInstance.initialize();
       Connect.sharedInstance.startHeartBeat();
       Account.sharedInstance.startHeartBeat();
-      NotificationHelper.sharedInstance.startHeartBeat();
     }
   }
 
