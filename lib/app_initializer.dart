@@ -118,7 +118,7 @@ class AppInitializer {
   Future<void> _setupModules() async {
     await Future.wait([
       OXCommon().setup(),
-      OXLogin().setup(),
+      OXLoginModuleService().setup(),
       OXUserCenter().setup(),
       OXChat().setup(),
       OXChatUI().setup(),

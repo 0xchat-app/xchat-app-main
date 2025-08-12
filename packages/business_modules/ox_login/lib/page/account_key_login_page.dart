@@ -12,6 +12,7 @@ import 'package:ox_common/component.dart';
 // plugin
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:chatcore/chat-core.dart';
+import 'package:ox_module_service/ox_module_service.dart';
 
 class AccountKeyLoginPage extends StatefulWidget {
   @override
@@ -220,9 +221,43 @@ class _AccountKeyLoginPageState extends State<AccountKeyLoginPage> with LoginMan
       _isLoggingIn = false;
     });
     
-    // Navigate back to root (home page)
+    // Start post-login flow instead of going directly to home
     if (mounted) {
-      OXNavigator.popToRoot(context);
+      _startPostLoginFlow();
+    }
+  }
+  
+  /// Start the post-login flow
+  Future<void> _startPostLoginFlow() async {
+    try {
+      // Import and use LoginFlowManager
+      final flowManager = await _getLoginFlowManager();
+      if (flowManager != null) {
+        await flowManager.startPostLoginFlow(context, isNewAccount: false);
+      } else {
+        // Fallback: go directly to home
+        if (mounted) {
+          OXNavigator.popToRoot(context);
+        }
+      }
+    } catch (e) {
+      debugPrint('Error starting post-login flow: $e');
+      // Fallback: go directly to home
+      if (mounted) {
+        OXNavigator.popToRoot(context);
+      }
+    }
+  }
+  
+  /// Get LoginFlowManager instance
+  Future<dynamic> _getLoginFlowManager() async {
+    try {
+      // Use dynamic import to avoid circular dependency
+      final flowManager = await OXModuleService.invoke('ox_login', 'getLoginFlowManager', []);
+      return flowManager;
+    } catch (e) {
+      debugPrint('Error getting LoginFlowManager: $e');
+      return null;
     }
   }
 

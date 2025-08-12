@@ -310,9 +310,43 @@ class _CreateAccountPageState extends State<CreateAccountPage> with LoginManager
   void onLoginSuccess(LoginState state) {
     _isCreating$.value = false;
     
-    // Navigate back to root (home page)
+    // Start post-login flow for new account
     if (mounted) {
-      OXNavigator.popToRoot(context);
+      _startPostLoginFlow();
+    }
+  }
+  
+  /// Start the post-login flow for new account
+  Future<void> _startPostLoginFlow() async {
+    try {
+      // Import and use LoginFlowManager
+      final flowManager = await _getLoginFlowManager();
+      if (flowManager != null) {
+        await flowManager.startPostLoginFlow(context, isNewAccount: true);
+      } else {
+        // Fallback: go directly to home
+        if (mounted) {
+          OXNavigator.popToRoot(context);
+        }
+      }
+    } catch (e) {
+      debugPrint('Error starting post-login flow: $e');
+      // Fallback: go directly to home
+      if (mounted) {
+        OXNavigator.popToRoot(context);
+      }
+    }
+  }
+  
+  /// Get LoginFlowManager instance
+  Future<dynamic> _getLoginFlowManager() async {
+    try {
+      // Use dynamic import to avoid circular dependency
+      final flowManager = await OXModuleService.invoke('ox_login', 'getLoginFlowManager', []);
+      return flowManager;
+    } catch (e) {
+      debugPrint('Error getting LoginFlowManager: $e');
+      return null;
     }
   }
 

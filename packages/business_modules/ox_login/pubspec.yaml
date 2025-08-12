@@ -17,6 +17,10 @@ dependencies:
 
   ox_common:
     path: ../../base_framework/ox_common
+  ox_module_service:
+    path: ../../base_framework/ox_module_service
+  ox_localizable:
+    path: ../../base_framework/ox_localizable
 
 dev_dependencies:
   flutter_test:

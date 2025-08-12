@@ -1,32 +1,19 @@
-import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:ox_module_service/ox_module_service.dart';
+library ox_login;
 
-class OXLogin extends OXFlutterModule {
-  static const MethodChannel channel = const MethodChannel('ox_login');
-  static String get loginPageId  => "login_page";
-  static Future<String> get platformVersion async {
-    final String version = await channel.invokeMethod('getPlatformVersion');
-    return version;
-  }
+// Export pages
+export 'page/account_key_login_page.dart';
+export 'page/create_account_page.dart';
+export 'page/relay_setup_page.dart';
+export 'page/profile_setup_page.dart';
 
-  @override
-  Future<void> setup() async {
-    await super.setup();
-  }
+// Export utilities
+export 'utils/login_flow_manager.dart';
 
-  @override
-  String get moduleName => 'ox_login';
+// Export module service
+export 'ox_login_module_service.dart';
 
-  @override
-  Map<String, Function> get interfaces => {};
-
-  @override
-  Future<T?>? navigateToPage<T>(BuildContext context, String pageName, Map<String, dynamic>? params) {
-    return null;
-  }
-}
+// Export models and other components
+// export 'models/login_models.dart'; // TODO: Create this file if needed
 
 
 
