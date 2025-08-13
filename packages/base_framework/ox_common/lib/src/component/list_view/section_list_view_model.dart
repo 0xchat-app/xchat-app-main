@@ -2,17 +2,30 @@ import 'package:flutter/widgets.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/adapt.dart';
 
-
 class SectionListViewItem {
+  /// Creates a section with optional header and footer
+  /// 
+  /// [data] - List of ListViewItem to display in this section
+  /// [header] - Optional string title for the section header (will be styled automatically)
+  /// [headerWidget] - Optional custom widget for the section header (overrides [header] if provided)
+  /// [footer] - Optional string description for the section footer (will be styled automatically)
+  /// [footerWidget] - Optional custom widget for the section footer (overrides [footer] if provided)
+  /// [margin] - Optional margin around the entire section
+  /// [isEditing] - Whether the list is in editing mode
+  /// [onDelete] - Callback when an item is deleted in editing mode
   SectionListViewItem({
     required this.data,
     String? header,
     Widget? headerWidget,
+    String? footer,
+    Widget? footerWidget,
     this.margin,
     this.isEditing = false,
     this.onDelete,
   }) : headerWidget = headerWidget
       ?? (header != null ? _buildSectionHeader(header) : null),
+       footerWidget = footerWidget
+      ?? (footer != null ? _buildSectionFooter(footer) : null),
        _isButtonSection = false,
        _buttonOnTap = null,
        _buttonType = null,
@@ -26,6 +39,7 @@ class SectionListViewItem {
     ButtonType type = ButtonType.secondary,
   }) : data = [],
        headerWidget = null,
+       footerWidget = null,
        isEditing = false,
        onDelete = null,
        _isButtonSection = true,
@@ -34,8 +48,16 @@ class SectionListViewItem {
        _buttonText = text,
        margin = null;
 
+  /// List of items to display in this section
   final List<ListViewItem> data;
+  
+  /// Optional header widget for the section
   final Widget? headerWidget;
+  
+  /// Optional footer widget for the section
+  final Widget? footerWidget;
+  
+  /// Optional margin around the entire section
   final EdgeInsetsGeometry? margin;
 
   /// Whether the CLListView inside this section is in editing mode.
@@ -68,6 +90,9 @@ class SectionListViewItem {
   /// Getter to get the button text
   String? get buttonText => _buttonText;
 
+  /// Builds a styled section header widget
+  /// 
+  /// Uses CLText.titleSmall with appropriate padding for Material Design
   static Widget _buildSectionHeader(String title) {
     Widget widget = CLText.titleSmall(title);
     if (PlatformStyle.isUseMaterial) {
@@ -75,6 +100,27 @@ class SectionListViewItem {
         padding: EdgeInsets.only(
           left: 20.px,
           top: 16.px,
+        ),
+        child: widget,
+      );
+    }
+    return widget;
+  }
+
+  /// Builds a styled section footer widget
+  /// 
+  /// Uses CLText.bodySmall with ColorToken.onSurfaceVariant color and appropriate padding
+  /// for Material Design. Footer text is typically used for descriptive text or help text.
+  static Widget _buildSectionFooter(String title) {
+    Widget widget = CLText.bodySmall(
+      title,
+      colorToken: ColorToken.onSurfaceVariant,
+    );
+    if (PlatformStyle.isUseMaterial) {
+      widget = Padding(
+        padding: EdgeInsets.only(
+          left: 20.px,
+          bottom: 16.px,
         ),
         child: widget,
       );

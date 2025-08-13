@@ -69,6 +69,7 @@ class CLSectionListView extends StatelessWidget {
 
   Widget buildItemWidget(SectionListViewItem model, BuildContext context) {
     final headerWidget = model.headerWidget;
+    final footerWidget = model.footerWidget;
 
     // Handle button sections
     if (model.isButtonSection) {
@@ -87,6 +88,9 @@ class CLSectionListView extends StatelessWidget {
         isEditing: model.isEditing,
         onDelete: model.onDelete,
       ));
+      if (footerWidget != null) {
+        widgets.add(footerWidget);
+      }
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: widgets,
@@ -99,6 +103,7 @@ class CLSectionListView extends StatelessWidget {
       );
       return CupertinoListSection.insetGrouped(
         header: headerWidget,
+        footer: footerWidget,
         hasLeading: listView.hasLeading,
         margin: model.margin,
         separatorColor: kSystemSeparator.resolveFrom(context),
