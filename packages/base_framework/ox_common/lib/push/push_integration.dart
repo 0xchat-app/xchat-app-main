@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:chatcore/chat-core.dart';
 import 'package:nostr_core_dart/nostr.dart';
 import 'package:flutter/widgets.dart';
+import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/ox_common.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
 import 'package:ox_common/utils/ox_chat_observer.dart';
@@ -129,6 +130,7 @@ class CLPushIntegration with WidgetsBindingObserver, OXChatObserver {
 
   Future<bool> uploadPushToken(String token, [bool force = false]) async {
     if (hasUploadPushToken && !force) return true;
+    if (!LoginManager.instance.isLoginCircle) return false;
     OKEvent okEvent = await NotificationHelper.sharedInstance.updateNotificationDeviceId(token);
     hasUploadPushToken = okEvent.status;
     return okEvent.status;
