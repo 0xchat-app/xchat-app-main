@@ -26,23 +26,6 @@ import ox_common
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
     
-    override func application(_ application: UIApplication, didRegister notificationSettings: UIUserNotificationSettings) {
-        super.application(application, didRegister: notificationSettings)
-        DispatchQueue.main.async {
-            UIApplication.shared.registerForRemoteNotifications()
-        }
-    }
-    
-    override func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        completionHandler(.newData)
-    }
-
-    override func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        let deviceTokenStr = deviceToken.map { String(format: "%02.2hhx", arguments: [$0]) }.joined()
-        print(deviceTokenStr)
-        SwiftOXCCommonPlugin.savePushToken(token: deviceTokenStr)
-    }
-    
     override func applicationDidBecomeActive(_ application: UIApplication) {
         signal(SIGPIPE, SIG_IGN)
         UIApplication.shared.applicationIconBadgeNumber = 0

@@ -6,7 +6,7 @@ import Photos
 
 public class SwiftOXCCommonPlugin: NSObject, FlutterPlugin, UINavigationControllerDelegate {
     
-    private static var channel: FlutterMethodChannel?
+    private var channel: FlutterMethodChannel?
     
     lazy var imagePicker: UIImagePickerController = {
         let imagePicker = UIImagePickerController()
@@ -16,12 +16,18 @@ public class SwiftOXCCommonPlugin: NSObject, FlutterPlugin, UINavigationControll
     
     var result:FlutterResult?
     
+    init(channel: FlutterMethodChannel? = nil, result: FlutterResult? = nil) {
+        super.init()
+        self.channel = channel
+        self.result = result
+        backgroundCoordinatorInitialized()
+    }
+    
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "ox_common", binaryMessenger: registrar.messenger())
-        let instance = SwiftOXCCommonPlugin()
+        let instance = SwiftOXCCommonPlugin(channel: channel)
+        registrar.addApplicationDelegate(instance)
         registrar.addMethodCallDelegate(instance, channel: channel)
-        
-        self.channel = channel
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -118,11 +124,30 @@ public class SwiftOXCCommonPlugin: NSObject, FlutterPlugin, UINavigationControll
             break;
         }
     }
+    
+    
+}
+
+extension SwiftOXCCommonPlugin: FlutterApplicationLifeCycleDelegate {
+    public func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) -> Bool {
+        IMBackgroundCoordinator.shared.handleSilentPush(userInfo: userInfo, fetchCompletionHandler: completionHandler)
+        return true
+    }
+    
+    public func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        let deviceTokenStr = deviceToken.map { String(format: "%02.2hhx", arguments: [$0]) }.joined()
+        print(deviceTokenStr)
+        savePushToken(token: deviceTokenStr)
+    }
+    
+    public func applicationDidEnterBackground(_ application: UIApplication) {
+        IMBackgroundCoordinator.shared.applicationDidEnterBackground()
+    }
 }
 
 // MARK: - Push
 extension SwiftOXCCommonPlugin {
-    public static func savePushToken(token: String) {
+    private func savePushToken(token: String) {
         channel?.invokeMethod("savePushToken", arguments: token)
     }
     
@@ -147,6 +172,16 @@ extension SwiftOXCCommonPlugin {
 
 // MARK: - Private tools
 extension SwiftOXCCommonPlugin {
+    private func backgroundCoordinatorInitialized() {
+        IMBackgroundCoordinator.shared.configure(
+            with: .init(
+                bgRefreshIdentifier: "com.xchat.app.refresh",
+                bgProcessingIdentifier: "com.xchat.app.processing",
+                urlSessionIdentifier: "com.xchat.app.bgtransfer"
+            )
+        )
+    }
+    
     private func getDeviceId(result:FlutterResult) {
         if let uuid = UserDefaults.standard.string(forKey: "com.ox.super_main.uuid") {
             result(uuid)

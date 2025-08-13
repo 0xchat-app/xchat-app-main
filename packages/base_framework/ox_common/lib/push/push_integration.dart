@@ -24,6 +24,7 @@ class CLPushIntegration with WidgetsBindingObserver, OXChatObserver {
   late final Notifier _notifier;
   late final NotificationDecisionService _decision;
   bool _initialized = false;
+  bool hasUploadPushToken = false;
 
   Future<void> initialize() async {
     if (_initialized) return;
@@ -126,8 +127,10 @@ class CLPushIntegration with WidgetsBindingObserver, OXChatObserver {
     }
   }
 
-  Future<bool> uploadPushToken(String token) async {
+  Future<bool> uploadPushToken(String token, [bool force = false]) async {
+    if (hasUploadPushToken && !force) return true;
     OKEvent okEvent = await NotificationHelper.sharedInstance.updateNotificationDeviceId(token);
+    hasUploadPushToken = okEvent.status;
     return okEvent.status;
   }
 }
@@ -139,16 +142,7 @@ class _ForegroundStateImpl implements ForegroundState {
   bool isAppInForeground() => false;
 
   @override
-  bool isThreadOpen(String threadId) {
-    // When chat page is open, PromptToneManager.sharedInstance.isCurrencyChatPage is set
-    final checker = PromptToneManager.sharedInstance.isCurrencyChatPage;
-    if (checker == null) return false;
-    try {
-      return checker(threadId, '');
-    } catch (_) {
-      return false;
-    }
-  }
+  bool isThreadOpen(String threadId) => false;
 }
 
 class _PermissionGatewayImpl implements PermissionGateway {

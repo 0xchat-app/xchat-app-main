@@ -440,9 +440,6 @@ extension LoginManagerAccount on LoginManager {
 
   void loginAccountSuccessHandler(AccountModel account) {
     CLPushIntegration.instance.initialize();
-    if (account.pushToken != null) {
-      CLPushIntegration.instance.uploadPushToken(account.pushToken!);
-    }
     _notifyLoginSuccess();
   }
 

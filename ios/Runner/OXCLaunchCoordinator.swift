@@ -8,7 +8,7 @@
 import UIKit
 import Flutter
 
-class OXCLaunchCoordinator: NSObject {
+class OXCLaunchCoordinator {
 
     static let shared = OXCLaunchCoordinator()
     
@@ -18,7 +18,7 @@ class OXCLaunchCoordinator: NSObject {
         registeFlutterPlugin(window: window)
     }
     
-    func registeFlutterPlugin(window: UIWindow) {
+    private func registeFlutterPlugin(window: UIWindow) {
 
         let navController = window.rootViewController as? UINavigationController ?? UINavigationController()
     
@@ -30,16 +30,5 @@ class OXCLaunchCoordinator: NSObject {
         
         navController.setViewControllers([mainController], animated: false)
         window.rootViewController = navController
-    }
-}
-
-extension OXCLaunchCoordinator: UNUserNotificationCenterDelegate {
-    
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        completionHandler([.sound, .alert, .badge])
-    }
-    
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        completionHandler()
     }
 }

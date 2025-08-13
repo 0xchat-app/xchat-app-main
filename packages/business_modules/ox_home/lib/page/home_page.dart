@@ -4,6 +4,7 @@ import 'package:nostr_core_dart/nostr.dart';
 import 'package:ox_cache_manager/ox_cache_manager.dart';
 import 'package:ox_common/login/login_models.dart';
 import 'package:ox_common/navigator/navigator.dart';
+import 'package:ox_common/push/push_integration.dart';
 import 'package:ox_common/utils/storage_key_tool.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
@@ -37,6 +38,10 @@ class _HomePageState extends State<HomePage> {
       valueListenable: LoginManager.instance.state$,
       builder: (context, loginState, child) {
         final loginAccount = loginState.account;
+        final pushToken = loginAccount?.pushToken;
+        if (pushToken != null) {
+          CLPushIntegration.instance.uploadPushToken(pushToken);
+        }
         return AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
           switchInCurve: Curves.easeIn,

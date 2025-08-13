@@ -26,7 +26,8 @@ class NotificationDecisionService {
 
   Future<void> onMessageArrived(IncomingMessage m) async {
     if (mute.isMuted(m.threadId)) return;
-    if (state.isAppInForeground() || state.isThreadOpen(m.threadId)) return;
+    if (state.isAppInForeground()) return;
+    if (state.isThreadOpen(m.threadId)) return;
     if (dedupe.seen(m.id)) return;
 
     if (!(await perms.notificationsAllowed())) return;
@@ -37,7 +38,8 @@ class NotificationDecisionService {
     b.timer = Timer(config.coalesceWindow, () async {
       final messages = List<IncomingMessage>.from(b.messages);
       _buckets.remove(m.threadId);
-      if (state.isAppInForeground() || state.isThreadOpen(m.threadId)) return;
+      if (state.isAppInForeground()) return;
+      if (state.isThreadOpen(m.threadId)) return;
 
       final latest = messages.last;
       final count = messages.length;
