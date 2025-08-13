@@ -106,5 +106,6 @@
   "secret_chat_rejected_tips": "${name}, gizli sohbet isteğinizi reddetti",
   "you": "sen",
   "webview_more_browser": "Tarayıcıda Aç",
-  "webview_more_copy": "Bağlantıyı Kopyala"
+  "webview_more_copy": "Bağlantıyı Kopyala",
+  "skip": "Atla"
 }

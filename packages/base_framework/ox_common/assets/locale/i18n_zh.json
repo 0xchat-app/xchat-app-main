@@ -195,5 +195,6 @@
   "circle_intro_faq_question_2": "可以删除circle 吗？",
   "circle_intro_faq_answer_2": "可以的，在settings -> circle  settings -> 右上角 。。。注意：删除 circle 会删除本地数据库，数据不可恢复",
   "circle_intro_examples_title": "热门中继：",
-  "circle_intro_note": "注意：每个圈子都是完全独立的。一个圈子中的联系人和消息不会出现在另一个圈子中，每个圈子都有自己的加密数据库。"
+  "circle_intro_note": "注意：每个圈子都是完全独立的。一个圈子中的联系人和消息不会出现在另一个圈子中，每个圈子都有自己的加密数据库。",
+  "skip": "跳过"
 }

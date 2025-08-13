@@ -106,5 +106,6 @@
   "secret_chat_rejected_tips": "${name} đã từ chối yêu cầu trò chuyện bí mật của bạn",
   "you": "bạn",
   "webview_more_browser": "Mở trong trình duyệt",
-  "webview_more_copy": "Sao chép liên kết"
+  "webview_more_copy": "Sao chép liên kết",
+  "skip": "Bỏ qua"
 }

@@ -195,5 +195,6 @@
   "circle_intro_faq_question_2": "Can I delete a circle?",
   "circle_intro_faq_answer_2": "Yes, you can delete a circle in Settings -> Circle Settings -> top right corner (...). Note: Deleting a circle will delete the local database, and the data cannot be recovered.",
   "circle_intro_examples_title": "Popular Relays:",
-  "circle_intro_note": "Note: Each Circle is completely independent. Your contacts and messages in one Circle won't appear in another, and each has its own encrypted database."
+  "circle_intro_note": "Note: Each Circle is completely independent. Your contacts and messages in one Circle won't appear in another, and each has its own encrypted database.",
+  "skip": "Skip"
 }

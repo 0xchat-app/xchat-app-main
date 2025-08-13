@@ -106,5 +106,6 @@
   "secret_chat_rejected_tips": "${name} odrzucił(a) twoją prośbę o tajny czat",
   "you": "ty",
   "webview_more_browser": "Otwórz w przeglądarce",
-  "webview_more_copy": "Kopiuj link"
+  "webview_more_copy": "Kopiuj link",
+  "skip": "Pomiń"
 }

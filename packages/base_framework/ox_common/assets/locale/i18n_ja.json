@@ -145,5 +145,6 @@
   "network_unreachable": "ネットワークに到達できません、接続を確認してください",
   "connection_timeout": "接続がタイムアウトしました、再試行してください",
   "websocket_connection_failed": "リレーに接続できません",
-  "connection_test_failed": "接続テストに失敗しました"
+  "connection_test_failed": "接続テストに失敗しました",
+  "skip": "スキップ"
 }

@@ -146,5 +146,6 @@
   "connection_timeout": "Verbindungszeit abgelaufen, bitte versuchen Sie es erneut",
   "websocket_connection_failed": "Verbindung zum Relay nicht möglich",
   "connection_test_failed": "Verbindungstest fehlgeschlagen",
+  "skip": "Überspringen",
   "camera": "Kamera"
 }

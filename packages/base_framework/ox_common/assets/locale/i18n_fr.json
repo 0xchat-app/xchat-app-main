@@ -132,5 +132,6 @@
   "network_unreachable": "Réseau inaccessible, veuillez vérifier votre connexion",
   "connection_timeout": "Délai de connexion dépassé, veuillez réessayer",
   "websocket_connection_failed": "Impossible de se connecter au relais",
-  "connection_test_failed": "Test de connexion échoué"
+  "connection_test_failed": "Test de connexion échoué",
+  "skip": "Passer"
 }

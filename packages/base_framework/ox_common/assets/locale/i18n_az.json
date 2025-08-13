@@ -108,5 +108,6 @@
   "webview_more_browser": "Brauzerdə Aç",
   "webview_more_copy": "Keçidi Kopyala",
   "open_singer_app_error_title": "Müğənni tətbiqini açarkən xəta",
-  "open_singer_app_error_content": "İmza tətbiqi tapılmadı, zəhmət olmasa bu tətbiqin silinmədiyini yoxlayın."
+  "open_singer_app_error_content": "İmza tətbiqi tapılmadı, zəhmət olmasa bu tətbiqin silinmədiyini yoxlayın.",
+  "skip": "Keç"
 }

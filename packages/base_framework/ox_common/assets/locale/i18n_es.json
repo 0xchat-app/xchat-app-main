@@ -98,6 +98,7 @@
   "message_type_file": "[archivo]",
   "message_type_zaps": "[zaps]",
   "message_type_call": "[videollamada]",
+  "skip": "Omitir",
   "message_type_template": "[plantilla]",
   "message_type_unknown": "[desconocido]",
   "secret_chat_invited_tips": "Has invitado a ${name} a un chat secreto",

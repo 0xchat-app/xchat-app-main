@@ -106,5 +106,6 @@
   "secret_chat_rejected_tips": "${name} elutasította a titkos csevegési kérelmed",
   "you": "te",
   "webview_more_browser": "Megnyitás böngészőben",
-  "webview_more_copy": "Link másolása"
+  "webview_more_copy": "Link másolása",
+  "skip": "Kihagyás"
 }
