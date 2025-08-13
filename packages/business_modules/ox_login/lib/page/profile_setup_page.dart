@@ -10,6 +10,8 @@ import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_module_service/ox_module_service.dart';
+import '../utils/avatar_generator.dart';
+import '../utils/username_generator.dart';
 
 /// Profile setup page for creating/updating user profile
 /// 
@@ -37,6 +39,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
   @override
   void initState() {
     super.initState();
+    debugPrint('ProfileSetupPage initialized, isNewAccount: ${widget.isNewAccount}');
     _loadCurrentProfile();
     _nameController.addListener(_onInputChanged);
     _bioController.addListener(_onInputChanged);
@@ -117,6 +120,54 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
           colorToken: ColorToken.onSurfaceVariant,
           maxLines: null,
         ),
+        if (widget.isNewAccount) ...[
+          SizedBox(height: 16.px),
+          Container(
+            padding: EdgeInsets.all(12.px),
+            decoration: BoxDecoration(
+              color: ColorToken.primaryContainer.of(context),
+              borderRadius: BorderRadius.circular(8.px),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.auto_awesome,
+                      size: 16.px,
+                      color: ColorToken.primary.of(context),
+                    ),
+                    SizedBox(width: 8.px),
+                    Expanded(
+                      child: CLText.bodySmall(
+                        '✨ 新建账号将自动生成用户名和头像',
+                        colorToken: ColorToken.primary,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8.px),
+                CLText.bodySmall(
+                  '当前状态: ${_nameController.text.isNotEmpty ? "✅ 用户名: ${_nameController.text}" : "⏳ 正在生成用户名"}',
+                  colorToken: ColorToken.primary,
+                ),
+                SizedBox(height: 4.px),
+                CLText.bodySmall(
+                  '头像状态: ${_avatarUrl != null && _avatarUrl!.startsWith('generated_avatar_') ? "✅ Emoji头像已生成" : "⏳ 正在生成头像"}',
+                  colorToken: ColorToken.primary,
+                ),
+                if (_avatarUrl != null && _avatarUrl!.startsWith('generated_avatar_')) ...[
+                  SizedBox(height: 4.px),
+                  CLText.bodySmall(
+                    '动物: ${_getAnimalStyleName()}',
+                    colorToken: ColorToken.primary,
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
       ],
     );
   }
@@ -135,11 +186,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
             children: [
               Hero(
                 tag: 'profile_avatar_hero',
-                child: OXUserAvatar(
-                  imageUrl: _avatarUrl,
-                  size: 100.px,
-                  onTap: _onAvatarTap,
-                ),
+                child: _buildAvatarWidget(),
               ),
               SizedBox(height: 12.px),
               CLButton.tonal(
@@ -151,6 +198,28 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
                 ),
                 onTap: _onAvatarTap,
               ),
+              if (widget.isNewAccount) ...[
+                SizedBox(height: 8.px),
+                CLButton.tonal(
+                  child: CLText.labelLarge('🔄 重新生成Emoji头像'),
+                  height: 36.px,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.px,
+                    vertical: 8.px,
+                  ),
+                  onTap: _onRegenerateAvatarTap,
+                ),
+                SizedBox(height: 8.px),
+                CLButton.tonal(
+                  child: CLText.labelLarge('🧪 测试Emoji头像生成'),
+                  height: 36.px,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.px,
+                    vertical: 8.px,
+                  ),
+                  onTap: _onTestAvatarGenerationTap,
+                ),
+              ],
             ],
           ),
         ),
@@ -167,10 +236,25 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
           colorToken: ColorToken.onSurface,
         ),
         SizedBox(height: 12.px),
-        CLTextField(
-          controller: _nameController,
-          placeholder: Localized.text('ox_login.profile_name_placeholder'),
-          textInputAction: TextInputAction.next,
+        Row(
+          children: [
+            Expanded(
+              child: CLTextField(
+                controller: _nameController,
+                placeholder: Localized.text('ox_login.profile_name_placeholder'),
+                textInputAction: TextInputAction.next,
+              ),
+            ),
+            if (widget.isNewAccount) ...[
+              SizedBox(width: 12.px),
+              CLButton.tonal(
+                child: CLText.labelLarge(Localized.text('ox_login.regenerate_username')),
+                height: 48.px,
+                padding: EdgeInsets.symmetric(horizontal: 12.px),
+                onTap: _onRegenerateUsernameTap,
+              ),
+            ],
+          ],
         ),
         SizedBox(height: 8.px),
         CLText.bodySmall(
@@ -285,8 +369,213 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
           _avatarUrl = currentUser.picture;
         });
       }
+      
+              // If this is a new account, generate default username and avatar
+        if (widget.isNewAccount) {
+          debugPrint('This is a new account, will generate default profile');
+          await _generateDefaultProfile();
+        } else {
+          debugPrint('This is an existing account, profile already exists');
+        }
     } catch (e) {
       debugPrint('Error loading current profile: $e');
+    }
+  }
+  
+  /// Generate default profile for new accounts
+  Future<void> _generateDefaultProfile() async {
+    try {
+      debugPrint('Generating default profile for new account...');
+      
+      // Get current user's npub
+      final currentUser = await _getCurrentUserInfo();
+      if (currentUser == null) {
+        debugPrint('Current user is null, cannot generate profile');
+        return;
+      }
+      
+      final npub = currentUser.pubKey;
+      debugPrint('User npub: $npub');
+      
+      if (npub.isEmpty) {
+        debugPrint('Npub is empty, cannot generate profile');
+        return;
+      }
+      
+      // Generate username if not set
+      if (_nameController.text.isEmpty) {
+        final username = UsernameGenerator.instance.generateUsername(npub);
+        debugPrint('Generated username: $username');
+        _nameController.text = username;
+      }
+      
+      // Generate avatar if not set
+      if (_avatarUrl == null || _avatarUrl!.isEmpty) {
+        _avatarUrl = 'generated_avatar_$npub';
+        debugPrint('Generated avatar URL: $_avatarUrl');
+      }
+      
+      // Update UI state with all changes
+      setState(() {
+        _hasChanges = _nameController.text.isNotEmpty || _bioController.text.isNotEmpty;
+      });
+      
+      debugPrint('Default profile generation completed');
+    } catch (e) {
+      debugPrint('Error generating default profile: $e');
+    }
+  }
+  
+  /// Build avatar widget with support for generated avatars
+  Widget _buildAvatarWidget() {
+    debugPrint('Building avatar widget with URL: $_avatarUrl');
+    
+    // Check if this is a generated avatar
+    if (_avatarUrl != null && _avatarUrl!.startsWith('generated_avatar_')) {
+      // Extract npub from the generated avatar URL
+      final npub = _avatarUrl!.replaceFirst('generated_avatar_', '');
+      debugPrint('Extracted npub for generated avatar: $npub');
+      
+      if (npub.isNotEmpty) {
+        // Use the avatar generator to create a pixel art avatar
+        debugPrint('Creating generated avatar for npub: $npub');
+        return GestureDetector(
+          onTap: _onAvatarTap,
+          child: AvatarGenerator.instance.generateAvatar(
+            npub,
+            size: 100.px,
+            borderRadius: 50.px,
+          ),
+        );
+      }
+    }
+    
+    // Use regular avatar for non-generated images
+    debugPrint('Using regular avatar with URL: $_avatarUrl');
+    return OXUserAvatar(
+      imageUrl: _avatarUrl,
+      size: 100.px,
+      onTap: _onAvatarTap,
+    );
+  }
+  
+  /// Handle regenerate username button tap
+  void _onRegenerateUsernameTap() async {
+    try {
+      final currentUser = await _getCurrentUserInfo();
+      if (currentUser == null) return;
+      
+      final npub = currentUser.pubKey;
+      if (npub.isEmpty) return;
+      
+      // Generate a new username
+      final newUsername = UsernameGenerator.instance.generateUsername(npub);
+      debugPrint('Regenerated username: $newUsername');
+      
+      // Update the controller and force UI update
+      setState(() {
+        _nameController.text = newUsername;
+        _hasChanges = true;
+      });
+      
+      // Show success message
+      if (mounted) {
+        CommonToast.instance.show(
+          context, 
+          'Generated new username: $newUsername'
+        );
+      }
+    } catch (e) {
+      debugPrint('Error regenerating username: $e');
+      if (mounted) {
+        CommonToast.instance.show(
+          context, 
+          'Failed to generate new username'
+        );
+      }
+    }
+  }
+  
+  /// Handle regenerate avatar button tap
+  void _onRegenerateAvatarTap() async {
+    try {
+      final currentUser = await _getCurrentUserInfo();
+      if (currentUser == null) return;
+      
+      final npub = currentUser.pubKey;
+      if (npub.isEmpty) return;
+      
+      // Generate a new avatar
+      _avatarUrl = 'generated_avatar_$npub';
+      debugPrint('Regenerated avatar URL: $_avatarUrl');
+      
+      // Force UI update
+      setState(() {});
+      
+      // Show success message
+      if (mounted) {
+        CommonToast.instance.show(
+          context, 
+          'Generated new emoji avatar!'
+        );
+      }
+    } catch (e) {
+      debugPrint('Error regenerating avatar: $e');
+      if (mounted) {
+        CommonToast.instance.show(
+          context, 
+          'Failed to generate new avatar'
+        );
+      }
+    }
+  }
+  
+  /// Handle test avatar generation button tap
+  void _onTestAvatarGenerationTap() async {
+    try {
+      debugPrint('Testing avatar generation...');
+      
+      // Test with a sample npub
+      const testNpub = 'npub1test123456789abcdefghijklmnopqrstuvwxyz';
+      
+      // Generate test avatar
+      _avatarUrl = 'generated_avatar_$testNpub';
+      
+      // Force UI update
+      setState(() {});
+      
+      // Show success message
+      if (mounted) {
+        CommonToast.instance.show(
+          context, 
+          'Test emoji avatar generated! Check console for debug info.'
+        );
+      }
+      
+      debugPrint('Test avatar generated with URL: $_avatarUrl');
+    } catch (e) {
+      debugPrint('Error testing avatar generation: $e');
+      if (mounted) {
+        CommonToast.instance.show(
+          context, 
+          'Failed to generate test avatar: $e'
+        );
+      }
+    }
+  }
+  
+  /// Get animal style name for current avatar
+  String _getAnimalStyleName() {
+    if (_avatarUrl == null || !_avatarUrl!.startsWith('generated_avatar_')) {
+      return 'Unknown';
+    }
+    
+    try {
+      final npub = _avatarUrl!.replaceFirst('generated_avatar_', '');
+      return AvatarGenerator.instance.getAnimalStyleName(npub);
+    } catch (e) {
+      debugPrint('Error getting animal style name: $e');
+      return 'Unknown';
     }
   }
 
@@ -489,7 +778,22 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
 
   Future<dynamic> _getCurrentUserInfo() async {
     try {
-      // Use dynamic import to avoid circular dependency
+      // First try to get from LoginManager
+      final loginState = LoginManager.instance.currentState;
+      if (loginState.account != null) {
+        debugPrint('Got user from LoginManager: ${loginState.account!.pubkey}');
+        
+        // Create a mock user object with the information we need
+        return _MockUser(
+          pubKey: loginState.account!.pubkey,
+          name: null, // Will be generated
+          bio: null,  // Will be generated
+          picture: null, // Will be generated
+        );
+      }
+      
+      // Fallback to dynamic import
+      debugPrint('Trying dynamic import for user info...');
       final accountModule = await OXModuleService.invoke('chatcore', 'getCurrentUser', []);
       return accountModule;
     } catch (e) {
@@ -522,4 +826,19 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
     // Return false to indicate user skipped profile setup
     Navigator.of(context).pop(false);
   }
+}
+
+/// Mock user class for profile generation
+class _MockUser {
+  final String pubKey;
+  String? name;
+  String? bio;
+  String? picture;
+  
+  _MockUser({
+    required this.pubKey,
+    this.name,
+    this.bio,
+    this.picture,
+  });
 }

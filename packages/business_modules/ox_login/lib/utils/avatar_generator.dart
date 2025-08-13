@@ -1,0 +1,991 @@
+import 'dart:math';
+import 'dart:typed_data';
+import 'package:flutter/material.dart';
+import 'package:nostr_core_dart/nostr.dart';
+
+/// Animal style for avatar generation
+enum AnimalStyle {
+  cat,      // 🐱
+  dog,      // 🐕
+  rabbit,   // 🐰
+  mouse,    // 🐀
+  fox,      // 🦊
+  bear,     // 🐻
+  panda,    // 🐼
+  tiger,    // 🐯
+  lion,     // 🦁
+  elephant, // 🐘
+  giraffe,  // 🦒
+  penguin,  // 🐧
+  owl,      // 🦉
+  duck,     // 🦆
+  fish,     // 🐠
+}
+
+/// Pixel art avatar generator for new accounts
+/// 
+/// Generates unique pixel-style avatars based on npub (public key)
+/// Each avatar has consistent colors and patterns for the same public key
+class AvatarGenerator {
+  AvatarGenerator._();
+  
+  static final AvatarGenerator instance = AvatarGenerator._();
+  
+  /// Generate a pixel art avatar as a widget
+  /// 
+  /// [npub] The npub public key to generate avatar from
+  /// [size] Size of the avatar widget
+  /// [borderRadius] Border radius for the avatar
+  Widget generateAvatar(String npub, {double size = 100, double borderRadius = 50}) {
+    debugPrint('AvatarGenerator: Generating avatar for npub: $npub');
+    
+    final colors = _generateColors(npub);
+    final pattern = _generatePattern(npub);
+    
+    debugPrint('AvatarGenerator: Colors generated - Primary: ${colors.primary}, Secondary: ${colors.secondary}, Accent: ${colors.accent}');
+    debugPrint('AvatarGenerator: Pattern generated with ${pattern.length}x${pattern[0].length} grid');
+    
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(borderRadius),
+        color: colors.primary,
+      ),
+      child: CustomPaint(
+        painter: PixelAvatarPainter(
+          colors: colors,
+          pattern: pattern,
+          pixelSize: size / 16, // 16x16 grid
+        ),
+      ),
+    );
+  }
+  
+  /// Generate a pixel art avatar as image data
+  /// 
+  /// [npub] The npub public key to generate avatar from
+  /// [size] Size of the image in pixels
+  /// Returns Uint8List of RGBA image data
+  Future<Uint8List> generateAvatarImage(String npub, {int size = 100}) async {
+    final colors = _generateColors(npub);
+    final pattern = _generatePattern(npub);
+    
+    final imageData = Uint8List(size * size * 4);
+    final pixelSize = size / 16;
+    
+    for (int y = 0; y < size; y++) {
+      for (int x = 0; x < size; x++) {
+        final gridX = (x / pixelSize).floor();
+        final gridY = (y / pixelSize).floor();
+        
+        final pixelIndex = (y * size + x) * 4;
+        final color = _getPixelColor(colors, pattern, gridX, gridY);
+        
+        imageData[pixelIndex] = color.red;     // R
+        imageData[pixelIndex + 1] = color.green; // G
+        imageData[pixelIndex + 2] = color.blue;  // B
+        imageData[pixelIndex + 3] = color.alpha; // A
+      }
+    }
+    
+    return imageData;
+  }
+  
+  /// Generate consistent colors based on npub
+  AvatarColors _generateColors(String npub) {
+    final hash = _hashString(npub);
+    final random = Random(hash);
+    
+    // Generate primary color (main background)
+    final primaryHue = random.nextDouble() * 360;
+    final primarySaturation = 0.3 + random.nextDouble() * 0.4; // 30-70%
+    final primaryValue = 0.7 + random.nextDouble() * 0.3; // 70-100%
+    
+    // Generate secondary color (pattern color)
+    final secondaryHue = (primaryHue + 180 + random.nextDouble() * 60 - 30) % 360;
+    final secondarySaturation = 0.4 + random.nextDouble() * 0.5; // 40-90%
+    final secondaryValue = 0.6 + random.nextDouble() * 0.4; // 60-100%
+    
+    // Generate accent color (highlight color)
+    final accentHue = (primaryHue + 120 + random.nextDouble() * 60 - 30) % 360;
+    final accentSaturation = 0.5 + random.nextDouble() * 0.5; // 50-100%
+    final accentValue = 0.8 + random.nextDouble() * 0.2; // 80-100%
+    
+    return AvatarColors(
+      primary: HSVColor.fromAHSV(1.0, primaryHue, primarySaturation, primaryValue).toColor(),
+      secondary: HSVColor.fromAHSV(1.0, secondaryHue, secondarySaturation, secondaryValue).toColor(),
+      accent: HSVColor.fromAHSV(1.0, accentHue, accentSaturation, accentValue).toColor(),
+    );
+  }
+  
+  /// Generate consistent pattern based on npub
+  List<List<int>> _generatePattern(String npub) {
+    final hash = _hashString(npub);
+    final random = Random(hash);
+    
+    // Create 16x16 grid pattern
+    final pattern = List.generate(16, (i) => List.filled(16, 0));
+    
+    // Select animal style based on npub hash
+    final animalStyle = _getAnimalStyle(hash);
+    
+    return _generateAnimalPattern(pattern, random, animalStyle);
+  }
+  
+  /// Get animal style based on hash
+  AnimalStyle _getAnimalStyle(int hash) {
+    final styles = AnimalStyle.values;
+    return styles[hash % styles.length];
+  }
+  
+
+  
+  /// Generate animal pattern based on style
+  List<List<int>> _generateAnimalPattern(List<List<int>> pattern, Random random, AnimalStyle style) {
+    // Background
+    for (int y = 0; y < 16; y++) {
+      for (int x = 0; x < 16; x++) {
+        pattern[y][x] = 0; // Background color
+      }
+    }
+    
+    switch (style) {
+      case AnimalStyle.cat:
+        return _generateCatPattern(pattern, random);
+      case AnimalStyle.dog:
+        return _generateDogPattern(pattern, random);
+      case AnimalStyle.rabbit:
+        return _generateRabbitPattern(pattern, random);
+      case AnimalStyle.mouse:
+        return _generateMousePattern(pattern, random);
+      case AnimalStyle.fox:
+        return _generateFoxPattern(pattern, random);
+      case AnimalStyle.bear:
+        return _generateBearPattern(pattern, random);
+      case AnimalStyle.panda:
+        return _generatePandaPattern(pattern, random);
+      case AnimalStyle.tiger:
+        return _generateTigerPattern(pattern, random);
+      case AnimalStyle.lion:
+        return _generateLionPattern(pattern, random);
+      case AnimalStyle.elephant:
+        return _generateElephantPattern(pattern, random);
+      case AnimalStyle.giraffe:
+        return _generateGiraffePattern(pattern, random);
+      case AnimalStyle.penguin:
+        return _generatePenguinPattern(pattern, random);
+      case AnimalStyle.owl:
+        return _generateOwlPattern(pattern, random);
+      case AnimalStyle.duck:
+        return _generateDuckPattern(pattern, random);
+      case AnimalStyle.fish:
+        return _generateFishPattern(pattern, random);
+    }
+  }
+  
+  /// Generate abstract geometric pattern
+  List<List<int>> _generateAbstractPattern(List<List<int>> pattern, Random random) {
+    // Background
+    for (int y = 0; y < 16; y++) {
+      for (int x = 0; x < 16; x++) {
+        pattern[y][x] = 0; // Background color
+      }
+    }
+    
+    // Random geometric shapes
+    for (int i = 0; i < 8; i++) {
+      final shapeType = random.nextInt(3);
+      final x = random.nextInt(12) + 2;
+      final y = random.nextInt(12) + 2;
+      final size = random.nextInt(4) + 2;
+      
+      switch (shapeType) {
+        case 0: // Circle
+          for (int dy = -size; dy <= size; dy++) {
+            for (int dx = -size; dx <= size; dx++) {
+              final nx = x + dx;
+              final ny = y + dy;
+              if (nx >= 0 && nx < 16 && ny >= 0 && ny < 16) {
+                final distance = sqrt(dx * dx + dy * dy);
+                if (distance <= size) {
+                  pattern[ny][nx] = (i % 3) + 1;
+                }
+              }
+            }
+          }
+          break;
+        case 1: // Square
+          for (int dy = -size; dy <= size; dy++) {
+            for (int dx = -size; dx <= size; dx++) {
+              final nx = x + dx;
+              final ny = y + dy;
+              if (nx >= 0 && nx < 16 && ny >= 0 && ny < 16) {
+                pattern[ny][nx] = (i % 3) + 1;
+              }
+            }
+          }
+          break;
+        case 2: // Triangle
+          for (int dy = -size; dy <= size; dy++) {
+            for (int dx = -size; dx <= size; dx++) {
+              final nx = x + dx;
+              final ny = y + dy;
+              if (nx >= 0 && nx < 16 && ny >= 0 && ny < 16) {
+                if ((dx + dy).abs() <= size) {
+                  pattern[ny][nx] = (i % 3) + 1;
+                }
+              }
+            }
+          }
+          break;
+      }
+    }
+    
+    return pattern;
+  }
+  
+  /// Get color for specific pixel based on pattern
+  Color _getPixelColor(AvatarColors colors, List<List<int>> pattern, int gridX, int gridY) {
+    if (gridX < 0 || gridX >= 16 || gridY < 0 || gridY >= 16) {
+      return colors.primary;
+    }
+    
+    final patternValue = pattern[gridY][gridX];
+    
+    switch (patternValue) {
+      case 0:
+        return colors.primary;
+      case 1:
+        return colors.secondary;
+      case 2:
+        return colors.accent;
+      case 3:
+        return _blendColors(colors.primary, colors.secondary, 0.5);
+      default:
+        return colors.primary;
+    }
+  }
+  
+  /// Blend two colors
+  Color _blendColors(Color color1, Color color2, double ratio) {
+    return Color.fromARGB(
+      ((color1.alpha * (1 - ratio) + color2.alpha * ratio) * 255).round(),
+      ((color1.red * (1 - ratio) + color2.red * ratio) * 255 / 255).round(),
+      ((color1.green * (1 - ratio) + color2.green * ratio) * 255 / 255).round(),
+      ((color1.blue * (1 - ratio) + color2.blue * ratio) * 255 / 255).round(),
+    );
+  }
+  
+  /// Simple hash function for consistent random generation
+  int _hashString(String input) {
+    int hash = 0;
+    for (int i = 0; i < input.length; i++) {
+      hash = ((hash << 5) - hash + input.codeUnitAt(i)) & 0xFFFFFFFF;
+    }
+    return hash;
+  }
+  
+  /// Get animal style name for debugging
+  String getAnimalStyleName(String npub) {
+    final hash = _hashString(npub);
+    final style = _getAnimalStyle(hash);
+    switch (style) {
+      case AnimalStyle.cat:
+        return '🐱 Cat';
+      case AnimalStyle.dog:
+        return '🐕 Dog';
+      case AnimalStyle.rabbit:
+        return '🐰 Rabbit';
+      case AnimalStyle.mouse:
+        return '🐀 Mouse';
+      case AnimalStyle.fox:
+        return '🦊 Fox';
+      case AnimalStyle.bear:
+        return '🐻 Bear';
+      case AnimalStyle.panda:
+        return '🐼 Panda';
+      case AnimalStyle.tiger:
+        return '🐯 Tiger';
+      case AnimalStyle.lion:
+        return '🦁 Lion';
+      case AnimalStyle.elephant:
+        return '🐘 Elephant';
+      case AnimalStyle.giraffe:
+        return '🦒 Giraffe';
+      case AnimalStyle.penguin:
+        return '🐧 Penguin';
+      case AnimalStyle.owl:
+        return '🦉 Owl';
+      case AnimalStyle.duck:
+        return '🦆 Duck';
+      case AnimalStyle.fish:
+        return '🐠 Fish';
+    }
+  }
+  
+  // Animal pattern generators
+  List<List<int>> _generateCatPattern(List<List<int>> pattern, Random random) {
+    // Background
+    for (int y = 0; y < 16; y++) {
+      for (int x = 0; x < 16; x++) {
+        pattern[y][x] = 0;
+      }
+    }
+    
+    // Cat body (oval)
+    for (int y = 4; y < 12; y++) {
+      for (int x = 4; x < 12; x++) {
+        final centerX = 8;
+        final centerY = 8;
+        final radiusX = 4;
+        final radiusY = 4;
+        
+        final distance = ((x - centerX) * (x - centerX)) / (radiusX * radiusX) + 
+                        ((y - centerY) * (y - centerY)) / (radiusY * radiusY);
+        
+        if (distance <= 1.0) {
+          pattern[y][x] = 1; // Body color
+        }
+      }
+    }
+    
+    // Cat ears (triangles)
+    pattern[2][6] = 2; pattern[2][7] = 2; pattern[3][6] = 2; // Left ear
+    pattern[2][9] = 2; pattern[2][10] = 2; pattern[3][10] = 2; // Right ear
+    
+    // Eyes
+    pattern[6][5] = 3; // Left eye
+    pattern[6][11] = 3; // Right eye
+    
+    // Nose
+    pattern[8][8] = 3;
+    
+    // Whiskers
+    pattern[7][4] = 2; pattern[7][12] = 2; // Horizontal whiskers
+    pattern[6][3] = 2; pattern[6][13] = 2; // Diagonal whiskers
+    
+    return pattern;
+  }
+  
+  List<List<int>> _generateDogPattern(List<List<int>> pattern, Random random) {
+    // Background
+    for (int y = 0; y < 16; y++) {
+      for (int x = 0; x < 16; x++) {
+        pattern[y][x] = 0;
+      }
+    }
+    
+    // Dog body (round)
+    for (int y = 3; y < 13; y++) {
+      for (int x = 3; x < 13; x++) {
+        final centerX = 8;
+        final centerY = 8;
+        final radius = 5;
+        
+        final distance = sqrt((x - centerX) * (x - centerX) + (y - centerY) * (y - centerY));
+        
+        if (distance <= radius) {
+          pattern[y][x] = 1; // Body color
+        }
+      }
+    }
+    
+    // Dog ears (floppy)
+    pattern[2][5] = 2; pattern[2][6] = 2; pattern[3][5] = 2; pattern[3][6] = 2; // Left ear
+    pattern[2][10] = 2; pattern[2][11] = 2; pattern[3][10] = 2; pattern[3][11] = 2; // Right ear
+    
+    // Eyes
+    pattern[6][5] = 3; // Left eye
+    pattern[6][11] = 3; // Right eye
+    
+    // Nose
+    pattern[8][8] = 3;
+    
+    // Tongue
+    pattern[9][7] = 2; pattern[9][8] = 2; pattern[9][9] = 2;
+    
+    return pattern;
+  }
+  
+  List<List<int>> _generateRabbitPattern(List<List<int>> pattern, Random random) {
+    // Background
+    for (int y = 0; y < 16; y++) {
+      for (int x = 0; x < 16; x++) {
+        pattern[y][x] = 0;
+      }
+    }
+    
+    // Rabbit body (oval)
+    for (int y = 4; y < 12; y++) {
+      for (int x = 4; x < 12; x++) {
+        final centerX = 8;
+        final centerY = 8;
+        final radiusX = 4;
+        final radiusY = 4;
+        
+        final distance = ((x - centerX) * (x - centerX)) / (radiusX * radiusX) + 
+                        ((y - centerY) * (y - centerY)) / (radiusY * radiusY);
+        
+        if (distance <= 1.0) {
+          pattern[y][x] = 1; // Body color
+        }
+      }
+    }
+    
+    // Long ears
+    pattern[1][7] = 2; pattern[2][7] = 2; pattern[3][7] = 2; // Left ear
+    pattern[1][9] = 2; pattern[2][9] = 2; pattern[3][9] = 2; // Right ear
+    
+    // Eyes
+    pattern[6][5] = 3; // Left eye
+    pattern[6][11] = 3; // Right eye
+    
+    // Nose
+    pattern[8][8] = 3;
+    
+    return pattern;
+  }
+  
+  List<List<int>> _generateMousePattern(List<List<int>> pattern, Random random) {
+    // Background
+    for (int y = 0; y < 16; y++) {
+      for (int x = 0; x < 16; x++) {
+        pattern[y][x] = 0;
+      }
+    }
+    
+    // Mouse body (small round)
+    for (int y = 5; y < 11; y++) {
+      for (int x = 5; x < 11; x++) {
+        final centerX = 8;
+        final centerY = 8;
+        final radius = 3;
+        
+        final distance = sqrt((x - centerX) * (x - centerX) + (y - centerY) * (y - centerY));
+        
+        if (distance <= radius) {
+          pattern[y][x] = 1; // Body color
+        }
+      }
+    }
+    
+    // Small ears
+    pattern[3][6] = 2; pattern[3][10] = 2;
+    
+    // Eyes
+    pattern[6][6] = 3; pattern[6][10] = 3;
+    
+    // Nose
+    pattern[8][8] = 3;
+    
+    // Tail
+    pattern[9][4] = 2; pattern[10][3] = 2; pattern[11][2] = 2;
+    
+    return pattern;
+  }
+  
+  List<List<int>> _generateFoxPattern(List<List<int>> pattern, Random random) {
+    // Background
+    for (int y = 0; y < 16; y++) {
+      for (int x = 0; x < 16; x++) {
+        pattern[y][x] = 0;
+      }
+    }
+    
+    // Fox body (oval)
+    for (int y = 4; y < 12; y++) {
+      for (int x = 4; x < 12; x++) {
+        final centerX = 8;
+        final centerY = 8;
+        final radiusX = 4;
+        final radiusY = 4;
+        
+        final distance = ((x - centerX) * (x - centerX)) / (radiusX * radiusX) + 
+                        ((y - centerY) * (y - centerY)) / (radiusY * radiusY);
+        
+        if (distance <= 1.0) {
+          pattern[y][x] = 1; // Body color
+        }
+      }
+    }
+    
+    // Pointed ears
+    pattern[2][6] = 2; pattern[1][7] = 2; // Left ear
+    pattern[2][10] = 2; pattern[1][9] = 2; // Right ear
+    
+    // Eyes
+    pattern[6][5] = 3; pattern[6][11] = 3;
+    
+    // Nose
+    pattern[8][8] = 3;
+    
+    // Bushy tail
+    pattern[9][2] = 2; pattern[10][2] = 2; pattern[11][2] = 2;
+    pattern[9][3] = 2; pattern[10][3] = 2; pattern[11][3] = 2;
+    
+    return pattern;
+  }
+  
+  List<List<int>> _generateBearPattern(List<List<int>> pattern, Random random) {
+    // Background
+    for (int y = 0; y < 16; y++) {
+      for (int x = 0; x < 16; x++) {
+        pattern[y][x] = 0;
+      }
+    }
+    
+    // Bear body (large round)
+    for (int y = 3; y < 13; y++) {
+      for (int x = 3; x < 13; x++) {
+        final centerX = 8;
+        final centerY = 8;
+        final radius = 5;
+        
+        final distance = sqrt((x - centerX) * (x - centerX) + (y - centerY) * (y - centerY));
+        
+        if (distance <= radius) {
+          pattern[y][x] = 1; // Body color
+        }
+      }
+    }
+    
+    // Round ears
+    pattern[2][6] = 2; pattern[2][7] = 2; pattern[3][6] = 2; pattern[3][7] = 2; // Left ear
+    pattern[2][9] = 2; pattern[2][10] = 2; pattern[3][9] = 2; pattern[3][10] = 2; // Right ear
+    
+    // Eyes
+    pattern[6][5] = 3; pattern[6][11] = 3;
+    
+    // Nose
+    pattern[8][8] = 3;
+    
+    return pattern;
+  }
+  
+  List<List<int>> _generatePandaPattern(List<List<int>> pattern, Random random) {
+    // Background
+    for (int y = 0; y < 16; y++) {
+      for (int x = 0; x < 16; x++) {
+        pattern[y][x] = 0;
+      }
+    }
+    
+    // Panda body (white)
+    for (int y = 3; y < 13; y++) {
+      for (int x = 3; x < 13; x++) {
+        final centerX = 8;
+        final centerY = 8;
+        final radius = 5;
+        
+        final distance = sqrt((x - centerX) * (x - centerX) + (y - centerY) * (y - centerY));
+        
+        if (distance <= radius) {
+          pattern[y][x] = 1; // White body
+        }
+      }
+    }
+    
+    // Black ears
+    pattern[2][6] = 2; pattern[2][7] = 2; pattern[3][6] = 2; pattern[3][7] = 2; // Left ear
+    pattern[2][9] = 2; pattern[2][10] = 2; pattern[3][9] = 2; pattern[3][10] = 2; // Right ear
+    
+    // Black eyes
+    pattern[6][5] = 2; pattern[6][6] = 2; pattern[6][11] = 2; pattern[6][12] = 2;
+    pattern[7][5] = 2; pattern[7][6] = 2; pattern[7][11] = 2; pattern[7][12] = 2;
+    
+    // Black nose
+    pattern[8][7] = 2; pattern[8][8] = 2; pattern[8][9] = 2;
+    pattern[9][8] = 2;
+    
+    return pattern;
+  }
+  
+  List<List<int>> _generateTigerPattern(List<List<int>> pattern, Random random) {
+    // Background
+    for (int y = 0; y < 16; y++) {
+      for (int x = 0; x < 16; x++) {
+        pattern[y][x] = 0;
+      }
+    }
+    
+    // Tiger body (orange)
+    for (int y = 4; y < 12; y++) {
+      for (int x = 4; x < 12; x++) {
+        final centerX = 8;
+        final centerY = 8;
+        final radiusX = 4;
+        final radiusY = 4;
+        
+        final distance = ((x - centerX) * (x - centerX)) / (radiusX * radiusX) + 
+                        ((y - centerY) * (y - centerY)) / (radiusY * radiusY);
+        
+        if (distance <= 1.0) {
+          pattern[y][x] = 1; // Orange body
+        }
+      }
+    }
+    
+    // Stripes
+    pattern[5][4] = 2; pattern[5][12] = 2; // Vertical stripes
+    pattern[7][4] = 2; pattern[7][12] = 2;
+    pattern[9][4] = 2; pattern[9][12] = 2;
+    
+    // Eyes
+    pattern[6][5] = 3; pattern[6][11] = 3;
+    
+    // Nose
+    pattern[8][8] = 3;
+    
+    return pattern;
+  }
+  
+  List<List<int>> _generateLionPattern(List<List<int>> pattern, Random random) {
+    // Background
+    for (int y = 0; y < 16; y++) {
+      for (int x = 0; x < 16; x++) {
+        pattern[y][x] = 0;
+      }
+    }
+    
+    // Lion body (golden)
+    for (int y = 4; y < 12; y++) {
+      for (int x = 4; x < 12; x++) {
+        final centerX = 8;
+        final centerY = 8;
+        final radiusX = 4;
+        final radiusY = 4;
+        
+        final distance = ((x - centerX) * (x - centerX)) / (radiusX * radiusX) + 
+                        ((y - centerY) * (y - centerY)) / (radiusY * radiusY);
+        
+        if (distance <= 1.0) {
+          pattern[y][x] = 1; // Golden body
+        }
+      }
+    }
+    
+    // Mane (around head)
+    for (int y = 2; y < 8; y++) {
+      for (int x = 3; x < 13; x++) {
+        if (y == 2 || y == 3 || x == 3 || x == 12) {
+          pattern[y][x] = 2; // Mane color
+        }
+      }
+    }
+    
+    // Eyes
+    pattern[6][5] = 3; pattern[6][11] = 3;
+    
+    // Nose
+    pattern[8][8] = 3;
+    
+    return pattern;
+  }
+  
+  List<List<int>> _generateElephantPattern(List<List<int>> pattern, Random random) {
+    // Background
+    for (int y = 0; y < 16; y++) {
+      for (int x = 0; x < 16; x++) {
+        pattern[y][x] = 0;
+      }
+    }
+    
+    // Elephant body (gray)
+    for (int y = 5; y < 11; y++) {
+      for (int x = 4; x < 12; x++) {
+        final centerX = 8;
+        final centerY = 8;
+        final radiusX = 4;
+        final radiusY = 3;
+        
+        final distance = ((x - centerX) * (x - centerX)) / (radiusX * radiusX) + 
+                        ((y - centerY) * (y - centerY)) / (radiusY * radiusY);
+        
+        if (distance <= 1.0) {
+          pattern[y][x] = 1; // Gray body
+        }
+      }
+    }
+    
+    // Trunk
+    pattern[9][8] = 2; pattern[10][8] = 2; pattern[11][8] = 2;
+    
+    // Ears (large)
+    pattern[3][4] = 2; pattern[3][5] = 2; pattern[4][4] = 2; pattern[4][5] = 2; // Left ear
+    pattern[3][11] = 2; pattern[3][12] = 2; pattern[4][11] = 2; pattern[4][12] = 2; // Right ear
+    
+    // Eyes
+    pattern[6][5] = 3; pattern[6][11] = 3;
+    
+    return pattern;
+  }
+  
+  List<List<int>> _generateGiraffePattern(List<List<int>> pattern, Random random) {
+    // Background
+    for (int y = 0; y < 16; y++) {
+      for (int x = 0; x < 16; x++) {
+        pattern[y][x] = 0;
+      }
+    }
+    
+    // Giraffe body (yellow with spots)
+    for (int y = 4; y < 12; y++) {
+      for (int x = 4; x < 12; x++) {
+        final centerX = 8;
+        final centerY = 8;
+        final radiusX = 4;
+        final radiusY = 4;
+        
+        final distance = ((x - centerX) * (x - centerX)) / (radiusX * radiusX) + 
+                        ((y - centerY) * (y - centerY)) / (radiusY * radiusY);
+        
+        if (distance <= 1.0) {
+          pattern[y][x] = 1; // Yellow body
+        }
+      }
+    }
+    
+    // Spots
+    pattern[5][6] = 2; pattern[5][10] = 2;
+    pattern[7][6] = 2; pattern[7][10] = 2;
+    pattern[9][6] = 2; pattern[9][10] = 2;
+    
+    // Long neck
+    for (int y = 2; y < 6; y++) {
+      pattern[y][8] = 1;
+    }
+    
+    // Eyes
+    pattern[4][7] = 3; pattern[4][9] = 3;
+    
+    return pattern;
+  }
+  
+  List<List<int>> _generatePenguinPattern(List<List<int>> pattern, Random random) {
+    // Background
+    for (int y = 0; y < 16; y++) {
+      for (int x = 0; x < 16; x++) {
+        pattern[y][x] = 0;
+      }
+    }
+    
+    // Penguin body (black and white)
+    for (int y = 3; y < 13; y++) {
+      for (int x = 3; x < 13; x++) {
+        final centerX = 8;
+        final centerY = 8;
+        final radius = 5;
+        
+        final distance = sqrt((x - centerX) * (x - centerX) + (y - centerY) * (y - centerY));
+        
+        if (distance <= radius) {
+          if (y < 8) {
+            pattern[y][x] = 2; // Black top
+          } else {
+            pattern[y][x] = 1; // White bottom
+          }
+        }
+      }
+    }
+    
+    // Eyes
+    pattern[5][5] = 3; pattern[5][11] = 3;
+    
+    // Beak
+    pattern[6][8] = 2;
+    
+    // Wings
+    pattern[7][4] = 2; pattern[7][12] = 2;
+    
+    return pattern;
+  }
+  
+  List<List<int>> _generateOwlPattern(List<List<int>> pattern, Random random) {
+    // Background
+    for (int y = 0; y < 16; y++) {
+      for (int x = 0; x < 16; x++) {
+        pattern[y][x] = 0;
+      }
+    }
+    
+    // Owl body (round)
+    for (int y = 3; y < 13; y++) {
+      for (int x = 3; x < 13; x++) {
+        final centerX = 8;
+        final centerY = 8;
+        final radius = 5;
+        
+        final distance = sqrt((x - centerX) * (x - centerX) + (y - centerY) * (y - centerY));
+        
+        if (distance <= radius) {
+          pattern[y][x] = 1; // Body color
+        }
+      }
+    }
+    
+    // Large eyes
+    pattern[5][4] = 3; pattern[5][5] = 3; pattern[5][11] = 3; pattern[5][12] = 3;
+    pattern[6][4] = 3; pattern[6][5] = 3; pattern[6][11] = 3; pattern[6][12] = 3;
+    
+    // Beak
+    pattern[7][8] = 2;
+    
+    // Wings
+    pattern[8][2] = 2; pattern[8][14] = 2;
+    
+    return pattern;
+  }
+  
+  List<List<int>> _generateDuckPattern(List<List<int>> pattern, Random random) {
+    // Background
+    for (int y = 0; y < 16; y++) {
+      for (int x = 0; x < 16; x++) {
+        pattern[y][x] = 0;
+      }
+    }
+    
+    // Duck body (oval)
+    for (int y = 4; y < 12; y++) {
+      for (int x = 4; x < 12; x++) {
+        final centerX = 8;
+        final centerY = 8;
+        final radiusX = 4;
+        final radiusY = 4;
+        
+        final distance = ((x - centerX) * (x - centerX)) / (radiusX * radiusX) + 
+                        ((y - centerY) * (y - centerY)) / (radiusY * radiusY);
+        
+        if (distance <= 1.0) {
+          pattern[y][x] = 1; // Body color
+        }
+      }
+    }
+    
+    // Bill
+    pattern[6][7] = 2; pattern[6][8] = 2; pattern[6][9] = 2;
+    pattern[7][7] = 2; pattern[7][8] = 2; pattern[7][9] = 2;
+    
+    // Eyes
+    pattern[5][6] = 3; pattern[5][10] = 3;
+    
+    // Wings
+    pattern[7][4] = 2; pattern[7][12] = 2;
+    
+    return pattern;
+  }
+  
+  List<List<int>> _generateFishPattern(List<List<int>> pattern, Random random) {
+    // Background
+    for (int y = 0; y < 16; y++) {
+      for (int x = 0; x < 16; x++) {
+        pattern[y][x] = 0;
+      }
+    }
+    
+    // Fish body (oval)
+    for (int y = 6; y < 10; y++) {
+      for (int x = 5; x < 11; x++) {
+        final centerX = 8;
+        final centerY = 8;
+        final radiusX = 3;
+        final radiusY = 2;
+        
+        final distance = ((x - centerX) * (x - centerX)) / (radiusX * radiusX) + 
+                        ((y - centerY) * (y - centerY)) / (radiusY * radiusY);
+        
+        if (distance <= 1.0) {
+          pattern[y][x] = 1; // Body color
+        }
+      }
+    }
+    
+    // Tail
+    pattern[7][4] = 2; pattern[8][4] = 2; pattern[9][4] = 2;
+    
+    // Eye
+    pattern[7][9] = 3;
+    
+    // Fins
+    pattern[6][6] = 2; pattern[6][10] = 2;
+    
+    return pattern;
+  }
+}
+
+/// Colors for the avatar
+class AvatarColors {
+  final Color primary;
+  final Color secondary;
+  final Color accent;
+  
+  AvatarColors({
+    required this.primary,
+    required this.secondary,
+    required this.accent,
+  });
+}
+
+/// Custom painter for pixel avatar
+class PixelAvatarPainter extends CustomPainter {
+  final AvatarColors colors;
+  final List<List<int>> pattern;
+  final double pixelSize;
+  
+  PixelAvatarPainter({
+    required this.colors,
+    required this.pattern,
+    required this.pixelSize,
+  });
+  
+  @override
+  void paint(Canvas canvas, Size size) {
+    for (int y = 0; y < 16; y++) {
+      for (int x = 0; x < 16; x++) {
+        final color = _getPixelColor(x, y);
+        final rect = Rect.fromLTWH(
+          x * pixelSize,
+          y * pixelSize,
+          pixelSize,
+          pixelSize,
+        );
+        
+        final paint = Paint()..color = color;
+        canvas.drawRect(rect, paint);
+      }
+    }
+  }
+  
+  Color _getPixelColor(int gridX, int gridY) {
+    if (gridX < 0 || gridX >= 16 || gridY < 0 || gridY >= 16) {
+      return colors.primary;
+    }
+    
+    final patternValue = pattern[gridY][gridX];
+    
+    switch (patternValue) {
+      case 0:
+        return colors.primary;
+      case 1:
+        return colors.secondary;
+      case 2:
+        return colors.accent;
+      case 3:
+        return _blendColors(colors.primary, colors.secondary, 0.5);
+      default:
+        return colors.primary;
+    }
+  }
+  
+  Color _blendColors(Color color1, Color color2, double ratio) {
+    return Color.fromARGB(
+      ((color1.alpha * (1 - ratio) + color2.alpha * ratio) * 255).round(),
+      ((color1.red * (1 - ratio) + color2.red * ratio) * 255 / 255).round(),
+      ((color1.green * (1 - ratio) + color2.green * ratio) * 255 / 255).round(),
+      ((color1.blue * (1 - ratio) + color2.blue * ratio) * 255 / 255).round(),
+    );
+  }
+  
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}

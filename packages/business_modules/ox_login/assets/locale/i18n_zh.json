@@ -89,5 +89,8 @@
   "enter_avatar_url": "输入头像URL",
   "profile_save_failed": "保存资料失败",
   "profile_import_success": "资料导入成功",
-  "profile_import_failed": "资料导入失败"
+  "profile_import_failed": "资料导入失败",
+  "regenerate_username": "重新生成",
+  "username_generated": "生成新用户名：{username}",
+  "username_generation_failed": "生成新用户名失败"
 }
