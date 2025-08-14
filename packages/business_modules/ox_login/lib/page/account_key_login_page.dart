@@ -106,33 +106,11 @@ class _AccountKeyLoginPageState extends State<AccountKeyLoginPage> with LoginMan
         ),
         
         SizedBox(height: 12.px),
-        
-        // Add explanation for nsec and bunker
-        Container(
-          padding: EdgeInsets.all(12.px),
-          decoration: BoxDecoration(
-            color: ColorToken.surfaceContainer.of(context),
-            borderRadius: BorderRadius.circular(8.px),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CLText.bodySmall(
-                Localized.text('ox_login.account_key_explanation_title'),
-                colorToken: ColorToken.onSurfaceVariant,
-              ),
-              SizedBox(height: 8.px),
-              CLText.bodyMedium(
-                Localized.text('ox_login.nsec_explanation'),
-                colorToken: ColorToken.onSurfaceVariant,
-              ),
-              SizedBox(height: 4.px),
-              CLText.bodyMedium(
-                Localized.text('ox_login.bunker_explanation'),
-                colorToken: ColorToken.onSurfaceVariant,
-              ),
-            ],
-          ),
+
+        CLDescription(
+          '${Localized.text('ox_login.nsec_explanation')}\n'
+          '${Localized.text('ox_login.bunker_explanation')}\n',
+          title: Localized.text('ox_login.account_key_explanation_title'),
         ),
         
         SizedBox(height: 8.px),
