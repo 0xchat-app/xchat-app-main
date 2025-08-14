@@ -109,23 +109,9 @@ class SectionListViewItem {
 
   /// Builds a styled section footer widget
   /// 
-  /// Uses CLText.bodySmall with ColorToken.onSurfaceVariant color and appropriate padding
-  /// for Material Design. Footer text is typically used for descriptive text or help text.
+  /// Uses `CLDescription.forSectionFooter` to ensure consistent spacing and style.
   static Widget _buildSectionFooter(String title) {
-    Widget widget = CLText.bodySmall(
-      title,
-      colorToken: ColorToken.onSurfaceVariant,
-    );
-    if (PlatformStyle.isUseMaterial) {
-      widget = Padding(
-        padding: EdgeInsets.only(
-          left: 20.px,
-          bottom: 16.px,
-        ),
-        child: widget,
-      );
-    }
-    return widget;
+    return CLDescription.forSectionFooter(title);
   }
 }
 
