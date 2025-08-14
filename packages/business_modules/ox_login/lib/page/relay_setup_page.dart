@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ox_common/component.dart';
-import 'package:ox_common/login/login_manager.dart';
-import 'package:ox_common/login/login_models.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
-import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_localizable/ox_localizable.dart';
@@ -46,50 +43,44 @@ class _RelaySetupPageState extends State<RelaySetupPage> {
 
   @override
   Widget build(BuildContext context) {
-    final title = widget.isNewAccount 
-        ? Localized.text('ox_login.setup_relay_title')
-        : Localized.text('ox_login.add_relay_title');
-    
-    return CLScaffold(
-      appBar: CLAppBar(
-        title: title,
-        actions: [
-          // Skip button
-          CLButton.text(
-            text: Localized.text('ox_common.skip'),
-            onTap: _onSkipTap,
-          ),
-        ],
+    return LoseFocusWrap(
+      child: CLScaffold(
+        appBar: CLAppBar(
+          actions: [
+            // Skip button
+            CLButton.text(
+              text: Localized.text('ox_common.skip'),
+              onTap: _onSkipTap,
+            ),
+          ],
+        ),
+        body: _buildBody(),
       ),
-      body: _buildBody(),
     );
   }
 
   Widget _buildBody() {
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      child: Padding(
-        padding: EdgeInsets.all(24.px),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeader(),
-            SizedBox(height: 32.px),
-            _buildRelayInput(),
-            SizedBox(height: 24.px),
-            _buildPredefinedRelays(),
-            SizedBox(height: 32.px),
-            _buildActionButtons(),
-            SizedBox(height: 24.px),
-            _buildInfoSection(),
-          ],
+    return ListView(
+      padding: EdgeInsets.all(24.px),
+      children: [
+        _buildHeader(),
+        SizedBox(height: 32.px),
+        _buildRelayInput(),
+        SizedBox(height: 32.px),
+        CLButton.filled(
+          text: _isJoining
+              ? Localized.text('ox_common.loading')
+              : Localized.text('ox_login.join_relay'),
+          onTap: _hasRelayInput && !_isJoining ? _onJoinRelayTap : null,
+          expanded: true,
+          height: 48.px,
         ),
-      ),
+      ],
     );
   }
 
   Widget _buildHeader() {
-    final title = widget.isNewAccount 
+    final title = widget.isNewAccount
         ? Localized.text('ox_login.setup_relay_header_title')
         : Localized.text('ox_login.add_relay_header_title');
     
@@ -97,8 +88,11 @@ class _RelaySetupPageState extends State<RelaySetupPage> {
         ? Localized.text('ox_login.setup_relay_header_subtitle')
         : Localized.text('ox_login.add_relay_header_subtitle');
 
+    final learnMore = Localized.text('ox_login.learn_more_about_relays');
+    final subtitleWithLearnMore = '$subtitle $learnMore';
+
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         CLText.titleLarge(
           title,
@@ -106,9 +100,17 @@ class _RelaySetupPageState extends State<RelaySetupPage> {
         ),
         SizedBox(height: 12.px),
         CLText.bodyMedium(
-          subtitle,
+          subtitleWithLearnMore,
           colorToken: ColorToken.onSurfaceVariant,
           maxLines: null,
+        ).highlighted(
+          rules: [
+            CLHighlightRule(
+              pattern: RegExp(learnMore),
+              onTap: (_) => _onLearnMoreTap(),
+              cursor: SystemMouseCursors.click,
+            ),
+          ],
         ),
       ],
     );
@@ -118,11 +120,6 @@ class _RelaySetupPageState extends State<RelaySetupPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CLText.titleMedium(
-          Localized.text('ox_login.relay_url_label'),
-          colorToken: ColorToken.onSurface,
-        ),
-        SizedBox(height: 12.px),
         CLTextField(
           controller: _relayController,
           placeholder: Localized.text('ox_login.relay_url_placeholder'),
@@ -133,106 +130,21 @@ class _RelaySetupPageState extends State<RelaySetupPage> {
         CLText.bodySmall(
           Localized.text('ox_login.relay_url_hint'),
           colorToken: ColorToken.onSurfaceVariant,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPredefinedRelays() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CLText.titleMedium(
-          Localized.text('ox_login.predefined_relays_title'),
-          colorToken: ColorToken.onSurface,
-        ),
-        SizedBox(height: 16.px),
-        Wrap(
-          spacing: 12.px,
-          runSpacing: 12.px,
-          children: [
-            _buildPredefinedRelayChip('0xchat'),
-            _buildPredefinedRelayChip('damus'),
-            _buildPredefinedRelayChip('nos'),
-            _buildPredefinedRelayChip('primal'),
-            _buildPredefinedRelayChip('nostrband'),
+        ).highlighted(
+          rules: [
+            CLHighlightRule(
+              pattern: RegExp(r'\b0xchat\b', caseSensitive: false),
+              onTap: (match) => _onExampleTap(match),
+              cursor: SystemMouseCursors.click,
+            ),
+            CLHighlightRule(
+              pattern: RegExp(r'\bdamus\b', caseSensitive: false),
+              onTap: (match) => _onExampleTap(match),
+              cursor: SystemMouseCursors.click,
+            ),
           ],
         ),
       ],
-    );
-  }
-
-  Widget _buildPredefinedRelayChip(String relayName) {
-    return ActionChip(
-      label: CLText.bodyMedium(relayName),
-      onPressed: () {
-        _relayController.text = relayName;
-        _onRelayInputChanged();
-      },
-      backgroundColor: ColorToken.surfaceContainer.of(context),
-      side: BorderSide(
-        color: ColorToken.onSurfaceVariant.of(context).withOpacity(0.2),
-      ),
-    );
-  }
-
-  Widget _buildActionButtons() {
-    return Column(
-      children: [
-        CLButton.filled(
-          text: _isJoining 
-              ? Localized.text('ox_common.loading')
-              : Localized.text('ox_login.join_relay'),
-          onTap: _hasRelayInput && !_isJoining ? _onJoinRelayTap : null,
-          expanded: true,
-          height: 48.px,
-        ),
-        SizedBox(height: 16.px),
-        CLButton.tonal(
-          text: Localized.text('ox_login.learn_more_about_relays'),
-          onTap: _onLearnMoreTap,
-          expanded: true,
-          height: 48.px,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildInfoSection() {
-    return Container(
-      padding: EdgeInsets.all(16.px),
-      decoration: BoxDecoration(
-        color: ColorToken.surfaceContainer.of(context),
-        borderRadius: BorderRadius.circular(12.px),
-        border: Border.all(
-          color: ColorToken.onSurfaceVariant.of(context).withOpacity(0.1),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.info_outline,
-                size: 20.px,
-                color: ColorToken.primary.of(context),
-              ),
-              SizedBox(width: 8.px),
-              CLText.titleSmall(
-                Localized.text('ox_login.relay_info_title'),
-                colorToken: ColorToken.primary,
-              ),
-            ],
-          ),
-          SizedBox(height: 12.px),
-          CLText.bodySmall(
-            Localized.text('ox_login.relay_info_content'),
-            colorToken: ColorToken.onSurfaceVariant,
-            maxLines: null,
-          ),
-        ],
-      ),
     );
   }
 
@@ -258,11 +170,11 @@ class _RelaySetupPageState extends State<RelaySetupPage> {
     try {
       // Show loading
       OXLoading.show();
-      
+
       // Use CircleJoinUtils to join the relay
-      final success = await CircleJoinUtils.showJoinCircleDialog(
-        context: context,
-        circleType: CircleType.relay,
+      final success = await CircleJoinUtils.processJoinInput(
+        context,
+        relayInput,
       );
 
       OXLoading.dismiss();
@@ -286,7 +198,7 @@ class _RelaySetupPageState extends State<RelaySetupPage> {
       
       if (mounted) {
         CommonToast.instance.show(
-          context, 
+          context,
           'Failed to join relay: ${e.toString()}'
         );
       }
@@ -300,6 +212,14 @@ class _RelaySetupPageState extends State<RelaySetupPage> {
       (context) => const CircleIntroductionPage(),
       type: OXPushPageType.present,
     );
+  }
+
+  void _onExampleTap(String example) {
+    _relayController.text = example;
+    _relayController.selection = TextSelection.fromPosition(
+      TextPosition(offset: _relayController.text.length),
+    );
+    _onRelayInputChanged();
   }
 
   void _onSkipTap() {
