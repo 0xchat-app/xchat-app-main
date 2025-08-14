@@ -101,7 +101,6 @@ class CircleJoinUtils {
   /// Returns Future<bool> indicating whether the operation was successful
   static Future<bool> showJoinCircleDialog({
     required BuildContext context,
-    CircleType circleType = CircleType.relay,
   }) async {
     try {
       final result = await CLDialog.showInputDialog(
@@ -114,7 +113,7 @@ class CircleJoinUtils {
         // showHintIcon: true,
         // onHintIconTap: () => _showCircleIntroduction(context),
         onConfirm: (input) async {
-          return await _processJoinInput(context, input, circleType);
+          return await processJoinInput(context, input);
         },
         belowInputBuilder: (ctx, controller) => _buildHintWidget(ctx, controller),
       );
@@ -215,8 +214,8 @@ class CircleJoinUtils {
   }
 
   /// Process join input (either URL or short name)
-  static Future<bool> _processJoinInput(
-      BuildContext context, String input, CircleType defaultCircleType) async {
+  static Future<bool> processJoinInput(
+      BuildContext context, String input) async {
     final trimmedInput = input.trim();
 
     // Check if input is an invite link
