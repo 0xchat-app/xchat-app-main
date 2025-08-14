@@ -53,11 +53,9 @@ class OXLoginModuleService extends OXFlutterModule {
 
   /// Navigate to ProfileSetupPage
   Future<bool?> _navigateToProfileSetupPage(BuildContext context, Map<String, dynamic>? params) async {
-    final isNewAccount = params?['isNewAccount'] as bool? ?? false;
-    
     final result = await Navigator.of(context).push<bool>(
       MaterialPageRoute<bool>(
-        builder: (context) => ProfileSetupPage(isNewAccount: isNewAccount),
+        builder: (context) => ProfileSetupPage(),
       ),
     );
     

@@ -47,7 +47,6 @@ class _RelaySetupPageState extends State<RelaySetupPage> {
       child: CLScaffold(
         appBar: CLAppBar(
           actions: [
-            // Skip button
             CLButton.text(
               text: Localized.text('ox_common.skip'),
               onTap: _onSkipTap,
@@ -55,39 +54,28 @@ class _RelaySetupPageState extends State<RelaySetupPage> {
           ],
         ),
         body: _buildBody(),
+        bottomWidget: CLButton.filled(
+          text: _isJoining
+              ? Localized.text('ox_common.loading')
+              : Localized.text('ox_login.join_relay'),
+          onTap: _hasRelayInput && !_isJoining ? _onJoinRelayTap : null,
+          expanded: true,
+          height: 48.px,
+        ),
       ),
     );
   }
 
   Widget _buildBody() {
-    return Stack(
+    return ListView(
+      padding: EdgeInsets.symmetric(
+        vertical: 24.px,
+        horizontal: CLLayout.horizontalPadding,
+      ),
       children: [
-        ListView(
-          padding: EdgeInsets.symmetric(
-            vertical: 24.px,
-            horizontal: CLLayout.horizontalPadding,
-          ),
-          children: [
-            _buildHeader(),
-            SizedBox(height: 32.px),
-            _buildRelayInput(),
-          ],
-        ),
-        Positioned(
-          left: CLLayout.horizontalPadding,
-          right: CLLayout.horizontalPadding,
-          bottom: 24.px,
-          child: SafeArea(
-            child: CLButton.filled(
-              text: _isJoining
-                  ? Localized.text('ox_common.loading')
-                  : Localized.text('ox_login.join_relay'),
-              onTap: _hasRelayInput && !_isJoining ? _onJoinRelayTap : null,
-              expanded: true,
-              height: 48.px,
-            ),
-          ),
-        ),
+        _buildHeader(),
+        SizedBox(height: 32.px),
+        _buildRelayInput(),
       ],
     );
   }

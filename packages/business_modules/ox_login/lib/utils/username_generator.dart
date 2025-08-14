@@ -1,15 +1,11 @@
 import 'dart:math';
-import 'package:nostr_core_dart/nostr.dart';
 
 /// Random username generator for new accounts
 /// 
 /// Generates unique and interesting usernames based on npub (public key)
 /// Each username is consistent for the same public key
 class UsernameGenerator {
-  UsernameGenerator._();
-  
-  static final UsernameGenerator instance = UsernameGenerator._();
-  
+
   // Adjective lists for generating interesting usernames
   static const List<String> _adjectives = [
     'Swift', 'Bright', 'Cosmic', 'Digital', 'Ethereal', 'Fierce', 'Gentle',
@@ -56,7 +52,7 @@ class UsernameGenerator {
   /// 
   /// [npub] The npub public key to generate username from
   /// Returns a unique username string
-  String generateUsername(String npub) {
+  static String generateUsername(String npub) {
     final hash = _hashString(npub);
     final random = Random(hash);
     
@@ -78,35 +74,35 @@ class UsernameGenerator {
   }
   
   /// Generate adjective + noun combination
-  String _generateAdjectiveNoun(Random random) {
+  static String _generateAdjectiveNoun(Random random) {
     final adjective = _adjectives[random.nextInt(_adjectives.length)];
     final noun = _nouns[random.nextInt(_nouns.length)];
     return '$adjective$noun';
   }
   
   /// Generate animal + adjective combination
-  String _generateAnimalAdjective(Random random) {
+  static String _generateAnimalAdjective(Random random) {
     final animal = _animals[random.nextInt(_animals.length)];
     final adjective = _adjectives[random.nextInt(_adjectives.length)];
     return '$adjective$animal';
   }
   
   /// Generate tech term + adjective combination
-  String _generateTechAdjective(Random random) {
+  static String _generateTechAdjective(Random random) {
     final techTerm = _techTerms[random.nextInt(_techTerms.length)];
     final adjective = _adjectives[random.nextInt(_adjectives.length)];
     return '$adjective$techTerm';
   }
   
   /// Generate numbered name
-  String _generateNumberedName(Random random) {
+  static String _generateNumberedName(Random random) {
     final adjective = _adjectives[random.nextInt(_adjectives.length)];
     final number = random.nextInt(999) + 1;
     return '$adjective$number';
   }
   
   /// Generate multiple username options
-  List<String> generateUsernameOptions(String npub, {int count = 5}) {
+  static List<String> generateUsernameOptions(String npub, {int count = 5}) {
     final usernames = <String>{};
     final baseHash = _hashString(npub);
     
@@ -145,7 +141,7 @@ class UsernameGenerator {
   }
   
   /// Simple hash function for consistent random generation
-  int _hashString(String input) {
+  static int _hashString(String input) {
     int hash = 0;
     for (int i = 0; i < input.length; i++) {
       hash = ((hash << 5) - hash + input.codeUnitAt(i)) & 0xFFFFFFFF;
