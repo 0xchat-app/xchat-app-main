@@ -1,7 +1,9 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ox_common/utils/adapt.dart';
 
+import '../layout/layout_constant.dart';
 import 'app_bar.dart';
 import 'platform_style.dart';
 
@@ -12,6 +14,7 @@ class CLScaffold extends StatelessWidget {
     bool? extendBody,
     this.backgroundColor,
     this.resizeToAvoidBottomInset = true,
+    this.bottomWidget,
     this.isSectionListPage = false,
   }) : extendBody = extendBody ?? appBar == null;
 
@@ -21,10 +24,28 @@ class CLScaffold extends StatelessWidget {
   final Color? backgroundColor;
   final bool resizeToAvoidBottomInset;
 
+  final Widget? bottomWidget;
+
   final bool isSectionListPage;
 
   @override
   Widget build(BuildContext context) {
+    Widget body = this.body;
+    if (bottomWidget != null) {
+      body = Stack(
+        children: [
+          body,
+          Positioned(
+            left: CLLayout.horizontalPadding,
+            right: CLLayout.horizontalPadding,
+            bottom: 24.px,
+            child: SafeArea(
+              child: bottomWidget!
+            ),
+          ),
+        ],
+      );
+    }
     final safeBody = extendBody ? body : SafeArea(bottom: false, child: body);
     if (PlatformStyle.isUseMaterial) {
       return Scaffold(
