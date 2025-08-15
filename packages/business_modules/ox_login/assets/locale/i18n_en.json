@@ -94,5 +94,5 @@
   "username_generated": "Generated new username: {username}",
   "username_generation_failed": "Failed to generate new username",
   "public_key_tips": "Before we get started, you'll need to save your nostr account ID. You can share it with your family or friends. Tap to copy!",
-  "private_key_tips": "This is your secret account key. You need this to access your account. otherwise you won't be able to login in the future if you ever uninstall 0xchat. Don't share this with anyone! Save it in a password manager and keep it safe!"
+  "private_key_tips": "This is your secret account key. You need this to access your account. otherwise you won't be able to login in the future if you ever uninstall XChat. Don't share this with anyone! Save it in a password manager and keep it safe!"
 }
