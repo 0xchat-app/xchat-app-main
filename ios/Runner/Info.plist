@@ -274,10 +274,11 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
-	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>XChat requires access to Bluetooth to connect with nearby devices for file sharing and data synchronization.</string>
-	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>XChat requires access to Bluetooth to connect with nearby devices for file sharing and data synchronization.</string>
+	<!-- Bluetooth permissions disabled -->
+	<!-- <key>NSBluetoothAlwaysUsageDescription</key> -->
+	<!-- <string>XChat requires access to Bluetooth to connect with nearby devices for file sharing and data synchronization.</string> -->
+	<!-- <key>NSBluetoothPeripheralUsageDescription</key> -->
+	<!-- <string>XChat requires access to Bluetooth to connect with nearby devices for file sharing and data synchronization.</string> -->
 	<key>NSBonjourServices</key>
 	<array>
 		<string>_http._tcp</string>

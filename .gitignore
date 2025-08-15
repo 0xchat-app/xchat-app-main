@@ -101,3 +101,20 @@ pubspec.lock
 Podfile.lock
 /bitchat-main
 .vscode/settings.json
+/packages/base_framework/ox_push
+
+# Firebase and Google Services (SENSITIVE - NEVER COMMIT!)
+**/google-services.json
+**/GoogleService-Info.plist
+**/google-services.plist
+**/firebase_options.dart
+**/firebase_options.g.dart
+
+# API Keys and Secrets (SENSITIVE - NEVER COMMIT!)
+**/secrets.json
+**/config.json
+**/*.key
+**/*.pem
+**/*.p12
+**/*.keystore
+**/*.jks
