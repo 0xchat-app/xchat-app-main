@@ -60,4 +60,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.13.2'
 
     implementation 'com.github.leyan95:android-zxingLibrary:0.1.4-PRE'
+    
+    // FCM Push dependencies - only embedded FCM distributor
+    implementation 'org.unifiedpush.android:foss-embedded-fcm-distributor:1.0.0'
 }

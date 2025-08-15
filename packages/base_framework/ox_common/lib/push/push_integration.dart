@@ -6,9 +6,9 @@ import 'package:nostr_core_dart/nostr.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/ox_common.dart';
+import 'package:ox_common/push/fcm_push_manager.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
 import 'package:ox_common/utils/ox_chat_observer.dart';
-import 'package:ox_common/utils/chat_prompt_tone.dart';
 
 import 'decision_service.dart';
 import 'core/local_notifier.dart';
@@ -75,7 +75,7 @@ class CLPushIntegration with WidgetsBindingObserver, OXChatObserver {
     if (Platform.isIOS) {
       OXCommon.registeNotification();
     } else if (Platform.isAndroid) {
-
+      FcmPushManager.instance.initializeFcmPush();
     }
   }
 

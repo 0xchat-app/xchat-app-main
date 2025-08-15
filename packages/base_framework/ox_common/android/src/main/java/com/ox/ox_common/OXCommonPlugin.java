@@ -69,6 +69,8 @@ public class OXCommonPlugin implements FlutterPlugin, MethodCallHandler, Activit
         mContext = flutterPluginBinding.getApplicationContext();
         channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "ox_common");
         channel.setMethodCallHandler(this);
+        
+        // FCM Push is now handled through UnifiedPush in Dart code
     }
 
     @Override
