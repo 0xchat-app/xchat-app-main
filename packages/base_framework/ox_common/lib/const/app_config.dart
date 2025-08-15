@@ -13,6 +13,7 @@ class AppConfig {
   static const List<String> supportedPaths = [
     '/lite',
     '/x/invite',
+    '/lite/invite',
     '/lite/join',
     '/lite/profile',
   ];
