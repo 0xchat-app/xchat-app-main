@@ -5,7 +5,6 @@ import 'package:chatcore/chat-core.dart';
 import 'package:ox_common/log_util.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/utils/chat_prompt_tone.dart';
-import 'package:ox_common/utils/compression_utils.dart';
 import 'package:ox_module_service/ox_module_service.dart';
 import 'package:isar/isar.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -17,7 +16,6 @@ import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'login/circle_config_models.dart';
 import 'model/file_server_model.dart';
 import 'push/push_integration.dart';
-import 'utils/ox_userinfo_manager.dart';
 
 const CommonModule = 'ox_common';
 
