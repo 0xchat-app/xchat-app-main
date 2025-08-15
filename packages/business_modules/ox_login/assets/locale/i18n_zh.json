@@ -92,5 +92,7 @@
   "profile_import_failed": "资料导入失败",
   "regenerate_username": "重新生成",
   "username_generated": "生成新用户名：{username}",
-  "username_generation_failed": "生成新用户名失败"
+  "username_generation_failed": "生成新用户名失败",
+  "public_key_tips": "在开始之前，您需要保存您的nostr账户ID。您可以与家人或朋友分享。点击复制！",
+  "private_key_tips": "这是您的秘密账户密钥。您需要它来访问您的账户。如果您将来卸载0xchat，您将无法登录。不要与任何人分享！将其保存在密码管理器中并妥善保管！"
 }

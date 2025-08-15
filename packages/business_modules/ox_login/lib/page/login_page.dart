@@ -275,10 +275,10 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _serviceWebView() {
-    OXModuleService.invoke('ox_common', 'gotoWebView', [context, 'https://www.0xchat.com/protocols/0xchat_terms_of_use.html', null, null, null, null]);
+    OXModuleService.invoke('ox_common', 'gotoWebView', [context, 'https://0xchat.com/protocols/xchat-terms-of-use.html', null, null, null, null]);
   }
 
   void _privacyPolicyWebView() {
-    OXModuleService.invoke('ox_common', 'gotoWebView', [context, 'https://www.0xchat.com/protocols/0xchat_privacy_policy.html', null, null, null, null]);
+    OXModuleService.invoke('ox_common', 'gotoWebView', [context, 'https://0xchat.com/protocols/xchat-privacy-policy.html', null, null, null, null]);
   }
 }

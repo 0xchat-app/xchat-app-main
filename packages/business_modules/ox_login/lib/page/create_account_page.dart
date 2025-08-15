@@ -35,8 +35,8 @@ class CreateAccountPage extends StatefulWidget {
 
 class _CreateAccountPageState extends State<CreateAccountPage> with LoginManagerObserver {
   // Text content for the page
-  final String _publicKeyTips = 'Before we get started, you\'ll need to save your nostr account ID. You can share it with your family or friends. Tap to copy!';
-  final String _privateKeyTips = 'This is your secret account key. You need this to access your account. otherwise you won\'t be able to login in the future if you ever uninstall 0xchat. Don\'t share this with anyone! Save it in a password manager and keep it safe!';
+  final String _publicKeyTips = Localized.text('ox_login.public_key_tips');
+  final String _privateKeyTips = Localized.text('ox_login.private_key_tips');
 
   // Key generation state
   late Keychain keychain;
@@ -44,7 +44,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> with LoginManager
   // Reactive state management
   final ValueNotifier<String> _encodedPubkey$ = ValueNotifier<String>('');
   final ValueNotifier<String> _encodedPrivkey$ = ValueNotifier<String>('');
-  final ValueNotifier<bool> _hasAcceptedTerms$ = ValueNotifier<bool>(true); // 默认勾选协议
+  final ValueNotifier<bool> _hasAcceptedTerms$ = ValueNotifier<bool>(true); 
   final ValueNotifier<bool> _isCreating$ = ValueNotifier<bool>(false);
 
   double get separatorHeight => 20.px;
@@ -284,7 +284,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> with LoginManager
   void _onTermsOfUseTap() {
     OXModuleService.invoke('ox_common', 'gotoWebView', [
       context, 
-      'https://www.0xchat.com/protocols/0xchat_terms_of_use.html', 
+      'https://0xchat.com/protocols/xchat-terms-of-use.html', 
       null, 
       null, 
       null, 
@@ -296,7 +296,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> with LoginManager
   void _onPrivacyPolicyTap() {
     OXModuleService.invoke('ox_common', 'gotoWebView', [
       context, 
-      'https://www.0xchat.com/protocols/0xchat_privacy_policy.html', 
+      'https://0xchat.com/protocols/xchat-privacy-policy.html', 
       null, 
       null, 
       null, 
