@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/navigator/navigator.dart';
+import 'package:ox_common/utils/profile_refresh_utils.dart';
 import '../page/profile_setup_page.dart';
 import '../page/relay_setup_page.dart';
 
@@ -22,10 +23,11 @@ class LoginFlowManager {
   Future _showRelaySetupPage(BuildContext context, {bool isNewAccount = false}) {
     return OXNavigator.pushReplacement(
       context,
-      RelaySetupPage(isNewAccount: isNewAccount, completeHandler: (ctx) {
+      RelaySetupPage(isNewAccount: isNewAccount, completeHandler: (ctx) async {
         if (!isNewAccount) {
           _navigateToHome(ctx);
-          // todo: Add sync profile AlertDialog
+          // Show profile refresh dialog after navigating to home
+          await ProfileRefreshUtils.showProfileRefreshDialog(ctx);
         } else {
           _showProfileSetupPage(ctx);
         }

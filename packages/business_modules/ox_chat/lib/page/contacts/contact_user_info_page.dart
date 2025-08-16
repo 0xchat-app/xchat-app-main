@@ -6,11 +6,11 @@ import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/string_utils.dart';
 import 'package:ox_common/utils/took_kit.dart';
 import 'package:ox_common/utils/widget_tool.dart';
+import 'package:ox_common/utils/profile_refresh_utils.dart';
 import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_common/login/login_manager.dart';
-import 'package:ox_common/widgets/common_loading.dart';
 import '../../utils/chat_session_utils.dart';
 
 class ContactUserInfoPage extends StatefulWidget {
@@ -175,67 +175,20 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
   void refreshUserProfile() async {
     if (_isRefreshing) return;
     
-    // Show confirmation dialog
-    final shouldRefreshFromSpecificRelay = await CLAlertDialog.show<bool>(
-      context: context,
-      title: Localized.text('ox_usercenter.refresh_user_profile'),
-      content: Localized.text('ox_usercenter.refresh_user_profile_from_relay_confirm'),
-      actions: [
-        CLAlertAction.cancel(),
-        CLAlertAction<bool>(
-          label: Localized.text('ox_usercenter.confirm'),
-          value: true,
-        ),
-      ],
-    );
-
-    if (shouldRefreshFromSpecificRelay != true) return;
-    
-    // Check if widget is still mounted before calling setState
-    if (!mounted) return;
-    
     setState(() {
       _isRefreshing = true;
     });
 
     try {
       final pubkey = widget.user?.pubKey ?? widget.pubkey ?? '';
-      if (pubkey.isEmpty) {
-        if (!mounted) return;
-        CommonToast.instance.show(context, Localized.text('ox_chat.user_pubkey_not_found'));
-        return;
+      final success = await ProfileRefreshUtils.showUserProfileRefreshDialog(
+        context,
+        pubkey: pubkey,
+      );
+      if (success && mounted) {
+        setState(() {});
       }
-
-      // Show loading indicator
-      OXLoading.show();
-      
-      // Connect to specific relay as temp type
-      const specificRelay = 'wss://relay.nostr.band';
-      final connectSuccess = await Connect.sharedInstance.connectRelays([specificRelay], relayKind: RelayKind.temp);
-      
-      if (!connectSuccess) {
-        if (!mounted) return;
-        CommonToast.instance.show(context, '${Localized.text('ox_usercenter.relay_connection_failed')}: $specificRelay');
-        return;
-      }
-      
-      // Reload profile from specific relay
-      await Account.sharedInstance.reloadProfileFromRelay(pubkey, relays: [specificRelay]);
-      
-      // Close temp relay connection after use
-      await Connect.sharedInstance.closeTempConnects([specificRelay]);
-      
-      // Dismiss loading and show success message
-      OXLoading.dismiss();
-      if (!mounted) return;
-      CommonToast.instance.show(context, Localized.text('ox_usercenter.refresh_user_profile_success'));
-      
-    } catch (e) {
-      OXLoading.dismiss();
-      if (!mounted) return;
-      CommonToast.instance.show(context, '${Localized.text('ox_usercenter.refresh_user_profile_failed')}: $e');
     } finally {
-      // Check if widget is still mounted before calling setState
       if (mounted) {
         setState(() {
           _isRefreshing = false;
