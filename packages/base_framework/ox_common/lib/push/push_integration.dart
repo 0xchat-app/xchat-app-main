@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:chatcore/chat-core.dart';
 import 'package:nostr_core_dart/nostr.dart';
 import 'package:flutter/widgets.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/ox_common.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
@@ -25,7 +26,39 @@ class CLPushIntegration with WidgetsBindingObserver, OXChatObserver {
   late final Notifier _notifier;
   late final NotificationDecisionService _decision;
   bool _initialized = false;
-  bool hasUploadPushToken = false;
+  
+  // Device-level push token storage
+  static const String _devicePushTokenKey = 'device_push_token';
+  
+  /// Get device-level push token from local storage
+  Future<String?> get devicePushToken async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_devicePushTokenKey);
+  }
+  
+  /// Set device-level push token to local storage
+  Future<void> setDevicePushToken(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_devicePushTokenKey, token);
+  }
+  
+  /// Check if the given token matches current device push token
+  Future<bool> isTokenMatchingDevice(String token) async {
+    final deviceToken = await devicePushToken;
+    return deviceToken != null && deviceToken == token;
+  }
+  
+  /// Register push token handler - called when iOS native gets push token
+  Future<void> registerPushTokenHandler(String token) async {
+    await setDevicePushToken(token);
+    
+    final account = LoginManager.instance.currentState.account;
+    if (account != null) {
+      await LoginManager.instance.savePushToken(token);
+    }
+
+    uploadPushToken(token);
+  }
 
   Future<void> initialize() async {
     if (_initialized) return;
@@ -64,18 +97,34 @@ class CLPushIntegration with WidgetsBindingObserver, OXChatObserver {
     WidgetsBinding.instance.addObserver(this);
     OXChatBinding.sharedInstance.addObserver(this);
 
-    if (await LocalPushKit.instance.requestPermission()) {
-      _initializeForRemotePush();
-    }
-
     _initialized = true;
   }
 
-  void _initializeForRemotePush() {
-    if (Platform.isIOS) {
-      OXCommon.registeNotification();
-    } else if (Platform.isAndroid) {
+  Future<void> initializeForRemotePush() async {
+    final notificationPermission = await LocalPushKit.instance.requestPermission();
+    if (!notificationPermission) return;
 
+    final accountPushToken = LoginManager.instance.currentState.account?.pushToken;
+    final isRotation = (await devicePushToken)?.isNotEmpty ?? false;
+
+    // account push token is null or empty, registe notification
+    if (accountPushToken == null || accountPushToken.isEmpty) {
+      registeNotification(isRotation);
+      return;
+    } 
+    
+    // account push token is not matching device push token, registe notification
+    if (!await isTokenMatchingDevice(accountPushToken)) {
+      registeNotification(isRotation);
+      return;
+    }
+  }
+
+  void registeNotification(bool isRotation) {
+    if (Platform.isIOS) {
+      OXCommon.registeNotification(isRotation: isRotation);
+    } else if (Platform.isAndroid) {
+      // TODO: Android implementation
     }
   }
 
@@ -128,11 +177,14 @@ class CLPushIntegration with WidgetsBindingObserver, OXChatObserver {
     }
   }
 
-  Future<bool> uploadPushToken(String token, [bool force = false]) async {
-    if (hasUploadPushToken && !force) return true;
+  Future<bool> uploadPushToken(String token) async {
+    final account = LoginManager.instance.currentState.account;
+    if (account?.hasUpload == true) return true;
     if (!LoginManager.instance.isLoginCircle) return false;
     OKEvent okEvent = await NotificationHelper.sharedInstance.updateNotificationDeviceId(token);
-    hasUploadPushToken = okEvent.status;
+    if (okEvent.status && account != null) {
+      await LoginManager.instance.saveUploadPushTokenState(true);
+    }
     return okEvent.status;
   }
 }

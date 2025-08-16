@@ -55,11 +55,10 @@ class OXCommon extends OXFlutterModule {
   }
 
   static Future<dynamic> _platformCallHandler(MethodCall call) async {
-    // Map<String, dynamic> callMap = Map<String, dynamic>.from(call.arguments);
     switch (call.method) {
-      case 'savePushToken':
-        String token = call.arguments;
-        requestRegistrationID(token);
+      case 'registerPushTokenHandler':
+        String token = call.arguments['token'];
+        CLPushIntegration.instance.registerPushTokenHandler(token);
         break;
     }
   }
@@ -110,15 +109,8 @@ class OXCommon extends OXFlutterModule {
     return result;
   }
 
-  static Future registeNotification() async {
-    await channel.invokeMethod('registeNotification', {});
-  }
-
-  static Future<void> requestRegistrationID(String registrationID) async {
-    final isSuccess = await LoginManager.instance.savePushToken(registrationID);
-    if (!isSuccess) return;
-
-    CLPushIntegration.instance.uploadPushToken(registrationID);
+  static Future registeNotification({bool isRotation = false}) async {
+    await channel.invokeMethod('registeNotification', {'isRotation': isRotation});
   }
 
   @override

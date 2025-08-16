@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage> {
       builder: (context, loginState, child) {
         final loginAccount = loginState.account;
         final pushToken = loginAccount?.pushToken;
-        if (pushToken != null) {
+        if (LoginManager.instance.isLoginCircle && pushToken != null) {
           CLPushIntegration.instance.uploadPushToken(pushToken);
         }
         return AnimatedSwitcher(

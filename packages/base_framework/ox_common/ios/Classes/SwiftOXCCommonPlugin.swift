@@ -118,7 +118,8 @@ public class SwiftOXCCommonPlugin: NSObject, FlutterPlugin, UINavigationControll
             }
             result(ClipboardHelper.copyImageToClipboard(imagePath: imagePath))
         case "registeNotification":
-            registeNotification()
+            let isRotation = (call.arguments as? [String: Any])?["isRotation"] as? Bool ?? false
+            registeNotification(isRotation: isRotation)
             result(nil)
         default:
             break;
@@ -137,7 +138,7 @@ extension SwiftOXCCommonPlugin: FlutterApplicationLifeCycleDelegate {
     public func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         let deviceTokenStr = deviceToken.map { String(format: "%02.2hhx", arguments: [$0]) }.joined()
         print(deviceTokenStr)
-        savePushToken(token: deviceTokenStr)
+        registerPushTokenHandler(token: deviceTokenStr)
     }
     
     public func applicationDidEnterBackground(_ application: UIApplication) {
@@ -147,18 +148,27 @@ extension SwiftOXCCommonPlugin: FlutterApplicationLifeCycleDelegate {
 
 // MARK: - Push
 extension SwiftOXCCommonPlugin {
-    private func savePushToken(token: String) {
-        channel?.invokeMethod("savePushToken", arguments: token)
+    
+    private func registerPushTokenHandler(token: String) {
+        let arguments: [String: Any] = ["token": token]
+        channel?.invokeMethod("registerPushTokenHandler", arguments: arguments)
     }
     
-    private func registeNotification() -> Void {
+    private func registeNotification(isRotation: Bool) -> Void {
         if #available(iOS 10.0, *) {
             let notificationCenter = UNUserNotificationCenter.current()
             notificationCenter.delegate = self
             notificationCenter.requestAuthorization(options:[.sound, .alert, .badge]) { (granted, error) in
                 if (granted) {
                     DispatchQueue.main.async {
-                        UIApplication.shared.registerForRemoteNotifications()
+                        if isRotation {
+                            UIApplication.shared.unregisterForRemoteNotifications()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                UIApplication.shared.registerForRemoteNotifications()
+                            }
+                        } else {
+                            UIApplication.shared.registerForRemoteNotifications()
+                        }
                     }
                     
                 }

@@ -322,6 +322,15 @@ extension LoginManagerAccount on LoginManager {
     return true;
   }
 
+  Future<bool> saveUploadPushTokenState(bool hasUpload) async {
+    final account = currentState.account;
+    if (account == null) return false;
+
+    account.hasUpload = hasUpload;
+    await account.saveToDB();
+    return true;
+  }
+
   // ============ Private Authentication Methods ============
 
   /// Unified account login interface
@@ -851,6 +860,7 @@ extension LoginManagerCircle on LoginManager {
     Account.sharedInstance.syncFollowingListFromRelay(pubkey, relay: circle.relayUrl);
 
     CLPushIntegration.instance.initialize();
+    CLPushIntegration.instance.initializeForRemotePush();
   }
 
   /// Initialize and start BitchatService for bitchat circles

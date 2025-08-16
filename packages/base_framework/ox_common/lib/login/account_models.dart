@@ -148,6 +148,7 @@ class AccountModel {
     required this.lastLoginAt,
     this.lastLoginCircleId,
     this.pushToken,
+    this.hasUpload = false,
     required this.db,
   });
 
@@ -161,6 +162,7 @@ class AccountModel {
   final int lastLoginAt;
   String? lastLoginCircleId;   // Last logged in circle ID
   String? pushToken;           // Push notification token
+  bool hasUpload = false;      // Whether push token has been uploaded
   
   late Isar db;
 
@@ -175,6 +177,7 @@ class AccountModel {
     int? lastLoginAt,
     String? lastLoginCircleId,
     String? pushToken,
+    bool? hasUpload,
   }) {
     return AccountModel(
       pubkey: pubkey ?? this.pubkey,
@@ -187,6 +190,7 @@ class AccountModel {
       lastLoginAt: lastLoginAt ?? this.lastLoginAt,
       lastLoginCircleId: lastLoginCircleId ?? this.lastLoginCircleId,
       pushToken: pushToken ?? this.pushToken,
+      hasUpload: hasUpload ?? this.hasUpload,
       db: db,
     );
   }
@@ -205,6 +209,7 @@ class AccountHelper {
   static const String keyLastLoginAt = 'last_login_at';
   static const String keyLastLoginCircleId = 'last_login_circle_id';
   static const String keyPushToken = 'push_token';
+  static const String keyHasUpload = 'has_upload';
 
   /// Convert AccountModel to list of AccountDataISAR entries
   static List<AccountDataISAR> toAccountDataList(AccountModel account) {
@@ -229,6 +234,8 @@ class AccountHelper {
       result.add(AccountDataISAR.createString(keyPushToken, account.pushToken!)..id = db.accountDataISARs.autoIncrement());
     }
     
+    result.add(AccountDataISAR.createBool(keyHasUpload, account.hasUpload)..id = db.accountDataISARs.autoIncrement());
+    
     return result;
   }
 
@@ -240,7 +247,7 @@ class AccountHelper {
     try {
       final accountData = await accountDb.accountDataISARs.where()
         .anyOf([keyPubkey, keyLoginType, keyEncryptedPrivKey, keyDefaultPassword, 
-               keyNostrConnectUri, keyCircles, keyCreatedAt, keyLastLoginAt, keyLastLoginCircleId, keyPushToken],
+               keyNostrConnectUri, keyCircles, keyCreatedAt, keyLastLoginAt, keyLastLoginCircleId, keyPushToken, keyHasUpload],
                (q, String key) => q.keyNameEqualTo(key))
         .findAll();
 
@@ -273,6 +280,7 @@ class AccountHelper {
       final encryptedPrivKey = dataMap[keyEncryptedPrivKey] as String?;
       final defaultPassword = dataMap[keyDefaultPassword] as String?;
       final nostrConnectUri = dataMap[keyNostrConnectUri] as String?;
+      final hasUpload = dataMap[keyHasUpload] as bool? ?? false;
       if (pubkey == null ||
           loginTypeRaw == null ||
           encryptedPrivKey == null ||
@@ -292,6 +300,7 @@ class AccountHelper {
         lastLoginAt: dataMap[keyLastLoginAt] as int? ?? DateTime.now().millisecondsSinceEpoch,
         lastLoginCircleId: dataMap[keyLastLoginCircleId] as String?,
         pushToken: dataMap[keyPushToken] as String?,
+        hasUpload: hasUpload,
         db: accountDb,
       );
     } catch (e) {
