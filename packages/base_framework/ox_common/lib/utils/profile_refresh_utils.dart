@@ -68,7 +68,7 @@ class ProfileRefreshUtils {
       // Reload profile from specific relay
       await Account.sharedInstance.reloadProfileFromRelay(
         currentUser.pubkey, 
-        relays: [specificRelay!]
+        relays: [specificRelay]
       );
 
       // Close temp relay connection after use
@@ -151,7 +151,7 @@ class ProfileRefreshUtils {
       // Reload profile from specific relay
       await Account.sharedInstance.reloadProfileFromRelay(
         pubkey, 
-        relays: [specificRelay!]
+        relays: [specificRelay]
       );
 
       // Close temp relay connection after use

@@ -141,10 +141,8 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
     });
 
     try {
-      final success = await ProfileRefreshUtils.showProfileRefreshDialog(context);
-      if (success && mounted) {
-        setState(() {});
-      }
+      await ProfileRefreshUtils.showProfileRefreshDialog(context);
+
     } finally {
       if (mounted) {
         setState(() {
