@@ -1,5 +1,6 @@
 
 import 'dart:async';
+import 'dart:io';
 import 'package:chatcore/chat-core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -8,6 +9,7 @@ import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_module_service/ox_module_service.dart';
 
+import 'avatar_generator.dart';
 
 class BaseAvatarWidget extends StatelessWidget {
   BaseAvatarWidget({
@@ -30,7 +32,7 @@ class BaseAvatarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final radius = isCircular ? size : 5.0;
+    final radius = isCircular ? size : CLLayout.avatarRadius;
     return GestureDetector(
       onTap: isClickable ? onTap : null,
       onLongPress: onLongPress,
@@ -93,6 +95,10 @@ class OXUserAvatar extends StatefulWidget {
   final GestureTapCallback? onTap;
   final GestureLongPressCallback? onLongPress;
 
+  static String get _clientAvatarPrefix => 'generated_avatar_';
+  static String clientAvatar(String value) => '${_clientAvatarPrefix}$value';
+  static bool isClientAvatar(String avatar) => avatar.startsWith(_clientAvatarPrefix);
+
   @override
   State<StatefulWidget> createState() => OXUserAvatarState();
 }
@@ -104,28 +110,48 @@ class OXUserAvatarState extends State<OXUserAvatar> {
   @override
   Widget build(BuildContext context) {
     final imageUrl = widget.user?.picture ?? widget.imageUrl ?? '';
+    if (OXUserAvatar.isClientAvatar(imageUrl)) {
+      final npub = imageUrl.replaceFirst(OXUserAvatar._clientAvatarPrefix, '');
+      if (npub.isNotEmpty) {
+        return ClientAvatar(
+          npub: npub,
+          size: widget.size,
+          isCircular: widget.isCircular,
+          isClickable: widget.onTap != null || widget.isClickable,
+          onTap: userAvatarOnTap,
+          onLongPress: widget.onLongPress,
+        );
+      }
+    }
+
     return BaseAvatarWidget(
       imageUrl: imageUrl,
       defaultImageName: defaultImageName,
       size: widget.size,
       isCircular: widget.isCircular,
       isClickable: widget.onTap != null || widget.isClickable,
-      onTap: widget.onTap ?? () async {
-        final user = widget.user;
-        if (user == null) {
-          CommonToast.instance.show(context, 'User not found');
-          return ;
-        }
-        await OXModuleService.pushPage(context, 'ox_chat', 'ContactUserInfoPage', {
-          'pubkey': user.pubKey,
-          'chatId': widget.chatId,
-          'isSecretChat':widget.isSecretChat
-        });
-        final onReturnFromNextPage = widget.onReturnFromNextPage;
-        if (onReturnFromNextPage != null) onReturnFromNextPage();
-      },
+      onTap: userAvatarOnTap,
       onLongPress: widget.onLongPress,
     );
+  }
+
+  void userAvatarOnTap() async {
+    if (widget.onTap != null) {
+      widget.onTap!.call();
+    } else {
+      final user = widget.user;
+      if (user == null) {
+        CommonToast.instance.show(context, 'User not found');
+        return ;
+      }
+      await OXModuleService.pushPage(context, 'ox_chat', 'ContactUserInfoPage', {
+        'pubkey': user.pubKey,
+        'chatId': widget.chatId,
+        'isSecretChat':widget.isSecretChat
+      });
+      final onReturnFromNextPage = widget.onReturnFromNextPage;
+      if (onReturnFromNextPage != null) onReturnFromNextPage();
+    }
   }
 }
 
@@ -301,6 +327,63 @@ class GroupedAvatar extends StatelessWidget {
       imageUrl: '',
       isCircular: isCircular,
       isClickable: isClickable,
+    );
+  }
+}
+
+class ClientAvatar extends StatefulWidget {
+  const ClientAvatar({
+    super.key,
+    required this.npub,
+    required this.size,
+    this.isCircular = false,
+    this.isClickable = false,
+    this.onTap,
+    this.onLongPress,
+  });
+
+  final String npub;
+  final double size;
+  final bool isCircular;
+  final bool isClickable;
+  final GestureTapCallback? onTap;
+  final GestureLongPressCallback? onLongPress;
+
+  @override
+  State<StatefulWidget> createState() => _ClientAvatarState();
+}
+
+class _ClientAvatarState extends State<ClientAvatar> {
+  late Future<File?> imageFile;
+
+  @override
+  void initState() {
+    super.initState();
+    imageFile = AvatarGenerator.instance.generateAvatar(npub: widget.npub);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final radius = widget.isCircular ? widget.size : CLLayout.avatarRadius;
+    return GestureDetector(
+      onTap: widget.isClickable ? widget.onTap : null,
+      onLongPress: widget.onLongPress,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(radius),
+        child: FutureBuilder<File?>(
+          future: imageFile,
+          builder: (context, snapshot) {
+            final file = snapshot.data;
+            if (!snapshot.hasData || file == null) return SizedBox();
+            return Image.file(
+              file,
+              width: widget.size,
+              height: widget.size,
+              fit: BoxFit.contain,
+            );
+          },
+        ),
+      ),
     );
   }
 }

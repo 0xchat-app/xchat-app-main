@@ -6,12 +6,12 @@ import 'package:ox_common/component.dart';
 import 'package:ox_common/ox_common.dart';
 import 'package:ox_common/upload/file_type.dart';
 import 'package:ox_common/upload/upload_utils.dart';
-import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/file_utils.dart';
 import 'package:ox_common/utils/image_picker_utils.dart';
 import 'package:ox_common/utils/permission_utils.dart';
 import 'package:ox_common/utils/platform_utils.dart';
 import 'package:ox_common/utils/string_utils.dart';
+import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_common/widgets/common_image.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/widgets/common_toast.dart';
@@ -56,8 +56,8 @@ class AvatarDisplayPage extends StatefulWidget {
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(opacity: animation, child: child);
         },
-        transitionDuration: const Duration(milliseconds: 300),
-        reverseTransitionDuration: const Duration(milliseconds: 300),
+        transitionDuration: const Duration(milliseconds: 1000),
+        reverseTransitionDuration: const Duration(milliseconds: 1000),
       ),
     );
   }
@@ -100,60 +100,27 @@ class _AvatarDisplayPageState extends State<AvatarDisplayPage>
   @override
   Widget build(BuildContext context) {
     return CLScaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          // Main avatar display area
-          Center(
-            child: _buildAvatarWidget(),
-          ),
-
-          // Top action bar
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: _buildTopActionBar(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTopActionBar() {
-    return Container(
-      height: 56.px,
-      color: Colors.black.withValues(alpha: 0.7),
-      child: Row(
-        children: [
-          // Back button
+      appBar: CLAppBar(
+        actions: [
           CLButton.icon(
-            icon: Icons.arrow_back,
-            onTap: () => Navigator.of(context).pop(),
+            icon: Icons.edit,
+            onTap: _showEditOptions,
           ),
-          
-          const Spacer(),
-          
-          // Edit button
-          if (widget.showEditButton)
-            CLButton.icon(
-              icon: Icons.edit,
-              onTap: _showEditOptions,
-            ),
         ],
       ),
+      backgroundColor: Colors.black,
+      body: _buildAvatarWidget(),
     );
   }
 
   Widget _buildAvatarWidget() {
-    // Square size equals screen width
     Widget avatar = LayoutBuilder(
       builder: (context, constraints) {
         final double size = constraints.maxWidth;
         return SizedBox(
           width: size,
           height: size,
-          child: _buildAvatarImage(),
+          child: _buildAvatarImage(size: size),
         );
       },
     );
@@ -172,54 +139,63 @@ class _AvatarDisplayPageState extends State<AvatarDisplayPage>
     );
   }
 
-  Widget _buildAvatarImage() {
-    if (_currentAvatarUrl != null && _currentAvatarUrl!.isNotEmpty) {
-      // Network image with gesture support
-      return CLCachedImageProviderStateful(
-        imageUrl: _currentAvatarUrl!,
-        builder: (context, provider, loading, error) {
-          if (provider == null || error != null) {
-            return _buildDefaultAvatar();
-          }
-          if (loading) {
-            return Center(child: CLProgressIndicator.circular());
-          }
-          return ExtendedImage(
-            image: provider,
-            fit: BoxFit.cover,
-            enableSlideOutPage: true,
-            onDoubleTap: _onDoubleTap,
-            mode: ExtendedImageMode.gesture,
-            loadStateChanged: (state) {
-              switch (state.extendedImageLoadState) {
-                case LoadState.loading:
-                  return Center(child: CLProgressIndicator.circular());
-                case LoadState.failed:
-                  return _buildDefaultAvatar();
-                case LoadState.completed:
-                  return null;
-              }
-            },
-            initGestureConfigHandler: (state) {
-              return GestureConfig(
-                minScale: 1.0,
-                animationMinScale: 0.7,
-                maxScale: 3.0,
-                animationMaxScale: 3.5,
-                speed: 1.0,
-                inertialSpeed: 100.0,
-                initialScale: 1.0,
-                inPageView: false,
-                initialAlignment: InitialAlignment.center,
-              );
-            },
-          );
-        },
-      );
-    } else {
-      // Default avatar
+  Widget _buildAvatarImage({
+    required double size,
+  }) {
+    final imageUrl = _currentAvatarUrl;
+    if (imageUrl == null || imageUrl.isEmpty) {
       return _buildDefaultAvatar();
     }
+
+    if (OXUserAvatar.isClientAvatar(imageUrl)) {
+      return OXUserAvatar(
+        imageUrl: imageUrl,
+        isCircular: false,
+        size: size,
+      );
+    }
+
+    return CLCachedImageProviderStateful(
+      imageUrl: imageUrl,
+      builder: (context, provider, loading, error) {
+        if (loading) {
+          return Center(child: CLProgressIndicator.circular());
+        }
+        if (provider == null || error != null) {
+          provider = AssetImage('icon_user_default.png', package: 'ox_common');
+        }
+        return ExtendedImage(
+          image: provider,
+          fit: BoxFit.cover,
+          enableSlideOutPage: true,
+          onDoubleTap: _onDoubleTap,
+          mode: ExtendedImageMode.gesture,
+          loadStateChanged: (state) {
+            switch (state.extendedImageLoadState) {
+              case LoadState.loading:
+                return Center(child: CLProgressIndicator.circular());
+              case LoadState.failed:
+                return _buildDefaultAvatar();
+              case LoadState.completed:
+                return null;
+            }
+          },
+          initGestureConfigHandler: (state) {
+            return GestureConfig(
+              minScale: 1.0,
+              animationMinScale: 0.7,
+              maxScale: 3.0,
+              animationMaxScale: 3.5,
+              speed: 1.0,
+              inertialSpeed: 100.0,
+              initialScale: 1.0,
+              inPageView: false,
+              initialAlignment: InitialAlignment.center,
+            );
+          },
+        );
+      },
+    );
   }
 
   Widget _buildDefaultAvatar() {

@@ -8,7 +8,6 @@ export 'page/profile_setup_page.dart';
 
 // Export utilities
 export 'utils/login_flow_manager.dart';
-export 'utils/avatar_generator.dart';
 export 'utils/username_generator.dart';
 
 // Export module service

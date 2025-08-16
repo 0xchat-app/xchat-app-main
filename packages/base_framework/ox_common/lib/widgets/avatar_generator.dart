@@ -1,9 +1,11 @@
 import 'dart:math';
 import 'dart:typed_data';
+import 'dart:io';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-import 'package:nostr_core_dart/nostr.dart';
+import 'package:path/path.dart' as path;
+import 'package:ox_common/login/account_path_helper.dart';
 
-/// Animal style for avatar generation
 enum AnimalStyle {
   cat,      // 🐱
   dog,      // 🐕
@@ -22,79 +24,96 @@ enum AnimalStyle {
   fish,     // 🐠
 }
 
+class AvatarColors {
+  final Color primary;
+  final Color secondary;
+  final Color accent;
+
+  AvatarColors({
+    required this.primary,
+    required this.secondary,
+    required this.accent,
+  });
+}
+
 /// Pixel art avatar generator for new accounts
-/// 
+///
 /// Generates unique pixel-style avatars based on npub (public key)
 /// Each avatar has consistent colors and patterns for the same public key
 class AvatarGenerator {
   AvatarGenerator._();
   
   static final AvatarGenerator instance = AvatarGenerator._();
-  
-  /// Generate a pixel art avatar as a widget
-  /// 
-  /// [npub] The npub public key to generate avatar from
-  /// [size] Size of the avatar widget
-  /// [borderRadius] Border radius for the avatar
-  Widget generateAvatar(String npub, {double size = 100, double borderRadius = 50}) {
-    debugPrint('AvatarGenerator: Generating avatar for npub: $npub');
-    
-    final colors = _generateColors(npub);
-    final pattern = _generatePattern(npub);
-    
-    debugPrint('AvatarGenerator: Colors generated - Primary: ${colors.primary}, Secondary: ${colors.secondary}, Accent: ${colors.accent}');
-    debugPrint('AvatarGenerator: Pattern generated with ${pattern.length}x${pattern[0].length} grid');
-    
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(borderRadius),
-        color: colors.primary,
-      ),
-      child: CustomPaint(
-        painter: PixelAvatarPainter(
-          colors: colors,
-          pattern: pattern,
-          pixelSize: size / 16, // 16x16 grid
-        ),
-      ),
-    );
+
+  Future<File?> generateAvatar({
+    required String npub,
+    int width = 128,
+    int height = 128,
+  }) async {
+    final imageCacheDir = await AccountPathHelper.imageCacheDir();
+    if (imageCacheDir.isEmpty) {
+      assert(false, 'imageCacheDir is empty');
+      return null;
+    }
+
+    final avatarDir = Directory(imageCacheDir);
+    if (!await avatarDir.exists()) {
+      avatarDir.create(recursive: true);
+    }
+
+    final hash = hashString(npub);
+    final filename = 'avatar_${hash.abs()}.png';
+    final filePath = path.join(avatarDir.path, filename);
+
+    final file = File(filePath);
+    if (file.existsSync()) return file;
+
+    // Create image file
+    final colors = generateColors(npub);
+    final pattern = generatePattern(npub);
+    final imageData = await _createImageData(colors, pattern, width, height);
+
+    await file.writeAsBytes(imageData);
+
+    return file;
   }
   
-  /// Generate a pixel art avatar as image data
-  /// 
-  /// [npub] The npub public key to generate avatar from
-  /// [size] Size of the image in pixels
-  /// Returns Uint8List of RGBA image data
-  Future<Uint8List> generateAvatarImage(String npub, {int size = 100}) async {
-    final colors = _generateColors(npub);
-    final pattern = _generatePattern(npub);
+  /// Create image data from pattern and colors
+  Future<Uint8List> _createImageData(AvatarColors colors, List<List<int>> pattern, int width, int height) async {
+    final recorder = ui.PictureRecorder();
+    final canvas = Canvas(recorder);
+
+    // Calculate pixel size for 16x16 grid
+    final pixelWidth = width / 16;
+    final pixelHeight = height / 16;
     
-    final imageData = Uint8List(size * size * 4);
-    final pixelSize = size / 16;
-    
-    for (int y = 0; y < size; y++) {
-      for (int x = 0; x < size; x++) {
-        final gridX = (x / pixelSize).floor();
-        final gridY = (y / pixelSize).floor();
+    // Draw pixels
+    for (int y = 0; y < 16; y++) {
+      for (int x = 0; x < 16; x++) {
+        final color = _getPixelColor(colors, pattern, x, y);
+        final rect = Rect.fromLTWH(
+          x * pixelWidth,
+          y * pixelHeight,
+          pixelWidth,
+          pixelHeight,
+        );
         
-        final pixelIndex = (y * size + x) * 4;
-        final color = _getPixelColor(colors, pattern, gridX, gridY);
-        
-        imageData[pixelIndex] = color.red;     // R
-        imageData[pixelIndex + 1] = color.green; // G
-        imageData[pixelIndex + 2] = color.blue;  // B
-        imageData[pixelIndex + 3] = color.alpha; // A
+        final paint = Paint()..color = color;
+        canvas.drawRect(rect, paint);
       }
     }
     
-    return imageData;
+    // Convert to image
+    final picture = recorder.endRecording();
+    final image = await picture.toImage(width, height);
+    final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    
+    return byteData!.buffer.asUint8List();
   }
-  
+
   /// Generate consistent colors based on npub
-  AvatarColors _generateColors(String npub) {
-    final hash = _hashString(npub);
+  AvatarColors generateColors(String npub) {
+    final hash = hashString(npub);
     final random = Random(hash);
     
     // Generate primary color (main background)
@@ -120,27 +139,25 @@ class AvatarGenerator {
   }
   
   /// Generate consistent pattern based on npub
-  List<List<int>> _generatePattern(String npub) {
-    final hash = _hashString(npub);
+  List<List<int>> generatePattern(String npub) {
+    final hash = hashString(npub);
     final random = Random(hash);
     
     // Create 16x16 grid pattern
     final pattern = List.generate(16, (i) => List.filled(16, 0));
     
     // Select animal style based on npub hash
-    final animalStyle = _getAnimalStyle(hash);
+    final animalStyle = getAnimalStyle(hash);
     
     return _generateAnimalPattern(pattern, random, animalStyle);
   }
   
   /// Get animal style based on hash
-  AnimalStyle _getAnimalStyle(int hash) {
+  AnimalStyle getAnimalStyle(int hash) {
     final styles = AnimalStyle.values;
     return styles[hash % styles.length];
   }
-  
 
-  
   /// Generate animal pattern based on style
   List<List<int>> _generateAnimalPattern(List<List<int>> pattern, Random random, AnimalStyle style) {
     // Background
@@ -183,68 +200,7 @@ class AvatarGenerator {
         return _generateFishPattern(pattern, random);
     }
   }
-  
-  /// Generate abstract geometric pattern
-  List<List<int>> _generateAbstractPattern(List<List<int>> pattern, Random random) {
-    // Background
-    for (int y = 0; y < 16; y++) {
-      for (int x = 0; x < 16; x++) {
-        pattern[y][x] = 0; // Background color
-      }
-    }
-    
-    // Random geometric shapes
-    for (int i = 0; i < 8; i++) {
-      final shapeType = random.nextInt(3);
-      final x = random.nextInt(12) + 2;
-      final y = random.nextInt(12) + 2;
-      final size = random.nextInt(4) + 2;
-      
-      switch (shapeType) {
-        case 0: // Circle
-          for (int dy = -size; dy <= size; dy++) {
-            for (int dx = -size; dx <= size; dx++) {
-              final nx = x + dx;
-              final ny = y + dy;
-              if (nx >= 0 && nx < 16 && ny >= 0 && ny < 16) {
-                final distance = sqrt(dx * dx + dy * dy);
-                if (distance <= size) {
-                  pattern[ny][nx] = (i % 3) + 1;
-                }
-              }
-            }
-          }
-          break;
-        case 1: // Square
-          for (int dy = -size; dy <= size; dy++) {
-            for (int dx = -size; dx <= size; dx++) {
-              final nx = x + dx;
-              final ny = y + dy;
-              if (nx >= 0 && nx < 16 && ny >= 0 && ny < 16) {
-                pattern[ny][nx] = (i % 3) + 1;
-              }
-            }
-          }
-          break;
-        case 2: // Triangle
-          for (int dy = -size; dy <= size; dy++) {
-            for (int dx = -size; dx <= size; dx++) {
-              final nx = x + dx;
-              final ny = y + dy;
-              if (nx >= 0 && nx < 16 && ny >= 0 && ny < 16) {
-                if ((dx + dy).abs() <= size) {
-                  pattern[ny][nx] = (i % 3) + 1;
-                }
-              }
-            }
-          }
-          break;
-      }
-    }
-    
-    return pattern;
-  }
-  
+
   /// Get color for specific pixel based on pattern
   Color _getPixelColor(AvatarColors colors, List<List<int>> pattern, int gridX, int gridY) {
     if (gridX < 0 || gridX >= 16 || gridY < 0 || gridY >= 16) {
@@ -266,19 +222,19 @@ class AvatarGenerator {
         return colors.primary;
     }
   }
-  
+
   /// Blend two colors
   Color _blendColors(Color color1, Color color2, double ratio) {
     return Color.fromARGB(
-      ((color1.alpha * (1 - ratio) + color2.alpha * ratio) * 255).round(),
-      ((color1.red * (1 - ratio) + color2.red * ratio) * 255 / 255).round(),
-      ((color1.green * (1 - ratio) + color2.green * ratio) * 255 / 255).round(),
-      ((color1.blue * (1 - ratio) + color2.blue * ratio) * 255 / 255).round(),
+      ((color1.a * (1 - ratio) + color2.a * ratio) * 255).round(),
+      ((color1.r * (1 - ratio) + color2.r * ratio) * 255 / 255).round(),
+      ((color1.g * (1 - ratio) + color2.g * ratio) * 255 / 255).round(),
+      ((color1.b * (1 - ratio) + color2.b * ratio) * 255 / 255).round(),
     );
   }
   
   /// Simple hash function for consistent random generation
-  int _hashString(String input) {
+  int hashString(String input) {
     int hash = 0;
     for (int i = 0; i < input.length; i++) {
       hash = ((hash << 5) - hash + input.codeUnitAt(i)) & 0xFFFFFFFF;
@@ -288,8 +244,8 @@ class AvatarGenerator {
   
   /// Get animal style name for debugging
   String getAnimalStyleName(String npub) {
-    final hash = _hashString(npub);
-    final style = _getAnimalStyle(hash);
+    final hash = hashString(npub);
+    final style = getAnimalStyle(hash);
     switch (style) {
       case AnimalStyle.cat:
         return '🐱 Cat';
@@ -911,81 +867,4 @@ class AvatarGenerator {
     
     return pattern;
   }
-}
-
-/// Colors for the avatar
-class AvatarColors {
-  final Color primary;
-  final Color secondary;
-  final Color accent;
-  
-  AvatarColors({
-    required this.primary,
-    required this.secondary,
-    required this.accent,
-  });
-}
-
-/// Custom painter for pixel avatar
-class PixelAvatarPainter extends CustomPainter {
-  final AvatarColors colors;
-  final List<List<int>> pattern;
-  final double pixelSize;
-  
-  PixelAvatarPainter({
-    required this.colors,
-    required this.pattern,
-    required this.pixelSize,
-  });
-  
-  @override
-  void paint(Canvas canvas, Size size) {
-    for (int y = 0; y < 16; y++) {
-      for (int x = 0; x < 16; x++) {
-        final color = _getPixelColor(x, y);
-        final rect = Rect.fromLTWH(
-          x * pixelSize,
-          y * pixelSize,
-          pixelSize,
-          pixelSize,
-        );
-        
-        final paint = Paint()..color = color;
-        canvas.drawRect(rect, paint);
-      }
-    }
-  }
-  
-  Color _getPixelColor(int gridX, int gridY) {
-    if (gridX < 0 || gridX >= 16 || gridY < 0 || gridY >= 16) {
-      return colors.primary;
-    }
-    
-    final patternValue = pattern[gridY][gridX];
-    
-    switch (patternValue) {
-      case 0:
-        return colors.primary;
-      case 1:
-        return colors.secondary;
-      case 2:
-        return colors.accent;
-      case 3:
-        return _blendColors(colors.primary, colors.secondary, 0.5);
-      default:
-        return colors.primary;
-    }
-  }
-  
-  Color _blendColors(Color color1, Color color2, double ratio) {
-    return Color.fromARGB(
-      ((color1.alpha * (1 - ratio) + color2.alpha * ratio) * 255).round(),
-      ((color1.red * (1 - ratio) + color2.red * ratio) * 255 / 255).round(),
-      ((color1.green * (1 - ratio) + color2.green * ratio) * 255 / 255).round(),
-      ((color1.blue * (1 - ratio) + color2.blue * ratio) * 255 / 255).round(),
-    );
-  }
-  
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
