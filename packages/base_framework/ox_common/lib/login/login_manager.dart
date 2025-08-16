@@ -269,7 +269,7 @@ extension LoginManagerAccount on LoginManager {
       // Try to login to last circle or first circle
       await _tryLoginLastCircle(loginState);
 
-      loginAccountSuccessHandler(account);
+      _notifyLoginSuccess();
       return true;
 
     } catch (e) {
@@ -390,7 +390,7 @@ extension LoginManagerAccount on LoginManager {
       // 6. Try to login to last circle or first circle
       await _tryLoginLastCircle(loginState);
 
-      loginAccountSuccessHandler(account);
+      _notifyLoginSuccess();
       return true;
 
     } catch (e) {
@@ -436,11 +436,6 @@ extension LoginManagerAccount on LoginManager {
     final privateKeyBytes = hex.decode(privateKey);
     final encryptedBytes = encryptPrivateKey(Uint8List.fromList(privateKeyBytes), password);
     return hex.encode(encryptedBytes);
-  }
-
-  void loginAccountSuccessHandler(AccountModel account) {
-    CLPushIntegration.instance.initialize();
-    _notifyLoginSuccess();
   }
 
   /// Notify login success
@@ -854,6 +849,8 @@ extension LoginManagerCircle on LoginManager {
     LoginUserNotifier.instance.updateUserSource(Account.sharedInstance.getUserNotifier(pubkey));
     Account.sharedInstance.reloadProfileFromRelay(pubkey);
     Account.sharedInstance.syncFollowingListFromRelay(pubkey, relay: circle.relayUrl);
+
+    CLPushIntegration.instance.initialize();
   }
 
   /// Initialize and start BitchatService for bitchat circles
