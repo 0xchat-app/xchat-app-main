@@ -35,7 +35,12 @@ class OXUserCenter extends OXFlutterModule {
         String? avatarUrl = params?['avatarUrl'];
         bool showEditButton = params?['showEditButton'] ?? false;
         String? heroTag = params?['heroTag'];
-        return OXNavigator.pushPage(context, (context) => AvatarDisplayPage(avatarUrl: avatarUrl, showEditButton: showEditButton, heroTag: heroTag),);
+        return AvatarDisplayPage.open(
+          context,
+          heroTag: heroTag ?? 'profile_avatar_hero',
+          avatarUrl: avatarUrl,
+          showEditButton: showEditButton,
+        );
       case 'QRCodeDisplayPage':
         String? previousPageTitle = params?['previousPageTitle'];
         UserDBISAR? otherUser = params?['otherUser'];

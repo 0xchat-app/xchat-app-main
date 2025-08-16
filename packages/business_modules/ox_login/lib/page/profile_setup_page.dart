@@ -10,7 +10,6 @@ import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_module_service/ox_module_service.dart';
-import '../utils/avatar_generator.dart';
 import '../utils/username_generator.dart';
 
 class ProfileSetupPage extends StatefulWidget {
@@ -33,13 +32,13 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
     _setupDefaultValue();
   }
 
-  Future<void> _setupDefaultValue() async {
+  void _setupDefaultValue() {
     final account = LoginManager.instance.currentState.account;
     if (account == null) return;
 
     final npub = account.getEncodedPubkey();
     _nameController.text = UsernameGenerator.generateUsername(npub);
-    _avatarUrl = 'generated_avatar_$npub';
+    _avatarUrl = OXUserAvatar.clientAvatar(npub);
   }
 
   @override
@@ -126,6 +125,14 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
     );
   }
 
+  Widget _buildAvatarWidget() {
+    return OXUserAvatar(
+      imageUrl: _avatarUrl,
+      size: 100.px,
+      onTap: _onAvatarTap,
+    );
+  }
+
   Widget _buildNameSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -154,66 +161,6 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
       onTap: !_isSaving ? _onSaveProfileTap : null,
       expanded: true,
       height: 48.px,
-    );
-  }
-
-  Widget _buildInfoSection() {
-    return Container(
-      padding: EdgeInsets.all(16.px),
-      decoration: BoxDecoration(
-        color: ColorToken.surfaceContainer.of(context),
-        borderRadius: BorderRadius.circular(12.px),
-        border: Border.all(
-          color: ColorToken.onSurfaceVariant.of(context).withOpacity(0.1),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.info_outline,
-                size: 20.px,
-                color: ColorToken.primary.of(context),
-              ),
-              SizedBox(width: 8.px),
-              CLText.titleSmall(
-                Localized.text('ox_login.profile_info_title'),
-                colorToken: ColorToken.primary,
-              ),
-            ],
-          ),
-          SizedBox(height: 12.px),
-          CLText.bodySmall(
-            Localized.text('ox_login.profile_info_content'),
-            colorToken: ColorToken.onSurfaceVariant,
-            maxLines: null,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAvatarWidget() {
-    if (_avatarUrl != null && _avatarUrl!.startsWith('generated_avatar_')) {
-      final npub = _avatarUrl!.replaceFirst('generated_avatar_', '');
-      if (npub.isNotEmpty) {
-        return GestureDetector(
-          onTap: _onAvatarTap,
-          child: AvatarGenerator.instance.generateAvatar(
-            npub,
-            size: 100.px,
-            borderRadius: 50.px,
-          ),
-        );
-      }
-    }
-
-    return OXUserAvatar(
-      imageUrl: _avatarUrl,
-      size: 100.px,
-      onTap: _onAvatarTap,
     );
   }
 

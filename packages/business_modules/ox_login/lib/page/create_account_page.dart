@@ -20,6 +20,8 @@ export 'package:visibility_detector/visibility_detector.dart';
 import 'package:nostr_core_dart/nostr.dart';
 import 'package:ox_module_service/ox_module_service.dart';
 
+import '../utils/login_flow_manager.dart';
+
 /// Create Account Page
 /// 
 /// Displays a form for users to create a new nostr account with public/private key pair.
@@ -309,45 +311,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> with LoginManager
   @override
   void onLoginSuccess(LoginState state) {
     _isCreating$.value = false;
-    
-    // Start post-login flow for new account
-    if (mounted) {
-      _startPostLoginFlow();
-    }
-  }
-  
-  /// Start the post-login flow for new account
-  Future<void> _startPostLoginFlow() async {
-    try {
-      // Import and use LoginFlowManager
-      final flowManager = await _getLoginFlowManager();
-      if (flowManager != null) {
-        await flowManager.startPostLoginFlow(context, isNewAccount: true);
-      } else {
-        // Fallback: go directly to home
-        if (mounted) {
-          OXNavigator.popToRoot(context);
-        }
-      }
-    } catch (e) {
-      debugPrint('Error starting post-login flow: $e');
-      // Fallback: go directly to home
-      if (mounted) {
-        OXNavigator.popToRoot(context);
-      }
-    }
-  }
-  
-  /// Get LoginFlowManager instance
-  Future<dynamic> _getLoginFlowManager() async {
-    try {
-      // Use dynamic import to avoid circular dependency
-      final flowManager = await OXModuleService.invoke('ox_login', 'getLoginFlowManager', []);
-      return flowManager;
-    } catch (e) {
-      debugPrint('Error getting LoginFlowManager: $e');
-      return null;
-    }
+    LoginFlowManager.instance.startPostLoginFlow(context, isNewAccount: true);
   }
 
   @override
@@ -375,18 +339,6 @@ class _CreateAccountPageState extends State<CreateAccountPage> with LoginManager
     
     // Show error toast using existing CommonToast
     CommonToast.instance.show(context, errorMessage);
-  }
-
-  // ========== Legacy Compatibility Methods ==========
-
-  // Legacy method - kept for compatibility
-  void createKeys() {
-    _generateKeys();
-  }
-
-  // Legacy method - kept for compatibility  
-  void createOnTap() async {
-    await _onCreateAccountTap();
   }
 
   // Legacy getters - kept for compatibility

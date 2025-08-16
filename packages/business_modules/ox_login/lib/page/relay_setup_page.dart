@@ -16,9 +16,11 @@ class RelaySetupPage extends StatefulWidget {
   const RelaySetupPage({
     super.key,
     this.isNewAccount = false,
+    this.completeHandler,
   });
 
   final bool isNewAccount;
+  final Function(BuildContext ctx)? completeHandler;
 
   @override
   State<RelaySetupPage> createState() => _RelaySetupPageState();
@@ -169,10 +171,8 @@ class _RelaySetupPageState extends State<RelaySetupPage> {
     });
 
     try {
-      // Show loading
       OXLoading.show();
 
-      // Use CircleJoinUtils to join the relay
       final success = await CircleJoinUtils.processJoinInput(
         context,
         relayInput,
@@ -180,13 +180,11 @@ class _RelaySetupPageState extends State<RelaySetupPage> {
 
       OXLoading.dismiss();
 
+      if (!mounted) return;
+
       if (success) {
-        // Successfully joined relay, return true to continue to profile setup
-        if (mounted) {
-          Navigator.of(context).pop(true);
-        }
+        widget.completeHandler?.call(context);
       } else {
-        // User cancelled or failed to join
         setState(() {
           _isJoining = false;
         });
@@ -207,7 +205,6 @@ class _RelaySetupPageState extends State<RelaySetupPage> {
   }
 
   void _onLearnMoreTap() {
-    // Navigate to circle introduction page
     OXNavigator.pushPage(
       context,
       (context) => const CircleIntroductionPage(),
@@ -224,7 +221,6 @@ class _RelaySetupPageState extends State<RelaySetupPage> {
   }
 
   void _onSkipTap() {
-    // Return false to indicate user skipped relay setup
-    Navigator.of(context).pop(false);
+    OXNavigator.popToRoot(context);
   }
 }
