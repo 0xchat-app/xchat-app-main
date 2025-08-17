@@ -8,6 +8,7 @@ import 'package:nostr_core_dart/nostr.dart';
 import 'package:convert/convert.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/push/push_integration.dart';
+import 'package:ox_common/push/push_notification_manager.dart';
 import 'package:ox_common/utils/extension.dart';
 import 'package:uuid/uuid.dart';
 import '../utils/ox_chat_binding.dart';
@@ -859,8 +860,13 @@ extension LoginManagerCircle on LoginManager {
     Account.sharedInstance.reloadProfileFromRelay(pubkey);
     Account.sharedInstance.syncFollowingListFromRelay(pubkey, relay: circle.relayUrl);
 
-    CLPushIntegration.instance.initialize();
-    CLPushIntegration.instance.initializeForRemotePush();
+    initializePushCore();
+  }
+
+  void initializePushCore() async {
+    await CLPushIntegration.instance.initialize();
+    await CLPushIntegration.instance.initializeForRemotePush();
+    await CLPushNotificationManager.instance.initialize();
   }
 
   /// Initialize and start BitchatService for bitchat circles

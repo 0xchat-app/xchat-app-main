@@ -29,6 +29,7 @@
   "allow_send_notification_tips": "Allow sending notifications to others. When enabled, temporary notification events will be sent to XChat push server containing only the recipient's pubkey and relay information",
   "allow_receive_notification": "Allow Receive Notifications",
   "allow_receive_notification_tips": "Allow receiving message push notifications. When enabled, device ID will be sent to XChat push server",
+  "notification_setting_failed": "Failed to update notification settings. Please check your network connection and try again.",
   "push_notifications": "Push Notifications",
   "push_notifications_tips": "We employ a privacy-oriented solution for our message push notifications. Technical details can be found here: ",
   "private_messages_notifications": "Private Messages",

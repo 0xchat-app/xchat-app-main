@@ -400,7 +400,11 @@ class _ListViewSwitcherItemWidget extends StatelessWidget {
         return CLSwitch(
           value: value,
           onChanged: (newValue) {
-            model.value$.value = newValue;
+            if (model.onChanged != null) {
+              model.onChanged?.call(newValue);
+            } else {
+              model.value$.value = newValue;
+            }
           },
         );
       },

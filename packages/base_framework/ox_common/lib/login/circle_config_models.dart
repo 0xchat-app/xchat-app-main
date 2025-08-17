@@ -115,24 +115,42 @@ class CircleConfigSchemas {
 class CircleConfigModel {
   CircleConfigModel({
     this.selectedFileServerUrl = '',
+    this.allowSendNotification,
+    this.allowReceiveNotification,
   });
 
   /// Currently selected file-server url for this circle.
   String selectedFileServerUrl;
+  
+  /// Whether to allow sending push notifications in this circle
+  bool? allowSendNotification;
+  
+  /// Whether to allow receiving push notifications in this circle
+  bool? allowReceiveNotification;
 
-  CircleConfigModel copyWith({String? selectedFileServerUrl}) =>
+  CircleConfigModel copyWith({
+    String? selectedFileServerUrl,
+    bool? allowSendNotification,
+    bool? allowReceiveNotification,
+  }) =>
       CircleConfigModel(
         selectedFileServerUrl:
             selectedFileServerUrl ?? this.selectedFileServerUrl,
+        allowSendNotification:
+            allowSendNotification ?? this.allowSendNotification,
+        allowReceiveNotification:
+            allowReceiveNotification ?? this.allowReceiveNotification,
       );
 
   Map<String, dynamic> toJson() => {
         'selectedFileServerUrl': selectedFileServerUrl,
+        'allowSendNotification': allowSendNotification,
+        'allowReceiveNotification': allowReceiveNotification,
       };
 
   @override
   String toString() =>
-      'CircleConfigModel(selectedFileServerUrl: $selectedFileServerUrl)';
+      'CircleConfigModel(selectedFileServerUrl: $selectedFileServerUrl, allowSendNotification: $allowSendNotification, allowReceiveNotification: $allowReceiveNotification)';
 }
 
 /// Helper for converting between [CircleConfigModel] and database entries.
@@ -140,10 +158,23 @@ class CircleConfigHelper {
   // Convert model to database entries
   static List<CircleConfigISAR> toConfigDataList(
       String circleId, CircleConfigModel config) {
-    return [
+    final List<CircleConfigISAR> dataList = [
       CircleConfigISAR.createString(circleId,
           CircleConfigISAR.keySelectedFileServerUrl, config.selectedFileServerUrl),
     ];
+    
+    // Only add notification settings if they are not null
+    if (config.allowSendNotification != null) {
+      dataList.add(CircleConfigISAR.createBool(circleId,
+          'allow_send_notification', config.allowSendNotification!));
+    }
+    
+    if (config.allowReceiveNotification != null) {
+      dataList.add(CircleConfigISAR.createBool(circleId,
+          'allow_receive_notification', config.allowReceiveNotification!));
+    }
+    
+    return dataList;
   }
 
   /// Load configuration from database for given circle
@@ -163,6 +194,10 @@ class CircleConfigHelper {
     return CircleConfigModel(
       selectedFileServerUrl:
           map[CircleConfigISAR.keySelectedFileServerUrl]?.stringValue ?? '',
+      allowSendNotification:
+          map['allow_send_notification']?.boolValue,
+      allowReceiveNotification:
+          map['allow_receive_notification']?.boolValue,
     );
   }
 

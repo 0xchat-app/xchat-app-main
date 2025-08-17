@@ -102,20 +102,41 @@ class Circle {
   @override
   String toString() => 'Circle(id: $id, name: $name, relayUrl: $relayUrl, type: ${type.value})';
 
-  //================ Circle Config Accessors ==================
-
   /// Internal use only. Called by LoginManager to initialize configuration.
   void initConfig(CircleConfigModel cfg) {
     _config = cfg;
   }
 
-  /// Currently selected file-server URL for this circle. Empty if not set.
   String get selectedFileServerUrl => _config.selectedFileServerUrl;
+  
+  /// Get allow send notification setting with fallback to false
+  bool get allowSendNotification => _config.allowSendNotification ?? false;
+  
+  /// Get allow receive notification setting with fallback to false
+  bool get allowReceiveNotification => _config.allowReceiveNotification ?? false;
+  
+  /// Check if notification settings are initialized
+  bool get isNotificationSettingsInitialized => 
+      _config.allowSendNotification != null && _config.allowReceiveNotification != null;
 
   /// Update the selected file-server URL and persist the change to database.
   Future<void> updateSelectedFileServerUrl(String url) async {
     if (_config.selectedFileServerUrl == url) return;
     _config = _config.copyWith(selectedFileServerUrl: url);
+    await CircleConfigHelper.saveConfig(db, id, _config);
+  }
+  
+  /// Update allow send notification setting and persist the change to database.
+  Future<void> updateAllowSendNotification(bool value) async {
+    if (_config.allowSendNotification == value) return;
+    _config = _config.copyWith(allowSendNotification: value);
+    await CircleConfigHelper.saveConfig(db, id, _config);
+  }
+  
+  /// Update allow receive notification setting and persist the change to database.
+  Future<void> updateAllowReceiveNotification(bool value) async {
+    if (_config.allowReceiveNotification == value) return;
+    _config = _config.copyWith(allowReceiveNotification: value);
     await CircleConfigHelper.saveConfig(db, id, _config);
   }
 }

@@ -84,10 +84,14 @@ class SwitcherItemModel extends ListViewItem {
     super.subtitle,
     super.isUseMaterial,
     required this.value$,
+    this.onChanged,
   });
 
   @override
   ValueNotifier<bool> value$;
+  
+  // If provided, this handler will be called instead of directly modifying the value$.
+  final ValueChanged<bool>? onChanged;
 }
 
 class SelectedItemModel<T> extends ListViewItem {
