@@ -38,10 +38,6 @@ class _HomePageState extends State<HomePage> {
       valueListenable: LoginManager.instance.state$,
       builder: (context, loginState, child) {
         final loginAccount = loginState.account;
-        final pushToken = loginAccount?.pushToken;
-        if (LoginManager.instance.isLoginCircle && pushToken != null) {
-          CLPushIntegration.instance.uploadPushToken(pushToken);
-        }
         return AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
           switchInCurve: Curves.easeIn,

@@ -9,7 +9,6 @@ import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/ox_common.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
 import 'package:ox_common/utils/ox_chat_observer.dart';
-import 'package:ox_common/utils/chat_prompt_tone.dart';
 
 import 'decision_service.dart';
 import 'core/local_notifier.dart';
@@ -118,6 +117,8 @@ class CLPushIntegration with WidgetsBindingObserver, OXChatObserver {
       registeNotification(isRotation);
       return;
     }
+
+    CLPushIntegration.instance.uploadPushToken(accountPushToken);
   }
 
   void registeNotification(bool isRotation) {
@@ -181,6 +182,7 @@ class CLPushIntegration with WidgetsBindingObserver, OXChatObserver {
     final account = LoginManager.instance.currentState.account;
     if (account?.hasUpload == true) return true;
     if (!LoginManager.instance.isLoginCircle) return false;
+
     OKEvent okEvent = await NotificationHelper.sharedInstance.updateNotificationDeviceId(token);
     if (okEvent.status && account != null) {
       await LoginManager.instance.saveUploadPushTokenState(true);
