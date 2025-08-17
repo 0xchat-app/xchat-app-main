@@ -319,5 +319,9 @@
   "permanent_keypackage_confirm_content": "Generate a permanent link and publish it to circle relay, can be used multiple times",
   "regenerate_invite_link": "Regenerate Invite Link",
   "invite_link_regenerated": "Invite link regenerated successfully",
-  "regenerate_confirm_content": "This will generate a new keypackage"
+  "regenerate_confirm_content": "This will generate a new keypackage",
+  "select_logout_option": "Select Action",
+  "delete_account_confirm_title": "Delete Account",
+  "delete_account_confirm_content": "This action will permanently delete your account and all its data. This cannot be undone. Are you sure you want to continue?",
+  "delete_account_failed": "Failed to delete account"
 }

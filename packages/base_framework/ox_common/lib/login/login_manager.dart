@@ -312,6 +312,25 @@ extension LoginManagerAccount on LoginManager {
     }
   }
 
+  Future<bool> deleteAccount() async {
+    try {
+      final loginState = _state$.value;
+      final account = loginState.account;
+      if (account == null) return false;
+
+      final pubkey = account.pubkey;
+      
+      // First logout to clean up current state
+      await logout();
+      
+      // Delete account folder and all its contents
+      return await AccountPathManager.deleteAccountFolder(pubkey);
+    } catch (e) {
+      debugPrint('Failed to delete account: $e');
+      return false;
+    }
+  }
+
   Future<bool> savePushToken(String token) async {
     if (token.isEmpty) return false;
 

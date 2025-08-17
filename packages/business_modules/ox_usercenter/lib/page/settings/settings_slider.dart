@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/navigator/navigator.dart';
@@ -9,6 +9,8 @@ import 'package:ox_common/utils/string_utils.dart';
 import 'package:ox_common/utils/extension.dart';
 import 'package:ox_common/utils/font_size_notifier.dart';
 import 'package:ox_common/widgets/avatar.dart';
+import 'package:ox_common/widgets/common_loading.dart';
+import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_theme/ox_theme.dart';
 import 'package:ox_usercenter/page/settings/language_settings_page.dart';
@@ -21,6 +23,12 @@ import 'circle_detail_page.dart';
 import 'font_size_settings_page.dart';
 import 'profile_settings_page.dart';
 import 'qr_code_display_page.dart';
+
+/// Logout options for user selection
+enum LogoutOption {
+  logout,
+  deleteAccount,
+}
 
 class SettingSlider extends StatefulWidget {
   const SettingSlider({super.key});
@@ -328,6 +336,35 @@ class SettingSliderState extends State<SettingSlider> {
   }
 
   void logoutItemOnTap() async {
+    // Show picker with logout options
+    final logoutOption = await CLPicker.show<LogoutOption>(
+      context: context,
+      items: [
+        CLPickerItem<LogoutOption>(
+          label: Localized.text('ox_usercenter.Logout'),
+          value: LogoutOption.logout,
+        ),
+        CLPickerItem<LogoutOption>(
+          label: Localized.text('ox_usercenter.delete_account'),
+          value: LogoutOption.deleteAccount,
+          isDestructive: true,
+        ),
+      ],
+    );
+
+    if (logoutOption == null) return;
+
+    switch (logoutOption) {
+      case LogoutOption.logout:
+        await _confirmLogout();
+        break;
+      case LogoutOption.deleteAccount:
+        await _confirmDeleteAccount();
+        break;
+    }
+  }
+
+  Future<void> _confirmLogout() async {
     final shouldLogout = await CLAlertDialog.show<bool>(
       context: context,
       title: Localized.text('ox_usercenter.warn_title'),
@@ -345,6 +382,39 @@ class SettingSliderState extends State<SettingSlider> {
     if (shouldLogout == true) {
       await LoginManager.instance.logout();
       OXNavigator.popToRoot(context);
+    }
+  }
+
+  Future<void> _confirmDeleteAccount() async {
+    final shouldDelete = await CLAlertDialog.show<bool>(
+      context: context,
+      title: Localized.text('ox_usercenter.delete_account_confirm_title'),
+      content: Localized.text('ox_usercenter.delete_account_confirm_content'),
+      actions: [
+        CLAlertAction.cancel(),
+        CLAlertAction<bool>(
+          label: Localized.text('ox_usercenter.delete_account'),
+          value: true,
+          isDestructiveAction: true,
+        ),
+      ],
+    );
+
+    if (shouldDelete == true) {
+      OXLoading.show();
+      try {
+        final success = await LoginManager.instance.deleteAccount();
+        OXLoading.dismiss();
+        
+        if (success) {
+          OXNavigator.popToRoot(context);
+        } else {
+          CommonToast.instance.show(context, Localized.text('ox_usercenter.delete_account_failed'));
+        }
+      } catch (e) {
+        OXLoading.dismiss();
+        CommonToast.instance.show(context, '${Localized.text('ox_usercenter.delete_account_failed')}: $e');
+      }
     }
   }
 
