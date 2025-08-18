@@ -67,6 +67,7 @@ class _FontSizeSettingsPageState extends State<FontSizeSettingsPage> {
                       name: 'XChat',
                       content: 'Hello, Jack.\nGo to "Settings - Text Size", and drag the slider below to set the text size.',
                       picture: 'icon_chat_settings_left.png',
+                      isSender: true,
                     ),
                   ],
                 ),
@@ -97,11 +98,14 @@ class _FontSizeSettingsPageState extends State<FontSizeSettingsPage> {
       mainAxisAlignment: MainAxisAlignment.start,
       textDirection: isSender ? TextDirection.rtl : TextDirection.ltr,
       children: [
-        CommonImage(
-          iconName: picture,
-          width: 40.px,
-          height: 40.px,
-          package: 'ox_usercenter',
+        ClipRRect(
+          borderRadius: BorderRadius.circular(5.px),
+          child: CommonImage(
+            iconName: picture,
+            width: 40.px,
+            height: 40.px,
+            package: 'ox_usercenter',
+          ),
         ),
         SizedBox(width: 10.px),
         Expanded(
@@ -117,7 +121,7 @@ class _FontSizeSettingsPageState extends State<FontSizeSettingsPage> {
                   horizontal: CLLayout.horizontalPadding,
                 ),
                 decoration: BoxDecoration(
-                  color: isSender ? ColorToken.secondaryContainer.of(context) : ColorToken.surfaceContainer.of(context),
+                  color: isSender ? ColorToken.primary.of(context) : ColorToken.surfaceContainer.of(context),
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(isSender ? 16.px : 0),
                     topRight: Radius.circular(isSender ? 0 : 16.px),
