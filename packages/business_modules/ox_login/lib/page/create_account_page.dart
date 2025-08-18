@@ -78,6 +78,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> with LoginManager
   @override
   Widget build(BuildContext context) {
     return CLScaffold(
+      backgroundColor: ColorToken.surface.of(context), // Set pure white background to avoid grayish tint
       appBar: CLAppBar(
         title: Localized.text('ox_login.create_account'),
       ),

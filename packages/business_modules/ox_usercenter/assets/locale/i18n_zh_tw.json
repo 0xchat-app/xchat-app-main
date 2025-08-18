@@ -251,6 +251,6 @@
   "unsupported_server": "此伺服器不受支援",
   "select_logout_option": "選擇操作",
   "delete_account_confirm_title": "刪除帳戶",
-  "delete_account_confirm_content": "此操作將永久刪除您的帳戶和所有數據。此操作無法撤銷。您確定要繼續嗎？",
+  "delete_account_confirm_content": "此操作將永久刪除您的帳戶和本地數據，包括訊息和媒體檔案。此操作無法撤銷。您確定要繼續嗎？",
   "delete_account_failed": "刪除帳戶失敗"
 }
