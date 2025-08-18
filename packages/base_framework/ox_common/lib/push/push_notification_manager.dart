@@ -104,8 +104,9 @@ class CLPushNotificationManager {
   }
 
   Future<void> _initializeDefaultConfiguration(Circle circle) async {
-    await setAllowSendNotification(true);
-    await setAllowReceiveNotification(true).then((isSuccess) {
+    final hasPermission = await _checkNativePushPermission();
+    await setAllowSendNotification(hasPermission);
+    await setAllowReceiveNotification(hasPermission).then((isSuccess) {
       if (!isSuccess) setAllowReceiveNotification(false);
     });
   }
