@@ -48,5 +48,22 @@
   "carousel_title_3": "Verschlüsselte lokale Speicherung",
   "carousel_text_3": "Chats sind verschlüsselt und auf Ihrem Gerät gespeichert.",
   "carousel_title_4": "Anonyme Nachrichtenübermittlung",
-  "carousel_text_4": "Keine Telefonnummer. Keine E-Mail. Nur reine Anonymität."
+  "carousel_text_4": "Keine Telefonnummer. Keine E-Mail. Nur reine Anonymität.",
+  
+  "enter_nostr_key_or_remote_signer": "Geben Sie Ihren Nostr-Privatschlüssel oder Remote-Signer-URI-Link ein.",
+  "learn_more": "Mehr erfahren",
+  "understanding_nostr_relay": "Nostr verstehen",
+  "nostr_intro_subtitle": "Erfahren Sie mehr über Nostr und wie Sie es sicher verwenden können",
+  "what_is_nostr_title": "Was ist Nostr?",
+  "nostr_explanation": "Nostr ist ein dezentrales, zensurresistentes Social-Media-Protokoll. Es ermöglicht es Benutzern, direkt zu kommunizieren, ohne sich auf zentrale Server zu verlassen, und verwendet kryptografische Schlüssel für Identität und Verschlüsselung.",
+  "nostr_private_key_title": "Nostr-Privatschlüssel",
+  "nostr_private_key_explanation": "Ein Nostr-Privatschlüssel ist ein geheimer kryptografischer Schlüssel, der Ihre Identität beweist und es Ihnen ermöglicht, Nachrichten zu signieren. Es ist wie ein Passwort, das Ihnen Zugang zu Ihrem Konto gibt.",
+  "nsec_format_explanation": "Privatschlüssel werden typischerweise als 'nsec1...' formatiert, gefolgt von einer langen Zeichenkette. Dieses Format macht sie leicht zu identifizieren und in Nostr-Anwendungen zu verwenden.",
+  "remote_signer_title": "Remote-Signer",
+  "remote_signer_explanation": "Ein Remote-Signer ist ein Dienst, der Ihren Privatschlüssel sicher aufbewahrt und Nachrichten in Ihrem Namen signiert. Dies ermöglicht es Ihnen, Nostr zu verwenden, ohne sensible Schlüssel auf Ihrem Gerät zu speichern.",
+  "bunker_protocol_explanation": "Das Bunker-Protokoll (NIP-46) ermöglicht eine sichere Kommunikation zwischen Ihrem Gerät und Remote-Signern und stellt sicher, dass Ihr Privatschlüssel niemals die sichere Umgebung verlässt.",
+  "how_to_use_title": "Verwendung",
+  "how_to_use_step_1": "Geben Sie Ihren nsec-Privatschlüssel für die direkte Anmeldung ein",
+  "how_to_use_step_2": "Oder verwenden Sie eine bunker:// URI für die Remote-Signer-Anmeldung",
+  "how_to_use_step_3": "Die App wird sich sicher verbinden und Sie authentifizieren"
 }

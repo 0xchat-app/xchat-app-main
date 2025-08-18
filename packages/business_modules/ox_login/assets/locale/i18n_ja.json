@@ -50,5 +50,22 @@
   "carousel_title_4": "匿名メッセージング",
   "carousel_text_4": "電話番号不要。メール不要。純粋な匿名性のみ。",
   "public_key_tips": "始める前に、nostrアカウントIDを保存する必要があります。家族や友達と共有できます。タップしてコピー！",
-  "private_key_tips": "これはあなたの秘密のアカウントキーです。アカウントにアクセスするために必要です。XChatをアンインストールした場合、将来ログインできなくなります。誰とも共有しないでください！パスワードマネージャーに保存して安全に保管してください！"
+  "private_key_tips": "これはあなたの秘密のアカウントキーです。アカウントにアクセスするために必要です。XChatをアンインストールした場合、将来ログインできなくなります。誰とも共有しないでください！パスワードマネージャーに保存して安全に保管してください！",
+  
+  "enter_nostr_key_or_remote_signer": "nostr秘密鍵またはリモート署名者URIリンクを入力してください。",
+  "learn_more": "詳細を見る",
+  "understanding_nostr_relay": "Nostrについて",
+  "nostr_intro_subtitle": "Nostrについて学び、安全に使用する方法を理解しましょう",
+  "what_is_nostr_title": "Nostrとは？",
+  "nostr_explanation": "Nostrは分散型で検閲に強いソーシャルメディアプロトコルです。中央サーバーに依存せず、暗号化キーを使用してアイデンティティと暗号化を行うことで、ユーザーが直接通信できるようにします。",
+  "nostr_private_key_title": "Nostr秘密鍵",
+  "nostr_private_key_explanation": "Nostr秘密鍵は、あなたのアイデンティティを証明し、メッセージに署名できるようにする秘密の暗号化キーです。アカウントにアクセスできるようにするパスワードのようなものです。",
+  "nsec_format_explanation": "秘密鍵は通常、'nsec1...'で始まり、その後に長い文字列が続く形式です。この形式により、Nostrアプリケーションで識別しやすく使用しやすくなります。",
+  "remote_signer_title": "リモート署名者",
+  "remote_signer_explanation": "リモート署名者は、あなたの秘密鍵を安全に保持し、あなたに代わってメッセージに署名するサービスです。これにより、デバイスに機密キーを保存せずにNostrを使用できます。",
+  "bunker_protocol_explanation": "Bunkerプロトコル（NIP-46）は、あなたのデバイスとリモート署名者間の安全な通信を可能にし、あなたの秘密鍵が安全な環境を離れることがないようにします。",
+  "how_to_use_title": "使用方法",
+  "how_to_use_step_1": "直接ログインするためにnsec秘密鍵を入力",
+  "how_to_use_step_2": "またはリモート署名者ログインのためにbunker:// URIを使用",
+  "how_to_use_step_3": "アプリが安全に接続し、あなたを認証します"
 }

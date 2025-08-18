@@ -107,5 +107,22 @@
   "relay_intro_how_step_1": "用户连接到一个或多个中继来发送和接收消息。",
   "relay_intro_how_step_2": "消息发送到中继进行存储和转发给其他连接的客户端。",
   "relay_intro_how_step_3": "中继将消息广播给所有订阅相关内容的连接用户。",
-  "relay_intro_how_step_4": "您的客户端从连接的中继接收和处理消息。"
+  "relay_intro_how_step_4": "您的客户端从连接的中继接收和处理消息。",
+  
+  "enter_nostr_key_or_remote_signer": "输入您的nostr私钥或远程签名器URI链接。",
+  "learn_more": "了解更多",
+  "understanding_nostr_relay": "了解Nostr",
+  "nostr_intro_subtitle": "了解Nostr以及如何安全使用它",
+  "what_is_nostr_title": "什么是Nostr？",
+  "nostr_explanation": "Nostr是一个去中心化、抗审查的社交媒体协议。它允许用户直接通信，无需依赖中央服务器，使用加密密钥进行身份验证和加密。",
+  "nostr_private_key_title": "Nostr私钥",
+  "nostr_private_key_explanation": "Nostr私钥是一个秘密的加密密钥，用于证明您的身份并允许您签名消息。它就像是一个密码，让您能够访问您的账户。",
+  "nsec_format_explanation": "私钥通常格式为'nsec1...'后跟一长串字符。这种格式使它们易于识别并在Nostr应用程序中使用。",
+  "remote_signer_title": "远程签名器",
+  "remote_signer_explanation": "远程签名器是一个安全保存您私钥并代表您签名消息的服务。这允许您使用Nostr而无需在设备上存储敏感密钥。",
+  "bunker_protocol_explanation": "Bunker协议（NIP-46）实现了您的设备与远程签名器之间的安全通信，确保您的私钥永远不会离开安全环境。",
+  "how_to_use_title": "如何使用",
+  "how_to_use_step_1": "输入您的nsec私钥进行直接登录",
+  "how_to_use_step_2": "或使用bunker:// URI进行远程签名器登录",
+  "how_to_use_step_3": "应用程序将安全连接并验证您的身份"
 }

@@ -14,6 +14,9 @@ import 'package:ox_localizable/ox_localizable.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_module_service/ox_module_service.dart';
 
+// local
+import 'nostr_introduction_page.dart';
+
 class AccountKeyLoginPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -107,10 +110,15 @@ class _AccountKeyLoginPageState extends State<AccountKeyLoginPage> with LoginMan
         
         SizedBox(height: 12.px),
 
-        CLDescription(
-          '${Localized.text('ox_login.nsec_explanation')}\n'
-          '${Localized.text('ox_login.bunker_explanation')}\n',
-          title: Localized.text('ox_login.account_key_explanation_title'),
+        // Simple section footer with "Learn More" link
+        CLDescription.forSectionFooter(
+          '${Localized.text('ox_login.enter_nostr_key_or_remote_signer')} ${Localized.text('ox_login.learn_more')}',
+          rules: [
+            CLHighlightRule(
+              pattern: Localized.text('ox_login.learn_more'),
+              onTap: (_) => _showNostrExplanationDialog(context),
+            ),
+          ],
         ),
         
         SizedBox(height: 8.px),
@@ -265,5 +273,14 @@ class _AccountKeyLoginPageState extends State<AccountKeyLoginPage> with LoginMan
     }
     
     CommonToast.instance.show(context, errorMessage);
+  }
+
+  /// Show dialog explaining Nostr concepts
+  void _showNostrExplanationDialog(BuildContext context) {
+    OXNavigator.pushPage(
+      context,
+      (context) => const NostrIntroductionPage(),
+      type: OXPushPageType.present,
+    );
   }
 }

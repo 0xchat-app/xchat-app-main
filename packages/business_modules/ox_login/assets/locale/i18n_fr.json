@@ -48,5 +48,22 @@
   "carousel_title_3": "Stockage local chiffré",
   "carousel_text_3": "Les chats sont chiffrés et stockés sur votre appareil.",
   "carousel_title_4": "Messagerie anonyme",
-  "carousel_text_4": "Pas de numéro de téléphone. Pas d'e-mail. Juste une pure anonymité."
+  "carousel_text_4": "Pas de numéro de téléphone. Pas d'e-mail. Juste une pure anonymité.",
+  
+  "enter_nostr_key_or_remote_signer": "Entrez votre clé privée nostr ou le lien URI du signataire distant.",
+  "learn_more": "En savoir plus",
+  "understanding_nostr_relay": "Comprendre Nostr",
+  "nostr_intro_subtitle": "Apprenez-en plus sur Nostr et comment l'utiliser en toute sécurité",
+  "what_is_nostr_title": "Qu'est-ce que Nostr ?",
+  "nostr_explanation": "Nostr est un protocole de médias sociaux décentralisé et résistant à la censure. Il permet aux utilisateurs de communiquer directement sans dépendre de serveurs centralisés, en utilisant des clés cryptographiques pour l'identité et le chiffrement.",
+  "nostr_private_key_title": "Clé privée Nostr",
+  "nostr_private_key_explanation": "Une clé privée Nostr est une clé cryptographique secrète qui prouve votre identité et vous permet de signer des messages. C'est comme un mot de passe qui vous donne accès à votre compte.",
+  "nsec_format_explanation": "Les clés privées sont généralement formatées comme 'nsec1...' suivi d'une longue chaîne de caractères. Ce format les rend faciles à identifier et à utiliser dans les applications Nostr.",
+  "remote_signer_title": "Signataire distant",
+  "remote_signer_explanation": "Un signataire distant est un service qui détient votre clé privée en toute sécurité et signe des messages en votre nom. Cela vous permet d'utiliser Nostr sans stocker de clés sensibles sur votre appareil.",
+  "bunker_protocol_explanation": "Le protocole Bunker (NIP-46) permet une communication sécurisée entre votre appareil et les signataires distants, garantissant que votre clé privée ne quitte jamais l'environnement sécurisé.",
+  "how_to_use_title": "Comment utiliser",
+  "how_to_use_step_1": "Entrez votre clé privée nsec pour la connexion directe",
+  "how_to_use_step_2": "Ou utilisez une URI bunker:// pour la connexion du signataire distant",
+  "how_to_use_step_3": "L'application se connectera en toute sécurité et vous authentifiera"
 }

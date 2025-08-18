@@ -48,5 +48,22 @@
   "carousel_title_3": "Almacenamiento local cifrado",
   "carousel_text_3": "Los chats están cifrados y almacenados en tu dispositivo.",
   "carousel_title_4": "Mensajería anónima",
-  "carousel_text_4": "Sin número de teléfono. Sin correo electrónico. Solo puro anonimato."
+  "carousel_text_4": "Sin número de teléfono. Sin correo electrónico. Solo puro anonimato.",
+  
+  "enter_nostr_key_or_remote_signer": "Ingresa tu clave privada nostr o el enlace URI del firmante remoto.",
+  "learn_more": "Saber más",
+  "understanding_nostr_relay": "Entender Nostr",
+  "nostr_intro_subtitle": "Aprende sobre Nostr y cómo usarlo de forma segura",
+  "what_is_nostr_title": "¿Qué es Nostr?",
+  "nostr_explanation": "Nostr es un protocolo de redes sociales descentralizado y resistente a la censura. Permite a los usuarios comunicarse directamente sin depender de servidores centralizados, usando claves criptográficas para identidad y encriptación.",
+  "nostr_private_key_title": "Clave privada Nostr",
+  "nostr_private_key_explanation": "Una clave privada Nostr es una clave criptográfica secreta que prueba tu identidad y te permite firmar mensajes. Es como una contraseña que te da acceso a tu cuenta.",
+  "nsec_format_explanation": "Las claves privadas típicamente se formatean como 'nsec1...' seguido de una larga cadena de caracteres. Este formato las hace fáciles de identificar y usar en aplicaciones Nostr.",
+  "remote_signer_title": "Firmante remoto",
+  "remote_signer_explanation": "Un firmante remoto es un servicio que mantiene tu clave privada de forma segura y firma mensajes en tu nombre. Esto te permite usar Nostr sin almacenar claves sensibles en tu dispositivo.",
+  "bunker_protocol_explanation": "El protocolo Bunker (NIP-46) permite comunicación segura entre tu dispositivo y firmantes remotos, asegurando que tu clave privada nunca salga del entorno seguro.",
+  "how_to_use_title": "Cómo usar",
+  "how_to_use_step_1": "Ingresa tu clave privada nsec para inicio de sesión directo",
+  "how_to_use_step_2": "O usa una URI bunker:// para inicio de sesión del firmante remoto",
+  "how_to_use_step_3": "La aplicación se conectará de forma segura y te autenticará"
 }
