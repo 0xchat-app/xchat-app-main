@@ -222,6 +222,12 @@ class _SessionListWidgetState extends State<SessionListWidget> {
     }
   }
 
+  bool _isInGroup(SessionListViewModel item) {
+    final groupId = item.sessionModel.groupId;
+    return groupId != null && groupId.isNotEmpty && 
+           Groups.sharedInstance.checkInMyGroupList(groupId);
+  }
+
   Future<void> _showSelfChatDeleteOptions(BuildContext context, SessionListViewModel item) async {
     final result = await CLPicker.show<SessionDeleteAction>(
       context: context,
@@ -263,11 +269,12 @@ class _SessionListWidgetState extends State<SessionListWidget> {
           value: SessionDeleteAction.singleDeleteForMe,
           isDestructive: true,
         ),
-        CLPickerItem(
-          label: Localized.text('ox_chat.delete_for_me_and_user').replaceAll(r'${userName}', otherUserName),
-          value: SessionDeleteAction.singleDeleteForAll,
-          isDestructive: true,
-        ),
+        if (_isInGroup(item))
+          CLPickerItem(
+            label: Localized.text('ox_chat.delete_for_me_and_user').replaceAll(r'${userName}', otherUserName),
+            value: SessionDeleteAction.singleDeleteForAll,
+            isDestructive: true,
+          ),
       ],
     );
 
@@ -286,11 +293,12 @@ class _SessionListWidgetState extends State<SessionListWidget> {
           label: Localized.text('ox_chat.clear_history'),
           value: SessionDeleteAction.clearHistory,
         ),
-        CLPickerItem(
-          label: Localized.text('ox_chat.delete_for_all_members'),
-          value: SessionDeleteAction.groupDeleteForAll,
-          isDestructive: true,
-        ),
+        if (_isInGroup(item))
+          CLPickerItem(
+            label: Localized.text('ox_chat.delete_for_all_members'),
+            value: SessionDeleteAction.groupDeleteForAll,
+            isDestructive: true,
+          ),
       ],
     );
 
@@ -310,11 +318,12 @@ class _SessionListWidgetState extends State<SessionListWidget> {
           label: Localized.text('ox_chat.clear_history'),
           value: SessionDeleteAction.clearHistory,
         ),
-        CLPickerItem(
-          label: Localized.text('ox_chat.delete_group_item'),
-          value: SessionDeleteAction.groupDeleteForMe,
-          isDestructive: true,
-        ),
+        if (_isInGroup(item))
+          CLPickerItem(
+            label: Localized.text('ox_chat.delete_group_item'),
+            value: SessionDeleteAction.groupDeleteForMe,
+            isDestructive: true,
+          ),
       ],
     );
 
