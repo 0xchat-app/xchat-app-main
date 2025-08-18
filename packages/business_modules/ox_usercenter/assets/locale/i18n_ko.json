@@ -65,6 +65,7 @@
   "version": "버전",
   "sign_out": "로그아웃",
   "delete_account": "계정 삭제",
+  "delete_account_confirm": "삭제",
   "warn_title": "경고",
   "sign_out_dialog_content": "개인 키를 백업했는지 확인하세요. 그렇지 않으면 계정에 접근할 수 없을 위험이 있습니다.",
   "delete_account_dialog_content": "이 작업은 이 계정을 삭제하는 이벤트를 생성합니다.\n\n이 계정 키로 XChat에 로그인할 수 없게 됩니다.\n\n계속하시겠습니까?",

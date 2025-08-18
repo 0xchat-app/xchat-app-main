@@ -65,6 +65,7 @@
   "version": "Version",
   "sign_out": "Abmelden",
   "delete_account": "Konto löschen",
+  "delete_account_confirm": "Löschen",
   "warn_title": "Warnung",
   "sign_out_dialog_content": "Stellen Sie sicher, dass Sie Ihren privaten Schlüssel gesichert haben. Andernfalls riskieren Sie den Zugang zu Ihrem Konto zu verlieren.",
   "delete_account_dialog_content": "Dies wird ein Ereignis auslösen, das dieses Konto löscht.\n\nSie können sich dann nicht mehr bei XChat mit diesem Kontoschlüssel anmelden.\n\nSind Sie sicher, dass Sie fortfahren möchten?",

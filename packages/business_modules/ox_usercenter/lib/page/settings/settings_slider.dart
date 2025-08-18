@@ -393,7 +393,7 @@ class SettingSliderState extends State<SettingSlider> {
       actions: [
         CLAlertAction.cancel(),
         CLAlertAction<bool>(
-          label: Localized.text('ox_usercenter.delete_account'),
+          label: Localized.text('ox_usercenter.delete_account_confirm'),
           value: true,
           isDestructiveAction: true,
         ),

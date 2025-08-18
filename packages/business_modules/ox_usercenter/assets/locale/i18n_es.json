@@ -65,6 +65,7 @@
   "version": "Versión",
   "sign_out": "Cerrar sesión",
   "delete_account": "Eliminar Cuenta",
+  "delete_account_confirm": "Eliminar",
   "warn_title": "Advertencia",
   "sign_out_dialog_content": "Asegúrate de haber respaldado tu clave privada. De lo contrario, podrías perder acceso a tu cuenta.",
   "delete_account_dialog_content": "Esto generará un evento que eliminará esta cuenta.\\n\\nYa no podrás acceder a XChat con esta clave de cuenta.\\n\\n¿Estás seguro de que quieres continuar?",

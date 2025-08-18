@@ -65,6 +65,7 @@
   "version": "Version",
   "sign_out": "Se déconnecter",
   "delete_account": "Supprimer le compte",
+  "delete_account_confirm": "Supprimer",
   "warn_title": "Avertissement",
   "sign_out_dialog_content": "Assurez-vous d'avoir sauvegardé votre clé privée. Sinon, vous risquez de perdre l'accès à votre compte.",
   "delete_account_dialog_content": "Ceci entraînera la suppression de ce compte.\n\nVous ne pourrez plus vous connecter à XChat avec cette clé de compte.\n\nÊtes-vous sûr de vouloir continuer ?",

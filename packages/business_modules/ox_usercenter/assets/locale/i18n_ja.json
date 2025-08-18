@@ -63,6 +63,7 @@
   "version": "バージョン",
   "sign_out": "サインアウト",
   "delete_account": "アカウントを削除",
+  "delete_account_confirm": "削除",
   "warn_title": "警告",
   "sign_out_dialog_content": "プライベートキーのバックアップを確認してください。そうしないと、アカウントへのアクセスを失う可能性があります。",
   "delete_account_dialog_content": "これによって、このアカウントを削除するイベントが署名されます。\n\nこれ以降、このアカウントキーでXChatにログインすることはできません。\n\n本当に続行しますか？",

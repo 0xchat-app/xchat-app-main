@@ -68,6 +68,7 @@
   "text_size": "文字大小",
   "sign_out": "登出",
   "delete_account": "删除账号",
+  "delete_account_confirm": "删除",
   "warn_title": "警告",
   "sign_out_dialog_content": "确保你已备份私钥，否则可能会失去账户访问权限。",
   "delete_account_dialog_content": "这将删除此帐户。\n\n你将无法再用这个帐户密钥登录XChat。\n\n确定继续吗？",
