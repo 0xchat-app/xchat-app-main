@@ -63,11 +63,12 @@ class CLPushNotificationManager {
       // Check push permission
       final hasPermission = await _checkNativePushPermission();
       if (!hasPermission) {
-        final shouldGoToSettings = await _showPermissionDialog();
-        if (shouldGoToSettings) {
-          await openAppSettings();
-        }
-        return false;
+        _showPermissionDialog().then((shouldGoToSettings) {
+          if (shouldGoToSettings) {
+            openAppSettings();
+          }
+        });
+        return true;
       }
       
       final success = await _uploadPushToken();
