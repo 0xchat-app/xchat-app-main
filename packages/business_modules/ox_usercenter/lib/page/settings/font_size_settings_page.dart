@@ -58,13 +58,13 @@ class _FontSizeSettingsPageState extends State<FontSizeSettingsPage> {
                   children: [
                     _buildChatWidget(
                       name: 'Jack',
-                      content: 'Hello, 0xChat.\nHow can I set the text size?',
+                      content: 'Hello, XChat.\nHow can I set the text size?',
                       picture: 'icon_chat_settings_right.png',
                       isSender: false,
                     ),
                     SizedBox(height: 16.px),
                     _buildChatWidget(
-                      name: '0xchat',
+                      name: 'XChat',
                       content: 'Hello, Jack.\nGo to "Settings - Text Size", and drag the slider below to set the text size.',
                       picture: 'icon_chat_settings_left.png',
                     ),
