@@ -873,6 +873,7 @@ extension LoginManagerCircle on LoginManager {
       channelsUpdatedCallBack: Channels.sharedInstance.myChannelsUpdatedCallBack,
       groupsUpdatedCallBack: Groups.sharedInstance.myGroupsUpdatedCallBack,
       relayGroupsUpdatedCallBack: RelayGroup.sharedInstance.myGroupsUpdatedCallBack,
+      pushServerRelay: 'ws://www.0xchat.com:9090'
     );
     await ChatCoreManager().initChatCoreWithConfig(config);
     LoginUserNotifier.instance.updateUserSource(Account.sharedInstance.getUserNotifier(pubkey));
