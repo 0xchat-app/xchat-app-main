@@ -105,7 +105,7 @@ class SessionHelper {
       // self-chat
       if (members.length == 1 && members.first.pubKey == currentUserPubkey) {
         receiverPubkey = currentUserPubkey;
-      } else if (members.length == 1) {
+      } else if (members.length == 2) {
         for (final member in members) {
           if (member.pubKey != currentUserPubkey) {
             receiverPubkey = member.pubKey;

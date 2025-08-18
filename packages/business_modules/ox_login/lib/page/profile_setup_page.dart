@@ -30,6 +30,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
   void initState() {
     super.initState();
     _setupDefaultValue();
+    _silentlySaveAvatar();
   }
 
   void _setupDefaultValue() {
@@ -39,6 +40,20 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
     final npub = account.getEncodedPubkey();
     _nameController.text = UsernameGenerator.generateUsername(npub);
     _avatarUrl = OXUserAvatar.clientAvatar(npub);
+  }
+
+  Future<void> _silentlySaveAvatar() async {
+    final user = Account.sharedInstance.me;
+    if (user == null) return;
+    
+    final account = LoginManager.instance.currentState.account;
+    if (account == null) return;
+
+    final npub = account.getEncodedPubkey();
+    final avatarUrl = OXUserAvatar.clientAvatar(npub);
+    
+    user.picture = avatarUrl;
+    await Account.sharedInstance.updateProfile(user);
   }
 
   @override
@@ -72,9 +87,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
         horizontal: CLLayout.horizontalPadding,
       ),
       children: [
-        _buildHeader(),
-        SizedBox(height: 12.px),
-        _buildAvatarSection(),
+        _buildNicknameHeader(),
         SizedBox(height: 12.px),
         _buildNameSection(),
         // SizedBox(height: 24.px),
@@ -83,7 +96,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildNicknameHeader() {
     final title = Localized.text('ox_login.setup_profile_header_title');
     final subtitle = Localized.text('ox_login.setup_profile_header_subtitle');
     return Column(
@@ -104,44 +117,10 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
     );
   }
 
-  Widget _buildAvatarSection() {
-    return Column(
-      children: [
-        Hero(
-          tag: 'profile_avatar_hero',
-          child: _buildAvatarWidget(),
-        ),
-        SizedBox(height: 12.px),
-        CLButton.tonal(
-          child: CLText.labelLarge('Edit Photo'),
-          height: 30.px,
-          padding: EdgeInsets.symmetric(
-            horizontal: 12.px,
-            vertical: 5.px,
-          ),
-          onTap: _onAvatarTap,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildAvatarWidget() {
-    return OXUserAvatar(
-      imageUrl: _avatarUrl,
-      size: 100.px,
-      onTap: _onAvatarTap,
-    );
-  }
-
   Widget _buildNameSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CLText.titleMedium(
-          'Nickname',
-          colorToken: ColorToken.onSurface,
-        ),
-        SizedBox(height: 12.px),
         CLTextField(
           controller: _nameController,
           placeholder: Localized.text('ox_login.profile_name_placeholder'),
@@ -164,59 +143,6 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
     );
   }
 
-  Future<void> _onAvatarTap() async {
-    await _openAvatarDisplayPage();
-    if (mounted) setState(() {});
-  }
-
-  Future<void> _openAvatarDisplayPage() async {
-    try {
-      await OXModuleService.pushPage(
-        context,
-        'ox_usercenter',
-        'AvatarDisplayPage',
-        {
-          'heroTag': 'profile_avatar_hero',
-          'avatarUrl': _avatarUrl,
-          'showEditButton': true,
-        },
-      );
-    } catch (_) {
-      await _showAvatarUrlDialog();
-    }
-  }
-
-  Future<void> _showAvatarUrlDialog() async {
-    final TextEditingController urlController = TextEditingController(text: _avatarUrl ?? '');
-
-    final result = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: CLText.titleMedium(Localized.text('ox_login.enter_avatar_url')),
-        content: CLTextField(
-          controller: urlController,
-          placeholder: 'https://example.com/avatar.jpg',
-        ),
-        actions: [
-          CLButton.text(
-            text: Localized.text('ox_common.cancel'),
-            onTap: () => OXNavigator.pop(context),
-          ),
-          CLButton.filled(
-            text: Localized.text('ox_common.confirm'),
-            onTap: () => OXNavigator.pop(context, urlController.text.trim()),
-          ),
-        ],
-      ),
-    );
-
-    if (result != null && result.isNotEmpty) {
-      setState(() {
-        _avatarUrl = result;
-      });
-    }
-  }
-
   Future<void> _onSaveProfileTap() async {
     if (_isSaving) return;
 
@@ -230,7 +156,6 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
         return;
       }
       user.name = _nameController.text.trim();
-      user.picture = _avatarUrl;
       final success = (await Account.sharedInstance.updateProfile(user)) != null;
       OXLoading.dismiss();
 
@@ -246,7 +171,7 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
       OXLoading.dismiss();
       setState(() { _isSaving = false; });
       if (mounted) {
-        CommonToast.instance.show(context, 'Failed to save profile: ${e.toString()}');
+        CommonToast.instance.show(context, 'Failed to save nickname: ${e.toString()}');
       }
     }
   }
