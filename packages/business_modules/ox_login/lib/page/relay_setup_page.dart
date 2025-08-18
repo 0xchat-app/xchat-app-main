@@ -6,7 +6,7 @@ import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_common/utils/circle_join_utils.dart';
-import 'package:ox_common/page/circle_introduction_page.dart';
+import 'nostr_relay_introduction_page.dart';
 
 /// Relay setup page for adding relay and creating circle
 /// 
@@ -207,7 +207,7 @@ class _RelaySetupPageState extends State<RelaySetupPage> {
   void _onLearnMoreTap() {
     OXNavigator.pushPage(
       context,
-      (context) => const CircleIntroductionPage(),
+      (context) => const NostrRelayIntroductionPage(),
       type: OXPushPageType.present,
     );
   }

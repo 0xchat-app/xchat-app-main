@@ -94,5 +94,18 @@
   "username_generated": "生成新用户名：{username}",
   "username_generation_failed": "生成新用户名失败",
   "public_key_tips": "在开始之前，您需要保存您的nostr账户ID。您可以与家人或朋友分享。点击复制！",
-  "private_key_tips": "这是您的秘密账户密钥。您需要它来访问您的账户。如果您将来卸载0xchat，您将无法登录。不要与任何人分享！将其保存在密码管理器中并妥善保管！"
+  "private_key_tips": "这是您的秘密账户密钥。您需要它来访问您的账户。如果您将来卸载XChat，您将无法登录。不要与任何人分享！将其保存在密码管理器中并妥善保管！",
+  
+  "relay_intro_title": "Nostr中继指南",
+  "relay_intro_subtitle": "了解Nostr中继",
+  "relay_intro_description": "了解Nostr中继的工作原理以及为什么它们对去中心化通信至关重要。中继是Nostr网络的后端服务器，在客户端之间存储和转发消息。",
+  "relay_intro_what_title": "什么是Nostr中继？",
+  "relay_intro_what_1": "中继就像是Nostr的后端服务器，允许客户端发送、存储和广播消息。",
+  "relay_intro_what_2": "中继可能会也可能不会存储消息，并将它们广播给所有其他连接的客户端。",
+  "relay_intro_what_3": "将中继想象成邮局，它们递送您的消息而无法读取内容。",
+  "relay_intro_how_title": "中继如何工作？",
+  "relay_intro_how_step_1": "用户连接到一个或多个中继来发送和接收消息。",
+  "relay_intro_how_step_2": "消息发送到中继进行存储和转发给其他连接的客户端。",
+  "relay_intro_how_step_3": "中继将消息广播给所有订阅相关内容的连接用户。",
+  "relay_intro_how_step_4": "您的客户端从连接的中继接收和处理消息。"
 }

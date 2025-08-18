@@ -5,6 +5,7 @@ export 'page/account_key_login_page.dart';
 export 'page/create_account_page.dart';
 export 'page/relay_setup_page.dart';
 export 'page/profile_setup_page.dart';
+export 'page/nostr_relay_introduction_page.dart';
 
 // Export utilities
 export 'utils/login_flow_manager.dart';
