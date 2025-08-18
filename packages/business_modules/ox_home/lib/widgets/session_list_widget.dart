@@ -569,10 +569,9 @@ class _SessionListWidgetState extends State<SessionListWidget> {
           valueListenable: item.groupMember$,
           builder: (context, groupMember, _) {
             final size = 40.px;
-            if (item.isSingleChat) {
-              return BaseAvatarWidget(
-                imageUrl: item.iconUrl,
-                defaultImageName: item.defaultIcon,
+            if (entity is UserDBISAR) {
+              return OXUserAvatar(
+                user: entity,
                 size: size,
                 isCircular: true,
               );
