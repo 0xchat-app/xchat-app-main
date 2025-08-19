@@ -363,6 +363,14 @@ class _ClientAvatarState extends State<ClientAvatar> {
   }
 
   @override
+  void didUpdateWidget(covariant ClientAvatar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.npub != widget.npub) {
+      imageFile = AvatarGenerator.instance.generateAvatar(npub: widget.npub);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final radius = widget.isCircular ? widget.size : CLLayout.avatarRadius;
     return GestureDetector(
