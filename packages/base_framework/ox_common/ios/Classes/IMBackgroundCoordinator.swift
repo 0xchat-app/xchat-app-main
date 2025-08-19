@@ -20,7 +20,7 @@ final class IMBackgroundCoordinator {
         init(bgRefreshIdentifier: String,
              bgProcessingIdentifier: String,
              urlSessionIdentifier: String,
-             defaultAddTimeSeconds: TimeInterval = 28) {
+             defaultAddTimeSeconds: TimeInterval = 27) {
             self.bgRefreshIdentifier = bgRefreshIdentifier
             self.bgProcessingIdentifier = bgProcessingIdentifier
             self.urlSessionIdentifier = urlSessionIdentifier
