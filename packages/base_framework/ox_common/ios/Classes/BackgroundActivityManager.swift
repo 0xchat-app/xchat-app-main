@@ -13,22 +13,29 @@ final class BackgroundActivityManager {
 
     enum EndReason { case normal, expired }
 
-    private struct Callback {
+    private struct EndCallback {
         let queue: DispatchQueue
-        let block: (EndReason) -> Void
+        let handler: (EndReason) -> Void
     }
 
-    private struct Entry {
-        var id: UIBackgroundTaskIdentifier
-        var ref: Int
-        var expired: Bool
-        var ended: Bool
-        var timeout: DispatchWorkItem?
-        var callbacks: [Callback]
+    private struct TaskEntry {
+        var taskIdentifier: UIBackgroundTaskIdentifier
+        var referenceCount: Int
+        var didExpire: Bool
+        var didEnd: Bool
+        var timeoutWorkItem: DispatchWorkItem?
+        var callbacks: [EndCallback]
     }
 
-    private let q = DispatchQueue(label: "xchat.bg.manager.sync")
-    private var map: [String: Entry] = [:]
+    private typealias EndInfo = (
+        taskId: UIBackgroundTaskIdentifier,
+        timeoutItem: DispatchWorkItem?,
+        callbacks: [EndCallback],
+        reason: EndReason
+    )
+
+    private let stateQueue = DispatchQueue(label: "xchat.bg.manager.sync")
+    private var entries: [String: TaskEntry] = [:]
 
     func start(
         key: String,
@@ -37,73 +44,91 @@ final class BackgroundActivityManager {
         onEnd: ((EndReason) -> Void)? = nil,
         callbackQueue: DispatchQueue = .main
     ) {
-        _ = q.sync { () -> UIBackgroundTaskIdentifier in
-            if var e = map[key], e.id != .invalid, !e.expired {
-                e.ref += 1
+        _ = stateQueue.sync { () -> UIBackgroundTaskIdentifier in
+            if var entry = entries[key], !entry.didEnd, !entry.didExpire {
+                entry.referenceCount += 1
                 if let onEnd = onEnd {
-                    e.callbacks.append(.init(queue: callbackQueue, block: onEnd))
+                    entry.callbacks.append(.init(queue: callbackQueue, handler: onEnd))
                 }
-                map[key] = e
-                return e.id
+                entries[key] = entry
+                return entry.taskIdentifier
             }
 
             if !requireBackgroundTask {
-                var e = Entry(id: .invalid, ref: 1, expired: false, ended: false, timeout: nil, callbacks: [])
-                if let onEnd = onEnd { e.callbacks.append(.init(queue: callbackQueue, block: onEnd)) }
-                map[key] = e
+                var entry = TaskEntry(
+                    taskIdentifier: .invalid,
+                    referenceCount: 1,
+                    didExpire: false,
+                    didEnd: false,
+                    timeoutWorkItem: nil,
+                    callbacks: []
+                )
+                if let onEnd = onEnd {
+                    entry.callbacks.append(.init(queue: callbackQueue, handler: onEnd))
+                }
+                entries[key] = entry
                 return .invalid
             }
 
-            var id = UIBackgroundTaskIdentifier.invalid
-            id = UIApplication.shared.beginBackgroundTask(withName: key) { [weak self] in
+            var bgTaskId = UIBackgroundTaskIdentifier.invalid
+            bgTaskId = UIApplication.shared.beginBackgroundTask(withName: key) { [weak self] in
                 self?.expire(key: key)
             }
 
-            var to: DispatchWorkItem?
-            if id != .invalid && maxDuration > 0 {
+            var timeoutItem: DispatchWorkItem?
+            if maxDuration > 0 {
                 let item = DispatchWorkItem { [weak self] in self?.expire(key: key) }
-                to = item
+                timeoutItem = item
                 DispatchQueue.global().asyncAfter(deadline: .now() + maxDuration, execute: item)
             }
 
-            var e = Entry(id: id, ref: 1, expired: false, ended: false, timeout: to, callbacks: [])
-            if let onEnd = onEnd { e.callbacks.append(.init(queue: callbackQueue, block: onEnd)) }
-            map[key] = e
-            return id
+            var entry = TaskEntry(
+                taskIdentifier: bgTaskId,
+                referenceCount: 1,
+                didExpire: false,
+                didEnd: false,
+                timeoutWorkItem: timeoutItem,
+                callbacks: []
+            )
+            if let onEnd = onEnd {
+                entry.callbacks.append(.init(queue: callbackQueue, handler: onEnd))
+            }
+            entries[key] = entry
+            return bgTaskId
         }
     }
 
     func stop(key: String) {
-        var ending: (UIBackgroundTaskIdentifier, DispatchWorkItem?, [Callback], EndReason)?
-        q.sync {
-            guard var e = map[key] else { return }
-            e.ref = max(0, e.ref - 1)
-            map[key] = e
-            if e.ref == 0 {
-                ending = tryEndLocked(key: key, reason: e.expired ? .expired : .normal)
+        var endInfo: EndInfo?
+        stateQueue.sync {
+            guard var entry = entries[key] else { return }
+            entry.referenceCount = max(0, entry.referenceCount - 1)
+            entries[key] = entry
+            if entry.referenceCount == 0 {
+                endInfo = tryEndLocked(key: key, reason: entry.didExpire ? .expired : .normal)
             }
         }
-        if let (id, to, cbs, reason) = ending {
-            to?.cancel()
-            if id != .invalid { UIApplication.shared.endBackgroundTask(id) }
-            q.sync { map.removeValue(forKey: key) }
-            for cb in cbs { cb.queue.async { cb.block(reason) } }
+        if let (taskId, timeoutItem, callbacks, reason) = endInfo {
+            timeoutItem?.cancel()
+            if taskId != .invalid { UIApplication.shared.endBackgroundTask(taskId) }
+            stateQueue.sync { entries.removeValue(forKey: key) }
+            for cb in callbacks { cb.queue.async { cb.handler(reason) } }
         }
     }
 
     private func expire(key: String) {
-        var ending: (UIBackgroundTaskIdentifier, DispatchWorkItem?, [Callback], EndReason)?
-        q.sync {
-            guard var e = map[key] else { return }
-            e.expired = true
-            map[key] = e
-            ending = tryEndLocked(key: key, force: true, reason: .expired)
+        var endInfo: EndInfo?
+        stateQueue.sync {
+            guard var entry = entries[key] else { return }
+            entry.didExpire = true
+            entries[key] = entry
+            endInfo = tryEndLocked(key: key, force: true, reason: .expired)
         }
-        if let (id, to, cbs, reason) = ending {
-            to?.cancel()
-            if id != .invalid { UIApplication.shared.endBackgroundTask(id) }
-            q.sync { map.removeValue(forKey: key) }
-            for cb in cbs { cb.queue.async { cb.block(reason) } }
+        if let (taskId, timeoutItem, callbacks, reason) = endInfo {
+            timeoutItem?.cancel()
+            if taskId != .invalid { UIApplication.shared.endBackgroundTask(taskId) }
+            stateQueue.sync { entries.removeValue(forKey: key) }
+            for cb in callbacks { cb.queue.async { cb.handler(reason) } }
         }
     }
 
@@ -111,12 +136,13 @@ final class BackgroundActivityManager {
         key: String,
         force: Bool = false,
         reason: EndReason = .normal
-    ) -> (UIBackgroundTaskIdentifier, DispatchWorkItem?, [Callback], EndReason)? {
-        guard var e = map[key], !e.ended else { return nil }
-        guard force || e.ref == 0 else { return nil }
-        e.ended = true
-        map[key] = e
-        return (e.id, e.timeout, e.callbacks, reason)
+    ) -> EndInfo? {
+        guard var entry = entries[key], !entry.didEnd else { return nil }
+        guard force || entry.referenceCount == 0 else { return nil }
+        entry.didEnd = true
+        entries[key] = entry
+        let finalReason: EndReason = entry.didExpire ? .expired : reason
+        return (entry.taskIdentifier, entry.timeoutWorkItem, entry.callbacks, finalReason)
     }
 
     func run(
@@ -127,7 +153,13 @@ final class BackgroundActivityManager {
         callbackQueue: DispatchQueue = .main,
         work: (_ done: @escaping () -> Void) -> Void
     ) {
-        start(key: key, requireBackgroundTask: requireBackgroundTask, maxDuration: maxDuration, onEnd: onEnd, callbackQueue: callbackQueue)
+        start(
+            key: key,
+            requireBackgroundTask: requireBackgroundTask,
+            maxDuration: maxDuration,
+            onEnd: onEnd,
+            callbackQueue: callbackQueue
+        )
         let once = Once()
         let done = { [weak self] in
             once.run { self?.stop(key: key) }
@@ -137,11 +169,13 @@ final class BackgroundActivityManager {
 }
 
 private final class Once {
-    private var ran = false
-    private let q = DispatchQueue(label: "xchat.bg.once")
+    private var hasRun = false
+    private let stateQueue = DispatchQueue(label: "xchat.bg.once")
     func run(_ block: () -> Void) {
-        var should = false
-        q.sync { if !ran { ran = true; should = true } }
-        if should { block() }
+        var shouldRun = false
+        stateQueue.sync {
+            if !hasRun { hasRun = true; shouldRun = true }
+        }
+        if shouldRun { block() }
     }
 }
