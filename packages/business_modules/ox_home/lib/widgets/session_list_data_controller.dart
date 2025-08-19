@@ -383,11 +383,13 @@ extension _ChatSessionModelISAREx on ChatSessionModelISAR {
     
     // Convert message createTime from seconds to milliseconds
     final createTimeInMs = message.createTime * 1000;
-    createTime = createTimeInMs;
+    if (createTime < createTimeInMs) {
+      createTime = createTimeInMs;
+      content = text;
+    }
     if (lastActivityTime < createTimeInMs) {
       lastActivityTime = createTimeInMs;
     }
-    content = text;
 
     if (!message.read) {
       unreadCount += 1;

@@ -11,6 +11,7 @@ class SessionCreateParams {
   final String? sender;
   final String? groupId;
   final int chatType;
+  final String content;
   final int? createTime;
   final String? avatar;
   final bool isSingleChat;
@@ -22,6 +23,7 @@ class SessionCreateParams {
     this.sender,
     this.groupId,
     required this.chatType,
+    required this.content,
     this.createTime,
     this.avatar,
     this.isSingleChat = false,
@@ -38,6 +40,7 @@ class SessionCreateParams {
       sender: message.sender,
       groupId: message.groupId,
       chatType: message.chatType!,
+      content: message.content,
       isSingleChat: false, // Will be determined later
     );
   }
@@ -47,6 +50,7 @@ class SessionCreateParams {
       chatId: groupDB.privateGroupId,
       groupId: groupDB.privateGroupId,
       chatType: ChatType.chatGroup,
+      content: '',
       chatName: groupDB.name,
       createTime: groupDB.updateTime,
       avatar: groupDB.picture,
@@ -66,6 +70,7 @@ class SessionHelper {
       sender: params.sender ?? '',
       groupId: params.groupId,
       chatType: params.chatType,
+      content: params.content,
       createTime: params.createTime ?? DateTime.now().millisecondsSinceEpoch,
       avatar: params.avatar,
       isSingleChat: params.isSingleChat,
