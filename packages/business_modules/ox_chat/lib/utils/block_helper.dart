@@ -65,27 +65,6 @@ class BlockHelper {
   }
 
   static Future<bool> unblockUser(BuildContext context, UserDBISAR user) async {
-    final userName = user.getUserShowName();
-    final isUnblock = await CLAlertDialog.show(
-      context: context,
-      title: Localized.text('ox_chat.unblock_dialog_title')
-          .replaceAll(r'${userName}', userName),
-      content: Localized.text('ox_chat.unblock_dialog_content')
-          .replaceAll(r'${userName}', userName),
-      actions: [
-        CLAlertAction.cancel(),
-        CLAlertAction<bool>(
-          label: Localized.text('ox_chat.unblock'),
-          value: true,
-          isDestructiveAction: false,
-        ),
-      ],
-    );
-
-    if (isUnblock != true) {
-      return false;
-    }
-
     await OXLoading.show();
     final pubKey = user.pubKey;
     final okEvent = await Contacts.sharedInstance.removeBlockList([pubKey]);
