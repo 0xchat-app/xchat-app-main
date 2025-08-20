@@ -177,7 +177,13 @@ class MainState extends State<MainApp>
       themeMode: ThemeManager.themeMode,
       themeData: CLThemeData.fromSeed(null),
       home: WillPopScope(
-        child: MultiRouteUtils.widgetForRoute(widget.routeName, context),
+        child: MultiRouteUtils.widgetForRoute(
+          // If routeName is a URL scheme, use default route instead
+          widget.routeName.startsWith('xchat://') || widget.routeName.startsWith('https://') 
+              ? '/' 
+              : widget.routeName,
+          context
+        ),
         onWillPop: () async {
           if (Platform.isAndroid) {
             OXCommon.backToDesktop();
