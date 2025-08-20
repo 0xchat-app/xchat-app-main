@@ -19,9 +19,9 @@ import 'package:ox_common/utils/compression_utils.dart';
 
 class ScanUtils {
   static Future<void> analysis(BuildContext context, String url) async {
-    // Remove oxchatlite:// prefix if present
-    if (url.startsWith('oxchatlite://')) {
-      url = url.substring('oxchatlite://'.length);
+    // Remove xchat:// prefix if present
+    if (url.startsWith('xchat://')) {
+      url = url.replaceFirst('xchat://', 'https://0xchat.com/x/');
     }
 
     try {

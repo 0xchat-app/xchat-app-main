@@ -21,7 +21,7 @@ class OxChatHome extends OXFlutterModule {
     SchemeHelper.defaultHandler = nostrHandler;
     SchemeHelper.register('nostr', nostrHandler);
     SchemeHelper.register('nprofile', nostrHandler);
-    SchemeHelper.register('oxchatlite', nostrHandler);
+    SchemeHelper.register('xchat', nostrHandler);
   }
 
   @override
@@ -34,6 +34,12 @@ class OxChatHome extends OXFlutterModule {
       String scheme, String action, Map<String, String> queryParameters) async {
     BuildContext? context = OXNavigator.navigatorKey.currentContext;
     if (context == null) return;
+
+    // Handle Universal Links for invite links
+    if (action == 'invite_link') {
+      await ScanUtils.analysis(context, scheme);
+      return;
+    }
 
     // Handle Universal Links
     if (action == 'universal_lite') {
@@ -53,19 +59,19 @@ class OxChatHome extends OXFlutterModule {
     }
     if (nostrString.isEmpty) return;
 
-    // Special handling for oxchatlite scheme
-    if (scheme == 'oxchatlite') {
+    // Special handling for xchat scheme
+    if (scheme == 'xchat') {
       // Extract the nprofile part from the full URL
       final nprofilePart =
-          nostrString.replaceFirst('oxchatlite://', '').replaceFirst('//', '');
-      await _handleOxchatliteNprofile(context, nprofilePart);
+          nostrString.replaceFirst('xchat://', '').replaceFirst('//', '');
+      await _handlexchatNprofile(context, nprofilePart);
     } else {
       // Use existing ScanUtils for other schemes
       ScanUtils.analysis(context, nostrString);
     }
   }
 
-  Future<void> _handleOxchatliteNprofile(
+  Future<void> _handlexchatNprofile(
       BuildContext context, String nprofileString) async {
     try {
       // Decode nprofile to get pubkey and relays

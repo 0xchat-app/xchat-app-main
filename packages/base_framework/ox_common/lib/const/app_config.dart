@@ -4,7 +4,7 @@ class AppConfig {
   static const String appDisplayName = '0xChat Lite';
   
   /// App scheme for custom URLs
-  static const String appScheme = 'oxchatlite';
+  static const String appScheme = 'xchat';
   
   /// Base URL for invite links
   static const String inviteBaseUrl = 'https://0xchat.com/x/invite';
@@ -28,5 +28,10 @@ class AppConfig {
   static bool isPathSupported(String path) {
     return supportedPaths.any((supportedPath) => 
       path.startsWith(supportedPath));
+  }
+  
+  /// Check if a path is an invite link
+  static bool isInviteLink(String path) {
+    return path.startsWith('/x/invite') || path.startsWith('/lite/invite');
   }
 } 

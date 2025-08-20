@@ -243,7 +243,7 @@
 			<string>ox</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>oxchatlite</string>
+				<string>xchat</string>
 				<string>nostr</string>
 				<string>nostr+walletconnect</string>
 			</array>

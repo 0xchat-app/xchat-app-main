@@ -33,102 +33,63 @@ class SchemeHelper {
   static handleAppURI(String uri) async {
     if (uri.isEmpty) return ;
 
-    String action = '';
-    Map<String, String> query = <String, String>{};
+    // Handle custom scheme formats first (xchat://, nostr://)
+    if (uri.startsWith('xchat://') || uri.startsWith('xchat:') || uri.startsWith('nostr://') || uri.startsWith('nostr:')) {
+      // This is a custom scheme, handle it directly
+      LogUtil.d('Processing custom scheme: $uri');
+      
+      // Handle xchat://invite format (absolute path)
+      if (uri.startsWith('xchat://invite')) {
+        LogUtil.d('Processing xchat://invite scheme: $uri');
+        if (defaultHandler != null) {
+          final handler = defaultHandler!;
+          await handler(uri, 'invite_link', {});
+        }
+        return;
+      }
+      
+      // Handle xchat:nprofile format
+      if (uri.startsWith('xchat:nprofile')) {
+        final nprofile = uri.replaceFirst('xchat:', '');
+        if (nprofile.isNotEmpty) {
+          // Handle nprofile directly (main app scheme)
+          defaultHandler?.call(uri, 'nprofile', {'value': nprofile});
+          return;
+        }
+      }
+      
+      // Handle nostr content
+      if (uri.startsWith('nostr:')) {
+        final nostrContent = uri.replaceFirst('nostr:', '');
+        if (nostrContent.isNotEmpty) {
+          // Handle nostr content directly
+          defaultHandler?.call(uri, 'nostr', {'value': nostrContent});
+          return;
+        }
+      }
+      
+      return;
+    }
 
     // Handle Universal Links for 0xchat.com domains
     if (AppConfig.supportedDomains.any((domain) => uri.contains(domain))) {
       final uriObj = Uri.parse(uri);
       final path = uriObj.path;
       
-      // Only handle /lite paths
-      if (path.startsWith('/lite')) {
-        // This is a supported path, handle it
+      // Handle /x/invite paths specifically
+      if (path.startsWith('/x/invite') || path.startsWith('/lite/invite')) {
+        LogUtil.d('Processing invite link: $uri');
         if (defaultHandler != null) {
           final handler = defaultHandler!;
-          await handler(uri, 'universal_lite', {});
+          await handler(uri, 'invite_link', {});
         }
-        return;
-      } else {
-        // This is not a supported path, ignore it
-        LogUtil.d('Lite app ignoring non-lite path: $path');
         return;
       }
     }
 
-    // Handle custom scheme formats first (oxchatlite:nprofile, nostr:nprofile)
-    if (uri.startsWith('oxchatlite:')) {
-      final nprofile = uri.replaceFirst('oxchatlite:', '');
-      if (nprofile.isNotEmpty) {
-        // Handle nprofile directly (main app scheme)
-        defaultHandler?.call(uri, 'nprofile', {'value': nprofile});
-        return;
-      }
-    } else if (uri.startsWith('nostr:')) {
-      final nostrContent = uri.replaceFirst('nostr:', '');
-      if (nostrContent.isNotEmpty) {
-        // Handle nostr content directly
-        defaultHandler?.call(uri, 'nostr', {'value': nostrContent});
-        return;
-      }
-    }
-
-    try {
-      final uriObj = Uri.parse(uri);
-      // Handle standard URI schemes (oxchatlite://, nostr://)
-      if (uriObj.scheme != 'oxchatlite' && uriObj.scheme != 'nostr') return ;
-
-      // For oxchatlite scheme (main app scheme), extract the nprofile part
-      if (uriObj.scheme == 'oxchatlite') {
-        final nprofile = uriObj.path.isNotEmpty ? uriObj.path.substring(1) : ''; // Remove leading slash
-        if (nprofile.isNotEmpty) {
-          // Handle nprofile directly
-          defaultHandler?.call(uri, 'nprofile', {'value': nprofile});
-          return;
-        }
-      }
-
-      // For nostr scheme, extract the content part
-      if (uriObj.scheme == 'nostr') {
-        final nostrContent = uriObj.path.isNotEmpty ? uriObj.path.substring(1) : ''; // Remove leading slash
-        if (nostrContent.isNotEmpty) {
-          // Handle nostr content directly
-          defaultHandler?.call(uri, 'nostr', {'value': nostrContent});
-          return;
-        }
-      }
-
-      action = uriObj.host.toLowerCase();
-      query = uriObj.queryParameters;
-    } catch (_) {
-      // Handle other URI formats if needed
-      final liteScheme = 'oxchatlite://';
-      final nostrScheme = 'nostr://';
-      
-      if (uri.startsWith(liteScheme)) {
-        final nprofile = uri.replaceFirst(liteScheme, '');
-        if (nprofile.isNotEmpty) {
-          // Handle nprofile directly (main app scheme)
-          defaultHandler?.call(uri, 'nprofile', {'value': nprofile});
-          return;
-        }
-      } else if (uri.startsWith(nostrScheme)) {
-        final nostrContent = uri.replaceFirst(nostrScheme, '');
-        if (nostrContent.isNotEmpty) {
-          // Handle nostr content directly
-          defaultHandler?.call(uri, 'nostr', {'value': nostrContent});
-          return;
-        }
-      }
-    }
-
-    final handler = schemeAction[action];
-    if (handler != null) {
-      handler(uri, action, query);
-      return;
-    }
-
-    defaultHandler?.call(uri, action, query);
+    // If we reach here, it's an unknown scheme or format
+    LogUtil.d('Unknown scheme or format: $uri');
+    defaultHandler?.call(uri, 'unknown', {});
   }
 }
 
