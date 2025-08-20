@@ -721,18 +721,20 @@ extension ChatMenuHandlerEx on ChatGeneralHandler {
       message: 'id: ${message.id}, content: ${message.content}',
     );
 
-    final reportSuccess = await ReportDialog.show(context, target: MessageReportTarget(message));
-    final messageDeleteHandler = this.messageDeleteHandler;
-    if (reportSuccess == true) {
-      messageDeleteHandler(message);
-    }
+    ReportDialog.show(
+      context,
+      target: MessageReportTarget(
+        message: message,
+        completeAction: () {
+          messageDeleteHandler(message);
+        }
+      ),
+    );
   }
 
   void messageDeleteHandler(types.Message message) {
     dataController.removeMessage(message: message);
   }
-
-
 }
 
 extension ChatInputMoreHandlerEx on ChatGeneralHandler {

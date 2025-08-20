@@ -1,24 +1,23 @@
-
+import 'dart:ui';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:ox_chat/widget/report_dialog.dart';
-import 'package:chatcore/chat-core.dart';
-import 'package:nostr_core_dart/nostr.dart';
 
 class MessageReportTarget implements ReportTarget {
 
-  MessageReportTarget(this.message);
+  MessageReportTarget({
+    required this.message,
+    this.completeAction,
+  });
 
   final types.Message message;
+  final VoidCallback? completeAction;
 
   Future<String> reportAction(String reason) async {
     var messageId = message.remoteId;
-    if (messageId == null)
-      return 'message not found';
-    OKEvent event = await Channels.sharedInstance.hideMessage(messageId, reason,);
-    if (event.status) {
-      return '';
-    } else {
-      return event.message;
-    }
+    if (messageId == null) return 'message not found';
+
+    await Future.delayed(Duration(milliseconds: 1300));
+    completeAction?.call();
+    return '';
   }
 }
