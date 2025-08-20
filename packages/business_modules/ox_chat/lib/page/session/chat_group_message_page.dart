@@ -14,6 +14,7 @@ import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_module_service/ox_module_service.dart';
+import '../../utils/block_helper.dart';
 
 class ChatGroupMessagePage extends StatefulWidget {
   final ChatGeneralHandler handler;
@@ -109,6 +110,20 @@ class _ChatGroupMessagePageState extends State<ChatGroupMessagePage> {
         Localized.text('ox_chat_ui.group_join'),
         onJoinGroupTap,
       );
+    } else if (group.isDirectMessage) {
+      final otherPubkey = handler.otherUser?.pubKey;
+      if (otherPubkey != null) {
+        final otherUser = Account.sharedInstance.userCache[otherPubkey]?.value;
+        if (otherUser != null) {
+          final isBlocked = BlockHelper.isUserBlocked(otherUser.pubKey);
+          if (isBlocked) {
+            return ChatHintParam(
+              Localized.text('ox_chat.user_blocked_hint'),
+              () => unblockOnTap(otherUser),
+            );
+          }
+        }
+      }
     }
 
     return null;
@@ -124,5 +139,10 @@ class _ChatGroupMessagePageState extends State<ChatGroupMessagePage> {
     } else {
       CommonToast.instance.show(context, okEvent.message);
     }
+  }
+
+  Future unblockOnTap(UserDBISAR user) async {
+    final isSuccess = await BlockHelper.unblockUser(context, user);
+    if (isSuccess) setState(() {});
   }
 }

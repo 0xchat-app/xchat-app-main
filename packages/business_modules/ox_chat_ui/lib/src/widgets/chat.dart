@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/num_utils.dart';
-import 'package:ox_common/utils/theme_color.dart';
 import 'package:ox_common/utils/web_url_helper.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/common_image_gallery.dart';
@@ -68,7 +67,6 @@ class Chat extends StatefulWidget {
     this.audioMessageBuilder,
     this.chatId,
     this.anchorMsgId,
-    this.bubbleBuilder,
     this.bubbleRtlAlignment = BubbleRtlAlignment.right,
     this.customTopWidget,
     this.customCenterWidget,
@@ -160,13 +158,6 @@ class Chat extends StatefulWidget {
   final String? chatId;
 
   final String? anchorMsgId;
-
-  /// See [Message.bubbleBuilder].
-  final Widget Function(
-    Widget child, {
-    required types.Message message,
-    required bool nextMessageInGroup,
-  })? bubbleBuilder;
 
   /// See [Message.bubbleRtlAlignment].
   final BubbleRtlAlignment? bubbleRtlAlignment;
@@ -786,7 +777,6 @@ class ChatState extends State<Chat> {
           key: widgetKey,
           uiConfig: widget.uiConfig,
           audioMessageBuilder: widget.audioMessageBuilder,
-          bubbleBuilder: widget.bubbleBuilder,
           bubbleRtlAlignment: widget.bubbleRtlAlignment,
           emojiEnlargementBehavior: widget.emojiEnlargementBehavior,
           fileMessageBuilder: widget.fileMessageBuilder,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/adapt.dart';
@@ -8,10 +7,10 @@ import 'package:ox_common/utils/took_kit.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/utils/profile_refresh_utils.dart';
 import 'package:ox_common/widgets/avatar.dart';
-import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_common/login/login_manager.dart';
 import '../../utils/chat_session_utils.dart';
+import '../../utils/block_helper.dart';
 
 class ContactUserInfoPage extends StatefulWidget {
   final String? pubkey;
@@ -78,12 +77,17 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
                         _buildBioItem(user),
                       ],
                     ),
+                    SectionListViewItem.button(
+                      text: _getBlockButtonText(user),
+                      onTap: () => _blockUserOnTap(user),
+                      type: _getBlockButtonType(user),
+                    )
                   ],
                 ),
               ),
               Visibility(
                 visible: widget.chatId == null && !isCurrentUser,
-                child: _buildBottomButton(),
+                child: _buildSendMsgButton(),
               ),
             ],
           );
@@ -112,7 +116,7 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
     );
   }
 
-  LabelItemModel _buildPubkeyItem(UserDBISAR user) {
+  ListViewItem _buildPubkeyItem(UserDBISAR user) {
     final userPubkey = user.encodedPubkey;
     return LabelItemModel(
       icon: ListViewIcon.data(Icons.key),
@@ -124,7 +128,7 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
     );
   }
 
-  LabelItemModel _buildBioItem(UserDBISAR user) {
+  ListViewItem _buildBioItem(UserDBISAR user) {
     final userBio = user.about ?? '';
     return LabelItemModel(
       icon: ListViewIcon(
@@ -138,7 +142,7 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
     );
   }
 
-  Widget _buildBottomButton() {
+  Widget _buildSendMsgButton() {
     return SafeArea(
       child: Padding(
         padding: EdgeInsets.only(
@@ -155,12 +159,25 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
     );
   }
 
+  String _getBlockButtonText(UserDBISAR user) {
+    return BlockHelper.getBlockButtonText(user);
+  }
+
+  ButtonType _getBlockButtonType(UserDBISAR user) {
+    return BlockHelper.getBlockButtonType(user);
+  }
+
   void _copyToClipboard(String text, String label) {
     TookKit.copyKey(
       context,
       text,
       '$label ${Localized.text('ox_common.copied_to_clipboard')}',
     );
+  }
+
+  void _blockUserOnTap(UserDBISAR user) async {
+    final isSuccess = await BlockHelper.handleBlockUser(context, user);
+    if (isSuccess) setState(() {});
   }
 
   void _sendMessage() async {
