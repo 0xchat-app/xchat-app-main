@@ -1,7 +1,7 @@
 /// App configuration for 0xChat Lite
 class AppConfig {
   /// App display name
-  static const String appDisplayName = '0xChat Lite';
+  static const String appDisplayName = 'XChat';
   
   /// App scheme for custom URLs
   static const String appScheme = 'xchat';
