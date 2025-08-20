@@ -16,7 +16,7 @@ import 'package:ox_theme/ox_theme.dart';
 import 'package:ox_usercenter/page/settings/language_settings_page.dart';
 import 'package:ox_usercenter/page/settings/theme_settings_page.dart';
 import 'package:ox_usercenter/page/settings/notification_settings_page.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+import 'package:ox_usercenter/page/settings/about_xchat_page.dart';
 
 import 'keys_page.dart';
 import 'circle_detail_page.dart';
@@ -43,7 +43,6 @@ class SettingSliderState extends State<SettingSlider> {
 
   late ValueNotifier themeItemNty;
   late ValueNotifier languageItemNty;
-  late ValueNotifier versionItemNty;
   late ValueNotifier textSizeItemNty;
 
   late LoginUserNotifier userNotifier;
@@ -71,9 +70,7 @@ class SettingSliderState extends State<SettingSlider> {
   void prepareNotifier() {
     themeItemNty = themeManager.styleNty.map((style) => style.text);
     languageItemNty = Localized.localized.localeTypeNty.map((type) => type.languageText);
-    versionItemNty = ValueNotifier<String>('');
     textSizeItemNty = textScaleFactorNotifier.map((scale) => getFormattedTextSize(scale));
-    _loadAppVersion();
   }
 
   void prepareLiteData() {
@@ -156,9 +153,9 @@ class SettingSliderState extends State<SettingSlider> {
         //   valueNty: ValueNotifier('Default'),
         // ),
         LabelItemModel(
-          icon: ListViewIcon(iconName: 'icon_setting_version.png', package: 'ox_usercenter'),
-          title: Localized.text('ox_usercenter.version'),
-          value$: versionItemNty,
+          icon: ListViewIcon.data(CupertinoIcons.info),
+          title: Localized.text('ox_usercenter.about_xchat'),
+          onTap: aboutXChatItemOnTap,
         ),
       ]),
       SectionListViewItem.button(
@@ -335,6 +332,10 @@ class SettingSliderState extends State<SettingSlider> {
     OXNavigator.pushPage(context, (_) => FontSizeSettingsPage(previousPageTitle: title,));
   }
 
+  void aboutXChatItemOnTap() {
+    OXNavigator.pushPage(context, (_) => AboutXChatPage(previousPageTitle: title,));
+  }
+
   void logoutItemOnTap() async {
     // Show picker with logout options
     final logoutOption = await CLPicker.show<LogoutOption>(
@@ -415,19 +416,6 @@ class SettingSliderState extends State<SettingSlider> {
         OXLoading.dismiss();
         CommonToast.instance.show(context, '${Localized.text('ox_usercenter.delete_account_failed')}: $e');
       }
-    }
-  }
-
-  /// Load the application version and build number then update [versionItemNty].
-  void _loadAppVersion() async {
-    try {
-      final packageInfo = await PackageInfo.fromPlatform();
-      final String version = packageInfo.version;
-      final String buildNumber = packageInfo.buildNumber;
-      versionItemNty.value = '$version+$buildNumber';
-    } catch (_) {
-      // Fallback in case of error
-      versionItemNty.value = '';
     }
   }
 }
