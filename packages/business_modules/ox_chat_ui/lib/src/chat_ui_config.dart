@@ -62,7 +62,11 @@ class ChatUIConfig {
     TextStyle? bodyTextStyle,
   })? moreButtonBuilder;
 
-  final Widget Function(types.Message, {required int messageWidth})? repliedMessageBuilder;
+  final Widget Function({
+    required types.Message message,
+    required int messageWidth,
+    required bool currentUserIsAuthor,
+  })? repliedMessageBuilder;
 
   /// Constructor: all fields are optional. The user can provide only what they need.
   const ChatUIConfig({

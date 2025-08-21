@@ -12,11 +12,8 @@ import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../../ox_chat_ui.dart';
 import '../../util.dart';
-import '../state/inherited_chat_theme.dart';
 import '../state/inherited_user.dart';
 import 'audio_message_page.dart';
-import 'video_message.dart';
-
 
 /// Base widget for all message types in the chat. Renders bubbles around
 /// messages and status. Sets maximum width for a message for
@@ -27,7 +24,6 @@ class Message extends StatefulWidget {
     super.key,
     required this.uiConfig,
     this.audioMessageBuilder,
-    this.bubbleBuilder,
     this.bubbleRtlAlignment,
     required this.emojiEnlargementBehavior,
     this.fileMessageBuilder,
@@ -62,17 +58,6 @@ class Message extends StatefulWidget {
   /// Build an audio message inside predefined bubble.
   final Widget Function(types.AudioMessage, {required int messageWidth})?
   audioMessageBuilder;
-
-  /// Customize the default bubble using this function. `child` is a content
-  /// you should render inside your bubble, `message` is a current message
-  /// (contains `author` inside) and `nextMessageInGroup` allows you to see
-  /// if the message is a part of a group (messages are grouped when written
-  /// in quick succession by the same author)
-  final Widget Function(
-      Widget child, {
-      required types.Message message,
-      required bool nextMessageInGroup,
-      })? bubbleBuilder;
 
   /// Determine the alignment of the bubble for RTL languages. Has no effect
   /// for the LTR languages.
@@ -194,7 +179,7 @@ class MessageState extends State<Message> {
   late Duration flashDuration = flashDisplayDuration;
 
   Color get flashColor => ThemeColor.color190;
-  late Color flashBackgroundColor = flashColor.withOpacity(0);
+  late Color flashBackgroundColor = flashColor.withValues(alpha: 0);
 
   @override
   Widget build(BuildContext context) {
@@ -426,70 +411,40 @@ class MessageState extends State<Message> {
     bool currentUserIsAuthor,
     bool enlargeEmojis,
   ) {
-    Widget bubble;
+    final hasReply = (widget.message.repliedMessageId?.isNotEmpty ?? false);
 
     var useBubbleBg = !widget.message.viewWithoutBubble;
-    if (enlargeEmojis) {
-      useBubbleBg = false;
-    }
+    if (enlargeEmojis) useBubbleBg = false;
 
-    if (widget.bubbleBuilder != null) {
-      final customBubble = widget.bubbleBuilder!(
-        _messageBuilder(context, borderRadius),
-        message: widget.message,
-        nextMessageInGroup: widget.roundBorder,
-      );
-      bubble = Container(
-        key: _bubbleKey,
-        child: customBubble,
-      );
-    } else {
-      bubble = Container(
-        key: _bubbleKey,
-        decoration: useBubbleBg ? BoxDecoration(
-          borderRadius: borderRadius,
-          color: currentUserIsAuthor
-              ? ColorToken.primary.of(context)
-              : ColorToken.secondaryContainer.of(context).withValues(alpha: 1.0),
-        ) : null,
-        child: ClipRRect(
-          borderRadius: borderRadius,
-          child: _messageBuilder(context, borderRadius),
-        ),
-      );
-    }
+    final bubbleBgColor = currentUserIsAuthor
+        ? ColorToken.primary.of(context)
+        : ColorToken.secondaryContainer.of(context).withValues(alpha: 1.0);
 
-    // Apply context menu only to the bubble content if contextMenuBuilder is provided
-    if (widget.uiConfig.contextMenuBuilder != null) {
-      bubble = widget.uiConfig.contextMenuBuilder!(
-        context,
-        widget.message,
-        bubble,
-      );
-    }
+    final core = _buildBubbleContent(
+      context: context,
+      borderRadius: borderRadius,
+      currentUserIsAuthor: currentUserIsAuthor,
+      hasReply: hasReply,
+    );
 
-    Widget bubbleWithReply;
-    if (widget.message.repliedMessageId == null || widget.message.repliedMessageId!.isEmpty) {
-      bubbleWithReply = Flexible(child: bubble);
-    } else {
-      bubbleWithReply = Flexible(
-        child: IntrinsicWidth(
-          child: Column(
-            crossAxisAlignment: currentUserIsAuthor ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-            children: [
-              bubble,
-              Align(
-                alignment: Alignment.centerLeft,
-                child: widget.uiConfig.repliedMessageBuilder?.call(
-                  widget.message,
-                  messageWidth: contentMaxWidth,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
+    var bubble = _wrapWithBubbleBackground(
+      key: _bubbleKey,
+      gradient: currentUserIsAuthor
+          ? CLThemeData.themeGradientOf(context)
+          : null,
+      bgColor: bubbleBgColor,
+      borderRadius: borderRadius,
+      useBubbleBg: useBubbleBg,
+      child: core,
+    );
+
+    bubble = _wrapWithContextMenu(
+      context: context,
+      message: widget.message,
+      child: bubble,
+    );
+
+    final bubbleWithFlex = Flexible(child: bubble);
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -497,11 +452,86 @@ class MessageState extends State<Message> {
       children: [
         if (currentUserIsAuthor)
           _buildStatusWidget().setPaddingOnly(right: statusPadding),
-        bubbleWithReply,
+        bubbleWithFlex,
         if (!currentUserIsAuthor)
           _buildStatusWidget().setPaddingOnly(left: statusPadding),
       ],
     );
+  }
+
+  Widget _buildBubbleContent({
+    required BuildContext context,
+    required BorderRadius borderRadius,
+    required bool currentUserIsAuthor,
+    required bool hasReply,
+  }) {
+    if (!hasReply) {
+      return _messageBuilder(context, borderRadius);
+    }
+
+    final replyPreview = _buildReplyPreview(
+      context: context,
+      currentUserIsAuthor: currentUserIsAuthor,
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        replyPreview,
+        _messageBuilder(context, borderRadius),
+      ],
+    );
+  }
+
+  Widget _buildReplyPreview({
+    required BuildContext context,
+    required bool currentUserIsAuthor,
+  }) {
+    final replyContent = widget.uiConfig.repliedMessageBuilder?.call(
+      message: widget.message,
+      messageWidth: contentMaxWidth,
+      currentUserIsAuthor: currentUserIsAuthor,
+    ) ?? const SizedBox();
+
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 8.px,
+        right: 8.px,
+        top: 8.px,
+      ),
+      child: replyContent,
+    );
+  }
+
+  Widget _wrapWithBubbleBackground({
+    required Key key,
+    required Gradient? gradient,
+    required Color bgColor,
+    required BorderRadius borderRadius,
+    required bool useBubbleBg,
+    required Widget child,
+  }) => Container(
+    key: key,
+    decoration: useBubbleBg
+        ? BoxDecoration(
+      gradient: gradient,
+      borderRadius: borderRadius,
+      color: bgColor,
+    ) : null,
+    child: ClipRRect(
+      borderRadius: borderRadius,
+      child: child,
+    ),
+  );
+
+  Widget _wrapWithContextMenu({
+    required BuildContext context,
+    required types.Message message,
+    required Widget child,
+  }) {
+    final builder = widget.uiConfig.contextMenuBuilder;
+    if (builder == null) return child;
+    return builder(context, message, child);
   }
 
   Widget _buildStatusWidget() => GestureDetector(
@@ -607,7 +637,7 @@ class MessageState extends State<Message> {
     Future.delayed(flashDisplayDuration, () {
       if (!mounted) return;
       setState(() {
-        flashBackgroundColor = flashColor.withOpacity(0.0);
+        flashBackgroundColor = flashColor.withValues(alpha: 0.0);
         flashDuration = flashDismissDuration;
       });
     });

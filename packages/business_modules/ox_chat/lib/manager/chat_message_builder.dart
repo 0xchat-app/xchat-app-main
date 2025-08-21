@@ -10,6 +10,7 @@ import 'package:ox_common/component.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/upload/upload_utils.dart';
 import 'package:ox_common/utils/adapt.dart';
+import 'package:ox_common/utils/color_extension.dart';
 import 'package:ox_common/utils/date_utils.dart';
 import 'package:ox_common/utils/platform_utils.dart';
 import 'package:ox_common/utils/string_utils.dart';
@@ -35,39 +36,75 @@ class ChatMessageBuilder {
     );
   }
 
-  static Widget buildRepliedMessageView(types.Message message, {
+  static Widget buildRepliedMessageView({
+    required types.Message message,
     required int messageWidth,
+    required bool currentUserIsAuthor,
     Function(types.Message? message)? onTap,
   }) {
     final repliedMessageId = message.repliedMessageId;
-    if (repliedMessageId == null || repliedMessageId.isEmpty) return SizedBox();
-
     final repliedMessage = message.repliedMessage;
+    if (repliedMessageId == null || repliedMessageId.isEmpty || repliedMessage == null)
+      return SizedBox();
+
+    Color bgColor = ColorToken.secondaryXChat.of(OXNavigator.rootContext);
+    if (!currentUserIsAuthor) {
+      bgColor = bgColor.withValues(alpha: 0.4);
+    }
+
+    Color bgBorderColor;
+    if (currentUserIsAuthor) {
+      bgBorderColor = Colors.white;
+    } else {
+      bgBorderColor = ColorToken.xChat.of(OXNavigator.rootContext);
+    }
+
     return GestureDetector(
       onTap: () => onTap?.call(repliedMessage),
       child: ConstrainedBox(
         constraints: BoxConstraints(
           maxWidth: messageWidth.toDouble(),
         ),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(Adapt.px(12)),
-            color: ThemeColor.color190,
-          ),
-          margin: EdgeInsets.only(top: Adapt.px(2)),
-          padding: EdgeInsets.symmetric(
-              horizontal: Adapt.px(12), vertical: Adapt.px(4)),
-          child: Text(
-            repliedMessage?.replyDisplayContent ?? '[Not Found]',
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: ThemeColor.color120,
-              fontSize: 12,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border(
+                left: BorderSide(
+                  color: bgBorderColor,
+                  width: 5,
+                ),
+              ),
+              color: bgColor,
+            ),
+            padding: EdgeInsets.symmetric(
+              horizontal: 6.px,
+              vertical: 4.px,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildAuthorName(repliedMessage),
+                SizedBox(height: 2.px,),
+                _buildMsgContent(repliedMessage),
+              ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  static Widget _buildAuthorName(types.Message msg) {
+    String name = msg.author.firstName ?? '[Not Found]';
+    return CLText.bodyMedium(name, isBold: true);
+  }
+
+  static Widget _buildMsgContent(types.Message msg) {
+    return CLText.bodyMedium(
+      msg.messagePreviewText,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
     );
   }
 

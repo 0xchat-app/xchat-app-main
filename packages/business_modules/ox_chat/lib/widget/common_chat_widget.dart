@@ -217,14 +217,18 @@ class CommonChatWidgetState extends State<CommonChatWidget> with OXChatObserver 
                 },
                 isSelfChat: handler.session.isSelfChat,
               ),
-              repliedMessageBuilder: (types.Message message, {required int messageWidth}) =>
-                  ChatMessageBuilder.buildRepliedMessageView(
-                    message,
-                    messageWidth: messageWidth,
-                    onTap: (message) async {
-                      scrollToMessage(message?.id);
-                    },
-                  ),
+              repliedMessageBuilder: ({
+                required types.Message message,
+                required int messageWidth,
+                required bool currentUserIsAuthor,
+              }) => ChatMessageBuilder.buildRepliedMessageView(
+                message: message,
+                messageWidth: messageWidth,
+                currentUserIsAuthor: currentUserIsAuthor,
+                onTap: (message) async {
+                  scrollToMessage(message?.id);
+                },
+              ),
               codeBlockBuilder: ChatMessageBuilder.buildCodeBlockWidget,
               moreButtonBuilder: ChatMessageBuilder.moreButtonBuilder,
             ),
