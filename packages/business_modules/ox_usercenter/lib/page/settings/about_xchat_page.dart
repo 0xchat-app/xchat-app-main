@@ -51,7 +51,7 @@ class _AboutXChatPageState extends State<AboutXChatPage> {
               icon: ListViewIcon.data(CupertinoIcons.chat_bubble_2),
               title: Localized.text('ox_usercenter.contact_us'),
               onTap: _contactUsOnTap,
-            ),
+            )
           ]),
 
           SectionListViewItem(
@@ -61,6 +61,11 @@ class _AboutXChatPageState extends State<AboutXChatPage> {
                 icon: ListViewIcon(iconName: 'icon_setting_version.png', package: 'ox_usercenter'),
                 title: Localized.text('ox_usercenter.version'),
                 value$: versionItemNty,
+              ),
+              LabelItemModel(
+                icon: ListViewIcon.data(CupertinoIcons.link),
+                title: 'GitHub',
+                onTap: _githubProjectOnTap,
               ),
               LabelItemModel(
                 icon: ListViewIcon.data(CupertinoIcons.doc_text),
@@ -81,7 +86,7 @@ class _AboutXChatPageState extends State<AboutXChatPage> {
 
   void _contactUsOnTap() {
     // TODO: Replace with actual contact URL
-    const contactUrl = 'https://0xchat.com/contact';
+    const contactUrl = 'https://primal.net/p/nprofile1qqs9ajjs5p904ml92evlkayppdpx2n3zdrq6ejnw2wqphxrzmd62swswfwcse';
     
     try {
       OXModuleService.invoke('ox_common', 'gotoWebView', [
@@ -127,6 +132,23 @@ class _AboutXChatPageState extends State<AboutXChatPage> {
       versionItemNty.value = '$version+$buildNumber';
     } catch (_) {
       versionItemNty.value = '';
+    }
+  }
+
+  void _githubProjectOnTap() {
+    const githubUrl = 'https://github.com/0xchat-app/xchat-app-main';
+    
+    try {
+      OXModuleService.invoke('ox_common', 'gotoWebView', [
+        context, 
+        githubUrl, 
+        null, 
+        null, 
+        null, 
+        null
+      ]);
+    } catch (e) {
+      CommonToast.instance.show(context, 'Failed to open GitHub project: $e');
     }
   }
 }
