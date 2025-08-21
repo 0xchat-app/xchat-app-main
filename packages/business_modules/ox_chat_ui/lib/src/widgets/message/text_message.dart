@@ -92,13 +92,7 @@ class TextMessage extends StatelessWidget {
       }
     }
 
-    return Container(
-      margin: EdgeInsets.symmetric(
-        horizontal: enlargeEmojis ? 0 : theme.messageInsetsHorizontal,
-        vertical: enlargeEmojis ? 0 : theme.messageInsetsVertical,
-      ),
-      child: _textWidgetBuilder(user, context, enlargeEmojis),
-    );
+    return _textWidgetBuilder(user, context, enlargeEmojis);
   }
 
   Widget _linkPreview(

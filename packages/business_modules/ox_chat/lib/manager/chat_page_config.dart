@@ -72,6 +72,8 @@ class ChatPageConfig {
           height: 1.5,
         ),
         inputTextColor: ThemeColor.color0,
+        messageInsetsHorizontal: 12.px,
+        messageInsetsVertical: 8.px,
       );
 }
 

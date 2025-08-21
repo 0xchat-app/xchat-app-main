@@ -12,6 +12,7 @@ import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../../ox_chat_ui.dart';
 import '../../util.dart';
+import '../state/inherited_chat_theme.dart';
 import '../state/inherited_user.dart';
 import 'audio_message_page.dart';
 
@@ -241,7 +242,7 @@ class MessageState extends State<Message> {
         onSwipeComplete: () {
           widget.replySwipeTriggerCallback?.call(widget.message);
         },
-        offset: currentUserIsAuthor ? Offset(50.px, 0) : Offset.zero,
+        offset: currentUserIsAuthor ? Offset(40.px, 0) : Offset.zero,
         child: content,
       );
     }
@@ -465,21 +466,24 @@ class MessageState extends State<Message> {
     required bool currentUserIsAuthor,
     required bool hasReply,
   }) {
-    if (!hasReply) {
-      return _messageBuilder(context, borderRadius);
-    }
-
-    final replyPreview = _buildReplyPreview(
-      context: context,
-      currentUserIsAuthor: currentUserIsAuthor,
-    );
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        replyPreview,
-        _messageBuilder(context, borderRadius),
-      ],
+    final theme = InheritedChatTheme.of(context).theme;
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: theme.messageInsetsHorizontal,
+        vertical: theme.messageInsetsVertical,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (hasReply)
+            _buildReplyPreview(
+              context: context,
+              currentUserIsAuthor: currentUserIsAuthor,
+            ),
+          _messageBuilder(context, borderRadius),
+        ],
+      ),
     );
   }
 
@@ -492,15 +496,7 @@ class MessageState extends State<Message> {
       messageWidth: contentMaxWidth,
       currentUserIsAuthor: currentUserIsAuthor,
     ) ?? const SizedBox();
-
-    return Padding(
-      padding: EdgeInsets.only(
-        left: 8.px,
-        right: 8.px,
-        top: 8.px,
-      ),
-      child: replyContent,
-    );
+    return replyContent;
   }
 
   Widget _wrapWithBubbleBackground({
@@ -736,12 +732,6 @@ class _SwipeToReplyState extends State<_SwipeToReply>
         final offset = _controller.value * -distance;
         return Stack(
           children: [
-            Positioned(
-              right: 10 - offset - widget.offset.dx,
-              top: widget.offset.dy,
-              bottom: 0,
-              child: Center(child: widget.revealIconBuilder(progress)),
-            ),
             Transform.translate(
               offset: Offset(offset, 0),
               child: GestureDetector(
@@ -750,7 +740,13 @@ class _SwipeToReplyState extends State<_SwipeToReply>
                 onHorizontalDragEnd: _onHorizontalDragEnd,
                 child: widget.child,
               ),
-            )
+            ),
+            Positioned(
+              right: -offset - widget.offset.dx,
+              top: widget.offset.dy,
+              bottom: 0,
+              child: Center(child: widget.revealIconBuilder(progress)),
+            ),
           ],
         );
       },
