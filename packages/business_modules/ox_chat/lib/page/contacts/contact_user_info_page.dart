@@ -77,11 +77,12 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
                         _buildBioItem(user),
                       ],
                     ),
-                    SectionListViewItem.button(
-                      text: _getBlockButtonText(user),
-                      onTap: () => _blockUserOnTap(user),
-                      type: _getBlockButtonType(user),
-                    )
+                    if (!LoginManager.instance.isMe(user.pubKey))
+                      SectionListViewItem.button(
+                        text: _getBlockButtonText(user),
+                        onTap: () => _blockUserOnTap(user),
+                        type: _getBlockButtonType(user),
+                      )
                   ],
                 ),
               ),
