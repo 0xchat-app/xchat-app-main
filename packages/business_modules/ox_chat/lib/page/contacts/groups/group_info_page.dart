@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ox_chat/model/option_model.dart';
 import 'package:ox_chat/utils/chat_session_utils.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/model/chat_type.dart';
@@ -304,7 +303,6 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
     OXNavigator.pushPage(
       context, (context) => ContactGroupMemberPage(
         groupId: widget.groupId,
-        groupType: GroupType.privateGroup,
       ),
     );
   }

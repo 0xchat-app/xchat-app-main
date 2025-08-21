@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ox_chat/model/option_model.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_chat/page/contacts/contact_user_info_page.dart';
 import 'package:ox_common/component.dart';
@@ -12,13 +11,11 @@ import 'package:lpinyin/lpinyin.dart';
 class ContactGroupMemberPage extends StatefulWidget {
   final String groupId;
   final String? title;
-  final GroupType? groupType;
 
   const ContactGroupMemberPage({
     super.key,
     required this.groupId,
     this.title,
-    this.groupType,
   });
 
   @override
@@ -54,13 +51,7 @@ class _ContactGroupMemberPageState extends State<ContactGroupMemberPage> {
     });
 
     try {
-      List<UserDBISAR> members;
-      if (widget.groupType == null || widget.groupType == GroupType.privateGroup) {
-        members = await Groups.sharedInstance.getAllGroupMembers(widget.groupId);
-      } else {
-        members = await RelayGroup.sharedInstance.getGroupMembersFromLocal(widget.groupId);
-      }
-
+      List<UserDBISAR> members = await Groups.sharedInstance.getAllGroupMembers(widget.groupId);
       setState(() {
         _allMembers = members;
         _filteredMembers = members;

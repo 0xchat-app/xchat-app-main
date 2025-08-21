@@ -17,8 +17,6 @@ dependencies:
     path: ../../base_framework/ox_module_service
   ox_common:
     path: ../../base_framework/ox_common
-  ox_network:
-    path: ../../base_framework/ox_network
   ox_theme:
     path: ../../base_framework/ox_theme
   ox_localizable:

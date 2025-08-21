@@ -103,8 +103,6 @@ dependencies:
     path: ../ox_module_service
   ox_localizable:
     path: ../ox_localizable
-  ox_network:
-    path: ../ox_network
   bitchat_flutter_plugin:
     path: ../../bitchat-flutter-plugin
 
