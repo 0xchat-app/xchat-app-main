@@ -12,7 +12,7 @@
 
 1. Clone the repository
 ```bash
-git clone https://github.com/your-username/xchat-app-main.git
+git clone https://github.com/0xchat-app/xchat-app-main
 cd xchat-app-main
 ```
 
