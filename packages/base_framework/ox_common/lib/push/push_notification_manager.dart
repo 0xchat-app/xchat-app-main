@@ -76,6 +76,9 @@ class CLPushNotificationManager {
         return false;
       }
     }
+    else{
+      await LoginManager.instance.saveUploadPushTokenState(false);
+    }
 
     await circle.updateAllowReceiveNotification(value);
 
