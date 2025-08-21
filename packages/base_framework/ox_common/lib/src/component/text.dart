@@ -17,6 +17,7 @@ class CLText extends StatelessWidget {
     this.textAlign,
     this.maxLines,
     this.overflow = TextOverflow.ellipsis,
+    this.isBold = false,
     _StyleResolver? resolver,
   }): _resolver = resolver;
 
@@ -27,12 +28,16 @@ class CLText extends StatelessWidget {
   final TextAlign? textAlign;
   final int? maxLines;
   final TextOverflow? overflow;
+  final bool isBold;
 
   final _StyleResolver? _resolver;
 
   @override
   Widget build(BuildContext context) {
-    final style = _resolver?.call(context) ?? TextStyle();
+    var style = _resolver?.call(context) ?? TextStyle();
+    if (isBold) {
+      style = style.merge(const TextStyle(fontWeight: FontWeight.bold));
+    }
     return Text(
       text,
       style: style.copyWith(
@@ -51,6 +56,7 @@ class CLText extends StatelessWidget {
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
+    bool isBold = false,
   }) {
     return CLText(
       text,
@@ -59,6 +65,7 @@ class CLText extends StatelessWidget {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
+      isBold: isBold,
       resolver: (context) => Theme.of(context).textTheme.titleLarge,
     );
   }
@@ -70,6 +77,7 @@ class CLText extends StatelessWidget {
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
+    bool isBold = false,
   }) {
     return CLText(
       text,
@@ -78,6 +86,7 @@ class CLText extends StatelessWidget {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
+      isBold: isBold,
       resolver: (context) => PlatformStyle
           .isUseMaterial
           ? Theme.of(context).textTheme.titleMedium
@@ -92,6 +101,7 @@ class CLText extends StatelessWidget {
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
+    bool isBold = false,
   }) {
     return CLText(
       text,
@@ -100,6 +110,7 @@ class CLText extends StatelessWidget {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
+      isBold: isBold,
       resolver: (context) => Theme.of(context).textTheme.titleSmall,
     );
   }
@@ -111,6 +122,7 @@ class CLText extends StatelessWidget {
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
+    bool isBold = false,
   }) {
     return CLText(
       text,
@@ -119,6 +131,7 @@ class CLText extends StatelessWidget {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
+      isBold: isBold,
       resolver: (context) => Theme.of(context).textTheme.bodyLarge,
     );
   }
@@ -130,6 +143,7 @@ class CLText extends StatelessWidget {
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
+    bool isBold = false,
   }) {
     return CLText(
       text,
@@ -138,6 +152,7 @@ class CLText extends StatelessWidget {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
+      isBold: isBold,
       resolver: (context) => Theme.of(context).textTheme.bodyMedium,
     );
   }
@@ -149,6 +164,7 @@ class CLText extends StatelessWidget {
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
+    bool isBold = false,
   }) {
     return CLText(
       text,
@@ -157,6 +173,7 @@ class CLText extends StatelessWidget {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
+      isBold: isBold,
       resolver: (context) => Theme.of(context).textTheme.bodySmall,
     );
   }
@@ -168,6 +185,7 @@ class CLText extends StatelessWidget {
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
+    bool isBold = false,
   }) {
     return CLText(
       text,
@@ -176,6 +194,7 @@ class CLText extends StatelessWidget {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
+      isBold: isBold,
       resolver: (context) => Theme.of(context).textTheme.labelLarge,
     );
   }
@@ -187,6 +206,7 @@ class CLText extends StatelessWidget {
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
+    bool isBold = false,
   }) {
     return CLText(
       text,
@@ -195,6 +215,7 @@ class CLText extends StatelessWidget {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
+      isBold: isBold,
       resolver: (context) => Theme.of(context).textTheme.labelMedium,
     );
   }
@@ -206,6 +227,7 @@ class CLText extends StatelessWidget {
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
+    bool isBold = false,
   }) {
     return CLText(
       text,
@@ -214,6 +236,7 @@ class CLText extends StatelessWidget {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
+      isBold: isBold,
       resolver: (context) => Theme.of(context).textTheme.labelSmall,
     );
   }
@@ -225,6 +248,7 @@ class CLText extends StatelessWidget {
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
+    bool isBold = false,
   }) {
     return CLText(
       text,
@@ -233,6 +257,7 @@ class CLText extends StatelessWidget {
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
+      isBold: isBold,
       resolver: (context) => Theme.of(context).textTheme.headlineSmall,
     );
   }
