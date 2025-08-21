@@ -140,14 +140,13 @@ class ChatImagePreviewWidgetState extends State<ChatImagePreviewWidget> with Tic
               child: child,
             );
           },
-          // errorBuilder: (context, error, stackTrace,) {
-          //   ChatLogUtils.error(
-          //     className: 'ImagePreviewWidget',
-          //     funcName: 'buildImageWidget',
-          //     message: error.toString(),
-          //   );
-          //   return SizedBox();
-          // },
+          errorBuilder: (context, error, stackTrace,) {
+            return Container(
+              color: ColorToken.secondaryContainer.of(context),
+              alignment: Alignment.center,
+              child: CLText.bodyMedium('Image failed to load'),
+            );
+          },
           // loadingBuilder: (context, child, loadingProgress) {
           //   if (loadingProgress == null) return child;
           //   final expectedTotalBytes = loadingProgress.expectedTotalBytes ?? 0;
