@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:ox_common/component.dart';
+import 'package:ox_common/utils/color_extension.dart';
 
 enum ColorToken {
+  xChat,
+  secondaryXChat,
   primary,
   onPrimary,
   primaryContainer,
@@ -25,6 +28,15 @@ extension AppColorResolver on ColorToken {
     if (PlatformStyle.isUseMaterial) {
       final scheme = Theme.of(context).colorScheme;
       switch (this) {
+        case ColorToken.xChat:
+          return CLThemeData.themeColorOf(context);
+        case ColorToken.secondaryXChat:
+          final brightness = Theme.of(context).brightness;
+          if (brightness == Brightness.light) {
+            return CLThemeData.themeColorOf(context).lighten();
+          } else {
+            return CLThemeData.themeColorOf(context).darken();
+          }
         case ColorToken.primary:
           return scheme.primary;
         case ColorToken.onPrimary:
@@ -59,6 +71,15 @@ extension AppColorResolver on ColorToken {
     } else {
       final cupertino = CupertinoTheme.of(context);
       switch (this) {
+        case ColorToken.xChat:
+          return CLThemeData.themeColorOf(context);
+        case ColorToken.secondaryXChat:
+          final brightness = Theme.of(context).brightness;
+          if (brightness == Brightness.light) {
+            return CLThemeData.themeColorOf(context).lighten();
+          } else {
+            return CLThemeData.themeColorOf(context).darken();
+          }
         case ColorToken.primary:
           return cupertino.primaryColor;
         case ColorToken.onPrimary:

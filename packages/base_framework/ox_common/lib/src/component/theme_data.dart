@@ -19,12 +19,21 @@ class CLThemeData {
   final CupertinoThemeData cupertinoLight;
   final CupertinoThemeData cupertinoDark;
 
+  static Color themeColorOf(BuildContext ctx) {
+    final brightness = Theme.of(ctx).brightness;
+    if (brightness == Brightness.light) {
+      return const Color(0xFFA484FF);
+    } else {
+      return Color(0xFFA484FF).darken();
+    }
+  }
+
   static Gradient themeGradientLight = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [
-      Color(0xFFCA7DFF),
-      Color(0xFF7A8BFF),
+      Color(0xFF818CF8),
+      Color(0xFFC084FC),
     ],
   );
 
@@ -32,8 +41,8 @@ class CLThemeData {
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [
-      Color(0xFFCA7DFF).darken(),
-      Color(0xFF7A8BFF).darken(),
+      Color(0xFF818CF8).darken(),
+      Color(0xFFC084FC).darken(),
     ],
   );
 
