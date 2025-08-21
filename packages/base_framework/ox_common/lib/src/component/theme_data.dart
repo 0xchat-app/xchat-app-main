@@ -1,6 +1,6 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ox_common/utils/color_extension.dart';
 import 'platform_style.dart';
 
 class CLThemeData {
@@ -18,6 +18,33 @@ class CLThemeData {
   /// CupertinoApp themes
   final CupertinoThemeData cupertinoLight;
   final CupertinoThemeData cupertinoDark;
+
+  static Gradient themeGradientLight = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+      Color(0xFFCA7DFF).lighten(),
+      Color(0xFF7A8BFF).lighten(),
+    ],
+  );
+
+  static Gradient themeGradientDark = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+      Color(0xFFCA7DFF).darken(),
+      Color(0xFF7A8BFF).darken(),
+    ],
+  );
+
+  static Gradient themeGradientOf(BuildContext ctx) {
+    final brightness = Theme.of(ctx).brightness;
+    if (brightness == Brightness.light) {
+      return themeGradientLight;
+    } else {
+      return themeGradientDark;
+    }
+  }
 
   factory CLThemeData.fromSeed(Color? seed, {bool useMaterial3 = true}) {
     // Material
