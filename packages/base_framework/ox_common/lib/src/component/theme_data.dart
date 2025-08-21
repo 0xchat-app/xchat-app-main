@@ -23,8 +23,8 @@ class CLThemeData {
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [
-      Color(0xFFCA7DFF).lighten(),
-      Color(0xFF7A8BFF).lighten(),
+      Color(0xFFCA7DFF),
+      Color(0xFF7A8BFF),
     ],
   );
 
