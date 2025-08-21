@@ -9,6 +9,7 @@ import 'package:ox_common/login/login_models.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/circle_join_utils.dart';
+import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_theme/ox_theme.dart';
@@ -177,10 +178,14 @@ class _HomeScaffoldState extends State<HomeScaffold> {
       builder: (context, loginState, child) {
         final loginAccount = loginState.account;
         final loginCircle = loginState.currentCircle;
-
+        
         if (loginAccount == null) {
-          // This shouldn't happen since HomePage should handle login check
-          return const Center(child: CircularProgressIndicator());
+          return Center(
+            child: SafeArea(
+              child: CLProgressIndicator.circular()
+                  .setPaddingOnly(bottom: 32),
+            ),
+          );
         }
 
         Widget body = loginCircle != null ? SessionListWidget(

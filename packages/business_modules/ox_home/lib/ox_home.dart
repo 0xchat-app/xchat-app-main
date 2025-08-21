@@ -154,7 +154,7 @@ class OxChatHome extends OXFlutterModule {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) => Center(child: CircularProgressIndicator()),
+        builder: (context) => Center(child: CLProgressIndicator.circular()),
       );
 
       // Create circle and join

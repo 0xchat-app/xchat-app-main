@@ -1,9 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/login/account_models.dart';
 import 'package:ox_common/login/login_manager.dart';
-import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/took_kit.dart';
 import 'package:ox_localizable/ox_localizable.dart';
@@ -94,11 +92,7 @@ class _KeysPageState extends State<KeysPage> {
                               trailing: encodedPubkey.isNotEmpty ? Icon(
                                 Icons.copy_rounded,
                                 color: ColorToken.onSecondaryContainer.of(context),
-                              ) : SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: CircularProgressIndicator(strokeWidth: 2),
-                              ),
+                              ) : CLProgressIndicator.circular(size: 16),
                               onTap: encodedPubkey.isNotEmpty ? pubkeyItemOnTap : null,
                             ),
                             CustomItemModel(
@@ -111,11 +105,7 @@ class _KeysPageState extends State<KeysPage> {
                                     maxLines: 2,
                                   ),
                               trailing: isLoading 
-                                ? SizedBox(
-                                    width: 16,
-                                    height: 16,
-                                    child: CircularProgressIndicator(strokeWidth: 2),
-                                  )
+                                ? CLProgressIndicator.circular(size: 16)
                                 : Icon(
                                     Icons.copy_rounded,
                                     color: ColorToken.onSecondaryContainer.of(context),

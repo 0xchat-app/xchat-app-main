@@ -32,17 +32,12 @@ class CLCircularProgressIndicator extends StatelessWidget {
     final size = this.size ?? defaultSize;
     // _CircularProgressIndicatorDefaultsM3Year2023.strokeWidth = 4.0
     final strokeWidth = 4.0 * size / defaultSize;
-    return Container(
-      height: size,
-      width: size,
-      alignment: Alignment.center,
-      child: SizedBox(
-        height: size,
-        width: size,
-        child: CircularProgressIndicator(
-          value: progress,
-          strokeWidth: strokeWidth,
-        ),
+    return SizedBox(
+      height: size + strokeWidth * 2,
+      width: size + strokeWidth * 2,
+      child: CircularProgressIndicator(
+        value: progress,
+        strokeWidth: strokeWidth,
       ),
     );
   }

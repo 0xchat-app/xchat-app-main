@@ -301,17 +301,10 @@ class _ListViewItemBaseWidgetState extends State<_ListViewItemBaseWidget>
   Widget? _buildLeading() {
     final icon = model.icon;
     if (icon == null) return null;
-
-    final iconData = icon.data;
-    if (iconData != null) {
-      return Icon(iconData);
-    }
-
-    return ImageIcon(
-      AssetImage(
-        'assets/images/${icon.iconName}',
-        package: icon.package,
-      ),
+    return CLIcon(
+      icon: icon.data,
+      iconName: icon.iconName,
+      package: icon.package ?? '',
       size: icon.size,
     );
   }

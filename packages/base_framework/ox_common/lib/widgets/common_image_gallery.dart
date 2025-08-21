@@ -288,7 +288,7 @@ class _CommonImageGalleryState extends State<CommonImageGallery>
           switch (state.extendedImageLoadState) {
             case LoadState.loading:
               return Center(
-                child: CircularProgressIndicator(),
+                child: CLProgressIndicator.circular(),
               );
             case LoadState.completed:
               return null; // Use the completed image

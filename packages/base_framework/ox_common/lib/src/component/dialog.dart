@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_localizable/ox_localizable.dart';
+
 import 'button.dart';
 import 'color_token.dart';
 import 'text.dart';
 import 'text_field.dart';
+import 'progress_indicators.dart';
 
 typedef InputControllerBuilder = Widget Function(BuildContext context, TextEditingController controller);
 
@@ -271,24 +273,10 @@ class _InputBottomSheetState extends State<InputBottomSheet> {
                   onTap: _isLoading ? null : _handleConfirm,
                   expanded: true,
                   height: 48.px,
+                  padding: EdgeInsets.zero,
+                  child: _isLoading ? CLProgressIndicator.circular(size: 20) : null,
                 ),
               ),
-
-              // Loading indicator
-              if (_isLoading)
-                Padding(
-                  padding: EdgeInsets.only(bottom: 24.px),
-                  child: Center(
-                    child: SizedBox(
-                      width: 20.px,
-                      height: 20.px,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.px,
-                        color: ColorToken.primary.of(context),
-                      ),
-                    ),
-                  ),
-                ),
 
               SizedBox(height: 16.px),
             ],
