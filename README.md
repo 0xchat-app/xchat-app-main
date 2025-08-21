@@ -1,6 +1,6 @@
 # XChat - A Lightweight Chat Client Built Around Nostr MLS
 
-## 🚀 Quick Start
+## Quick Start
 
 ### System Requirements
 
@@ -26,7 +26,7 @@ flutter pub get
 flutter run
 ```
 
-## 🔧 Development
+## Development
 
 ### Environment Setup
 
@@ -44,11 +44,11 @@ flutter build apk
 flutter build ios
 ```
 
-## 📄 License
+## License
 
 This project is licensed under the [LICENSE](LICENSE) license.
 
-## 🤝 Contributing
+## Contributing
 
 Issues and Pull Requests are welcome!
 
