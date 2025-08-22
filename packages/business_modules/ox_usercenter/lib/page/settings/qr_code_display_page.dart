@@ -363,7 +363,7 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
 
   PrettyQrDecoration createDecoration(QRCodeStyle style) {
     Color color = ColorToken.primary.of(
-      OXNavigator.navigatorKey.currentState!.context
+      OXNavigator.rootContext
     ).withValues(alpha: 0.8);
     double roundFactor = 1;
     PrettyQrShape shape;
@@ -393,14 +393,7 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
       case QRCodeStyle.gradient:
         shape = PrettyQrSmoothSymbol(
           color: PrettyQrBrush.gradient(
-            gradient: LinearGradient(
-              colors: [
-                color,
-                Colors.teal.shade200,
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            gradient: CLThemeData.themeGradientOf(OXNavigator.rootContext),
           ),
           roundFactor: roundFactor, // Rounded
         );

@@ -130,7 +130,7 @@ class _CLTextFieldState extends State<CLTextField> {
           borderRadius: BorderRadius.circular(12.px),
           border: Border.all(
             color: _hasFocus 
-                ? ColorToken.primary.of(context) 
+                ? ColorToken.xChat.of(context)
                 : ColorToken.onSurfaceVariant.of(context),
             width: 2.px,
           ),

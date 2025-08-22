@@ -32,9 +32,7 @@ class CircleEmptyWidget extends StatelessWidget {
           Icon(
             Icons.forum_outlined,
             size: 120.px,
-            color: PlatformStyle.isUseMaterial
-                ? ColorToken.primary.of(context)
-                : CupertinoTheme.of(context).textTheme.actionSmallTextStyle?.color,
+            color: ColorToken.xChat.of(context),
           ),
 
           SizedBox(height: 24.px),

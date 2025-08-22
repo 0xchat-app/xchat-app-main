@@ -38,7 +38,8 @@ class CommonImage extends StatelessWidget{
   Widget build(BuildContext context) {
     var iconName = this.iconName;
     if (isPlatformStyle) {
-      final platformPrefix = PlatformStyle.isUseMaterial ? 'material' : 'cupertino';
+      // final platformPrefix = PlatformStyle.isUseMaterial ? 'material' : 'cupertino';
+      final platformPrefix = 'material';
       iconName = '${platformPrefix}_$iconName';
     }
     return Image.asset(
