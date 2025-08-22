@@ -1,12 +1,16 @@
 [submodule "packages/0xchat-core"]
 	path = packages/0xchat-core
 	url = https://github.com/0xchat-app/0xchat-core.git
+	branch = main
 [submodule "packages/nostr-dart"]
 	path = packages/nostr-dart
 	url = https://github.com/0xchat-app/nostr-dart.git
+	branch = upgrade/isar4
 [submodule "packages/nostr-mls-package"]
 	path = packages/nostr-mls-package
 	url = https://github.com/0xchat-app/nostr-mls-package.git
+	branch = main
 [submodule "packages/bitchat-flutter-plugin"]
 	path = packages/bitchat-flutter-plugin
 	url = https://github.com/wcat7/bitchat-flutter-plugin.git
+	branch = master
