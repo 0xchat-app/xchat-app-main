@@ -156,17 +156,9 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
         return;
       }
       user.name = _nameController.text.trim();
-      final success = (await Account.sharedInstance.updateProfile(user)) != null;
+      Account.sharedInstance.updateProfile(user);
       OXLoading.dismiss();
-
-      if (success) {
-        if (mounted) OXNavigator.popToRoot(context);
-      } else {
-        setState(() { _isSaving = false; });
-        if (mounted) {
-          CommonToast.instance.show(context, Localized.text('ox_login.profile_save_failed'));
-        }
-      }
+      if (mounted) OXNavigator.popToRoot(context);
     } catch (e) {
       OXLoading.dismiss();
       setState(() { _isSaving = false; });
