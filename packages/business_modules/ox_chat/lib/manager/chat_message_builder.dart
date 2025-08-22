@@ -97,11 +97,16 @@ class ChatMessageBuilder {
 
   static Widget _buildAuthorName(types.Message msg) {
     String name = msg.author.firstName ?? '[Not Found]';
-    return CLText.bodyMedium(name, isBold: true);
+    return Padding(
+      padding: EdgeInsetsDirectional.only(
+        end: 4.px,
+      ),
+      child: CLText.labelMedium(name, isBold: true),
+    );
   }
 
   static Widget _buildMsgContent(types.Message msg) {
-    return CLText.bodyMedium(
+    return CLText.labelSmall(
       msg.messagePreviewText,
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
