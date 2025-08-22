@@ -90,12 +90,6 @@ checkout_branch() {
   log_step "Checking out $repo_name to branch: $branch"
   
   if is_git_submodule "$dir"; then
-    echo "  $repo_name is a git submodule, updating..."
-    if ! git -C "$main_path" submodule update --remote --merge "$dir"; then
-      log_error "Failed to update submodule $repo_name"
-      exit 1
-    fi
-    
     # Checkout specific branch in submodule
     if ! git -C "$dir" checkout "$branch"; then
       log_error "Failed to checkout branch '$branch' in submodule $repo_name"
