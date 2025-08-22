@@ -19,12 +19,16 @@ class CLThemeData {
   final CupertinoThemeData cupertinoLight;
   final CupertinoThemeData cupertinoDark;
 
+  static Color get themeColorLight => const Color(0xFFA484FF);
+
+  static Color themeColorDark = Color(0xFFA484FF).darken();
+
   static Color themeColorOf(BuildContext ctx) {
     final brightness = Theme.of(ctx).brightness;
     if (brightness == Brightness.light) {
-      return const Color(0xFFA484FF);
+      return themeColorLight;
     } else {
-      return Color(0xFFA484FF).darken();
+      return themeColorDark;
     }
   }
 

@@ -51,6 +51,88 @@ extension ColorX on Color {
   }
 }
 
+extension GradientGrayExtension on Gradient {
+  Gradient toOpacity(double opacity) {
+    final gradient = this;
+    if (gradient is LinearGradient) {
+      return LinearGradient(
+        begin: gradient.begin,
+        end: gradient.end,
+        stops: gradient.stops,
+        tileMode: gradient.tileMode,
+        transform: gradient.transform,
+        colors: gradient.colors.map(
+                (c) => c.withOpacity(opacity * c.opacity)
+        ).toList(growable: false),
+      );
+    } else if (gradient is RadialGradient) {
+      return RadialGradient(
+        center: gradient.center,
+        radius: gradient.radius,
+        stops: gradient.stops,
+        tileMode: gradient.tileMode,
+        focal: gradient.focal,
+        focalRadius: gradient.focalRadius,
+        transform: gradient.transform,
+        colors: gradient.colors.map(
+                (c) => c.withOpacity(opacity * c.opacity)
+        ).toList(growable: false),
+      );
+    } else if (gradient is SweepGradient) {
+      return SweepGradient(
+        center: gradient.center,
+        startAngle: gradient.startAngle,
+        endAngle: gradient.endAngle,
+        stops: gradient.stops,
+        tileMode: gradient.tileMode,
+        transform: gradient.transform,
+        colors: gradient.colors.map(
+                (c) => c.withOpacity(opacity * c.opacity)
+        ).toList(growable: false),
+      );
+    }
+    return gradient;
+  }
+
+  Gradient toGray() {
+    if (this is LinearGradient) {
+      final g = this as LinearGradient;
+      return LinearGradient(
+        begin: g.begin,
+        end: g.end,
+        stops: g.stops,
+        tileMode: g.tileMode,
+        transform: g.transform,
+        colors: g.colors.map((c) => c.toGray()).toList(growable: false),
+      );
+    } else if (this is RadialGradient) {
+      final g = this as RadialGradient;
+      return RadialGradient(
+        center: g.center,
+        radius: g.radius,
+        stops: g.stops,
+        tileMode: g.tileMode,
+        focal: g.focal,
+        focalRadius: g.focalRadius,
+        transform: g.transform,
+        colors: g.colors.map((c) => c.toGray()).toList(growable: false),
+      );
+    } else if (this is SweepGradient) {
+      final g = this as SweepGradient;
+      return SweepGradient(
+        center: g.center,
+        startAngle: g.startAngle,
+        endAngle: g.endAngle,
+        stops: g.stops,
+        tileMode: g.tileMode,
+        transform: g.transform,
+        colors: g.colors.map((c) => c.toGray()).toList(growable: false),
+      );
+    }
+    return this;
+  }
+}
+
 double _relativeLuminance(Color c) {
   double chan(int v) {
     final cs = v / 255.0;

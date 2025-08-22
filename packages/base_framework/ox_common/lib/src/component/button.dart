@@ -11,6 +11,8 @@ import 'button/text_button.dart';
 import 'button/tonal_button.dart';
 
 class CLButton {
+  static bool get isDefaultUseThemeGradient => true;
+
   static Widget _defaultText(String text, [Color? color]) {
     return CLText(
       text,
@@ -89,6 +91,7 @@ class CLButton {
       CLFilledButton(
         minimumSize: minimumSize,
         padding: padding,
+        useThemeGradient: isDefaultUseThemeGradient,
         onTap: onTap,
         child: child,
       ),
@@ -120,6 +123,7 @@ class CLButton {
       CLTonalButton(
         minimumSize: minimumSize,
         padding: padding,
+        useThemeGradient: isDefaultUseThemeGradient,
         onTap: onTap,
         child: child,
       ),
@@ -151,6 +155,7 @@ class CLButton {
       CLElevatedButton(
         minimumSize: minimumSize,
         padding: padding,
+        useThemeGradient: isDefaultUseThemeGradient,
         onTap: onTap,
         child: child,
       ),
@@ -182,6 +187,7 @@ class CLButton {
       CLOutlinedButton(
         minimumSize: minimumSize,
         padding: padding,
+        useThemeGradient: isDefaultUseThemeGradient,
         onTap: onTap,
         child: child,
       ),
