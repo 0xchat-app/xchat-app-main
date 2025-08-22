@@ -49,7 +49,7 @@ class NostrIntroductionPage extends StatelessWidget {
       children: [
         CLText.headlineSmall(
           Localized.text('ox_login.nostr_intro_subtitle'),
-          colorToken: ColorToken.primary,
+          colorToken: ColorToken.xChat,
         ),
         SizedBox(height: 8.px),
         Container(
@@ -58,8 +58,8 @@ class NostrIntroductionPage extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                ColorToken.primary.of(context),
-                ColorToken.primary.of(context).withOpacity(0.3),
+                ColorToken.xChat.of(context),
+                ColorToken.xChat.of(context).withOpacity(0.3),
               ],
             ),
             borderRadius: BorderRadius.circular(2.px),
@@ -182,13 +182,13 @@ class NostrIntroductionPage extends StatelessWidget {
         Container(
           padding: EdgeInsets.all(8.px),
           decoration: BoxDecoration(
-            color: ColorToken.primary.of(context).withOpacity(0.1),
+            color: ColorToken.xChat.of(context).withOpacity(0.1),
             borderRadius: BorderRadius.circular(8.px),
           ),
           child: Icon(
             icon,
             size: 20.px,
-            color: ColorToken.primary.of(context),
+            color: ColorToken.xChat.of(context),
           ),
         ),
         SizedBox(width: 12.px),
@@ -214,13 +214,13 @@ class NostrIntroductionPage extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(8.px),
             decoration: BoxDecoration(
-              color: ColorToken.primary.of(context).withOpacity(0.1),
+              color: ColorToken.xChat.of(context).withOpacity(0.1),
               borderRadius: BorderRadius.circular(8.px),
             ),
             child: Icon(
               icon,
               size: 24.px,
-              color: ColorToken.primary.of(context),
+              color: ColorToken.xChat.of(context),
             ),
           ),
           SizedBox(width: 12.px),

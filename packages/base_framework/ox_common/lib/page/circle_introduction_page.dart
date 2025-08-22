@@ -55,7 +55,7 @@ class CircleIntroductionPage extends StatelessWidget {
       children: [
         CLText.headlineSmall(
           Localized.text('ox_common.circle_intro_subtitle'),
-          colorToken: ColorToken.primary,
+          colorToken: ColorToken.xChat,
         ),
         SizedBox(height: 8.px),
         Container(
@@ -64,8 +64,8 @@ class CircleIntroductionPage extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                ColorToken.primary.of(context),
-                ColorToken.primary.of(context).withOpacity(0.3),
+                ColorToken.xChat.of(context),
+                ColorToken.xChat.of(context).withOpacity(0.3),
               ],
             ),
             borderRadius: BorderRadius.circular(2.px),
@@ -115,13 +115,13 @@ class CircleIntroductionPage extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(8.px),
             decoration: BoxDecoration(
-              color: ColorToken.primary.of(context).withOpacity(0.1),
+              color: ColorToken.xChat.of(context).withOpacity(0.1),
               borderRadius: BorderRadius.circular(8.px),
             ),
             child: Icon(
               icon,
               size: 24.px,
-              color: ColorToken.primary.of(context),
+              color: ColorToken.xChat.of(context),
             ),
           ),
           SizedBox(width: 12.px),
@@ -255,14 +255,14 @@ class CircleIntroductionPage extends StatelessWidget {
                       height: 6.px,
                       margin: EdgeInsets.only(top: 8.px, right: 8.px),
                       decoration: BoxDecoration(
-                        color: ColorToken.primary.of(context),
+                        color: ColorToken.xChat.of(context),
                         shape: BoxShape.circle,
                       ),
                     ),
                     Expanded(
                       child: CLText.titleSmall(
                         Localized.text('ox_common.circle_intro_relay_question'),
-                        colorToken: ColorToken.primary,
+                        colorToken: ColorToken.xChat,
                       ),
                     ),
                   ],
@@ -326,14 +326,14 @@ class CircleIntroductionPage extends StatelessWidget {
                 height: 6.px,
                 margin: EdgeInsets.only(top: 8.px, right: 8.px),
                 decoration: BoxDecoration(
-                  color: ColorToken.primary.of(context),
+                  color: ColorToken.xChat.of(context),
                   shape: BoxShape.circle,
                 ),
               ),
               Expanded(
                 child: CLText.titleSmall(
                   question,
-                  colorToken: ColorToken.primary,
+                  colorToken: ColorToken.xChat,
                 ),
               ),
             ],

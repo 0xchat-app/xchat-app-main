@@ -121,7 +121,8 @@ class _FontSizeSettingsPageState extends State<FontSizeSettingsPage> {
                   horizontal: CLLayout.horizontalPadding,
                 ),
                 decoration: BoxDecoration(
-                  color: isSender ? ColorToken.primary.of(context) : ColorToken.surfaceContainer.of(context),
+                  color: isSender ? null : ColorToken.surfaceContainer.of(context),
+                  gradient: isSender ? CLThemeData.themeGradientOf(context) : null,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(isSender ? 16.px : 0),
                     topRight: Radius.circular(isSender ? 0 : 16.px),

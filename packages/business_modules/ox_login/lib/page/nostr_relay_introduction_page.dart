@@ -45,7 +45,7 @@ class NostrRelayIntroductionPage extends StatelessWidget {
       children: [
         CLText.headlineSmall(
           Localized.text('ox_login.relay_intro_subtitle'),
-          colorToken: ColorToken.primary,
+          colorToken: ColorToken.xChat,
         ),
         SizedBox(height: 8.px),
         Container(
@@ -54,8 +54,8 @@ class NostrRelayIntroductionPage extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                ColorToken.primary.of(context),
-                ColorToken.primary.of(context).withOpacity(0.3),
+                ColorToken.xChat.of(context),
+                ColorToken.xChat.of(context).withOpacity(0.3),
               ],
             ),
             borderRadius: BorderRadius.circular(2.px),
@@ -121,13 +121,13 @@ class NostrRelayIntroductionPage extends StatelessWidget {
         Container(
           padding: EdgeInsets.all(8.px),
           decoration: BoxDecoration(
-            color: ColorToken.primary.of(context).withOpacity(0.1),
+            color: ColorToken.xChat.of(context).withOpacity(0.1),
             borderRadius: BorderRadius.circular(8.px),
           ),
           child: Icon(
             icon,
             size: 20.px,
-            color: ColorToken.primary.of(context),
+            color: ColorToken.xChat.of(context),
           ),
         ),
         SizedBox(width: 12.px),
@@ -198,7 +198,7 @@ class NostrRelayIntroductionPage extends StatelessWidget {
           width: 24.px,
           height: 24.px,
           decoration: BoxDecoration(
-            color: ColorToken.primary.of(context),
+            color: ColorToken.xChat.of(context),
             shape: BoxShape.circle,
           ),
           child: Center(
