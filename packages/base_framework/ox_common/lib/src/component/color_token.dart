@@ -6,6 +6,7 @@ import 'package:ox_common/utils/color_extension.dart';
 enum ColorToken {
   xChat,
   secondaryXChat,
+
   primary,
   onPrimary,
   primaryContainer,
@@ -21,6 +22,9 @@ enum ColorToken {
   onSurfaceVariant,
   surfaceContainer,
   surfaceContainerHigh,
+
+  white,
+  black,
 }
 
 extension AppColorResolver on ColorToken {
@@ -67,6 +71,10 @@ extension AppColorResolver on ColorToken {
           return scheme.surfaceContainer;
         case ColorToken.surfaceContainerHigh:
           return scheme.surfaceContainerHigh;
+        case ColorToken.white:
+          return Colors.white;
+        case ColorToken.black:
+          return Colors.black;
       }
     } else {
       final cupertino = CupertinoTheme.of(context);
@@ -113,6 +121,10 @@ extension AppColorResolver on ColorToken {
           return CupertinoColors.secondarySystemFill.resolveFrom(context);
         case ColorToken.surfaceContainerHigh:
           return CupertinoColors.secondarySystemFill.resolveFrom(context);
+        case ColorToken.white:
+          return CupertinoColors.white;
+        case ColorToken.black:
+          return CupertinoColors.black;
       }
     }
   }

@@ -6,17 +6,16 @@ import 'package:ox_common/component.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/ox_common.dart';
 import 'package:ox_common/utils/adapt.dart';
-import 'package:ox_common/utils/common_color.dart';
 import 'package:ox_common/utils/image_picker_utils.dart';
 import 'package:ox_common/utils/permission_utils.dart';
 import 'package:ox_common/utils/string_utils.dart';
-import 'package:ox_common/utils/theme_color.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:flutter_zxing/flutter_zxing.dart';
-import 'common_image.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+import 'common_image.dart';
 
 class CommonScanPage extends StatefulWidget {
   @override
@@ -62,49 +61,13 @@ class CommonScanPageState extends State<CommonScanPage> with SingleTickerProvide
   @override
   Widget build(BuildContext context) {
     return CLScaffold(
+      appBar: CLAppBar(
+        title: 'str_scan'.commonLocalized(),
+      ),
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Container(
-            width: double.infinity,
-            height: double.infinity,
-            child: _buildQrView(context),
-          ),
-          Positioned(
-              width: MediaQuery.of(context).size.width,
-              child: Container(
-                height: Adapt.px(56),
-                margin: EdgeInsets.only(left: Adapt.px(12), right: Adapt.px(12)),
-                child: Stack(
-                  children: [
-                    GestureDetector(
-                      onTap: () => OXNavigator.pop(context),
-                      behavior: HitTestBehavior.translucent,
-                      child: Container(
-                        height: double.infinity,
-                        child: CommonImage(
-                          iconName: "appbar_back.png",
-                          width: Adapt.px(32),
-                          height: Adapt.px(32),
-                          color: CommonColor.white01,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      height: double.infinity,
-                      alignment: Alignment.center,
-                      child: Text(
-                        'str_scan'.commonLocalized(),
-                        style: TextStyle(
-                          fontSize: Adapt.px(18),
-                          color: ThemeColor.white,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              )),
+          Positioned.fill(top: 1, child: _buildQrView(context)),
           Positioned(
             width: MediaQuery.of(context).size.width,
             bottom: Adapt.px(56),
@@ -127,12 +90,9 @@ class CommonScanPageState extends State<CommonScanPage> with SingleTickerProvide
                           SizedBox(
                             height: Adapt.px(7),
                           ),
-                          Text(
+                          CLText.labelSmall(
                             'str_my_idcard'.commonLocalized(),
-                            style: TextStyle(
-                              color: ThemeColor.white,
-                              fontSize: Adapt.px(12),
-                            ),
+                            colorToken: ColorToken.white,
                           ),
                         ],
                       ),
@@ -142,9 +102,9 @@ class CommonScanPageState extends State<CommonScanPage> with SingleTickerProvide
                     },
                   )),
                   Container(
-                    width: Adapt.px(0.5),
-                    height: Adapt.px(79),
-                    color: ThemeColor.gray5,
+                    width: 0.5,
+                    height: 80.px,
+                    color: ColorToken.white.of(context),
                   ),
                   Expanded(
                       child: GestureDetector(
@@ -159,12 +119,9 @@ class CommonScanPageState extends State<CommonScanPage> with SingleTickerProvide
                           SizedBox(
                             height: Adapt.px(7),
                           ),
-                          Text(
+                          CLText.labelSmall(
                             'str_album'.commonLocalized(),
-                            style: TextStyle(
-                              color: ThemeColor.white,
-                              fontSize: Adapt.px(12),
-                            ),
+                            colorToken: ColorToken.white,
                           ),
                         ],
                       ),
@@ -186,17 +143,18 @@ class CommonScanPageState extends State<CommonScanPage> with SingleTickerProvide
       alignment: Alignment.center,
       children: [
         Center(
-          child: CommonImage(
+          child: CLIcon(
             iconName: 'icon_btn_bg.png',
+            package: 'ox_common',
             size: 54.px,
-            color: ThemeColor.gray5,
+            color: ColorToken.white.of(context),
           ),
         ),
         Center(
           child: CommonImage(
             iconName: iconName,
             size: 24.px,
-            color: ThemeColor.color0,
+            color: ColorToken.black.of(context),
           ),
         ),
       ],
