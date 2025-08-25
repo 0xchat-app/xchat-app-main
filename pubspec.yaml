@@ -96,6 +96,7 @@ dependency_overrides:
     path: packages/bitchat-flutter-plugin
   super_native_extensions:
     path: packages/base_framework/super_native_extensions
+  irondash_engine_context: 0.5.5
 
 
 # For information on the generic Dart part of this file, see the
@@ -111,11 +112,10 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-   - assets/images/
-   - assets/locale/
-   - assets/sounds/
-   - assets/sounds/classic/
-   - assets/sounds/ostrich/
+    - .dart_tool/
+    - .dart_tool/dartpad/
+    - .dart_tool/flutter_build/
+    - .dart_tool/flutter_build/2fa4cde422f29064997cf3311a04f923/
 
   fonts:
     - family: OX Font
