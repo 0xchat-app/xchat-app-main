@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
-import 'package:ox_common/component.dart';
 import 'package:ox_common/utils/adapt.dart';
+import 'color_token.dart';
 import 'theme_data.dart';
 
 class CLIcon extends StatelessWidget {

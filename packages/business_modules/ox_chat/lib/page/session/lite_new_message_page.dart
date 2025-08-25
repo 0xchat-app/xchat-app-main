@@ -173,7 +173,9 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
     return SectionListViewItem(
       data: [
         LabelItemModel(
-          icon: ListViewIcon.data(Icons.share),
+          icon: ListViewIcon.data(
+            Icons.share,
+          ),
           title: Localized.text('ox_usercenter.invite'),
           onTap: _onInviteFriends,
         ),
@@ -182,7 +184,6 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
             icon: ListViewIcon(
               iconName: 'icon_scan_qr.png',
               package: 'ox_common',
-              size: 22.px,
             ),
             title: Localized.text('ox_common.str_scan'),
             onTap: _onScanQRCode,
@@ -191,7 +192,6 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
           icon: ListViewIcon(
             iconName: 'icon_new_group.png',
             package: 'ox_common',
-            size: 40.px,
           ),
           title: Localized.text('ox_chat.str_new_group'),
           onTap: _onNewGroup,
