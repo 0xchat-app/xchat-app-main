@@ -1,4 +1,3 @@
-// plugin
 import 'dart:io';
 
 import 'package:chatcore/chat-core.dart';
@@ -9,7 +8,6 @@ import 'package:ox_common/const/common_constant.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/nip46_status_notifier.dart';
-import 'package:ox_common/utils/theme_color.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/common_image.dart';
 import 'package:ox_common/widgets/common_toast.dart';
@@ -18,8 +16,6 @@ import 'package:ox_localizable/ox_localizable.dart';
 // ox_login
 import 'package:ox_login/page/account_key_login_page.dart';
 import 'package:ox_login/page/create_account_page.dart';
-import 'package:ox_module_service/ox_module_service.dart';
-import 'package:rich_text_widget/rich_text_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class LoginPage extends StatefulWidget {
@@ -103,22 +99,6 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget buildLogoIcon() => CommonImage(
-    iconName: 'logo_icon.png',
-    fit: BoxFit.contain,
-    width: Adapt.px(180),
-    height: Adapt.px(180),
-    useTheme: true,
-  );
-
-  Widget buildTips() => Container(
-    child: Text(
-      Localized.text('ox_login.login_tips'),
-      style: TextStyle(color: ThemeColor.titleColor, fontSize: 18.sp),
-      textAlign: TextAlign.center,
-    ),
-  );
-
   Widget buildCreateAccountButton() => CLButton.filled(
     onTap: _createAccount,
     height: 48.py,
@@ -131,55 +111,6 @@ class _LoginPageState extends State<LoginPage> {
     height: 48.py,
     expanded: true,
     text: Localized.text('ox_login.login_button'),
-  );
-
-  Widget buildPrivacyWidget() => Container(
-    margin: EdgeInsets.symmetric(horizontal: 24.px),
-    child: RichTextWidget(
-      // default Text
-      Text(
-        Localized.text('ox_login.terms_of_service_privacy_policy'),
-        style: TextStyle(
-          fontWeight: FontWeight.w500,
-          fontSize: Adapt.px(14),
-          color: ThemeColor.titleColor,
-          height: 1.5,
-        ),
-      ),
-      maxLines: 2,
-      textAlign: TextAlign.center,
-      // rich text list
-      richTexts: [
-        BaseRichText(
-          Localized.text("ox_login.terms_of_service"),
-          style: TextStyle(
-            fontSize: Adapt.px(14),
-            fontWeight: FontWeight.bold,
-            foreground: Paint()
-              ..shader = LinearGradient(
-                colors: [ThemeColor.gradientMainEnd, ThemeColor.gradientMainStart],
-              ).createShader(
-                Rect.fromLTWH(0.0, 0.0, 550.0, 70.0),
-              ),
-          ),
-          onTap: _serviceWebView,
-        ),
-        BaseRichText(
-          Localized.text("ox_login.privacy_policy"),
-          style: TextStyle(
-            fontSize: Adapt.px(14),
-            fontWeight: FontWeight.bold,
-            foreground: Paint()
-              ..shader = LinearGradient(
-                colors: [ThemeColor.gradientMainEnd, ThemeColor.gradientMainStart],
-              ).createShader(
-                Rect.fromLTWH(0.0, 0.0, 350.0, 70.0),
-              ),
-          ),
-          onTap: _privacyPolicyWebView,
-        ),
-      ],
-    ),
   );
 
   Widget buildAmberLoginWidget() {
@@ -201,7 +132,7 @@ class _LoginPageState extends State<LoginPage> {
               child: Container(
                 width: double.infinity,
                 height: 0.5.px,
-                color: ThemeColor.color160,
+                color: ColorToken.secondaryContainer.of(context),
               ),
             ),
             Align(
@@ -272,13 +203,5 @@ class _LoginPageState extends State<LoginPage> {
         CommonToast.instance.show(context, 'Login failed: ${e.toString()}');
       }
     }
-  }
-
-  void _serviceWebView() {
-    OXModuleService.invoke('ox_common', 'gotoWebView', [context, 'https://0xchat.com/protocols/xchat-terms-of-use.html', null, null, null, null]);
-  }
-
-  void _privacyPolicyWebView() {
-    OXModuleService.invoke('ox_common', 'gotoWebView', [context, 'https://0xchat.com/protocols/xchat-privacy-policy.html', null, null, null, null]);
   }
 }
