@@ -36,7 +36,7 @@ public class VoiceCallService extends Service {
                 .setContentTitle(voiceTitle)
                 .setContentText(voiceContent)
                 .setContentIntent(pendingIntent)
-                .setSmallIcon(R.mipmap.ox_logo_launcher)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .build();
         startForeground(1, notification);
         return START_STICKY;

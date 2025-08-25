@@ -21,7 +21,7 @@
 
     <application
         android:label="@string/main_app_name"
-        android:icon="@mipmap/ox_logo_launcher"
+        android:icon="@mipmap/ic_launcher"
         android:largeHeap="true"
         android:usesCleartextTraffic="true">
         <meta-data android:name="io.flutter.network-policy"
