@@ -58,7 +58,7 @@ class AvatarGenerator {
 
     final avatarDir = Directory(imageCacheDir);
     if (!await avatarDir.exists()) {
-      avatarDir.create(recursive: true);
+      await avatarDir.create(recursive: true);
     }
 
     final hash = hashString(npub);
