@@ -104,7 +104,7 @@ class _BannerCarouselState extends State<BannerCarousel> {
 
   Widget _buildIndicator() {
     final activeColor = ColorToken.onPrimaryContainer.of(context);
-    final inactiveColor = ColorToken.secondaryContainer.of(context);
+    final inactiveColor = activeColor.withValues(alpha: 0.15);
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: List.generate(widget.items.length, (i) {
