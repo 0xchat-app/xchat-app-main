@@ -3,6 +3,7 @@ import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 
+import '../layout/layout_constant.dart';
 import 'button.dart';
 import 'color_token.dart';
 import 'text.dart';
@@ -11,7 +12,77 @@ import 'progress_indicators.dart';
 
 typedef InputControllerBuilder = Widget Function(BuildContext context, TextEditingController controller);
 
+/// Default dialog-level style used by [CLDialog.show].
+class CLDialogStyle {
+  const CLDialogStyle({
+    this.barrierColor,
+    this.backgroundColor,
+    this.borderRadius,
+    this.insetPadding,
+  });
+
+  final Color? barrierColor;
+  final Color? backgroundColor;
+  final double? borderRadius;
+  final EdgeInsets? insetPadding;
+
+  static const Color defaultBarrierColor = Color(0x8A000000);
+  static const Color defaultBackgroundColor = Color(0xFF1C1C1E);
+  static const double defaultBorderRadius = 24;
+}
+
 class CLDialog {
+  /// Shows a centered dialog with unified style and slide-up + fade animation.
+  ///
+  /// Dialog-level defaults: [CLDialogStyle.defaultBarrierColor], [CLDialogStyle.defaultBackgroundColor],
+  /// [CLDialogStyle.defaultBorderRadius]. Animation: slide from bottom to top with fade in/out.
+  ///
+  /// [contentWidget] The dialog body. Call [Navigator.pop(context, result)] to close and return [result].
+  /// [barrierDismissible] Whether tapping the barrier closes the dialog.
+  static Future<T?> show<T>({
+    required BuildContext context,
+    required Widget contentWidget,
+    bool barrierDismissible = true,
+  }) {
+    return showGeneralDialog<T>(
+      context: context,
+      barrierDismissible: barrierDismissible,
+      barrierLabel: '',
+      transitionDuration: const Duration(milliseconds: 280),
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        final curve = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutCubic,
+        );
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0, 0.2),
+            end: Offset.zero,
+          ).animate(curve),
+          child: FadeTransition(
+            opacity: curve,
+            child: child,
+          ),
+        );
+      },
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return Dialog(
+          child: Container(
+            decoration: BoxDecoration(
+              color: ColorToken.cardContainer.of(context),
+              borderRadius: BorderRadius.circular(CLDialogStyle.defaultBorderRadius),
+            ),
+            padding: EdgeInsets.symmetric(
+              horizontal: 24,
+              vertical: 32,
+            ),
+            child: contentWidget,
+          ),
+        );
+      },
+    );
+  }
+
   /// Show a bottom sheet input dialog that slides up from the bottom
   /// 
   /// This creates a modal bottom sheet with an input field that:

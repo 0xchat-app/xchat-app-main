@@ -7,7 +7,9 @@ import 'package:ox_module_service/ox_module_service.dart';
 import 'package:ox_usercenter/page/settings/avatar_display_page.dart';
 import 'package:ox_usercenter/page/settings/qr_code_display_page.dart';
 import 'package:ox_usercenter/page/settings/settings_slider.dart';
+import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_usercenter/user_feedback/app_review_manager.dart';
+import 'package:ox_localizable/ox_localizable.dart';
 import 'package:chatcore/chat-core.dart';
 
 class OXUserCenter extends OXFlutterModule {
@@ -18,6 +20,20 @@ class OXUserCenter extends OXFlutterModule {
     await super.setup();
     // ChatBinding.instance.setup();
     await AppReviewManager.instance.prepare();
+    _registerCircleExpiredCallback();
+  }
+
+  /// Register callback for circle expired: show global toast when expired is detected (e.g. relay "tenant expired" or purchase).
+  void _registerCircleExpiredCallback() {
+    Account.onCircleExpired = () {
+      final context = OXNavigator.navigatorKey.currentContext;
+      if (context != null) {
+        CommonToast.instance.show(
+          context,
+          Localized.text('ox_common.circle_expired_title'),
+        );
+      }
+    };
   }
 
   @override

@@ -165,5 +165,12 @@
   "str_title_contacts": "Contacts",
   "str_title_groups": "Groups",
   "logged_circle_not_found": "Logged circle not found",
-  "push_token_is_null": "Push token is null"
+  "push_token_is_null": "Push token is null",
+  "unsupported_platform": "Unsupported platform",
+  "failed_to_open_url": "Failed to open URL",
+  "circle_expired_title": "Circle Expired",
+  "circle_expired_heading": "Circle Expired",
+  "circle_expired_message_member": "This circle has expired. You can still view data but cannot send messages or make changes. Please contact the circle admin to renew.",
+  "circle_expired_message_admin": "This circle has expired. You can still view data but cannot send messages or make changes. You can renew below.",
+  "renew": "Renew"
 }

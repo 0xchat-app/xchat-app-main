@@ -13,6 +13,9 @@ import 'package:ox_common/push/push_integration.dart';
 import 'package:ox_common/push/push_notification_manager.dart';
 import 'package:ox_common/purchase/purchase_manager.dart';
 import 'package:ox_common/utils/extension.dart';
+import 'package:ox_common/circle/page/circle_expired_prompt_dialog.dart';
+import 'package:ox_common/log_util.dart';
+import 'package:ox_common/navigator/navigator.dart';
 import '../utils/ox_chat_binding.dart';
 import 'database_manager.dart';
 import 'login_models.dart';
@@ -1085,17 +1088,48 @@ extension LoginManagerCircle on LoginManager {
       TorNetworkHelper.initialize();
     }
 
-    // Asynchronously ensure keypackage is uploaded to paid relay
-    // Wait for relay connection before ensuring keypackage
+    // Wait for relay connection then: ensure keypackage (paid relay), fetch tenant info (paid relay, once per circle)
     Connect.sharedInstance.waitForRelayConnection(relayKind: RelayKind.circleRelay).then((connected) {
-      if (connected) {
-        KeyPackageManager.ensurePermanentKeyPackageOnRelay().catchError((e) {
-          debugPrint('Failed to ensure keypackage on relay: $e');
-        });
-      }
+      if (!connected) return;
+      KeyPackageManager.ensurePermanentKeyPackageOnRelay().catchError((e) {
+        debugPrint('Failed to ensure keypackage on relay: $e');
+      });
+      _fetchTenantInfo(circle);
     }).catchError((e) {
       debugPrint('Failed to wait for relay connection: $e');
     });
+  }
+
+  /// Silently fetch latest tenant info for paid relay after relay is connected.
+  /// Handles: notfound -> delete circle; expired -> save to DB and show [CircleExpiredPromptDialog].
+  void _fetchTenantInfo(Circle circle) async {
+    if (!CircleApi.isPaidRelay(circle.relayUrl)) return;
+    try {
+      final tenantInfo = await CircleMemberService.sharedInstance.getTenantInfo();
+      final status = (tenantInfo['status'] ?? tenantInfo['subscription_status']) as String?;
+      final statusLower = status?.toLowerCase();
+
+      if (statusLower == 'notfound') {
+        await deleteCircle(circle.id);
+        return;
+      }
+
+      await Account.sharedInstance.saveTenantInfoToCircleDB(
+        circleId: circle.id,
+        tenantInfo: tenantInfo,
+      );
+      final subscriptionStatus = tenantInfo['subscription_status'] as String?;
+      final expiresAt = tenantInfo['expires_at'] as int?;
+      final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+      final isExpired = statusLower == 'expired' ||
+          subscriptionStatus == 'expired' ||
+          (expiresAt != null && expiresAt > 0 && expiresAt < now);
+      if (isExpired) {
+        CircleExpiredPromptDialog.show(OXNavigator.rootContext, circle);
+      }
+    } catch (e) {
+      LogUtils.w(() => 'Silent fetch tenant info failed: $e');
+    }
   }
 
   void initializePushCore() async {

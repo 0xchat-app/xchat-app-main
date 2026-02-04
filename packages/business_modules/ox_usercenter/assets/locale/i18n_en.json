@@ -140,5 +140,8 @@
   "invite_link_description": "Anyone who receives this link can initiate a chat with you. Please only share it with people you trust.",
   "invite_member": "Invite Member",
   "share_qr_or_link_description": "Share this QR code or link to invite someone to this circle.",
-  "share_link": "Share Link"
+  "share_link": "Share Link",
+  "circle_expired_title": "Circle Expired",
+  "circle_expired_message_member": "This circle has expired. You can still view data but cannot send messages or make changes. Please contact the circle admin to renew.",
+  "circle_expired_message_admin": "This circle has expired. You can still view data but cannot send messages or make changes. You can renew below."
 }
