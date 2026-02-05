@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_common/component.dart';
@@ -7,18 +8,25 @@ import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/model/file_server_model.dart';
 import 'package:ox_common/repository/file_server_repository.dart';
 import 'package:ox_common/utils/extension.dart';
+import 'package:ox_common/utils/file_server_helper.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 
 import 'add_file_server_page.dart';
 
 /// File Server Settings page.
+/// When [readOnlyForPaidCircle] is true, only the current circle's file server (S3) is shown
+/// and the page is read-only (no add/edit/delete/selection).
 class FileServerPage extends StatefulWidget {
   const FileServerPage({
     super.key,
     this.previousPageTitle,
+    this.readOnlyForPaidCircle = false,
   });
 
   final String? previousPageTitle;
+
+  /// When true, only show the circle's file server info (for paid circles) and disable management.
+  final bool readOnlyForPaidCircle;
 
   @override
   State<FileServerPage> createState() => _FileServerPageState();
@@ -30,10 +38,10 @@ class _FileServerPageState extends State<FileServerPage> {
   // Holds selected server relay URL.
   final ValueNotifier<String?> _selected$ = ValueNotifier(null);
   bool _isEditing = false;
-  late final FileServerRepository _repo;
+  FileServerRepository? _repo;
 
   /// Subscription for the repo stream, used to cancel listening when the page is disposed.
-  late final StreamSubscription<List<FileServerModel>> _repoSub;
+  StreamSubscription<List<FileServerModel>>? _repoSub;
 
   // Holds the url selected in circle config before servers list is loaded.
   String? _pendingSelectedUrl;
@@ -44,19 +52,29 @@ class _FileServerPageState extends State<FileServerPage> {
   void initState() {
     super.initState();
 
-    prepareData();
-    _loadInitialSelection();
-    addListener();
+    if (widget.readOnlyForPaidCircle) {
+      _loadCircleFileServerForDisplay();
+    } else {
+      prepareData();
+      _loadInitialSelection();
+      addListener();
+    }
   }
 
   void prepareData() {
     _repo = FileServerRepository(DBISAR.sharedInstance.isar);
-    final fileServers = _repo.fetch();
+    final fileServers = _repo!.fetch();
     _servers$.value = fileServers;
 
     final selectedFileServerUrl = LoginManager.instance.currentCircle?.selectedFileServerUrl;
     // Empty string means the default file server group is selected.
     _selected$.value = selectedFileServerUrl ?? '';
+  }
+
+  Future<void> _loadCircleFileServerForDisplay() async {
+    final server = await FileServerHelper.getCircleFileServerForDisplay();
+    if (!mounted) return;
+    _servers$.value = server != null ? [server] : [];
   }
 
   void _loadInitialSelection() {
@@ -68,8 +86,9 @@ class _FileServerPageState extends State<FileServerPage> {
   }
 
   void addListener() {
+    if (_repo == null) return;
     // Listen list changes
-    _repoSub = _repo.watchAll().listen((servers) {
+    _repoSub = _repo!.watchAll().listen((servers) {
 
       if (!mounted) return;
 
@@ -121,9 +140,7 @@ class _FileServerPageState extends State<FileServerPage> {
 
   @override
   void dispose() {
-    // Stop listening to repository changes before disposing the notifiers to
-    // avoid attempting to update disposed objects.
-    _repoSub.cancel();
+    _repoSub?.cancel();
     _servers$.dispose();
     _selected$.dispose();
     super.dispose();
@@ -132,33 +149,70 @@ class _FileServerPageState extends State<FileServerPage> {
   @override
   Widget build(BuildContext context) {
     final bodyWidget = _buildBody(context);
+    final isReadOnly = widget.readOnlyForPaidCircle;
 
     return CLScaffold(
       appBar: CLAppBar(
         title: _title,
         previousPageTitle: widget.previousPageTitle,
-        actions: [
-          CLButton.text(
-            text: _isEditing ? Localized.text('ox_common.complete') : Localized.text('ox_usercenter.edit'),
-            onTap: () => setState(() => _isEditing = !_isEditing),
-          ),
-        ],
+        actions: isReadOnly
+            ? const []
+            : [
+                CLButton.text(
+                  text: _isEditing ? Localized.text('ox_common.complete') : Localized.text('ox_usercenter.edit'),
+                  onTap: () => setState(() => _isEditing = !_isEditing),
+                ),
+              ],
       ),
       isSectionListPage: true,
       body: bodyWidget,
-      bottomWidget: AnimatedOpacity(
-        opacity: _isEditing ? 0.0 : 1.0,
-        duration: const Duration(milliseconds: 200),
-        child: CLButton.filled(
-          text: Localized.text('ox_usercenter.add_server'),
-          expanded: true,
-          onTap: _addServer,
-        ),
-      ),
+      bottomWidget: isReadOnly
+          ? null
+          : AnimatedOpacity(
+              opacity: _isEditing ? 0.0 : 1.0,
+              duration: const Duration(milliseconds: 200),
+              child: CLButton.filled(
+                text: Localized.text('ox_usercenter.add_server'),
+                expanded: true,
+                onTap: _addServer,
+              ),
+            ),
     );
   }
 
   Widget _buildBody(BuildContext context) {
+    if (widget.readOnlyForPaidCircle) {
+      return ValueListenableBuilder<List<FileServerModel>>(
+        valueListenable: _servers$,
+        builder: (_, List<FileServerModel> list, __) {
+          final data = list.isEmpty
+              ? [
+                  LabelItemModel(
+                    title: Localized.text('ox_usercenter.file_server_info_empty'),
+                    subtitle: '',
+                    onTap: null,
+                  ),
+                ]
+              : list
+                  .map((item) => LabelItemModel(
+                        icon: ListViewIcon.data(CupertinoIcons.doc_fill),
+                        title: item.name,
+                        subtitle: item.url,
+                        onTap: null,
+                      ))
+                  .toList();
+          return CLSectionListView(
+            items: [
+              SectionListViewItem(
+                data: data,
+                isEditing: false,
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     final listWidget = ValueListenableBuilder(
       valueListenable: _servers$,
       builder: (_, List<FileServerModel> list, __) {
@@ -195,7 +249,7 @@ class _FileServerPageState extends State<FileServerPage> {
                 final target = servers.where((e) => e.url == urlToDelete).firstOrNull;
                 if (target == null || target.id <= 0) return;
 
-                _repo.delete(target.id);
+                _repo?.delete(target.id);
 
                 // Update UI immediately
                 servers.removeWhere((e) => e.url == urlToDelete);
@@ -214,13 +268,14 @@ class _FileServerPageState extends State<FileServerPage> {
   }
 
   Future<void> _addServer() async {
+    if (_repo == null) return;
     final type = await _selectType();
     if (type == null) return;
 
     final FileServerModel? newServer = await Navigator.push<FileServerModel>(
       context,
       MaterialPageRoute(
-        builder: (_) => AddFileServerPage(type: type, repo: _repo),
+        builder: (_) => AddFileServerPage(type: type, repo: _repo!),
       ),
     );
 

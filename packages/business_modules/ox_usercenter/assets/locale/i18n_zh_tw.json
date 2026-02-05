@@ -55,6 +55,7 @@
   "relay_server": "Relay 伺服器",
   "relay_server_description": "中繼伺服器是儲存和轉發訊息的地方。它充當您圈子的訊息中心。",
   "file_server_setting": "檔案伺服器設定",
+  "file_server_info_empty": "暫無檔案伺服器資訊",
   "delete_circle_confirm_title": "刪除圈子",
   "delete_circle_confirm_content": "此操作將永久刪除該圈子且無法撤銷。您在此圈子內的所有資料，包括聊天記錄等相關資料，將不可恢復地遺失。",
   "add_server": "新增伺服器",

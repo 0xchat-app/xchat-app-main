@@ -55,6 +55,7 @@
   "relay_server": "Relay server",
   "relay_server_description": "The relay server is where your messages are stored and forwarded. It acts as a message hub for your circle.",
   "file_server_setting": "File server setting",
+  "file_server_info_empty": "No file server information",
   "delete_circle_confirm_title": "Delete Circle",
   "delete_circle_confirm_content": "This action will permanently delete this circle and cannot be undone. All your data within this circle, including chat messages and other related data, will be irreversibly lost.",
   "add_server": "Add Server",

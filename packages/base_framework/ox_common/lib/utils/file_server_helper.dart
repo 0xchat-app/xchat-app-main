@@ -146,6 +146,19 @@ class FileServerHelper {
     return (await currentUploadCandidates()).isNotEmpty;
   }
 
+  /// Returns the current circle's file server (S3) for display when the circle is a paid relay.
+  /// Used on the read-only file server info page for paid circles.
+  static Future<FileServerModel?> getCircleFileServerForDisplay() async {
+    final circle = LoginManager.instance.currentCircle;
+    if (circle == null || !CircleApi.isPaidRelay(circle.relayUrl)) return null;
+    final candidates = await currentUploadCandidates();
+    try {
+      return candidates.firstWhere((e) => e.type == FileServerType.minio);
+    } catch (_) {
+      return null;
+    }
+  }
+
   /// Check if S3 config is expired or near expiration
   /// 
   /// [s3Config] S3 configuration to check
