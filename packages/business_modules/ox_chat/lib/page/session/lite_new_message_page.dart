@@ -499,7 +499,7 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
             icon: ListViewIcon.data(
               Icons.share,
             ),
-            title: Localized.text('ox_usercenter.invite'),
+            title: Localized.text('ox_usercenter.invite_to_circle'),
             onTap: _onInviteFriends,
           ),
         );

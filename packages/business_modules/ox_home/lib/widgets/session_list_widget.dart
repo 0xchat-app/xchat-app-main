@@ -229,7 +229,9 @@ class _SessionListWidgetState extends State<SessionListWidget> {
                   onPressed: () => _navigateToInviteFriends(context),
                   padding: EdgeInsets.zero,
                   child: CLText.bodyMedium(
-                    Localized.text('ox_chat.invite_friends_link'),
+                    _isPaidRelay
+                        ? Localized.text('ox_chat.invite_to_circle_link')
+                        : Localized.text('ox_chat.invite_friends_link'),
                     colorToken: ColorToken.onSurfaceXChat,
                   ),
                 ),
