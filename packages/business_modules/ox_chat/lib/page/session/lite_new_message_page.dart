@@ -259,7 +259,10 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
     try {
       // Check admin status from network
       try {
-        final tenantInfo = await CircleMemberService.sharedInstance.getTenantInfo();
+        final tenantInfo = await CircleMemberService.sharedInstance.getTenantInfoForRelay(
+          circle.relayUrl,
+          circleId: circle.id,
+        );
         final isAdmin = tenantInfo.tenantAdminPubkey.toLowerCase() == currentPubkey.toLowerCase();
         if (_isAdmin != isAdmin && mounted) {
           _isAdmin = isAdmin;
@@ -271,6 +274,10 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
           circleId: circle.id,
           tenantInfo: tenantInfo.toJson(),
         );
+        // Sync to LoginManager state so state$ has latest (reactive UI)
+        if (LoginManager.instance.currentCircle?.id == circle.id) {
+          LoginManager.instance.updateCircleTenantInfo(tenantInfo);
+        }
       } catch (e) {
         print('Error checking admin status from network: $e');
       }

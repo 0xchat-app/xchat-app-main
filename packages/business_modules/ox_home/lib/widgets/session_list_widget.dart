@@ -34,14 +34,11 @@ class SessionListWidget extends StatefulWidget {
 
 class _SessionListWidgetState extends State<SessionListWidget> {
   SessionListDataController? controller;
-  bool _isPaidRelay = false;
-  bool _isAdmin = false;
 
   @override
   void initState() {
     super.initState();
     _initializeController();
-    _checkPaidRelayAndAdmin();
   }
 
   @override
@@ -69,53 +66,32 @@ class _SessionListWidgetState extends State<SessionListWidget> {
     }
   }
 
-  /// Check if current circle is paid relay and if current user is admin
-  Future<void> _checkPaidRelayAndAdmin() async {
-    try {
-      _isPaidRelay = CircleApi.isPaidRelay(widget.circle.relayUrl);
-      
-      if (_isPaidRelay) {
-        // Check admin status
-        final currentPubkey = LoginManager.instance.currentPubkey;
-        try {
-          final tenantInfo = await CircleMemberService.sharedInstance.getTenantInfo();
-          _isAdmin = tenantInfo.tenantAdminPubkey.toLowerCase() == currentPubkey.toLowerCase();
-        } catch (e) {
-          // Default to false on error
-          _isAdmin = false;
-        }
-      }
-      
-      if (mounted) {
-        setState(() {});
-      }
-    } catch (e) {
-      print('Error checking paid relay and admin status: $e');
-      _isPaidRelay = false;
-      _isAdmin = false;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    // Show loading if controller is not initialized or ownerPubkey is empty
     if (controller == null || widget.ownerPubkey.isEmpty) {
       return Center(
         child: CLProgressIndicator.circular(),
       );
     }
 
-    return ValueListenableBuilder(
-      valueListenable: controller!.sessionList$,
-      builder: (context, sessionList, _) {
-        return ValueListenableBuilder(
-          valueListenable: controller!.hasArchivedChats$,
-          builder: (context, hasArchived, _) {
-            if (sessionList.isEmpty && !hasArchived) {
-              return _buildEmptyState(context);
-            }
+    return ValueListenableBuilder<LoginState>(
+      valueListenable: LoginManager.instance.state$,
+      builder: (context, loginState, _) {
+        final isPaidRelay = CircleApi.isPaidRelay(widget.circle.relayUrl);
+        final isAdmin = loginState.currentCircle?.id == widget.circle.id &&
+            (loginState.currentCircle?.isAdminFor(LoginManager.instance.currentPubkey) ?? false);
 
-            return ListView.separated(
+        return ValueListenableBuilder(
+          valueListenable: controller!.sessionList$,
+          builder: (context, sessionList, _) {
+            return ValueListenableBuilder(
+              valueListenable: controller!.hasArchivedChats$,
+              builder: (context, hasArchived, _) {
+                if (sessionList.isEmpty && !hasArchived) {
+                  return _buildEmptyState(context, isPaidRelay, isAdmin);
+                }
+
+                return ListView.separated(
               padding:
                   EdgeInsets.only(bottom: Adapt.bottomSafeAreaHeightByKeyboard),
               itemBuilder: (context, index) {
@@ -133,6 +109,8 @@ class _SessionListWidgetState extends State<SessionListWidget> {
                 return buildSeparator(context, index, sessionList);
               },
               itemCount: sessionList.length + (hasArchived ? 1 : 0),
+                );
+              },
             );
           },
         );
@@ -152,7 +130,11 @@ class _SessionListWidgetState extends State<SessionListWidget> {
     return const SizedBox.shrink();
   }
 
-  Widget _buildEmptyState(BuildContext context) {
+  Widget _buildEmptyState(
+    BuildContext context,
+    bool isPaidRelay,
+    bool isAdmin,
+  ) {
     return Transform.translate(
       offset: Offset(0, -120.px),
       child: Center(
@@ -163,36 +145,26 @@ class _SessionListWidgetState extends State<SessionListWidget> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Empty state icon
               CommonImage(
                 iconName: 'empty.png',
                 size: 120.px,
                 package: 'ox_home',
               ),
-
               SizedBox(height: 32.px),
-
-              // Title
               CLText.titleLarge(
                 Localized.text('ox_chat.welcome_to_xchat'),
                 colorToken: ColorToken.onSurface,
                 textAlign: TextAlign.center,
               ),
-
               SizedBox(height: 32.px),
-
-              // Description
               CLText.bodyMedium(
                 Localized.text('ox_chat.welcome_description'),
                 colorToken: ColorToken.onSurfaceVariant,
                 textAlign: TextAlign.center,
                 maxLines: 3,
               ),
-
               SizedBox(height: 32.px),
-
-              // Find People to Chat button (only for non-paid relay)
-              if (!_isPaidRelay)
+              if (!isPaidRelay)
                 CLButton.filled(
                   expanded: true,
                   onTap: () => _navigateToFindPeople(context),
@@ -215,19 +187,13 @@ class _SessionListWidgetState extends State<SessionListWidget> {
                     ],
                   ),
                 ),
-
-              // SizedBox(height: 16.px),
-
-              // Invite Friends link
-              // For paid relay: only show if admin
-              // For regular relay: always show
-              if ((_isPaidRelay && _isAdmin) || !_isPaidRelay)
+              if ((isPaidRelay && isAdmin) || !isPaidRelay)
                 CupertinoButton(
-                  onPressed: () => _navigateToInviteFriends(context),
+                  onPressed: () => _navigateToInviteFriends(context, isPaidRelay),
                   padding: EdgeInsets.zero,
                   child: CLText.bodyMedium(
-                    _isPaidRelay
-                        ? Localized.text('ox_chat.invite_to_circle_link')
+                    isPaidRelay
+                        ? Localized.text('ox_usercenter.invite_to_circle')
                         : Localized.text('ox_chat.invite_friends_link'),
                     colorToken: ColorToken.onSurfaceXChat,
                   ),
@@ -246,15 +212,14 @@ class _SessionListWidgetState extends State<SessionListWidget> {
     );
   }
 
-  void _navigateToInviteFriends(BuildContext context) {
+  void _navigateToInviteFriends(BuildContext context, bool isPaidRelay) {
     final circle = LoginManager.instance.currentCircle;
     if (circle == null) {
       CircleJoinUtils.showJoinCircleGuideDialog(context: OXNavigator.rootContext);
       return;
     }
-    
-    // For paid relay, show circle invite QR code
-    if (_isPaidRelay) {
+
+    if (isPaidRelay) {
       OXNavigator.pushPage(
         context,
         (context) => QRCodeDisplayPage(

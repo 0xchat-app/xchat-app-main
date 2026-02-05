@@ -1106,7 +1106,10 @@ extension LoginManagerCircle on LoginManager {
   void _fetchTenantInfo(Circle circle) async {
     if (!circle.isPaidRelay) return;
     try {
-      final tenantInfo = await CircleMemberService.sharedInstance.getTenantInfo();
+      final tenantInfo = await CircleMemberService.sharedInstance.getTenantInfoForRelay(
+        circle.relayUrl,
+        circleId: circle.id,
+      );
       final statusLower = tenantInfo.status.toLowerCase();
 
       if (statusLower == 'notfound') {

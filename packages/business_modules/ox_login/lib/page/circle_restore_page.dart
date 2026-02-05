@@ -50,15 +50,16 @@ class _CircleRestorePageState extends State<CircleRestorePage> {
   }
 
   Future<void> _loadCircleDetails() async {
-    // Load role and member count for each circle
     final currentPubkey = Account.sharedInstance.currentPubkey;
     
     for (final item in _circleItems) {
       try {
-        // Get tenant info
         try {
-          final tenantInfo = await CircleMemberService.sharedInstance.getTenantInfo();
-          
+          final tenantInfo = await CircleMemberService.sharedInstance.getTenantInfoForRelay(
+            item.relayInfo.relayUrl,
+            tenantId: item.relayInfo.tenantId,
+          );
+          if (!mounted) return;
           setState(() {
             item.memberCount = tenantInfo.currentMembers;
             if (tenantInfo.tenantAdminPubkey.toLowerCase() == currentPubkey.toLowerCase()) {
@@ -68,7 +69,7 @@ class _CircleRestorePageState extends State<CircleRestorePage> {
             }
           });
         } catch (e) {
-          // If request fails, use defaults
+          if (!mounted) return;
           setState(() {
             item.role = Localized.text('ox_login.member');
           });

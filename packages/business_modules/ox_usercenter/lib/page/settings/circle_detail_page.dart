@@ -59,6 +59,7 @@ class _CircleDetailPageState extends State<CircleDetailPage> {
   int _maxMembers = 6;
   late ValueNotifier<String> _fileServerName$;
   List<UserDBISAR> _members = [];
+  void Function()? _stateListener;
 
   @override
   void initState() {
@@ -68,7 +69,14 @@ class _CircleDetailPageState extends State<CircleDetailPage> {
     _subscriptionStatus$ = ValueNotifier<String?>(null);
     _fileServerName$ = ValueNotifier<String>('');
     _checkIfOwner();
-    // Defer heavy work (Isar/network) to after first frame to avoid enter jank
+    _stateListener = () {
+      final state = LoginManager.instance.currentState;
+      if (state.currentCircle?.id != widget.circle.id ||
+          state.currentCircle?.tenantInfo == null) return;
+      if (!mounted) return;
+      _updateUIWithTenantInfo(state.currentCircle!.tenantInfo!.toJson());
+    };
+    LoginManager.instance.state$.addListener(_stateListener!);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       _loadLocalData();
@@ -79,6 +87,9 @@ class _CircleDetailPageState extends State<CircleDetailPage> {
 
   @override
   void dispose() {
+    if (_stateListener != null) {
+      LoginManager.instance.state$.removeListener(_stateListener!);
+    }
     _renewDate$.dispose();
     _subscriptionStatus$.dispose();
     _fileServerName$.dispose();
@@ -236,13 +247,21 @@ class _CircleDetailPageState extends State<CircleDetailPage> {
 
     // Then request server update (request regardless of whether cached data exists)
     try {
-      final tenantInfo = await CircleMemberService.sharedInstance.getTenantInfo();
+      final tenantInfo = await CircleMemberService.sharedInstance.getTenantInfoForRelay(
+        widget.circle.relayUrl,
+        circleId: widget.circle.id,
+      );
       
       // Update UI
       await _updateUIWithTenantInfo(tenantInfo.toJson());
 
       // Save to local cache
       await _saveTenantInfoToCache(tenantInfo.toJson());
+
+      // Sync to LoginManager state so state$ has latest tenantInfo (reactive UI elsewhere)
+      if (LoginManager.instance.currentCircle?.id == widget.circle.id) {
+        LoginManager.instance.updateCircleTenantInfo(tenantInfo);
+      }
 
       // If server returns tenant_name different from local, update circle name
       final tenantName = tenantInfo.name;
