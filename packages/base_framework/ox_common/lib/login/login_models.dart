@@ -1,3 +1,4 @@
+import 'package:chatcore/chat-core.dart';
 import 'package:isar/isar.dart';
 import 'package:uuid/uuid.dart';
 
@@ -110,12 +111,28 @@ class Circle {
   /// Subscription group id (e.g. loc1) for paid circles owned by this account.
   String? groupId;
 
+  /// Tenant info for paid relay (from [CircleMemberService.getTenantInfo]).
+  /// Updated when tenant info is fetched; null until loaded or for non-paid circles.
+  TenantInfo? tenantInfo;
+
   /// Circle level configuration, loaded lazily after circle DB initialized.
   CircleConfigModel _config = CircleConfigModel();
+
+  /// Whether this circle uses a paid relay (by relay URL pattern).
+  /// Synchronous, no I/O.
+  bool get isPaidRelay => CircleApi.isPaidRelay(relayUrl);
+
+  /// Whether the given [currentPubkey] is admin of this circle (paid relay only).
+  /// Derived from [tenantInfo]; returns false when [tenantInfo] is null or not loaded.
+  bool isAdminFor(String currentPubkey) =>
+      tenantInfo != null &&
+      currentPubkey.isNotEmpty &&
+      tenantInfo!.tenantAdminPubkey.toLowerCase() == currentPubkey.toLowerCase();
 
   late Isar db;
 
   /// Create Circle from CircleISAR
+  /// [Circle.tenantInfo] is not persisted here; load from [CircleDBISAR] / getTenantInfo when needed.
   factory Circle.fromISAR(CircleISAR isar) {
     return Circle(
       id: isar.circleId,
@@ -130,6 +147,7 @@ class Circle {
   }
 
   /// Convert Circle to CircleISAR
+  /// [Circle.tenantInfo] is not persisted; tenant info lives in [CircleDBISAR] / runtime only.
   CircleISAR toISAR() {
     return CircleISAR(
       pubkey: ownerPubkey ?? '',

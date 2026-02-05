@@ -60,9 +60,8 @@ class _CircleRestorePageState extends State<CircleRestorePage> {
           final tenantInfo = await CircleMemberService.sharedInstance.getTenantInfo();
           
           setState(() {
-            item.memberCount = tenantInfo['current_members'] as int?;
-            final adminPubkey = tenantInfo['tenant_admin_pubkey'] as String?;
-            if (adminPubkey != null && adminPubkey.toLowerCase() == currentPubkey.toLowerCase()) {
+            item.memberCount = tenantInfo.currentMembers;
+            if (tenantInfo.tenantAdminPubkey.toLowerCase() == currentPubkey.toLowerCase()) {
               item.role = Localized.text('ox_login.admin');
             } else {
               item.role = Localized.text('ox_login.member');

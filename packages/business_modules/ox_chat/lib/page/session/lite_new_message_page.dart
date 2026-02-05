@@ -260,19 +260,16 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
       // Check admin status from network
       try {
         final tenantInfo = await CircleMemberService.sharedInstance.getTenantInfo();
-        final tenantAdminPubkey = tenantInfo['tenant_admin_pubkey'] as String?;
-        if (tenantAdminPubkey != null && tenantAdminPubkey.isNotEmpty) {
-          final isAdmin = tenantAdminPubkey.toLowerCase() == currentPubkey.toLowerCase();
-          if (_isAdmin != isAdmin && mounted) {
-            _isAdmin = isAdmin;
-            setState(() {});
-          }
+        final isAdmin = tenantInfo.tenantAdminPubkey.toLowerCase() == currentPubkey.toLowerCase();
+        if (_isAdmin != isAdmin && mounted) {
+          _isAdmin = isAdmin;
+          setState(() {});
         }
-        
+
         // Save tenant info to cache
         await Account.sharedInstance.saveTenantInfoToCircleDB(
           circleId: circle.id,
-          tenantInfo: tenantInfo,
+          tenantInfo: tenantInfo.toJson(),
         );
       } catch (e) {
         print('Error checking admin status from network: $e');

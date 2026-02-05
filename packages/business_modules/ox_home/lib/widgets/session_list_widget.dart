@@ -79,10 +79,7 @@ class _SessionListWidgetState extends State<SessionListWidget> {
         final currentPubkey = LoginManager.instance.currentPubkey;
         try {
           final tenantInfo = await CircleMemberService.sharedInstance.getTenantInfo();
-          final tenantAdminPubkey = tenantInfo['tenant_admin_pubkey'] as String?;
-          if (tenantAdminPubkey != null && tenantAdminPubkey.isNotEmpty) {
-            _isAdmin = tenantAdminPubkey.toLowerCase() == currentPubkey.toLowerCase();
-          }
+          _isAdmin = tenantInfo.tenantAdminPubkey.toLowerCase() == currentPubkey.toLowerCase();
         } catch (e) {
           // Default to false on error
           _isAdmin = false;

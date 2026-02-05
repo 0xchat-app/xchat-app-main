@@ -239,16 +239,14 @@ class _CircleDetailPageState extends State<CircleDetailPage> {
       final tenantInfo = await CircleMemberService.sharedInstance.getTenantInfo();
       
       // Update UI
-      await _updateUIWithTenantInfo(tenantInfo);
+      await _updateUIWithTenantInfo(tenantInfo.toJson());
 
       // Save to local cache
-      await _saveTenantInfoToCache(tenantInfo);
+      await _saveTenantInfoToCache(tenantInfo.toJson());
 
       // If server returns tenant_name different from local, update circle name
-      final tenantName = tenantInfo['name'] as String?;
-      if (tenantName != null &&
-          tenantName.isNotEmpty &&
-          tenantName != _circleName) {
+      final tenantName = tenantInfo.name;
+      if (tenantName.isNotEmpty && tenantName != _circleName) {
         if (mounted) {
           setState(() {
             _circleName = tenantName;
@@ -573,6 +571,7 @@ class _CircleDetailPageState extends State<CircleDetailPage> {
             onTap: () {
               OXNavigator.pushPage(context, (_) => FileServerPage(
                 previousPageTitle: widget.title,
+                readOnlyForPaidCircle: _isPaidRelay(),
               )).then((_) {
                 // Reload file server info when returning from file server page
                 _loadFileServerInfo();

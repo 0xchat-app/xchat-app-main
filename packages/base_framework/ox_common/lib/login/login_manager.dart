@@ -1102,12 +1102,12 @@ extension LoginManagerCircle on LoginManager {
 
   /// Silently fetch latest tenant info for paid relay after relay is connected.
   /// Handles: notfound -> delete circle; expired -> save to DB and show [CircleExpiredPromptDialog].
+  /// Updates circle tenant info via [updateCircleTenantInfo].
   void _fetchTenantInfo(Circle circle) async {
-    if (!CircleApi.isPaidRelay(circle.relayUrl)) return;
+    if (!circle.isPaidRelay) return;
     try {
       final tenantInfo = await CircleMemberService.sharedInstance.getTenantInfo();
-      final status = (tenantInfo['status'] ?? tenantInfo['subscription_status']) as String?;
-      final statusLower = status?.toLowerCase();
+      final statusLower = tenantInfo.status.toLowerCase();
 
       if (statusLower == 'notfound') {
         await deleteCircle(circle.id);
@@ -1116,13 +1116,14 @@ extension LoginManagerCircle on LoginManager {
 
       await Account.sharedInstance.saveTenantInfoToCircleDB(
         circleId: circle.id,
-        tenantInfo: tenantInfo,
+        tenantInfo: tenantInfo.toJson(),
       );
-      final subscriptionStatus = tenantInfo['subscription_status'] as String?;
-      final expiresAt = tenantInfo['expires_at'] as int?;
+
+      updateCircleTenantInfo(tenantInfo);
+
+      final expiresAt = tenantInfo.expiresAt;
       final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
       final isExpired = statusLower == 'expired' ||
-          subscriptionStatus == 'expired' ||
           (expiresAt != null && expiresAt > 0 && expiresAt < now);
       if (isExpired) {
         CircleExpiredPromptDialog.show(OXNavigator.rootContext, circle);
@@ -1357,6 +1358,12 @@ extension AccountUpdateMethod on LoginManager {
     updateLastLoginCircle(circle);
   }
 
+  /// Updates [Circle.tenantInfo] for the current circle and refreshes state.
+  void updateCircleTenantInfo(TenantInfo? tenantInfo) {
+    currentState.currentCircle?.tenantInfo = tenantInfo;
+    _refreshState();
+  }
+
   Future<bool> updateEncryptedPrivKey(String encryptedPrivKey) async {
     final account = currentState.account;
     if (account == null) return false;
@@ -1444,4 +1451,11 @@ extension LoginManagerUtils on LoginManager {
         return 'bitchat';
     }
   }
+}
+
+/// Extension so that [Circle.isAdmin] is available when [LoginManager] is in scope.
+extension CircleAdminExtension on Circle {
+  /// Whether current user is admin of this circle (paid relay only).
+  /// Uses [tenantInfo]; prefer [Circle.isAdminFor] when passing a pubkey explicitly.
+  bool get isAdmin => isAdminFor(LoginManager.instance.currentPubkey);
 }
