@@ -85,6 +85,7 @@
   "method_1_scan": "MEETOD 1: SKANNEERIMINE",
   "scan_friend_qr_code": "Skaneeri sõbra QR-koodi",
   "method_2_paste_id": "MEETOD 2: KLEEBI KUTSELINK VÕI ID",
+  "enter_circle_invite_link": "Sisestage ringi kutselink",
   "enter_user_id": "Sisestage kutselink või kasutaja ID (npub...)",
   "find_and_add": "Leia ja lisa",
   "str_leave_group": "Lahku",

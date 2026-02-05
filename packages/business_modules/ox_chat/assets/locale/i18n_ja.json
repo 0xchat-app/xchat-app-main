@@ -85,6 +85,7 @@
   "method_1_scan": "方法1: スキャン",
   "scan_friend_qr_code": "友達のQRコードをスキャン",
   "method_2_paste_id": "方法2: 招待リンクまたはIDを貼り付け",
+  "enter_circle_invite_link": "サークル招待リンクを入力",
   "enter_user_id": "招待リンクまたはユーザーIDを入力 (npub...)",
   "find_and_add": "検索して追加",
   "str_leave_group": "グループを退出",

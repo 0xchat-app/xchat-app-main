@@ -85,6 +85,7 @@
   "method_1_scan": "विधि 1: स्कैन",
   "scan_friend_qr_code": "दोस्त का QR कोड स्कैन करें",
   "method_2_paste_id": "विधि 2: आमंत्रण लिंक या ID चिपकाएं",
+  "enter_circle_invite_link": "सर्कल आमंत्रण लिंक दर्ज करें",
   "enter_user_id": "आमंत्रण लिंक या उपयोगकर्ता ID दर्ज करें (npub...)",
   "find_and_add": "खोजें और जोड़ें",
   "str_leave_group": "समूह छोड़ें",

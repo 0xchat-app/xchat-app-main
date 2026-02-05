@@ -85,6 +85,7 @@
   "method_1_scan": "วิธีที่ 1: สแกน",
   "scan_friend_qr_code": "สแกน QR Code ของเพื่อน",
   "method_2_paste_id": "วิธีที่ 2: วางลิงก์เชิญหรือ ID",
+  "enter_circle_invite_link": "ป้อนลิงก์เชิญวงกลม",
   "enter_user_id": "ป้อนลิงก์เชิญหรือ ID ผู้ใช้ (npub...)",
   "find_and_add": "ค้นหาและเพิ่ม",
   "str_leave_group": "ออกจากกลุ่ม",

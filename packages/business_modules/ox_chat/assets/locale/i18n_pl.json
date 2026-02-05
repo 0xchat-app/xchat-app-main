@@ -85,6 +85,7 @@
   "method_1_scan": "METODA 1: SKANOWANIE",
   "scan_friend_qr_code": "Zeskanuj kod QR znajomego",
   "method_2_paste_id": "METODA 2: WKLEJ LINK ZAPROSZENIA LUB ID",
+  "enter_circle_invite_link": "Wprowadź link zaproszenia do kręgu",
   "enter_user_id": "Wprowadź link zaproszenia lub ID użytkownika (npub...)",
   "find_and_add": "Znajdź i dodaj",
   "str_leave_group": "Opuść Grupę",

@@ -85,6 +85,7 @@
   "method_1_scan": "YÖNTEM 1: TARAMA",
   "scan_friend_qr_code": "Arkadaşın QR kodunu tara",
   "method_2_paste_id": "YÖNTEM 2: DAVET BAĞLANTISI VEYA KİMLİK YAPIŞTIR",
+  "enter_circle_invite_link": "Daire davet bağlantısını girin",
   "enter_user_id": "Davet bağlantısı veya kullanıcı kimliğini girin (npub...)",
   "find_and_add": "Bul ve ekle",
   "str_leave_group": "Gruptan Ayrıl",

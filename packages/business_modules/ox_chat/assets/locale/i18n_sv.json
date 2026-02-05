@@ -85,6 +85,7 @@
   "method_1_scan": "METOD 1: SKANNA",
   "scan_friend_qr_code": "Skanna väns QR-kod",
   "method_2_paste_id": "METOD 2: KLISTRA IN INBJUDNINGSLÄNK ELLER ID",
+  "enter_circle_invite_link": "Ange inbjudningslänk till cirkel",
   "enter_user_id": "Ange inbjudningslänk eller användar-ID (npub...)",
   "find_and_add": "Hitta och lägg till",
   "str_leave_group": "Lämna Grupp",

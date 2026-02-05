@@ -87,6 +87,7 @@
   "method_1_scan": "方法一：扫描",
   "scan_friend_qr_code": "扫描朋友的二维码",
   "method_2_paste_id": "方法二：粘贴邀请链接或ID",
+  "enter_circle_invite_link": "输入圈子邀请链接",
   "enter_user_id": "输入邀请链接或用户ID (npub...)",
   "find_and_add": "查找并添加",
   "str_leave_group": "退出群组",

@@ -85,6 +85,7 @@
   "method_1_scan": "METODA 1: SKENOVÁNÍ",
   "scan_friend_qr_code": "Naskenujte QR kód přítele",
   "method_2_paste_id": "METODA 2: VLOŽIT ODKAZ NA POZVÁNÍ NEBO ID",
+  "enter_circle_invite_link": "Zadejte odkaz na pozvánku do kruhu",
   "enter_user_id": "Zadejte odkaz na pozvánku nebo ID uživatele (npub...)",
   "find_and_add": "Najít a přidat",
   "str_leave_group": "Opustit",

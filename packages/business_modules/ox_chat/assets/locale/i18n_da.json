@@ -85,6 +85,7 @@
   "method_1_scan": "METODE 1: SCAN",
   "scan_friend_qr_code": "Scan ven QR-kode",
   "method_2_paste_id": "METODE 2: INDSAET INVITATIONS LINK ELLER ID",
+  "enter_circle_invite_link": "Indtast invitationslink til cirkel",
   "enter_user_id": "Indtast invitationslink eller bruger-ID (npub...)",
   "find_and_add": "Find og tilføj",
   "str_leave_group": "Forlad",

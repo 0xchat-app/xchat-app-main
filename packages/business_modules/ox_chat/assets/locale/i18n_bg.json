@@ -85,6 +85,7 @@
   "method_1_scan": "МЕТОД 1: СКАНИРАНЕ",
   "scan_friend_qr_code": "Сканирайте QR кода на приятел",
   "method_2_paste_id": "МЕТОД 2: ПОСТАВЕТЕ ЛИНК ЗА ПОКАНА ИЛИ ID",
+  "enter_circle_invite_link": "Въведете линк за покана в кръг",
   "enter_user_id": "Въведете линк за покана или потребителски ID (npub...)",
   "find_and_add": "Намерете и добавете",
   "str_leave_group": "Напускане",

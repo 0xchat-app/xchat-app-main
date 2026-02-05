@@ -50,6 +50,11 @@ class _FindPeoplePageState extends State<FindPeoplePage> {
           ? Localized.text('ox_chat.find_people_join_circle_notice')
           : Localized.text('ox_chat.find_people_privacy_notice');
 
+  String get _inputPlaceholder =>
+      widget.joinCircleMode
+          ? Localized.text('ox_chat.enter_circle_invite_link')
+          : Localized.text('ox_chat.enter_user_id');
+
   @override
   Widget build(BuildContext context) {
     return CLScaffold(
@@ -79,7 +84,7 @@ class _FindPeoplePageState extends State<FindPeoplePage> {
               CLTextField(
                 controller: _userIdController,
                 focusNode: _userIdFocusNode,
-                placeholder: Localized.text('ox_chat.enter_user_id'),
+                placeholder: _inputPlaceholder,
                 onChanged: _onUsernameChanged,
                 autofocus: false,
               ),

@@ -85,6 +85,7 @@
   "method_1_scan": "MÈTODE 1: ESCANEJAR",
   "scan_friend_qr_code": "Escaneja el codi QR de l'amic",
   "method_2_paste_id": "MÈTODE 2: ENGANXAR ENLLAÇ D'INVITACIÓ O ID",
+  "enter_circle_invite_link": "Introduïu l'enllaç d'invitació al cercle",
   "enter_user_id": "Introduïu l'enllaç d'invitació o l'ID d'usuari (npub...)",
   "find_and_add": "Troba i afegeix",
   "str_leave_group": "Sortir",

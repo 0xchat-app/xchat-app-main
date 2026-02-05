@@ -85,6 +85,7 @@
   "method_1_scan": "MÓDSZER 1: BEOLVASÁS",
   "scan_friend_qr_code": "Barát QR kódjának beolvasása",
   "method_2_paste_id": "MÓDSZER 2: MEGHÍVÓ LINK VAGY AZONOSÍTÓ BEILLESZTÉSE",
+  "enter_circle_invite_link": "Adja meg a kör meghívó linkjét",
   "enter_user_id": "Adja meg a meghívó linket vagy felhasználói azonosítót (npub...)",
   "find_and_add": "Keresés és hozzáadás",
   "str_leave_group": "Csoport Elhagyása",

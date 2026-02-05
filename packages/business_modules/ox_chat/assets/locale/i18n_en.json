@@ -87,6 +87,7 @@
   "method_1_scan": "METHOD 1: SCAN",
   "scan_friend_qr_code": "Scan Friend's QR Code",
   "method_2_paste_id": "METHOD 2: PASTE INVITE LINK OR ID",
+  "enter_circle_invite_link": "Enter circle invite link",
   "enter_user_id": "Enter Invite Link or User ID (npub...)",
   "find_and_add": "Find & Add",
   "str_leave_group": "Leave Group",

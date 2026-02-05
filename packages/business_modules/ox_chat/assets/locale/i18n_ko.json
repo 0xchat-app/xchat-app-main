@@ -85,6 +85,7 @@
   "method_1_scan": "방법 1: 스캔",
   "scan_friend_qr_code": "친구의 QR 코드 스캔",
   "method_2_paste_id": "방법 2: 초대 링크 또는 ID 붙여넣기",
+  "enter_circle_invite_link": "원 초대 링크 입력",
   "enter_user_id": "초대 링크 또는 사용자 ID 입력 (npub...)",
   "find_and_add": "찾기 및 추가",
   "str_leave_group": "그룹 나가기",

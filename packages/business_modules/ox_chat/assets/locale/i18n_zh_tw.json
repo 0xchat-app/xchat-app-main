@@ -85,6 +85,7 @@
   "method_1_scan": "方法一：掃描",
   "scan_friend_qr_code": "掃描朋友的二維碼",
   "method_2_paste_id": "方法二：粘貼邀請連結或ID",
+  "enter_circle_invite_link": "輸入圈子邀請連結",
   "enter_user_id": "輸入邀請連結或用戶ID (npub...)",
   "find_and_add": "查找並添加",
   "str_leave_group": "退出群組",

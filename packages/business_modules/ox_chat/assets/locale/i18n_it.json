@@ -85,6 +85,7 @@
   "method_1_scan": "METODO 1: SCANSIONE",
   "scan_friend_qr_code": "Scansiona il codice QR dell'amico",
   "method_2_paste_id": "METODO 2: INCOLLA LINK DI INVITO O ID",
+  "enter_circle_invite_link": "Inserisci il link di invito al cerchio",
   "enter_user_id": "Inserisci il link di invito o l'ID utente (npub...)",
   "find_and_add": "Trova e aggiungi",
   "str_leave_group": "Lascia",
