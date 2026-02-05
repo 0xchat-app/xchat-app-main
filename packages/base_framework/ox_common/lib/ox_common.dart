@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
 
 import 'login/circle_config_models.dart';
+import 'login/relay_ok_error_handler.dart';
 import 'model/file_server_model.dart';
 import 'push/push_integration.dart';
 
@@ -31,6 +32,7 @@ class OXCommon extends OXFlutterModule {
     await super.setup();
     await ThreadPoolManager.sharedInstance.initialize();
     PromptToneManager.sharedInstance.setup();
+    registerRelayOkErrorHandler();
     channel.setMethodCallHandler(_platformCallHandler);
   }
 
