@@ -99,5 +99,25 @@
   "admin": "管理员",
   "member": "成员",
   "skip": "跳过",
-  "expired": "已过期"
+  "expired": "已过期",
+  
+  "private_circle_learn_more": "了解更多",
+  "private_circle_features_title": "功能",
+  "private_circle_features_1": "专用托管中继服务器",
+  "private_circle_features_2": "免费文件存储服务，单次上传50MB，文件保存30天",
+  "private_circle_features_3": "成员管理与文件清理功能",
+  "private_circle_privacy_title": "隐私",
+  "private_circle_privacy_1": "零日志记录，保护您的隐私",
+  "private_circle_privacy_2": "端到端加密存储，服务器无法查看文件内容",
+  "private_circle_privacy_3": "管理员删除圈子时，所有成员的本地数据将自动清除",
+  "private_circle_privacy_4": "移除成员时，该成员的本地数据将自动清除",
+  "private_circle_pricing_title": "费用",
+  "private_circle_pricing_2_members_monthly": "2 人套餐：$0.99/月",
+  "private_circle_pricing_2_members_yearly": "2 人套餐：$9.99/年",
+  "private_circle_pricing_6_members_monthly": "6 人套餐：$2.99/月",
+  "private_circle_pricing_6_members_yearly": "6 人套餐：$29.99/年",
+  "private_circle_pricing_20_members_monthly": "20 人套餐：$9.99/月",
+  "private_circle_pricing_20_members_yearly": "20 人套餐：$99.99/年",
+  "yearly_plan": "年付计划",
+  "private_circle_pricing_disclaimer": "订阅将自动续订，除非在当前周期结束前至少 24 小时关闭自动续订。"
 }

@@ -6,6 +6,7 @@ import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'capacity_selection_page.dart';
+import 'private_circle_learn_more_page.dart';
 
 class PrivateCloudOverviewPage extends StatelessWidget {
   const PrivateCloudOverviewPage({super.key, this.groupId});
@@ -72,6 +73,25 @@ class PrivateCloudOverviewPage extends StatelessWidget {
           colorToken: ColorToken.onSurfaceVariant,
           textAlign: TextAlign.center,
           maxLines: null,
+        ),
+        SizedBox(height: 16.px),
+        GestureDetector(
+          onTap: () => _showLearnMoreDialog(context),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CLText.bodyMedium(
+                Localized.text('ox_login.private_circle_learn_more'),
+                colorToken: ColorToken.xChat,
+              ),
+              SizedBox(width: 4.px),
+              Icon(
+                Icons.arrow_forward,
+                size: 16.px,
+                color: ColorToken.xChat.of(context),
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -193,6 +213,14 @@ class PrivateCloudOverviewPage extends StatelessWidget {
     OXNavigator.pushPage(
       context,
       (context) => CapacitySelectionPage(subscriptionGroupId: groupId),
+    );
+  }
+
+  void _showLearnMoreDialog(BuildContext context) {
+    OXNavigator.pushPage(
+      context,
+      (context) => const PrivateCircleLearnMorePage(),
+      type: OXPushPageType.present,
     );
   }
 }

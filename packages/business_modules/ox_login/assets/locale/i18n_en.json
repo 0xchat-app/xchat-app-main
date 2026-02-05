@@ -160,7 +160,7 @@
   "family_circle": "Family Circle",
   "tb_storage": "Unlimited",
   "overview": "OVERVIEW",
-  "private_cloud_overview_desc": "Own your data with a dedicated relay and file server. Starts at just $1.99/mo.",
+  "private_cloud_overview_desc": "Own your data with a dedicated relay and file server. Starts at just $0.99/mo.",
   "configure_plan": "CONFIGURE PLAN",
   "subscription_limit_reached": "Subscription server limit reached",
   
@@ -172,5 +172,25 @@
   "admin": "Admin",
   "member": "Member",
   "skip": "Skip",
-  "expired": "Expired"
+  "expired": "Expired",
+  
+  "private_circle_learn_more": "Learn More",
+  "private_circle_features_title": "Features",
+  "private_circle_features_1": "Dedicated hosted relay server",
+  "private_circle_features_2": "Free file storage service, 50MB per upload, files stored for 30 days",
+  "private_circle_features_3": "Member management and file cleanup",
+  "private_circle_privacy_title": "Privacy",
+  "private_circle_privacy_1": "Zero logging to protect your privacy",
+  "private_circle_privacy_2": "End-to-end encrypted storage, server cannot view file contents",
+  "private_circle_privacy_3": "When admin deletes circle, all members' local data will be automatically cleared",
+  "private_circle_privacy_4": "When member is removed, their local data will be automatically cleared",
+  "private_circle_pricing_title": "Pricing",
+  "private_circle_pricing_2_members_monthly": "2 Members: $0.99/month",
+  "private_circle_pricing_2_members_yearly": "2 Members: $9.99/year",
+  "private_circle_pricing_6_members_monthly": "6 Members: $2.99/month",
+  "private_circle_pricing_6_members_yearly": "6 Members: $29.99/year",
+  "private_circle_pricing_20_members_monthly": "20 Members: $9.99/month",
+  "private_circle_pricing_20_members_yearly": "20 Members: $99.99/year",
+  "yearly_plan": "Yearly plan",
+  "private_circle_pricing_disclaimer": "Subscriptions automatically renew unless auto-renew is turned off at least 24-hours before the end of the current period."
 }
