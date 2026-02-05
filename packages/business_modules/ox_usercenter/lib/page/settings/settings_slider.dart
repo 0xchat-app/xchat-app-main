@@ -446,16 +446,6 @@ class SettingSliderState extends State<SettingSlider> {
     );
   }
 
-  void circleItemOnTap() {
-    final circle = LoginManager.instance.currentCircle;
-    if (circle == null) return;
-
-    OXNavigator.pushPage(context, (_) => CircleDetailPage(
-      previousPageTitle: title,
-      circle: circle,
-    ));
-  }
-
   void _onCircleTap(Circle circle) async {
     final currentCircle = LoginManager.instance.currentCircle;
     if (currentCircle?.id == circle.id) {

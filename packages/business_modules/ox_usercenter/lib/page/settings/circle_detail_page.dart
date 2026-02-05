@@ -16,7 +16,6 @@ import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_common/utils/file_server_helper.dart';
 import 'package:ox_common/repository/file_server_repository.dart';
 import 'package:ox_common/log_util.dart';
-import 'package:ox_common/model/file_server_model.dart';
 import 'package:ox_module_service/ox_module_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:io';
@@ -54,38 +53,34 @@ class CircleDetailPage extends StatefulWidget {
 class _CircleDetailPageState extends State<CircleDetailPage> {
   late String _circleName;
   bool _isOwner = false;
-  late ValueNotifier<String> _planName$;
   late ValueNotifier<String> _renewDate$;
   late ValueNotifier<String?> _subscriptionStatus$;
   int _currentMembers = 1;
   int _maxMembers = 6;
-  late ValueNotifier<String> _storageUsed$;
   late ValueNotifier<String> _fileServerName$;
   List<UserDBISAR> _members = [];
-  bool _autoDeleteEnabled = false;
 
   @override
   void initState() {
     super.initState();
     _circleName = widget.circle.name;
-    _planName$ = ValueNotifier<String>('Family');
     _renewDate$ = ValueNotifier<String>('Dec 31, 2025');
     _subscriptionStatus$ = ValueNotifier<String?>(null);
-    _storageUsed$ = ValueNotifier<String>('45.2 GB');
     _fileServerName$ = ValueNotifier<String>('');
     _checkIfOwner();
-    // Load local data first, then request server update
-    _loadLocalData();
-    _loadSubscriptionInfo();
-    _loadFileServerInfo();
+    // Defer heavy work (Isar/network) to after first frame to avoid enter jank
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _loadLocalData();
+      _loadSubscriptionInfo();
+      _loadFileServerInfo();
+    });
   }
 
   @override
   void dispose() {
-    _planName$.dispose();
     _renewDate$.dispose();
     _subscriptionStatus$.dispose();
-    _storageUsed$.dispose();
     _fileServerName$.dispose();
     super.dispose();
   }
@@ -100,22 +95,9 @@ class _CircleDetailPageState extends State<CircleDetailPage> {
     return CircleApi.isPaidRelay(widget.circle.relayUrl);
   }
 
-  /// Load local data first (for paid relays, load cached tenant info)
+  /// Load local data first (for paid relays, UI comes from _loadSubscriptionInfo only)
   Future<void> _loadLocalData() async {
-    // From widget.circle get local data
     _circleName = widget.circle.name;
-
-    // If it's a paid relay, load cached tenant info from CircleDBISAR
-    if (_isPaidRelay()) {
-      final cachedTenantInfo = await _loadCachedTenantInfo();
-      if (cachedTenantInfo != null) {
-        _updateUIWithTenantInfo(cachedTenantInfo);
-      }
-      // Update category if it's not already paid
-      if (widget.circle.category != CircleCategory.paid) {
-        await _updateCircleCategory(CircleCategory.paid);
-      }
-    }
   }
 
   /// Load cached tenant info from CircleDBISAR
@@ -146,23 +128,32 @@ class _CircleDetailPageState extends State<CircleDetailPage> {
     final currentMembers = tenantInfo['current_members'] as int? ?? 0;
     final maxMembers = tenantInfo['max_members'] as int? ?? 100;
 
-    // Extract and convert members list
+    // Extract and convert members list (batch getUserInfos to avoid N sequential DB reads)
     final membersList = <UserDBISAR>[];
     final membersData = tenantInfo['members'] as List<dynamic>?;
-    if (membersData != null) {
+    if (membersData != null && membersData.isNotEmpty) {
+      final pubkeys = <String>[];
+      final displayNames = <String, String>{};
       for (final memberData in membersData) {
         final memberMap = memberData as Map<String, dynamic>;
         final pubkey = memberMap['pubkey'] as String?;
         if (pubkey != null && pubkey.isNotEmpty) {
-          final user = await Account.sharedInstance.getUserInfo(pubkey);
-          if (user != null) {
-            // Update display name if provided
-            final displayName = memberMap['display_name'] as String?;
-            if (displayName != null && displayName.isNotEmpty) {
-              user.name = displayName;
-            }
-            membersList.add(user);
+          pubkeys.add(pubkey);
+          final displayName = memberMap['display_name'] as String?;
+          if (displayName != null && displayName.isNotEmpty) {
+            displayNames[pubkey] = displayName;
           }
+        }
+      }
+      final userMap = await Account.sharedInstance.getUserInfos(pubkeys);
+      for (final pubkey in pubkeys) {
+        final user = userMap[pubkey];
+        if (user != null) {
+          final displayName = displayNames[pubkey];
+          if (displayName != null && displayName.isNotEmpty) {
+            user.name = displayName;
+          }
+          membersList.add(user);
         }
       }
     }
@@ -209,8 +200,6 @@ class _CircleDetailPageState extends State<CircleDetailPage> {
         _members = membersList;
         _renewDate$.value = renewDateText;
         _subscriptionStatus$.value = subscriptionStatus;
-        _planName$.value = 'Family'; // TODO: Load actual plan name from API if available
-        _storageUsed$.value = '45.2 GB'; // TODO: Load actual storage from API if available
       });
     }
   }
@@ -1036,9 +1025,6 @@ class _CircleDetailPageState extends State<CircleDetailPage> {
         context,
         Localized.text('ox_common.operation_success'),
       );
-
-      // Update storage display
-      _storageUsed$.value = '0.0 GB';
 
       LogUtil.v(() => 'Successfully deleted ${result.deletedCount}/${result.totalCount} files for tenant $tenantId');
     } catch (e) {
