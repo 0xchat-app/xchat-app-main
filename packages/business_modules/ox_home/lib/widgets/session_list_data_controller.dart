@@ -150,6 +150,15 @@ class SessionListDataController extends CLSessionHandler with OXChatObserver, Se
 
   @override
   void didChatMessageUpdateCallBack(MessageDBISAR message, String replacedMessageId) {
+    // Self-sent message updates (e.g. image replace/status) must be treated as read,
+    // otherwise updateWithMessage will increment unreadCount and show multiple red dots.
+    final isSentByMyself = message.sender == LoginManager.instance.currentPubkey;
+    final messageIsRead = isSentByMyself ||
+        (OXChatBinding.sharedInstance.msgIsReaded?.call(message) ?? false);
+    if (messageIsRead && !message.read) {
+      message.read = true;
+      Messages.saveMessageToDB(message);
+    }
     updateWithMessage(
       chatId: message.chatId,
       message: message,
