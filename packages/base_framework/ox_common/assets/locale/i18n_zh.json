@@ -74,6 +74,7 @@
   "signer_signature": "签名已确认",
   "invalid_url_format": "无效的URL格式",
   "operation_failed": "操作失败，失败原因：${errMsg}",
+  "operation_success": "操作成功",
   "required": "必填",
   "network_warning_title": "服务器连接问题",
   "network_warning_message": "无法连接到服务器 ${relay}。服务器可能离线或无法访问，但您仍可以尝试加入圈子。是否要继续？",

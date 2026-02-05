@@ -74,6 +74,7 @@
   "signer_signature": "Signature approved.",
   "invalid_url_format": "Invalid URL format",
   "operation_failed": "Operation failed, failure reason: ${errMsg}",
+  "operation_success": "Operation successful",
   "required": "Required",
   "network_warning_title": "Server Connection Issue",
   "network_warning_message": "Unable to connect to the server at ${relay}. The server may be offline or unreachable, but you can still try to join the circle. Do you want to continue?",
