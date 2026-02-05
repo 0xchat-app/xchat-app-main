@@ -28,6 +28,7 @@ class _CircleActivatedPageState extends State<CircleActivatedPage> {
   late TextEditingController _nameController;
   late String _circleName;
   int _currentMemberCount = 1; // Start with 1 (the current user)
+  final GlobalKey _shareButtonKey = GlobalKey();
 
   @override
   void initState() {
@@ -263,6 +264,7 @@ class _CircleActivatedPageState extends State<CircleActivatedPage> {
               SizedBox(height: 16.px),
               // Share invite link button
               GestureDetector(
+                key: _shareButtonKey,
                 onTap: _shareInviteLink,
                 child: Container(
                   padding: EdgeInsets.symmetric(
@@ -394,9 +396,33 @@ class _CircleActivatedPageState extends State<CircleActivatedPage> {
 
     // Generate invite link (this is a placeholder - you may need to implement actual invite link generation)
     final inviteLink = 'https://0xchat.com/lite/invite?circle=${circle.id}';
-    
+
+    // iOS/iPad requires a non-zero sharePositionOrigin for the share sheet popover.
+    Rect sharePositionOrigin;
+    final box = _shareButtonKey.currentContext?.findRenderObject() as RenderBox?;
+    if (box != null && box.hasSize) {
+      final rect = box.localToGlobal(Offset.zero) & box.size;
+      sharePositionOrigin = rect.size.width > 0 && rect.size.height > 0
+          ? rect
+          : Rect.fromCenter(
+              center: box.localToGlobal(Offset(box.size.width / 2, box.size.height / 2)),
+              width: 1,
+              height: 1,
+            );
+    } else {
+      final media = MediaQuery.sizeOf(context);
+      sharePositionOrigin = Rect.fromCenter(
+        center: Offset(media.width / 2, media.height / 2),
+        width: 1,
+        height: 1,
+      );
+    }
+
     try {
-      await Share.share(inviteLink);
+      await Share.share(
+        inviteLink,
+        sharePositionOrigin: sharePositionOrigin,
+      );
     } catch (e) {
       CommonToast.instance.show(context, 'Failed to share: $e');
     }
