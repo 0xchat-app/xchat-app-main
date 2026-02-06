@@ -22,6 +22,7 @@ import 'login_models.dart';
 import 'account_models.dart';
 import 'circle_config_models.dart';
 import 'circle_service.dart';
+import 'circle_repository.dart';
 import 'account_path_manager.dart';
 import '../secure/db_key_manager.dart';
 
@@ -93,7 +94,10 @@ class LoginManager {
   ValueListenable<LoginState> get state$ => _state$;
   LoginState get currentState => _state$.value;
 
+  /// Current circle held in state
+  /// UI should use [state$] to react to changes; procedural logic can use this getter.
   Circle? get currentCircle => currentState.currentCircle;
+
   bool get isLoginCircle => currentCircle != null;
 
   ValueNotifier<bool> accountUpdated$ = ValueNotifier(false);
@@ -1088,22 +1092,49 @@ extension LoginManagerCircle on LoginManager {
       TorNetworkHelper.initialize();
     }
 
-    // Wait for relay connection then: ensure keypackage (paid relay), fetch tenant info (paid relay, once per circle)
+    // Wait for relay connection then: ensure keypackage (paid relay), refresh circle info (paid relay)
     Connect.sharedInstance.waitForRelayConnection(relayKind: RelayKind.circleRelay).then((connected) {
       if (!connected) return;
       KeyPackageManager.ensurePermanentKeyPackageOnRelay().catchError((e) {
         debugPrint('Failed to ensure keypackage on relay: $e');
       });
-      _fetchTenantInfo(circle);
+      refreshCircleFromRemote();
     }).catchError((e) {
       debugPrint('Failed to wait for relay connection: $e');
     });
   }
 
-  /// Silently fetch latest tenant info for paid relay after relay is connected.
-  /// Handles: notfound -> delete circle; expired -> save to DB and show [CircleExpiredPromptDialog].
-  /// Updates circle tenant info via [updateCircleTenantInfo].
-  void _fetchTenantInfo(Circle circle) async {
+  /// Fetches latest circle (tenant) info from remote, updates cache (mem + store), and returns it.
+  /// Use when procedural logic needs up-to-date data. For current circle only (paid relay).
+  /// Returns [currentCircle] after update, or null if not applicable / notfound deleted.
+  Future<Circle?> fetchCircleFromRemote() async {
+    final circle = currentState.currentCircle;
+    if (circle == null || !circle.isPaidRelay) return circle;
+    await _fetchAndUpdateTenantInfo(circle);
+    return currentState.currentCircle;
+  }
+
+  /// Refreshes circle info from remote (same as [fetchCircleFromRemote]) but does not return.
+  /// Use with UI that reads from [state$] (e.g. startup, entering circle detail page).
+  Future<void> refreshCircleFromRemote() async {
+    final circle = currentState.currentCircle;
+    if (circle == null || !circle.isPaidRelay) return;
+    await _fetchAndUpdateTenantInfo(circle);
+  }
+
+  /// Returns cached tenant info for [circleId] (for UI first-paint or non-current circle).
+  /// Prefer mem when it's the current circle and [tenantInfo] is already loaded; otherwise store (CircleDB).
+  /// Use this instead of calling [Account.loadTenantInfoFromCircleDB] directly.
+  Future<Map<String, dynamic>?> getCachedTenantInfoForCircle(String circleId) async {
+    if (currentState.currentCircle?.id == circleId &&
+        currentState.currentCircle?.tenantInfo != null) {
+      return currentState.currentCircle!.tenantInfo!.toJson();
+    }
+    return await Account.sharedInstance.loadTenantInfoFromCircleDB(circleId);
+  }
+
+  /// Internal: fetch tenant info, update mem + store, handle notfound/expired.
+  Future<void> _fetchAndUpdateTenantInfo(Circle circle) async {
     if (!circle.isPaidRelay) return;
     try {
       final tenantInfo = await CircleMemberService.sharedInstance.getTenantInfoForRelay(
@@ -1124,6 +1155,15 @@ extension LoginManagerCircle on LoginManager {
 
       updateCircleTenantInfo(tenantInfo);
 
+      if (tenantInfo.name.isNotEmpty && tenantInfo.name != circle.name) {
+        circle.name = tenantInfo.name;
+        final account = currentState.account;
+        if (account != null) {
+          await CircleRepository.update(account.db, circle);
+          _refreshState();
+        }
+      }
+
       final expiresAt = tenantInfo.expiresAt;
       final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
       final isExpired = statusLower == 'expired' ||
@@ -1132,7 +1172,7 @@ extension LoginManagerCircle on LoginManager {
         CircleExpiredPromptDialog.show(OXNavigator.rootContext, circle);
       }
     } catch (e) {
-      LogUtils.w(() => 'Silent fetch tenant info failed: $e');
+      LogUtils.w(() => 'Fetch and update tenant info failed: $e');
     }
   }
 

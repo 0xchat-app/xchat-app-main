@@ -34,6 +34,97 @@ enum _StorageAction { clearAllStorage }
 /// optimistic "renews on" which would flash to "expired" after server response.
 const String _kSubscriptionUnknownPlaceholder = '—';
 
+/// Display data derived from TenantInfo or cache map. Single source: state$ or cache.
+class _TenantDisplayData {
+  const _TenantDisplayData({
+    required this.isOwner,
+    required this.renewDateText,
+    required this.subscriptionStatus,
+    required this.currentMembers,
+    required this.maxMembers,
+    required this.memberPubkeys,
+  });
+
+  final bool isOwner;
+  final String renewDateText;
+  final String? subscriptionStatus;
+  final int currentMembers;
+  final int maxMembers;
+  final List<String> memberPubkeys;
+
+  static _TenantDisplayData fromTenantInfo(TenantInfo info, String currentPubkey) {
+    final isOwner = info.tenantAdminPubkey.toLowerCase() == currentPubkey.toLowerCase();
+    String renewDateText = _kSubscriptionUnknownPlaceholder;
+    if (info.expiresAt != null && info.expiresAt! > 0) {
+      try {
+        final date = DateTime.fromMillisecondsSinceEpoch(info.expiresAt! * 1000);
+        renewDateText = DateFormat('MMM d, yyyy').format(date);
+      } catch (_) {}
+    }
+    String? status = info.status.isNotEmpty ? info.status : null;
+    if (status == null && info.expiresAt != null && info.expiresAt! > 0) {
+      try {
+        final expiresDate = DateTime.fromMillisecondsSinceEpoch(info.expiresAt! * 1000);
+        status = expiresDate.isBefore(DateTime.now()) ? 'expired' : 'active';
+      } catch (_) {}
+    }
+    final pubkeys = info.members.map((m) => m.pubkey).where((p) => p.isNotEmpty).toList();
+    return _TenantDisplayData(
+      isOwner: isOwner,
+      renewDateText: renewDateText,
+      subscriptionStatus: status,
+      currentMembers: info.currentMembers,
+      maxMembers: info.maxMembers,
+      memberPubkeys: pubkeys,
+    );
+  }
+
+  static _TenantDisplayData? fromMap(Map<String, dynamic> map, String currentPubkey, {bool fromCache = false}) {
+    final tenantAdminPubkey = map['tenant_admin_pubkey'] as String?;
+    final isOwner = tenantAdminPubkey != null && tenantAdminPubkey.isNotEmpty
+        ? tenantAdminPubkey.toLowerCase() == currentPubkey.toLowerCase()
+        : false;
+    String renewDateText = _kSubscriptionUnknownPlaceholder;
+    final expiresAt = map['expires_at'] as int?;
+    if (expiresAt != null && expiresAt > 0) {
+      try {
+        final date = DateTime.fromMillisecondsSinceEpoch(expiresAt * 1000);
+        renewDateText = DateFormat('MMM d, yyyy').format(date);
+      } catch (_) {}
+    }
+    String? subscriptionStatus = map['subscription_status'] as String? ?? map['status'] as String?;
+    if (subscriptionStatus == null || subscriptionStatus.isEmpty) {
+      if (expiresAt != null && expiresAt > 0) {
+        try {
+          final expiresDate = DateTime.fromMillisecondsSinceEpoch(expiresAt * 1000);
+          subscriptionStatus = expiresDate.isBefore(DateTime.now()) ? 'expired' : 'active';
+          if (fromCache && subscriptionStatus == 'expired') subscriptionStatus = null;
+        } catch (_) {}
+      }
+    } else if (fromCache && subscriptionStatus == 'expired') {
+      subscriptionStatus = null;
+    }
+    final currentMembers = map['current_members'] as int? ?? 0;
+    final maxMembers = map['max_members'] as int? ?? 100;
+    final membersData = map['members'] as List<dynamic>? ?? [];
+    final pubkeys = <String>[];
+    for (final m in membersData) {
+      if (m is Map<String, dynamic>) {
+        final p = m['pubkey'] as String?;
+        if (p != null && p.isNotEmpty) pubkeys.add(p);
+      }
+    }
+    return _TenantDisplayData(
+      isOwner: isOwner,
+      renewDateText: renewDateText,
+      subscriptionStatus: subscriptionStatus,
+      currentMembers: currentMembers,
+      maxMembers: maxMembers,
+      memberPubkeys: pubkeys,
+    );
+  }
+}
+
 class CircleDetailPage extends StatefulWidget {
   const CircleDetailPage({
     super.key,
@@ -56,40 +147,25 @@ class CircleDetailPage extends StatefulWidget {
 
 class _CircleDetailPageState extends State<CircleDetailPage>
     with WidgetsBindingObserver {
-  late String _circleName;
-  bool _isOwner = false;
-  late ValueNotifier<String> _renewDate$;
-  late ValueNotifier<String?> _subscriptionStatus$;
-  int _currentMembers = 1;
-  int _maxMembers = 6;
+  /// Display name: from state$ when this is current circle, else widget.circle.name.
+  String get _displayCircleName {
+    final state = LoginManager.instance.currentState;
+    if (state.currentCircle?.id == widget.circle.id && state.currentCircle != null) {
+      return state.currentCircle!.name;
+    }
+    return widget.circle.name;
+  }
+
   late ValueNotifier<String> _fileServerName$;
-  List<UserDBISAR> _members = [];
-  void Function()? _stateListener;
+  /// Cache for first-paint when state.currentCircle.tenantInfo not yet loaded. Loaded once.
+  late Future<Map<String, dynamic>?> _cachedTenantInfoFuture;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _circleName = widget.circle.name;
-    _renewDate$ = ValueNotifier<String>(_kSubscriptionUnknownPlaceholder);
-    _subscriptionStatus$ = ValueNotifier<String?>(null);
     _fileServerName$ = ValueNotifier<String>('');
-    _checkIfOwner();
-    if (widget.circle.isPaidRelay &&
-        widget.circle.id == LoginManager.instance.currentCircle?.id &&
-        LoginManager.instance.currentCircle?.tenantInfo != null) {
-      _applySubscriptionDisplayFromTenantInfo(
-        LoginManager.instance.currentCircle!.tenantInfo!.toJson(),
-      );
-    }
-    _stateListener = () {
-      final state = LoginManager.instance.currentState;
-      if (state.currentCircle?.id != widget.circle.id ||
-          state.currentCircle?.tenantInfo == null) return;
-      if (!mounted) return;
-      _updateUIWithTenantInfo(state.currentCircle!.tenantInfo!.toJson());
-    };
-    LoginManager.instance.state$.addListener(_stateListener!);
+    _cachedTenantInfoFuture = _loadCachedTenantInfo();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       _loadLocalData();
@@ -101,11 +177,6 @@ class _CircleDetailPageState extends State<CircleDetailPage>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    if (_stateListener != null) {
-      LoginManager.instance.state$.removeListener(_stateListener!);
-    }
-    _renewDate$.dispose();
-    _subscriptionStatus$.dispose();
     _fileServerName$.dispose();
     super.dispose();
   }
@@ -124,222 +195,36 @@ class _CircleDetailPageState extends State<CircleDetailPage>
     _loadFileServerInfo();
   }
 
-  void _checkIfOwner() {
-    final currentPubkey = LoginManager.instance.currentPubkey;
-    _isOwner = widget.circle.ownerPubkey == currentPubkey;
-  }
-
-  /// Updates only subscription display (renew date, status, isOwner) from
-  /// [tenantInfo]. Synchronous; use for first-paint when tenantInfo is already
-  /// in memory (e.g. currentCircle.tenantInfo) to avoid showing "loading" then
-  /// flashing to real state.
-  void _applySubscriptionDisplayFromTenantInfo(Map<String, dynamic> tenantInfo) {
-    final currentPubkey = LoginManager.instance.currentPubkey;
-    final tenantAdminPubkey = tenantInfo['tenant_admin_pubkey'] as String?;
-    if (tenantAdminPubkey != null && tenantAdminPubkey.isNotEmpty) {
-      _isOwner = tenantAdminPubkey.toLowerCase() == currentPubkey.toLowerCase();
-    }
-    String renewDateText = _kSubscriptionUnknownPlaceholder;
-    final expiresAt = tenantInfo['expires_at'] as int?;
-    if (expiresAt != null && expiresAt > 0) {
-      try {
-        final date = DateTime.fromMillisecondsSinceEpoch(expiresAt * 1000);
-        renewDateText = DateFormat('MMM d, yyyy').format(date);
-      } catch (_) {}
-    }
-    _renewDate$.value = renewDateText;
-    String? subscriptionStatus = tenantInfo['subscription_status'] as String? ?? tenantInfo['status'] as String?;
-    if (subscriptionStatus == null || subscriptionStatus.isEmpty) {
-      if (expiresAt != null && expiresAt > 0) {
-        try {
-          final expiresDate = DateTime.fromMillisecondsSinceEpoch(expiresAt * 1000);
-          subscriptionStatus = expiresDate.isBefore(DateTime.now()) ? 'expired' : 'active';
-        } catch (_) {}
-      }
-    }
-    _subscriptionStatus$.value = subscriptionStatus;
-  }
-
   /// Check if this circle is a paid relay (based on relayUrl matching privateRelayApiBaseUrl)
   bool _isPaidRelay() {
     return CircleApi.isPaidRelay(widget.circle.relayUrl);
   }
 
   /// Load local data first (for paid relays, UI comes from _loadSubscriptionInfo only)
-  Future<void> _loadLocalData() async {
-    _circleName = widget.circle.name;
-  }
+  Future<void> _loadLocalData() async {}
 
-  /// Load cached tenant info from CircleDBISAR
+  /// Load cached tenant info: mem (state) when current circle, else store; via LoginManager.
   Future<Map<String, dynamic>?> _loadCachedTenantInfo() async {
     try {
-      return await Account.sharedInstance.loadTenantInfoFromCircleDB(
-        widget.circle.id,
-      );
+      return await LoginManager.instance.getCachedTenantInfoForCircle(widget.circle.id);
     } catch (e) {
       LogUtil.w(() => 'Failed to load cached tenant info: $e');
       return null;
     }
   }
 
-  /// Update UI with tenant info.
-  /// When [fromCache] is true, avoid showing 'expired' from cache alone (cache may be stale);
-  /// keep status null so UI shows neutral until server response.
-  Future<void> _updateUIWithTenantInfo(
-    Map<String, dynamic> tenantInfo, {
-    bool fromCache = false,
-  }) async {
-    // Check if current user is tenant admin
-    final currentPubkey = LoginManager.instance.currentPubkey;
-    final tenantAdminPubkey = tenantInfo['tenant_admin_pubkey'] as String?;
-    if (tenantAdminPubkey != null && tenantAdminPubkey.isNotEmpty) {
-      _isOwner = tenantAdminPubkey.toLowerCase() == currentPubkey.toLowerCase();
-    } else {
-      // Fallback to circle pubkey check
-      _isOwner = widget.circle.ownerPubkey == currentPubkey;
-    }
-
-    // Extract member count and limits
-    final currentMembers = tenantInfo['current_members'] as int? ?? 0;
-    final maxMembers = tenantInfo['max_members'] as int? ?? 100;
-
-    // Extract and convert members list (batch getUserInfos to avoid N sequential DB reads)
-    final membersList = <UserDBISAR>[];
-    final membersData = tenantInfo['members'] as List<dynamic>?;
-    if (membersData != null && membersData.isNotEmpty) {
-      final pubkeys = <String>[];
-      for (final memberData in membersData) {
-        final memberMap = memberData as Map<String, dynamic>;
-        final pubkey = memberMap['pubkey'] as String?;
-        if (pubkey != null && pubkey.isNotEmpty) {
-          pubkeys.add(pubkey);
-        }
-      }
-      final userMap = await Account.sharedInstance.getUserInfos(pubkeys);
-      for (final pubkey in pubkeys) {
-        final user = userMap[pubkey];
-        if (user != null) {
-          membersList.add(user);
-        }
-      }
-    }
-
-    // Extract expires_at and format renew date
-    String renewDateText = _kSubscriptionUnknownPlaceholder;
-    final expiresAt = tenantInfo['expires_at'] as int?;
-    if (expiresAt != null && expiresAt > 0) {
-      try {
-        // expires_at is in seconds, convert to milliseconds
-        final date = DateTime.fromMillisecondsSinceEpoch(expiresAt * 1000);
-        renewDateText = DateFormat('MMM d, yyyy').format(date);
-      } catch (e) {
-        LogUtil.w(() => 'Failed to format expires_at: $e');
-      }
-    }
-
-    // Extract subscription status
-    String? subscriptionStatus = tenantInfo['subscription_status'] as String?;
-    // If subscription_status is not available, determine status from expires_at
-    if (subscriptionStatus == null || subscriptionStatus.isEmpty) {
-      if (expiresAt != null && expiresAt > 0) {
-        try {
-          final expiresDate = DateTime.fromMillisecondsSinceEpoch(expiresAt * 1000);
-          final now = DateTime.now();
-          subscriptionStatus = expiresDate.isBefore(now) ? 'expired' : 'active';
-          // From cache, do not show 'expired' (cache may be stale); keep null until server responds
-          if (fromCache && subscriptionStatus == 'expired') {
-            subscriptionStatus = null;
-          }
-        } catch (e) {
-          LogUtil.w(() => 'Failed to determine subscription status from expires_at: $e');
-        }
-      }
-    } else if (fromCache && subscriptionStatus == 'expired') {
-      // Server-provided status in cache might be stale; do not show expired from cache
-      subscriptionStatus = null;
-    }
-
-    // Extract tenant name if available
-    final tenantName = tenantInfo['name'] as String?;
-    if (tenantName != null && tenantName.isNotEmpty && tenantName != _circleName) {
-      // Optionally update circle name if different
-      // _circleName = tenantName;
-    }
-
-    if (mounted) {
-      setState(() {
-        _currentMembers = currentMembers;
-        _maxMembers = maxMembers;
-        _members = membersList;
-        _renewDate$.value = renewDateText;
-        _subscriptionStatus$.value = subscriptionStatus;
-      });
-    }
-  }
-
-  /// Save tenant info to cache (CircleDBISAR)
-  /// This method is called when we successfully get tenant info, which means it's a paid circle
-  Future<void> _saveTenantInfoToCache(Map<String, dynamic> tenantInfo) async {
-    try {
-      await Account.sharedInstance.saveTenantInfoToCircleDB(
-        circleId: widget.circle.id,
-        tenantInfo: tenantInfo,
-      );
-    } catch (e) {
-      LogUtil.w(() => 'Failed to save tenant info to cache: $e');
-    }
-  }
-
   Future<void> _loadSubscriptionInfo() async {
-    // Only load subscription info for paid relays
-    if (!_isPaidRelay()) {
-      return;
-    }
+    if (!_isPaidRelay()) return;
 
-    // Try to load cached data from local first and display immediately
-    final cachedData = await _loadCachedTenantInfo();
-    if (cachedData != null) {
-      _updateUIWithTenantInfo(cachedData, fromCache: true);
-    }
-
-    // Update category if it's not already paid
     if (widget.circle.category != CircleCategory.paid) {
       await _updateCircleCategory(CircleCategory.paid);
     }
 
-    // Then request server update (request regardless of whether cached data exists)
-    try {
-      final tenantInfo = await CircleMemberService.sharedInstance.getTenantInfoForRelay(
-        widget.circle.relayUrl,
-        circleId: widget.circle.id,
-      );
-      
-      // Update UI
-      await _updateUIWithTenantInfo(tenantInfo.toJson());
-
-      // Save to local cache
-      await _saveTenantInfoToCache(tenantInfo.toJson());
-
-      // Sync to LoginManager state so state$ has latest tenantInfo (reactive UI elsewhere)
-      if (LoginManager.instance.currentCircle?.id == widget.circle.id) {
-        LoginManager.instance.updateCircleTenantInfo(tenantInfo);
-      }
-
-      // If server returns tenant_name different from local, update circle name
-      final tenantName = tenantInfo.name;
-      if (tenantName.isNotEmpty && tenantName != _circleName) {
-        if (mounted) {
-          setState(() {
-            _circleName = tenantName;
-          });
-        }
-      }
-    } catch (e) {
-      // Request failed, keep displaying local data (if any)
-      LogUtil.w(() => 'Failed to load subscription info: $e');
-      // If no cached data was loaded and request failed, try fallback
-      if (_members.isEmpty && cachedData == null) {
-        _loadCurrentUserFallback();
+    if (LoginManager.instance.currentCircle?.id == widget.circle.id) {
+      try {
+        await LoginManager.instance.refreshCircleFromRemote();
+      } catch (e) {
+        LogUtil.w(() => 'Failed to refresh circle info: $e');
       }
     }
   }
@@ -371,23 +256,6 @@ class _CircleDetailPageState extends State<CircleDetailPage>
     }
   }
   
-  Future<void> _loadCurrentUserFallback() async {
-    try {
-      final currentPubkey = LoginManager.instance.currentPubkey;
-      if (currentPubkey.isNotEmpty) {
-        final currentUser = await Account.sharedInstance.getUserInfo(currentPubkey);
-        if (currentUser != null && _members.isEmpty) {
-          setState(() {
-            _members = [currentUser];
-            _currentMembers = 1;
-          });
-        }
-      }
-    } catch (e) {
-      LogUtil.e(() => 'Failed to load current user: $e');
-    }
-  }
-
   Future<void> _loadFileServerInfo() async {
     final selectedUrl = widget.circle.selectedFileServerUrl;
     String displayName = '';
@@ -408,6 +276,18 @@ class _CircleDetailPageState extends State<CircleDetailPage>
     _fileServerName$.value = displayName;
   }
 
+  /// Derive display data from state$ (when current circle) or cache (first-paint / non-current).
+  _TenantDisplayData? _tenantDisplayData(LoginState state, Map<String, dynamic>? cache) {
+    final currentPubkey = LoginManager.instance.currentPubkey;
+    final isCurrentCircle = state.currentCircle?.id == widget.circle.id;
+    if (isCurrentCircle && state.currentCircle?.tenantInfo != null) {
+      return _TenantDisplayData.fromTenantInfo(state.currentCircle!.tenantInfo!, currentPubkey);
+    }
+    if (cache != null) {
+      return _TenantDisplayData.fromMap(cache, currentPubkey, fromCache: true);
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -418,15 +298,21 @@ class _CircleDetailPageState extends State<CircleDetailPage>
         actions: [_buildMenuButton(context)],
         backgroundColor: ColorToken.primaryContainer.of(context),
       ),
-      body: CLSectionListView(
-        padding: EdgeInsets.only(bottom: 40.px),
-        items: [
-          SectionListViewItem(
-            headerWidget: _buildHeader(context),
-            data: [],
-          ),
-          ..._buildMainItems(context),
-        ],
+      body: ValueListenableBuilder<LoginState>(
+        valueListenable: LoginManager.instance.state$,
+        builder: (context, state, _) {
+          return FutureBuilder<Map<String, dynamic>?>(
+            future: _cachedTenantInfoFuture,
+            builder: (context, cacheSnap) {
+              final displayData = _tenantDisplayData(state, cacheSnap.data);
+              return _CircleDetailBody(
+                displayData: displayData,
+                circle: widget.circle,
+                parent: this,
+              );
+            },
+          );
+        },
       ),
       isSectionListPage: true,
     );
@@ -505,7 +391,7 @@ class _CircleDetailPageState extends State<CircleDetailPage>
             radius: 40.px,
             backgroundColor: ColorToken.onPrimary.of(context),
             child: CLText.titleLarge(
-              _circleName.isNotEmpty ? _circleName[0].toUpperCase() : '?',
+              _displayCircleName.isNotEmpty ? _displayCircleName[0].toUpperCase() : '?',
             ),
           ),
       
@@ -519,7 +405,7 @@ class _CircleDetailPageState extends State<CircleDetailPage>
               children: [
                 Flexible(
                   child: CLText.titleLarge(
-                    _circleName,
+                    _displayCircleName,
                     textAlign: TextAlign.center,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -563,14 +449,14 @@ class _CircleDetailPageState extends State<CircleDetailPage>
       context: context,
       title: Localized.text('ox_usercenter.edit_circle_name'),
       inputLabel: Localized.text('ox_usercenter.circle_name'),
-      initialValue: _circleName,
+      initialValue: _displayCircleName,
       onConfirm: (newName) async {
         if (newName.trim().isEmpty) {
           CommonToast.instance.show(context, Localized.text('ox_common.input_cannot_be_empty'));
           return false;
         }
         
-        if (newName.trim() == _circleName) {
+        if (newName.trim() == _displayCircleName) {
           return true; // No change needed
         }
 
@@ -615,11 +501,7 @@ class _CircleDetailPageState extends State<CircleDetailPage>
           }
 
           Loading.OXLoading.dismiss();
-          
-          // Update UI state (for paid relays, _loadSubscriptionInfo already updated it, but we update again to ensure consistency)
-          setState(() {
-            _circleName = trimmedName;
-          });
+          setState(() {}); // Rebuild so _displayCircleName reflects state / updated circle.
 
           return true;
         } catch (e) {
@@ -633,9 +515,12 @@ class _CircleDetailPageState extends State<CircleDetailPage>
     );
   }
 
-  List<SectionListViewItem> _buildMainItems(BuildContext context) {
+  List<SectionListViewItem> _buildMainItems(
+    BuildContext context,
+    _TenantDisplayData? displayData,
+    List<UserDBISAR>? resolvedMembers,
+  ) {
     final items = <SectionListViewItem>[
-      // Relay Server
       SectionListViewItem(
         footer: Localized.text('ox_usercenter.relay_server_description'),
         data: [
@@ -648,13 +533,11 @@ class _CircleDetailPageState extends State<CircleDetailPage>
           LabelItemModel(
             icon: ListViewIcon.data(CupertinoIcons.settings),
             title: Localized.text('ox_usercenter.file_server_setting'),
-            // subtitle: _fileServerName$.value,
             onTap: () {
               OXNavigator.pushPage(context, (_) => FileServerPage(
                 previousPageTitle: widget.title,
                 readOnlyForPaidCircle: _isPaidRelay(),
               )).then((_) {
-                // Reload file server info when returning from file server page
                 _loadFileServerInfo();
               });
             },
@@ -663,99 +546,81 @@ class _CircleDetailPageState extends State<CircleDetailPage>
       ),
     ];
 
-    // Add subscription and members sections if user is owner
-    if (_isOwner) {
+    if (displayData != null && displayData.isOwner) {
       items.addAll([
-        _buildSubscriptionSection(context),
-        _buildMembersSection(context),
+        _buildSubscriptionSection(context, displayData),
+        _buildMembersSection(context, displayData, resolvedMembers ?? []),
       ]);
     }
 
     return items;
   }
 
-  SectionListViewItem _buildSubscriptionSection(BuildContext context) {
+  SectionListViewItem _buildSubscriptionSection(BuildContext context, _TenantDisplayData displayData) {
+    final status = displayData.subscriptionStatus;
+    final renewDate = displayData.renewDateText;
     return SectionListViewItem(
       header: Localized.text('ox_usercenter.subscription_and_usage'),
       data: [
-        // Plan
         CustomItemModel(
           icon: ListViewIcon.data(Icons.workspace_premium),
           title: Localized.text('ox_usercenter.plan'),
-          subtitleWidget: ValueListenableBuilder<String?>(
-            valueListenable: _subscriptionStatus$,
-            builder: (context, status, _) {
-              return ValueListenableBuilder<String>(
-                valueListenable: _renewDate$,
-                builder: (context, renewDate, _) {
-                  if (status == 'active') {
-                    return Row(
-                      children: [
-                        Expanded(
-                          child: CLText.bodySmall(
-                            Localized.text('ox_usercenter.renews_on').replaceAll('{date}', renewDate),
-                            colorToken: ColorToken.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
-                    );
-                  } else if (status == 'expired') {
-                    return Row(
-                      children: [
-                        Expanded(
-                          child: CLText.bodySmall(
-                            Localized.text('ox_usercenter.subscription_expired_on').replaceAll('{date}', renewDate),
-                            colorToken: ColorToken.error,
-                          ),
-                        ),
-                      ],
-                    );
-                  } else {
-                    // Loading or unknown: show neutral placeholder so we never
-                    // show optimistic "renews on" that later flips to "expired".
-                    return CLText.bodySmall(
-                      _kSubscriptionUnknownPlaceholder,
-                      colorToken: ColorToken.onSurfaceVariant,
-                    );
-                  }
-                },
+          subtitleWidget: Builder(
+            builder: (context) {
+              if (status == 'active') {
+                return Row(
+                  children: [
+                    Expanded(
+                      child: CLText.bodySmall(
+                        Localized.text('ox_usercenter.renews_on').replaceAll('{date}', renewDate),
+                        colorToken: ColorToken.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                );
+              } else if (status == 'expired') {
+                return Row(
+                  children: [
+                    Expanded(
+                      child: CLText.bodySmall(
+                        Localized.text('ox_usercenter.subscription_expired_on').replaceAll('{date}', renewDate),
+                        colorToken: ColorToken.error,
+                      ),
+                    ),
+                  ],
+                );
+              }
+              return CLText.bodySmall(
+                _kSubscriptionUnknownPlaceholder,
+                colorToken: ColorToken.onSurfaceVariant,
               );
             },
           ),
-          onTap: () {
-            _showPlanOptions(context);
-          },
+          onTap: () => _showPlanOptions(context),
         ),
-        // Storage
         LabelItemModel(
           icon: ListViewIcon.data(Icons.storage),
           title: Localized.text('ox_usercenter.storage'),
-          // value$: _storageUsed$,
-          onTap: () {
-            _showStorageOptions(context);
-          },
+          onTap: () => _showStorageOptions(context),
         ),
       ],
     );
   }
 
-  SectionListViewItem _buildMembersSection(BuildContext context) {
+  SectionListViewItem _buildMembersSection(
+    BuildContext context,
+    _TenantDisplayData displayData,
+    List<UserDBISAR> members,
+  ) {
     final currentPubkey = LoginManager.instance.currentPubkey;
     final memberItems = <ListViewItem>[];
 
-    // Add owner (current user)
     UserDBISAR? ownerUser;
     try {
-      ownerUser = _members.firstWhere(
-        (user) => user.pubKey == currentPubkey,
-      );
+      ownerUser = members.firstWhere((user) => user.pubKey == currentPubkey);
     } catch (e) {
-      // Owner not found in members list, use first member if available
-      if (_members.isNotEmpty) {
-        ownerUser = _members.first;
-      }
+      if (members.isNotEmpty) ownerUser = members.first;
     }
-    
     if (ownerUser != null) {
       memberItems.add(
         LabelItemModel(
@@ -767,15 +632,12 @@ class _CircleDetailPageState extends State<CircleDetailPage>
       );
     }
 
-    // Add other members
-    for (final member in _members) {
+    for (final member in members) {
       if (member.pubKey != currentPubkey) {
         final memberName = member.name ?? '';
-        final displayName = memberName.isNotEmpty 
-            ? memberName 
-            : (member.pubKey.length >= 8 
-                ? member.pubKey.substring(0, 8) 
-                : member.pubKey);
+        final displayName = memberName.isNotEmpty
+            ? memberName
+            : (member.pubKey.length >= 8 ? member.pubKey.substring(0, 8) : member.pubKey);
         memberItems.add(
           CustomItemModel(
             icon: ListViewIcon.data(Icons.person),
@@ -787,14 +649,11 @@ class _CircleDetailPageState extends State<CircleDetailPage>
               onTap: () => _removeMember(member),
             ),
             onTap: () {
-              // Navigate to user profile page
               OXModuleService.pushPage(
                 context,
                 'ox_chat',
                 'ContactUserInfoPage',
-                {
-                  'pubkey': member.pubKey,
-                },
+                {'pubkey': member.pubKey},
               );
             },
           ),
@@ -802,19 +661,18 @@ class _CircleDetailPageState extends State<CircleDetailPage>
       }
     }
 
-    // Add "Add Member" option only if not at max capacity
-    if (_currentMembers < _maxMembers) {
+    if (displayData.currentMembers < displayData.maxMembers) {
       memberItems.add(
         LabelItemModel(
           icon: ListViewIcon.data(Icons.person_add),
           title: Localized.text('ox_usercenter.add_member'),
-          onTap: _addMember,
+          onTap: () => _addMember(displayData),
         ),
       );
     }
 
     return SectionListViewItem(
-      header: '${Localized.text('ox_usercenter.members')}(${_currentMembers}/${_maxMembers})',
+      header: '${Localized.text('ox_usercenter.members')}(${displayData.currentMembers}/${displayData.maxMembers})',
       data: memberItems,
     );
   }
@@ -862,17 +720,14 @@ class _CircleDetailPageState extends State<CircleDetailPage>
     }
   }
 
-  Future<void> _addMember() async {
-    // Check if member limit is reached
-    if (_currentMembers >= _maxMembers) {
+  Future<void> _addMember(_TenantDisplayData displayData) async {
+    if (displayData.currentMembers >= displayData.maxMembers) {
       CommonToast.instance.show(
         context,
         Localized.text('ox_usercenter.member_limit_reached'),
       );
       return;
     }
-
-    // Navigate to QR code display page for circle invite
     if (mounted) {
       await OXNavigator.pushPage(
         context,
@@ -884,12 +739,25 @@ class _CircleDetailPageState extends State<CircleDetailPage>
     }
   }
 
+  /// Subscription status at tap time from state$ (for plan options dialog).
+  String? get _currentSubscriptionStatus {
+    final state = LoginManager.instance.currentState;
+    if (state.currentCircle?.id != widget.circle.id || state.currentCircle?.tenantInfo == null) {
+      return null;
+    }
+    final info = state.currentCircle!.tenantInfo!;
+    final status = info.status;
+    if (status.isNotEmpty) return status.toLowerCase();
+    if (info.expiresAt != null && info.expiresAt! > 0) {
+      final expiresDate = DateTime.fromMillisecondsSinceEpoch(info.expiresAt! * 1000);
+      return expiresDate.isBefore(DateTime.now()) ? 'expired' : 'active';
+    }
+    return null;
+  }
 
   void _showPlanOptions(BuildContext context) async {
-    final status = _subscriptionStatus$.value;
+    final status = _currentSubscriptionStatus;
     final items = <CLPickerItem<_PlanAction>>[];
-
-    // Build options based on subscription status
     if (status == 'active') {
       // Active subscription: show change plan and cancel subscription
       items.addAll([
@@ -1118,5 +986,94 @@ class _CircleDetailPageState extends State<CircleDetailPage>
 
       LogUtil.e(() => 'Failed to delete tenant files: $e');
     }
+  }
+}
+
+/// Body that builds section list from [displayData] (from state$ / cache).
+/// Holds only page-specific async state: resolved members for list.
+class _CircleDetailBody extends StatefulWidget {
+  const _CircleDetailBody({
+    required this.displayData,
+    required this.circle,
+    required this.parent,
+  });
+
+  final _TenantDisplayData? displayData;
+  final Circle circle;
+  final _CircleDetailPageState parent;
+
+  @override
+  State<_CircleDetailBody> createState() => _CircleDetailBodyState();
+}
+
+class _CircleDetailBodyState extends State<_CircleDetailBody> {
+  List<UserDBISAR>? _resolvedMembers;
+  List<String>? _lastMemberPubkeys;
+
+  Future<void> _resolveMembers(List<String> pubkeys) async {
+    if (pubkeys.isEmpty) {
+      if (mounted) setState(() => _resolvedMembers = []);
+      return;
+    }
+    final userMap = await Account.sharedInstance.getUserInfos(pubkeys);
+    final list = <UserDBISAR>[];
+    for (final p in pubkeys) {
+      final user = userMap[p];
+      if (user != null) list.add(user);
+    }
+    if (mounted) setState(() => _resolvedMembers = list);
+  }
+
+  bool _listEquals(List<String> a, List<String>? b) {
+    if (b == null) return false;
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    final pubkeys = widget.displayData?.memberPubkeys ?? [];
+    if (pubkeys.isNotEmpty) {
+      _lastMemberPubkeys = List.from(pubkeys);
+      _resolveMembers(pubkeys);
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant _CircleDetailBody oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final pubkeys = widget.displayData?.memberPubkeys ?? [];
+    if (pubkeys.isEmpty) {
+      if (_lastMemberPubkeys != null && mounted) {
+        setState(() {
+          _resolvedMembers = null;
+          _lastMemberPubkeys = null;
+        });
+      }
+      return;
+    }
+    if (_listEquals(pubkeys, _lastMemberPubkeys) == false) {
+      _lastMemberPubkeys = List.from(pubkeys);
+      _resolveMembers(pubkeys);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final parent = widget.parent;
+    return CLSectionListView(
+      padding: EdgeInsets.only(bottom: 40.px),
+      items: [
+        SectionListViewItem(
+          headerWidget: parent._buildHeader(context),
+          data: [],
+        ),
+        ...parent._buildMainItems(context, widget.displayData, _resolvedMembers),
+      ],
+    );
   }
 }

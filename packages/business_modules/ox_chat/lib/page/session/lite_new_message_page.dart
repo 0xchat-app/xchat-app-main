@@ -252,26 +252,22 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
   /// Load circle members from network and update UI
   Future<void> _loadCircleMembersFromNetwork(Circle circle, String currentPubkey) async {
     try {
-      // Check admin status from network
+      // Check admin status: use unified API for current circle, otherwise fetch for this circle only
       try {
-        final tenantInfo = await CircleMemberService.sharedInstance.getTenantInfoForRelay(
-          circle.relayUrl,
-          circleId: circle.id,
-        );
-        final isAdmin = tenantInfo.tenantAdminPubkey.toLowerCase() == currentPubkey.toLowerCase();
+        bool isAdmin = false;
+        if (LoginManager.instance.currentCircle?.id == circle.id) {
+          final updated = await LoginManager.instance.fetchCircleFromRemote();
+          isAdmin = updated?.isAdminFor(currentPubkey) ?? false;
+        } else {
+          final tenantInfo = await CircleMemberService.sharedInstance.getTenantInfoForRelay(
+            circle.relayUrl,
+            circleId: circle.id,
+          );
+          isAdmin = tenantInfo.tenantAdminPubkey.toLowerCase() == currentPubkey.toLowerCase();
+        }
         if (_isAdmin != isAdmin && mounted) {
           _isAdmin = isAdmin;
           setState(() {});
-        }
-
-        // Save tenant info to cache
-        await Account.sharedInstance.saveTenantInfoToCircleDB(
-          circleId: circle.id,
-          tenantInfo: tenantInfo.toJson(),
-        );
-        // Sync to LoginManager state so state$ has latest (reactive UI)
-        if (LoginManager.instance.currentCircle?.id == circle.id) {
-          LoginManager.instance.updateCircleTenantInfo(tenantInfo);
         }
       } catch (e) {
         print('Error checking admin status from network: $e');
