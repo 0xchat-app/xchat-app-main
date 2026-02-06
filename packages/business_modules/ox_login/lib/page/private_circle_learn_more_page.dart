@@ -99,7 +99,7 @@ class PrivateCircleLearnMorePage extends StatelessWidget {
         ),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             padding: EdgeInsets.all(8.px),
@@ -166,12 +166,12 @@ class PrivateCircleLearnMorePage extends StatelessWidget {
         ),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             width: 6.px,
             height: 6.px,
-            margin: EdgeInsets.only(top: 8.px, right: 8.px),
+            margin: EdgeInsets.only(right: 8.px),
             decoration: BoxDecoration(
               color: ColorToken.xChat.of(context),
               shape: BoxShape.circle,
@@ -235,6 +235,7 @@ class PrivateCircleLearnMorePage extends StatelessWidget {
           Localized.text('ox_login.private_circle_pricing_disclaimer'),
           colorToken: ColorToken.onSurfaceVariant,
           maxLines: null,
+          textAlign: TextAlign.center,
         ),
       ],
     );
