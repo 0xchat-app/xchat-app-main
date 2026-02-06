@@ -164,37 +164,38 @@ class _SessionListWidgetState extends State<SessionListWidget> {
                 maxLines: 3,
               ),
               SizedBox(height: 32.px),
-              if (!isPaidRelay)
-                CLButton.filled(
-                  expanded: true,
-                  onTap: () => _navigateToFindPeople(context),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        PlatformStyle.isUseMaterial
-                            ? Icons.person_add
-                            : CupertinoIcons.person_add,
-                        size: 20.px,
-                        color: ColorToken.white.of(context),
-                      ),
-                      SizedBox(width: 8.px),
-                      CLText.bodyMedium(
-                        Localized.text('ox_chat.add_friends_to_chat'),
-                        customColor: ColorToken.white.of(context),
-                      ),
-                    ],
-                  ),
+              CLButton.filled(
+                expanded: true,
+                onTap: () => isPaidRelay
+                    ? _navigateToInviteFriends(context, isPaidRelay)
+                    : _navigateToFindPeople(context),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      PlatformStyle.isUseMaterial
+                          ? Icons.person_add
+                          : CupertinoIcons.person_add,
+                      size: 20.px,
+                      color: ColorToken.white.of(context),
+                    ),
+                    SizedBox(width: 8.px),
+                    CLText.bodyMedium(
+                      isPaidRelay
+                          ? Localized.text('ox_usercenter.invite_to_circle')
+                          : Localized.text('ox_chat.add_friends_to_chat'),
+                      customColor: ColorToken.white.of(context),
+                    ),
+                  ],
                 ),
-              if ((isPaidRelay && isAdmin) || !isPaidRelay)
+              ),
+              if (!isPaidRelay)
                 CupertinoButton(
                   onPressed: () => _navigateToInviteFriends(context, isPaidRelay),
                   padding: EdgeInsets.zero,
                   child: CLText.bodyMedium(
-                    isPaidRelay
-                        ? Localized.text('ox_usercenter.invite_to_circle')
-                        : Localized.text('ox_chat.invite_friends_link'),
+                    Localized.text('ox_chat.invite_friends_link'),
                     colorToken: ColorToken.onSurfaceXChat,
                   ),
                 ),
