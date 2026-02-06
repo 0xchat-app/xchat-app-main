@@ -157,11 +157,6 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
             if (pubkey != null && pubkey.isNotEmpty) {
               final user = await Account.sharedInstance.getUserInfo(pubkey);
               if (user != null) {
-                // Update display name if provided
-                final displayName = memberMap['display_name'] as String?;
-                if (displayName != null && displayName.isNotEmpty) {
-                  user.name = displayName;
-                }
                 _circleMembers.add(Account.sharedInstance.getUserNotifier(pubkey));
               }
             }
@@ -292,11 +287,6 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
           if (pubkey != null && pubkey.isNotEmpty) {
             final user = await Account.sharedInstance.getUserInfo(pubkey);
             if (user != null) {
-              // Update display name if provided
-              final displayName = memberData['display_name'] as String?;
-              if (displayName != null && displayName.isNotEmpty) {
-                user.name = displayName;
-              }
               newCircleMembers.add(Account.sharedInstance.getUserNotifier(pubkey));
             }
           }

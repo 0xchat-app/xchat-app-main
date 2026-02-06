@@ -140,8 +140,13 @@ class _CircleDetailPageState extends State<CircleDetailPage>
     }
   }
 
-  /// Update UI with tenant info
-  Future<void> _updateUIWithTenantInfo(Map<String, dynamic> tenantInfo) async {
+  /// Update UI with tenant info.
+  /// When [fromCache] is true, avoid showing 'expired' from cache alone (cache may be stale);
+  /// keep status null so UI shows neutral until server response.
+  Future<void> _updateUIWithTenantInfo(
+    Map<String, dynamic> tenantInfo, {
+    bool fromCache = false,
+  }) async {
     // Check if current user is tenant admin
     final currentPubkey = LoginManager.instance.currentPubkey;
     final tenantAdminPubkey = tenantInfo['tenant_admin_pubkey'] as String?;
@@ -161,26 +166,17 @@ class _CircleDetailPageState extends State<CircleDetailPage>
     final membersData = tenantInfo['members'] as List<dynamic>?;
     if (membersData != null && membersData.isNotEmpty) {
       final pubkeys = <String>[];
-      final displayNames = <String, String>{};
       for (final memberData in membersData) {
         final memberMap = memberData as Map<String, dynamic>;
         final pubkey = memberMap['pubkey'] as String?;
         if (pubkey != null && pubkey.isNotEmpty) {
           pubkeys.add(pubkey);
-          final displayName = memberMap['display_name'] as String?;
-          if (displayName != null && displayName.isNotEmpty) {
-            displayNames[pubkey] = displayName;
-          }
         }
       }
       final userMap = await Account.sharedInstance.getUserInfos(pubkeys);
       for (final pubkey in pubkeys) {
         final user = userMap[pubkey];
         if (user != null) {
-          final displayName = displayNames[pubkey];
-          if (displayName != null && displayName.isNotEmpty) {
-            user.name = displayName;
-          }
           membersList.add(user);
         }
       }
@@ -208,10 +204,17 @@ class _CircleDetailPageState extends State<CircleDetailPage>
           final expiresDate = DateTime.fromMillisecondsSinceEpoch(expiresAt * 1000);
           final now = DateTime.now();
           subscriptionStatus = expiresDate.isBefore(now) ? 'expired' : 'active';
+          // From cache, do not show 'expired' (cache may be stale); keep null until server responds
+          if (fromCache && subscriptionStatus == 'expired') {
+            subscriptionStatus = null;
+          }
         } catch (e) {
           LogUtil.w(() => 'Failed to determine subscription status from expires_at: $e');
         }
       }
+    } else if (fromCache && subscriptionStatus == 'expired') {
+      // Server-provided status in cache might be stale; do not show expired from cache
+      subscriptionStatus = null;
     }
 
     // Extract tenant name if available
@@ -254,7 +257,7 @@ class _CircleDetailPageState extends State<CircleDetailPage>
     // Try to load cached data from local first and display immediately
     final cachedData = await _loadCachedTenantInfo();
     if (cachedData != null) {
-      _updateUIWithTenantInfo(cachedData);
+      _updateUIWithTenantInfo(cachedData, fromCache: true);
     }
 
     // Update category if it's not already paid
