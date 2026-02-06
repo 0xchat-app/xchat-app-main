@@ -567,7 +567,7 @@ class _CircleDetailPageState extends State<CircleDetailPage>
       header: Localized.text('ox_usercenter.subscription_and_usage'),
       data: [
         CustomItemModel(
-          icon: ListViewIcon.data(Icons.workspace_premium),
+          icon: ListViewIcon.data(Icons.diamond_rounded),
           title: Localized.text('ox_usercenter.plan'),
           subtitleWidget: Builder(
             builder: (context) {

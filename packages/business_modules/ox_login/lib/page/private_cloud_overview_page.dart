@@ -67,10 +67,13 @@ class _PrivateCloudOverviewPageState extends State<PrivateCloudOverviewPage> {
             color: ColorToken.xChat.of(context),
             borderRadius: BorderRadius.circular(16.px),
           ),
-          child: Icon(
-            Icons.verified,
-            color: Colors.white,
-            size: 48.px,
+          child: Padding(
+            padding: EdgeInsets.only(top: 8.px),
+            child: Icon(
+              Icons.diamond_rounded,
+              color: Colors.white,
+              size: 48.px,
+            ),
           ),
         ),
         SizedBox(height: 24.px),

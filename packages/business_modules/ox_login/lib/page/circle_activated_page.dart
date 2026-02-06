@@ -206,7 +206,7 @@ class _CircleActivatedPageState extends State<CircleActivatedPage> {
               Row(
                 children: [
                   Icon(
-                    Icons.workspace_premium,
+                    Icons.diamond_rounded,
                     size: 20.px,
                     color: const Color(0xFFFFC107), // Yellow crown icon
                   ),
