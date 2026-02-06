@@ -148,6 +148,8 @@
   "tb_storage": "غير محدود",
   "overview": "نظرة عامة",
   "private_cloud_overview_desc": "امتلك بياناتك مع محطة إعادة مخصصة وخادم ملفات. يبدأ من 0.99 دولار فقط/شهر.",
+  "private_cloud_overview_desc_1": "امتلك بياناتك مع محطة إعادة مخصصة وخادم ملفات.",
+  "private_cloud_overview_desc_2": "يبدأ من {price}/شهر.",
   "configure_plan": "تكوين الخطة",
   "subscription_limit_reached": "تم الوصول إلى حد خادم الاشتراك",
   "welcome_back": "مرحباً بعودتك",

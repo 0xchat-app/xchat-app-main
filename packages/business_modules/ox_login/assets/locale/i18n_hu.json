@@ -150,6 +150,8 @@
   "tb_storage": "Korlátlan",
   "overview": "ÁTTEKINTÉS",
   "private_cloud_overview_desc": "Tulajdonosa adatai a dedikált relével és fájl szerverrel. Csak $0,99/hótól kezdődik.",
+  "private_cloud_overview_desc_1": "Tulajdonosa adatai a dedikált relével és fájl szerverrel.",
+  "private_cloud_overview_desc_2": "Csak {price}/hótól kezdődik.",
   "configure_plan": "TERV KONFIGURÁLÁSA",
   "subscription_limit_reached": "Előfizetési szerver korlát elérve",
   "welcome_back": "Üdvözöljük Vissza",

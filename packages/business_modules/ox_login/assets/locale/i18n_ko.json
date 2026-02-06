@@ -150,6 +150,8 @@
   "tb_storage": "무제한",
   "overview": "개요",
   "private_cloud_overview_desc": "전용 릴레이 및 파일 서버로 데이터를 소유하세요. 월 $0.99부터 시작합니다.",
+  "private_cloud_overview_desc_1": "전용 릴레이 및 파일 서버로 데이터를 소유하세요.",
+  "private_cloud_overview_desc_2": "월 {price}부터 시작합니다.",
   "configure_plan": "플랜 구성",
   "subscription_limit_reached": "구독 서버 제한에 도달했습니다",
   "welcome_back": "다시 오신 것을 환영합니다",

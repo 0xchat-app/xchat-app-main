@@ -150,6 +150,8 @@
   "tb_storage": "Piiramatu",
   "overview": "ÜLEVAADE",
   "private_cloud_overview_desc": "Omandage oma andmed pühendatud relee ja failiserveriga. Algab vaid $0,99/kuu.",
+  "private_cloud_overview_desc_1": "Omandage oma andmed pühendatud relee ja failiserveriga.",
+  "private_cloud_overview_desc_2": "Algab vaid {price}/kuu.",
   "configure_plan": "SEADISTA PLAAN",
   "subscription_limit_reached": "Tellimuse serveri piirang saavutatud",
   "welcome_back": "Tere Tulemast Tagasi",

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/navigator/navigator.dart';
+import 'package:ox_common/purchase/purchase_manager.dart';
+import 'package:ox_common/purchase/subscription_product_prices.dart';
 import 'package:ox_login/utils/circle_entry_helper.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/widgets/common_toast.dart';
@@ -8,10 +10,21 @@ import 'package:ox_localizable/ox_localizable.dart';
 import 'capacity_selection_page.dart';
 import 'private_circle_learn_more_page.dart';
 
-class PrivateCloudOverviewPage extends StatelessWidget {
+class PrivateCloudOverviewPage extends StatefulWidget {
   const PrivateCloudOverviewPage({super.key, this.groupId});
 
   final String? groupId;
+
+  @override
+  State<PrivateCloudOverviewPage> createState() => _PrivateCloudOverviewPageState();
+}
+
+class _PrivateCloudOverviewPageState extends State<PrivateCloudOverviewPage> {
+  @override
+  void initState() {
+    super.initState();
+    PurchaseManager.instance.refreshAllPrices();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,10 +82,26 @@ class PrivateCloudOverviewPage extends StatelessWidget {
         ),
         SizedBox(height: 12.px),
         CLText.bodyMedium(
-          Localized.text('ox_login.private_cloud_overview_desc'),
+          Localized.text('ox_login.private_cloud_overview_desc_1'),
           colorToken: ColorToken.onSurfaceVariant,
           textAlign: TextAlign.center,
           maxLines: null,
+        ),
+        ValueListenableBuilder<String?>(
+          valueListenable: SubscriptionProductPrices.instance.lowestPriceNotifier,
+          builder: (_, lowestPrice, __) {
+            if (lowestPrice == null || lowestPrice.isEmpty) return const SizedBox.shrink();
+            final part2 = Localized.text('ox_login.private_cloud_overview_desc_2').replaceAll('{price}', lowestPrice);
+            return Padding(
+              padding: EdgeInsets.only(top: 4.px),
+              child: CLText.bodyMedium(
+                part2,
+                colorToken: ColorToken.onSurfaceVariant,
+                textAlign: TextAlign.center,
+                maxLines: null,
+              ),
+            );
+          },
         ),
         SizedBox(height: 16.px),
         GestureDetector(
@@ -201,7 +230,7 @@ class PrivateCloudOverviewPage extends StatelessWidget {
   }
 
   Future<void> _onConfigurePlan(BuildContext context) async {
-    final groupId = this.groupId ?? await CircleEntryHelper.getCurrentInactiveGroupId();
+    final groupId = widget.groupId ?? await CircleEntryHelper.getCurrentInactiveGroupId();
     if (!context.mounted) return;
     if (groupId == null || groupId.isEmpty) {
       CommonToast.instance.show(

@@ -158,6 +158,8 @@
   "tb_storage": "نامحدود",
   "overview": "بررسی اجمالی",
   "private_cloud_overview_desc": "با رله اختصاصی و سرور فایل، مالک داده‌های خود باشید. از فقط $0.99/ماه شروع می‌شود.",
+  "private_cloud_overview_desc_1": "با رله اختصاصی و سرور فایل، مالک داده‌های خود باشید.",
+  "private_cloud_overview_desc_2": "از فقط {price}/ماه شروع می‌شود.",
   "configure_plan": "پیکربندی طرح",
   "subscription_limit_reached": "حد مجاز سرور اشتراک رسیده است",
   "welcome_back": "خوش آمدید",

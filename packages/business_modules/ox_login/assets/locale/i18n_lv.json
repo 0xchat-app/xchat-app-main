@@ -150,6 +150,8 @@
   "tb_storage": "Neierobežots",
   "overview": "PĀRSKATS",
   "private_cloud_overview_desc": "Piederiet savus datus ar dedicētu releju un failu serveri. Sākas no tikai $0,99/mēnesī.",
+  "private_cloud_overview_desc_1": "Piederiet savus datus ar dedicētu releju un failu serveri.",
+  "private_cloud_overview_desc_2": "Sākas no tikai {price}/mēnesī.",
   "configure_plan": "KONFIGURĒT PLĀNU",
   "subscription_limit_reached": "Sasniegts abonementa servera limits",
   "welcome_back": "Laipni Lūdzam Atpakaļ",

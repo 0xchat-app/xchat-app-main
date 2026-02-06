@@ -150,6 +150,8 @@
   "tb_storage": "Neomezené",
   "overview": "PŘEHLED",
   "private_cloud_overview_desc": "Vlastněte svá data s vyhrazeným relé a souborovým serverem. Začíná na pouhých $0,99/měsíc.",
+  "private_cloud_overview_desc_1": "Vlastněte svá data s vyhrazeným relé a souborovým serverem.",
+  "private_cloud_overview_desc_2": "Začíná na pouhých {price}/měsíc.",
   "configure_plan": "NASTAVIT PLÁN",
   "subscription_limit_reached": "Dosažen limit serveru předplatného",
   "welcome_back": "Vítejte Zpět",

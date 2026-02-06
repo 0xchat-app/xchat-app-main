@@ -150,6 +150,8 @@
   "tb_storage": "Sınırsız",
   "overview": "GENEL BAKIŞ",
   "private_cloud_overview_desc": "Adanmış bir relay ve dosya sunucusu ile verilerinize sahip olun. Sadece $0,99/ay ile başlar.",
+  "private_cloud_overview_desc_1": "Adanmış bir relay ve dosya sunucusu ile verilerinize sahip olun.",
+  "private_cloud_overview_desc_2": "Sadece {price}/ay ile başlar.",
   "configure_plan": "PLANI YAPILANDIR",
   "subscription_limit_reached": "Abonelik sunucu limitine ulaşıldı",
   "welcome_back": "Tekrar Hoş Geldiniz",

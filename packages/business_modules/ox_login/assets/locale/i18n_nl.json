@@ -150,6 +150,8 @@
   "tb_storage": "Onbeperkt",
   "overview": "OVERZICHT",
   "private_cloud_overview_desc": "Bezit uw gegevens met een toegewijde relay en bestandsserver. Begint vanaf slechts $0,99/maand.",
+  "private_cloud_overview_desc_1": "Bezit uw gegevens met een toegewijde relay en bestandsserver.",
+  "private_cloud_overview_desc_2": "Begint vanaf slechts {price}/maand.",
   "configure_plan": "PLAN CONFIGUREREN",
   "subscription_limit_reached": "Abonnementsserverlimiet bereikt",
   "welcome_back": "Welkom Terug",

@@ -150,6 +150,8 @@
   "tb_storage": "Tak terbatas",
   "overview": "RINGKASAN",
   "private_cloud_overview_desc": "Miliki data Anda dengan relay khusus dan server file. Mulai dari hanya $0,99/bulan.",
+  "private_cloud_overview_desc_1": "Miliki data Anda dengan relay khusus dan server file.",
+  "private_cloud_overview_desc_2": "Mulai dari hanya {price}/bulan.",
   "configure_plan": "KONFIGURASI PAKET",
   "subscription_limit_reached": "Batas server langganan tercapai",
   "welcome_back": "Selamat Datang Kembali",

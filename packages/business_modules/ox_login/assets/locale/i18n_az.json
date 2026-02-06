@@ -150,6 +150,8 @@
   "tb_storage": "Limitsiz",
   "overview": "BAXIŞ",
   "private_cloud_overview_desc": "Xüsusi röle və fayl serveri ilə məlumatlarınıza sahib olun. Yalnız $0,99/aydan başlayır.",
+  "private_cloud_overview_desc_1": "Xüsusi röle və fayl serveri ilə məlumatlarınıza sahib olun.",
+  "private_cloud_overview_desc_2": "Yalnız {price}/aydan başlayır.",
   "configure_plan": "PLAN KONFİQURASIYASI",
   "subscription_limit_reached": "Abunə server limitinə çatıldı",
   "welcome_back": "Yenidən Xoş Gəlmisiniz",

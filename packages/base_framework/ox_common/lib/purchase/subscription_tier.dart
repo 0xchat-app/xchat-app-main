@@ -9,28 +9,18 @@ abstract class SubscriptionTierIds {
   static const String community = 'community';
 }
 
-/// Subscription tier: capacity and pricing only. No UI fields, no productIds.
-/// UI controls display (name, description, color, isPopular) via tier id.
+/// Subscription tier: capacity only. No pricing — use store [ProductDetails]
+/// for display/charge. UI controls display (name, description, color, isPopular) via tier id.
 class SubscriptionTier {
   final String id;
   final int maxUsers;
   final int fileSizeLimitMB;
-  final double monthlyPrice;
-  final double yearlyPrice;
 
   const SubscriptionTier({
     required this.id,
     required this.maxUsers,
     required this.fileSizeLimitMB,
-    required this.monthlyPrice,
-    required this.yearlyPrice,
   });
-
-  double price(SubscriptionPeriod period) =>
-      period == SubscriptionPeriod.monthly ? monthlyPrice : yearlyPrice;
-
-  int amountInCents(SubscriptionPeriod period) =>
-      (price(period) * 100).round();
 
   String levelPeriod(SubscriptionPeriod period) =>
       period == SubscriptionPeriod.monthly ? '2592000' : '31536000';

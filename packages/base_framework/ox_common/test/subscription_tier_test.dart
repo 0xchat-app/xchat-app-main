@@ -10,8 +10,6 @@ void main() {
           id: SubscriptionTierIds.lovers,
           maxUsers: 2,
           fileSizeLimitMB: -1,
-          monthlyPrice: 1.99,
-          yearlyPrice: 19.99,
         );
         expect(tier.level, 1);
       });
@@ -21,8 +19,6 @@ void main() {
           id: SubscriptionTierIds.family,
           maxUsers: 6,
           fileSizeLimitMB: -1,
-          monthlyPrice: 5.99,
-          yearlyPrice: 59.99,
         );
         expect(tier.level, 2);
       });
@@ -32,8 +28,6 @@ void main() {
           id: SubscriptionTierIds.community,
           maxUsers: 20,
           fileSizeLimitMB: -1,
-          monthlyPrice: 19.99,
-          yearlyPrice: 199.99,
         );
         expect(tier.level, 3);
       });
@@ -43,58 +37,8 @@ void main() {
           id: 'unknown',
           maxUsers: 1,
           fileSizeLimitMB: -1,
-          monthlyPrice: 0,
-          yearlyPrice: 0,
         );
         expect(tier.level, 1);
-      });
-    });
-
-    group('price', () {
-      test('returns monthlyPrice for monthly', () {
-        const tier = SubscriptionTier(
-          id: SubscriptionTierIds.family,
-          maxUsers: 6,
-          fileSizeLimitMB: -1,
-          monthlyPrice: 5.99,
-          yearlyPrice: 59.99,
-        );
-        expect(tier.price(SubscriptionPeriod.monthly), 5.99);
-      });
-
-      test('returns yearlyPrice for yearly', () {
-        const tier = SubscriptionTier(
-          id: SubscriptionTierIds.family,
-          maxUsers: 6,
-          fileSizeLimitMB: -1,
-          monthlyPrice: 5.99,
-          yearlyPrice: 59.99,
-        );
-        expect(tier.price(SubscriptionPeriod.yearly), 59.99);
-      });
-    });
-
-    group('amountInCents', () {
-      test('rounds monthly price to cents', () {
-        const tier = SubscriptionTier(
-          id: SubscriptionTierIds.lovers,
-          maxUsers: 2,
-          fileSizeLimitMB: -1,
-          monthlyPrice: 1.99,
-          yearlyPrice: 19.99,
-        );
-        expect(tier.amountInCents(SubscriptionPeriod.monthly), 199);
-      });
-
-      test('rounds yearly price to cents', () {
-        const tier = SubscriptionTier(
-          id: SubscriptionTierIds.lovers,
-          maxUsers: 2,
-          fileSizeLimitMB: -1,
-          monthlyPrice: 1.99,
-          yearlyPrice: 19.99,
-        );
-        expect(tier.amountInCents(SubscriptionPeriod.yearly), 1999);
       });
     });
 
@@ -104,8 +48,6 @@ void main() {
           id: SubscriptionTierIds.family,
           maxUsers: 6,
           fileSizeLimitMB: -1,
-          monthlyPrice: 5.99,
-          yearlyPrice: 59.99,
         );
         expect(tier.levelPeriod(SubscriptionPeriod.monthly), '2592000');
       });
@@ -115,8 +57,6 @@ void main() {
           id: SubscriptionTierIds.family,
           maxUsers: 6,
           fileSizeLimitMB: -1,
-          monthlyPrice: 5.99,
-          yearlyPrice: 59.99,
         );
         expect(tier.levelPeriod(SubscriptionPeriod.yearly), '31536000');
       });

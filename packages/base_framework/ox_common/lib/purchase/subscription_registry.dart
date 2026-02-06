@@ -27,22 +27,16 @@ class SubscriptionRegistry {
       id: SubscriptionTierIds.lovers,
       maxUsers: 2,
       fileSizeLimitMB: -1,
-      monthlyPrice: 1.99,
-      yearlyPrice: 19.99,
     ),
     SubscriptionTier(
       id: SubscriptionTierIds.family,
       maxUsers: 6,
       fileSizeLimitMB: -1,
-      monthlyPrice: 5.99,
-      yearlyPrice: 59.99,
     ),
     SubscriptionTier(
       id: SubscriptionTierIds.community,
       maxUsers: 20,
       fileSizeLimitMB: -1,
-      monthlyPrice: 19.99,
-      yearlyPrice: 199.99,
     ),
   ];
 

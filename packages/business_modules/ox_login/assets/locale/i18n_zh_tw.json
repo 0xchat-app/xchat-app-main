@@ -150,6 +150,8 @@
   "tb_storage": "無限制",
   "overview": "概覽",
   "private_cloud_overview_desc": "擁有專用中繼和檔案伺服器，擁有您的資料。起價僅 $0.99/月。",
+  "private_cloud_overview_desc_1": "擁有專用中繼和檔案伺服器，擁有您的資料。",
+  "private_cloud_overview_desc_2": "起價僅 {price}/月。",
   "configure_plan": "設定方案",
   "subscription_limit_reached": "已達到訂閱伺服器限制",
   "welcome_back": "歡迎回來",

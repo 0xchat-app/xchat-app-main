@@ -7,6 +7,7 @@ import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_common/log_util.dart';
 import 'package:ox_common/purchase/purchase_idempotency_manager.dart';
+import 'package:ox_common/purchase/subscription_product_prices.dart';
 import 'package:ox_common/purchase/subscription_registry.dart';
 import 'package:ox_common/purchase/purchase_service.dart';
 
@@ -192,11 +193,76 @@ class PurchaseManager {
 
       _isInitialized = true;
       LogUtil.d(() => 'PurchaseManager initialized successfully');
+
+      // Preload subscription product prices so flow pages show price immediately (no loading).
+      _preloadProductDetails();
     } catch (e) {
       LogUtil.e(() => 'Error initializing PurchaseManager: $e');
       rethrow;
     }
   }
+
+  /// Preload all subscription product prices into [SubscriptionProductPrices]. Awaited so data is ready before user enters purchase flow.
+  Future<void> _preloadProductDetails() async {
+    try {
+      final available = await _inAppPurchase.isAvailable();
+      if (!available) {
+        SubscriptionProductPrices.instance.updateFromMap({});
+        return;
+      }
+      final productIds = SubscriptionRegistry.instance.allProductIds;
+      if (productIds.isEmpty) {
+        SubscriptionProductPrices.instance.updateFromMap({});
+        return;
+      }
+      final response = await _inAppPurchase.queryProductDetails(productIds);
+      if (response.error != null) {
+        LogUtil.w(() => '[PurchaseManager] Preload product details error: ${response.error}');
+        SubscriptionProductPrices.instance.updateFromMap({});
+        return;
+      }
+      final idToPrice = <String, String>{};
+      final idToRawPrice = <String, double>{};
+      for (final d in response.productDetails) {
+        idToPrice[d.id] = d.price;
+        idToRawPrice[d.id] = d.rawPrice;
+      }
+      SubscriptionProductPrices.instance.updateFromMap(idToPrice, idToRawPrice);
+      LogUtil.d(() => '[PurchaseManager] Preloaded ${idToPrice.length} product prices');
+    } catch (e) {
+      LogUtil.w(() => '[PurchaseManager] Preload product details failed: $e');
+      SubscriptionProductPrices.instance.updateFromMap({});
+    }
+  }
+
+  /// Refreshes price for [productId] from store and updates [SubscriptionProductPrices] (with rawPrice for lowest-price logic).
+  Future<void> refreshPrice(String productId) async {
+    final d = await getProductDetails(productId);
+    if (d != null) {
+      SubscriptionProductPrices.instance.setPrice(productId, d.price, d.rawPrice);
+    }
+  }
+
+  /// Refreshes prices for [productIds] in one query and updates notifiers (with rawPrice for lowest-price logic).
+  Future<void> refreshPrices(Set<String> productIds) async {
+    if (productIds.isEmpty) return;
+    final details = await getProductDetailsSet(productIds);
+    for (final id in productIds) {
+      final d = details[id];
+      if (d != null) {
+        SubscriptionProductPrices.instance.setPrice(id, d.price, d.rawPrice);
+      }
+    }
+  }
+
+  /// Refreshes all subscription product prices. Call from page initState for silent refresh (updates all notifiers).
+  Future<void> refreshAllPrices() async {
+    final productIds = SubscriptionRegistry.instance.allProductIds;
+    await refreshPrices(productIds);
+  }
+
+  /// Returns the lowest price (display string) if all products have a price; null if any product price is missing.
+  String? getLowestPrice() => SubscriptionProductPrices.instance.getLowestPrice();
 
   /// --- Session APIs ---------------------------------------------------------
 
@@ -794,6 +860,7 @@ class PurchaseManager {
 
     _endSessionInternal(reason: 'dispose');
     _pendingPurchases.clear();
+    SubscriptionProductPrices.instance.clear();
 
     _seenTxKeys.clear();
     _isInitialized = false;
@@ -824,6 +891,51 @@ class PurchaseManager {
   ///   print('Error: ${result.errorMessage}');
   /// }
   /// ```
+  ///
+  /// Query product details from the store for UI display (e.g. localized price).
+  /// Returns null if store unavailable or product not found. Flow pages use [SubscriptionProductPrices] first, then this as fallback.
+  Future<ProductDetails?> getProductDetails(String productId) async {
+    try {
+      final available = await _inAppPurchase.isAvailable();
+      if (!available) return null;
+      final response = await _inAppPurchase.queryProductDetails({productId});
+      if (response.error != null || response.productDetails.isEmpty) return null;
+      return response.productDetails.first;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Query multiple product details at once. Returns map by product id.
+  Future<Map<String, ProductDetails>> getProductDetailsSet(Set<String> productIds) async {
+    final result = <String, ProductDetails>{};
+    if (productIds.isEmpty) return result;
+    try {
+      final available = await _inAppPurchase.isAvailable();
+      if (!available) return result;
+      final response = await _inAppPurchase.queryProductDetails(productIds);
+      if (response.error != null) return result;
+      for (final d in response.productDetails) {
+        result[d.id] = d;
+      }
+      return result;
+    } catch (_) {
+      return result;
+    }
+  }
+
+  /// Localized price string for UI (e.g. "\$5.99" or "¥38"). Returns null if unavailable.
+  Future<String?> getProductPrice(String productId) async {
+    final d = await getProductDetails(productId);
+    return d?.price;
+  }
+
+  /// Localized price strings for UI. Returns map productId -> price string.
+  Future<Map<String, String>> getProductPrices(Set<String> productIds) async {
+    final details = await getProductDetailsSet(productIds);
+    return details.map((id, d) => MapEntry(id, d.price));
+  }
+
   Future<PurchaseResult> purchaseProduct(String productId) async {
     LogUtil.d(() => '[PurchaseManager] Starting purchase for product: $productId');
 

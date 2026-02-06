@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/navigator/navigator.dart';
+import 'package:ox_common/purchase/purchase_manager.dart';
 import 'package:ox_common/purchase/subscription_period.dart';
+import 'package:ox_common/purchase/subscription_product_prices.dart';
+import 'package:ox_common/purchase/subscription_registry.dart';
 import 'package:ox_common/purchase/subscription_tier.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_localizable/ox_localizable.dart';
@@ -23,6 +26,28 @@ class DurationSelectionPage extends StatefulWidget {
 
 class _DurationSelectionPageState extends State<DurationSelectionPage> {
   SubscriptionPeriod _selectedPeriod = SubscriptionPeriod.yearly;
+
+  String get _yearlyProductId => SubscriptionRegistry.instance.productIdFor(
+        widget.subscriptionGroupId,
+        widget.selectedTier.id,
+        SubscriptionPeriod.yearly,
+      );
+  String get _monthlyProductId => SubscriptionRegistry.instance.productIdFor(
+        widget.subscriptionGroupId,
+        widget.selectedTier.id,
+        SubscriptionPeriod.monthly,
+      );
+
+  late final ValueNotifier<String?> _yearlyPriceNotifier =
+      SubscriptionProductPrices.instance.getNotifier(_yearlyProductId);
+  late final ValueNotifier<String?> _monthlyPriceNotifier =
+      SubscriptionProductPrices.instance.getNotifier(_monthlyProductId);
+
+  @override
+  void initState() {
+    super.initState();
+    PurchaseManager.instance.refreshAllPrices();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -123,12 +148,11 @@ class _DurationSelectionPageState extends State<DurationSelectionPage> {
   }
 
   Widget _buildDurationOptions() {
-    final t = widget.selectedTier;
     return Column(
       children: [
         _buildDurationOption(
           period: SubscriptionPeriod.yearly,
-          price: t.yearlyPrice,
+          priceNotifier: _yearlyPriceNotifier,
           label: Localized.text('ox_login.yearly'),
           billingText: Localized.text('ox_login.billed_every_12_months'),
           showSaveTag: true,
@@ -136,7 +160,7 @@ class _DurationSelectionPageState extends State<DurationSelectionPage> {
         SizedBox(height: 16.px),
         _buildDurationOption(
           period: SubscriptionPeriod.monthly,
-          price: t.monthlyPrice,
+          priceNotifier: _monthlyPriceNotifier,
           label: Localized.text('ox_login.monthly'),
           billingText: Localized.text('ox_login.billed_every_month'),
           showSaveTag: false,
@@ -147,7 +171,7 @@ class _DurationSelectionPageState extends State<DurationSelectionPage> {
 
   Widget _buildDurationOption({
     required SubscriptionPeriod period,
-    required double price,
+    required ValueNotifier<String?> priceNotifier,
     required String label,
     required String billingText,
     required bool showSaveTag,
@@ -183,15 +207,25 @@ class _DurationSelectionPageState extends State<DurationSelectionPage> {
                         isBold: true,
                       ),
                       SizedBox(height: 8.px),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          CLText.titleLarge(
-                            '\$${price.toStringAsFixed(2)}',
+                      ValueListenableBuilder<String?>(
+                        valueListenable: priceNotifier,
+                        builder: (_, price, __) {
+                          if (price == null) {
+                            return SizedBox(
+                              width: 24.px,
+                              height: 24.px,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: ColorToken.xChat.of(context),
+                              ),
+                            );
+                          }
+                          return CLText.titleLarge(
+                            price,
                             colorToken: ColorToken.onSurface,
                             isBold: true,
-                          ),
-                        ],
+                          );
+                        },
                       ),
                       SizedBox(height: 4.px),
                       CLText.bodySmall(

@@ -6,6 +6,7 @@ import 'package:ox_common/log_util.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/purchase/purchase_manager.dart';
 import 'package:ox_common/purchase/subscription_period.dart';
+import 'package:ox_common/purchase/subscription_product_prices.dart';
 import 'package:ox_common/purchase/subscription_registry.dart';
 import 'package:ox_common/purchase/subscription_tier.dart';
 import 'package:ox_common/utils/adapt.dart';
@@ -31,6 +32,20 @@ class CheckoutPage extends StatefulWidget {
 
 class _CheckoutPageState extends State<CheckoutPage> {
   bool _isProcessing = false;
+
+  String get _productId => SubscriptionRegistry.instance.productIdFor(
+        widget.subscriptionGroupId,
+        widget.selectedTier.id,
+        widget.selectedPeriod,
+      );
+
+  late final ValueNotifier<String?> _priceNotifier =
+      SubscriptionProductPrices.instance.getNotifier(_productId);
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -148,14 +163,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
   Widget _buildOrderSummary() {
     final t = widget.selectedTier;
     final p = widget.selectedPeriod;
-    final price = t.price(p);
     final periodText = p == SubscriptionPeriod.monthly
         ? Localized.text('ox_login.monthly')
         : Localized.text('ox_login.yearly');
     final planName = _planDisplayName(t);
     final membersText = '${t.maxUsers} ${Localized.text('ox_login.max_users')}';
     final storageText = Localized.text('ox_login.tb_storage');
-
     return Container(
       padding: EdgeInsets.all(20.px),
       decoration: BoxDecoration(
@@ -224,16 +237,37 @@ class _CheckoutPageState extends State<CheckoutPage> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  CLText.titleLarge(
-                    '\$${price.toStringAsFixed(2)}',
-                    colorToken: ColorToken.onSurface,
-                    isBold: true,
+                  ValueListenableBuilder<String?>(
+                    valueListenable: _priceNotifier,
+                    builder: (_, price, __) {
+                      if (price == null) {
+                        return SizedBox(
+                          width: 24.px,
+                          height: 24.px,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: ColorToken.xChat.of(context),
+                          ),
+                        );
+                      }
+                      return CLText.titleLarge(
+                        price,
+                        colorToken: ColorToken.onSurface,
+                        isBold: true,
+                      );
+                    },
                   ),
-                  CLText.bodySmall(
-                    widget.selectedPeriod == SubscriptionPeriod.yearly
-                        ? Localized.text('ox_login.per_year')
-                        : '/month',
-                    colorToken: ColorToken.onSurfaceVariant,
+                  ValueListenableBuilder<String?>(
+                    valueListenable: _priceNotifier,
+                    builder: (_, price, __) {
+                      if (price == null) return const SizedBox.shrink();
+                      return CLText.bodySmall(
+                        widget.selectedPeriod == SubscriptionPeriod.yearly
+                            ? Localized.text('ox_login.per_year')
+                            : '/month',
+                        colorToken: ColorToken.onSurfaceVariant,
+                      );
+                    },
                   ),
                 ],
               ),

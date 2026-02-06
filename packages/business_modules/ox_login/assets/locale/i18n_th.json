@@ -150,6 +150,8 @@
   "tb_storage": "ไม่จำกัด",
   "overview": "ภาพรวม",
   "private_cloud_overview_desc": "เป็นเจ้าของข้อมูลของคุณด้วยรีเลย์เฉพาะและเซิร์ฟเวอร์ไฟล์ เริ่มต้นเพียง $0.99/เดือน",
+  "private_cloud_overview_desc_1": "เป็นเจ้าของข้อมูลของคุณด้วยรีเลย์เฉพาะและเซิร์ฟเวอร์ไฟล์",
+  "private_cloud_overview_desc_2": "เริ่มต้นเพียง {price}/เดือน",
   "configure_plan": "กำหนดค่าแผน",
   "subscription_limit_reached": "ถึงขีดจำกัดเซิร์ฟเวอร์การสมัครสมาชิกแล้ว",
   "welcome_back": "ยินดีต้อนรับกลับ",

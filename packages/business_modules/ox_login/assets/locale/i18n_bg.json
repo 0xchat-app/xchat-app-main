@@ -150,6 +150,8 @@
   "tb_storage": "Неограничено",
   "overview": "ПРЕГЛЕД",
   "private_cloud_overview_desc": "Притежавайте вашите данни с посветен релей и файлов сървър. Започва от само $0,99/месец.",
+  "private_cloud_overview_desc_1": "Притежавайте вашите данни с посветен релей и файлов сървър.",
+  "private_cloud_overview_desc_2": "Започва от само {price}/месец.",
   "configure_plan": "КОНФИГУРИРАНЕ НА ПЛАН",
   "subscription_limit_reached": "Достигнат лимит на сървъра за абонамент",
   "welcome_back": "Добре Дошли Обратно",

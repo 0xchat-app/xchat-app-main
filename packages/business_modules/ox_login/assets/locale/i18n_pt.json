@@ -150,6 +150,8 @@
   "tb_storage": "Ilimitado",
   "overview": "VISÃO GERAL",
   "private_cloud_overview_desc": "Possua seus dados com um relay dedicado e servidor de arquivos. Começa em apenas $0,99/mês.",
+  "private_cloud_overview_desc_1": "Possua seus dados com um relay dedicado e servidor de arquivos.",
+  "private_cloud_overview_desc_2": "Começa em apenas {price}/mês.",
   "configure_plan": "CONFIGURAR PLANO",
   "subscription_limit_reached": "Limite de servidor de assinatura atingido",
   "welcome_back": "Bem-vindo de Volta",

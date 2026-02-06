@@ -150,6 +150,8 @@
   "tb_storage": "無制限",
   "overview": "概要",
   "private_cloud_overview_desc": "専用リレーとファイルサーバーでデータを所有します。月額$0.99から始まります。",
+  "private_cloud_overview_desc_1": "専用リレーとファイルサーバーでデータを所有します。",
+  "private_cloud_overview_desc_2": "月額{price}から始まります。",
   "configure_plan": "プランを設定",
   "subscription_limit_reached": "サブスクリプションサーバー制限に達しました",
   "welcome_back": "おかえりなさい",

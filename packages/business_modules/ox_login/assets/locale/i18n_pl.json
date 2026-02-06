@@ -150,6 +150,8 @@
   "tb_storage": "Bez limitu",
   "overview": "PRZEGLĄD",
   "private_cloud_overview_desc": "Posiadaj swoje dane z dedykowanym przekaźnikiem i serwerem plików. Zaczyna się od zaledwie $0,99/mies.",
+  "private_cloud_overview_desc_1": "Posiadaj swoje dane z dedykowanym przekaźnikiem i serwerem plików.",
+  "private_cloud_overview_desc_2": "Zaczyna się od zaledwie {price}/mies.",
   "configure_plan": "SKONFIGURUJ PLAN",
   "subscription_limit_reached": "Osiągnięto limit serwera subskrypcji",
   "welcome_back": "Witamy Z Powrotem",

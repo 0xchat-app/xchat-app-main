@@ -161,6 +161,8 @@
   "tb_storage": "Unlimited",
   "overview": "OVERVIEW",
   "private_cloud_overview_desc": "Own your data with a dedicated relay and file server. Starts at just $0.99/mo.",
+  "private_cloud_overview_desc_1": "Own your data with a dedicated relay and file server.",
+  "private_cloud_overview_desc_2": "Starts at just {price}/mo.",
   "configure_plan": "CONFIGURE PLAN",
   "subscription_limit_reached": "Subscription server limit reached",
   

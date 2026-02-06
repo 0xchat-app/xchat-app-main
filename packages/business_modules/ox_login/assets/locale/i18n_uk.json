@@ -150,6 +150,8 @@
   "tb_storage": "Безлімітний",
   "overview": "ОГЛЯД",
   "private_cloud_overview_desc": "Володійте своїми даними з виділеним реле та файловим сервером. Починається всього з $0,99/міс.",
+  "private_cloud_overview_desc_1": "Володійте своїми даними з виділеним реле та файловим сервером.",
+  "private_cloud_overview_desc_2": "Починається всього з {price}/міс.",
   "configure_plan": "НАЛАШТУВАТИ ПЛАН",
   "subscription_limit_reached": "Досягнуто ліміт сервера підписки",
   "welcome_back": "Ласкаво Просимо Назад",

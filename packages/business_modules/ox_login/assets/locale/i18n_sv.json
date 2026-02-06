@@ -150,6 +150,8 @@
   "tb_storage": "Obegränsat",
   "overview": "ÖVERSIKT",
   "private_cloud_overview_desc": "Äg dina data med en dedikerad relä och filserver. Börjar på bara $0,99/mån.",
+  "private_cloud_overview_desc_1": "Äg dina data med en dedikerad relä och filserver.",
+  "private_cloud_overview_desc_2": "Börjar på bara {price}/mån.",
   "configure_plan": "KONFIGURERA PLAN",
   "subscription_limit_reached": "Prenumerationsservergräns nådd",
   "welcome_back": "Välkommen Tillbaka",

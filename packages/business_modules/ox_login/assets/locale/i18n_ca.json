@@ -150,6 +150,8 @@
   "tb_storage": "Il·limitat",
   "overview": "RESUM",
   "private_cloud_overview_desc": "Possïu les vostres dades amb un relé dedicat i servidor de fitxers. Comença des de només $0,99/mes.",
+  "private_cloud_overview_desc_1": "Possïu les vostres dades amb un relé dedicat i servidor de fitxers.",
+  "private_cloud_overview_desc_2": "Comença des de només {price}/mes.",
   "configure_plan": "CONFIGURAR PLA",
   "subscription_limit_reached": "Límit de servidor de subscripció assolit",
   "welcome_back": "Benvingut de Tornada",
