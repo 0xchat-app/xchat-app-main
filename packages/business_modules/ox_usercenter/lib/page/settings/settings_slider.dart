@@ -99,7 +99,18 @@ class SettingSliderState extends State<SettingSlider> {
     
     // Add CIRCLES section if there are any circles
     if (circles.isNotEmpty) {
-      final circleItems = circles.map((circle) => _buildCircleItem(circle, currentCircle)).toList();
+      // Sort circles so that the selected one appears first
+      final sortedCircles = List<Circle>.from(circles);
+      if (currentCircle != null) {
+        sortedCircles.sort((a, b) {
+          final aIsSelected = a.id == currentCircle.id;
+          final bIsSelected = b.id == currentCircle.id;
+          if (aIsSelected && !bIsSelected) return -1;
+          if (!aIsSelected && bIsSelected) return 1;
+          return 0;
+        });
+      }
+      final circleItems = sortedCircles.map((circle) => _buildCircleItem(circle, currentCircle)).toList();
       
       // Add "Add a Circle" button item
       circleItems.add(
