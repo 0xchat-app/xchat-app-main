@@ -520,31 +520,35 @@ class _CircleDetailPageState extends State<CircleDetailPage>
     _TenantDisplayData? displayData,
     List<UserDBISAR>? resolvedMembers,
   ) {
-    final items = <SectionListViewItem>[
-      SectionListViewItem(
-        footer: Localized.text('ox_usercenter.relay_server_description'),
-        data: [
-          LabelItemModel(
-            icon: ListViewIcon.data(CupertinoIcons.antenna_radiowaves_left_right),
-            title: Localized.text('ox_usercenter.relay_server'),
-            subtitle: widget.circle.relayUrl,
-            onTap: null,
-          ),
-          LabelItemModel(
-            icon: ListViewIcon.data(CupertinoIcons.settings),
-            title: Localized.text('ox_usercenter.file_server_setting'),
-            onTap: () {
-              OXNavigator.pushPage(context, (_) => FileServerPage(
-                previousPageTitle: widget.title,
-                readOnlyForPaidCircle: _isPaidRelay(),
-              )).then((_) {
-                _loadFileServerInfo();
-              });
-            },
-          ),
-        ],
-      ),
-    ];
+    final items = <SectionListViewItem>[];
+    
+    if (!_isPaidRelay()) {
+      items.add(
+        SectionListViewItem(
+          footer: Localized.text('ox_usercenter.relay_server_description'),
+          data: [
+            LabelItemModel(
+              icon: ListViewIcon.data(CupertinoIcons.antenna_radiowaves_left_right),
+              title: Localized.text('ox_usercenter.relay_server'),
+              subtitle: widget.circle.relayUrl,
+              onTap: null,
+            ),
+            LabelItemModel(
+              icon: ListViewIcon.data(CupertinoIcons.settings),
+              title: Localized.text('ox_usercenter.file_server_setting'),
+              onTap: () {
+                OXNavigator.pushPage(context, (_) => FileServerPage(
+                  previousPageTitle: widget.title,
+                  readOnlyForPaidCircle: _isPaidRelay(),
+                )).then((_) {
+                  _loadFileServerInfo();
+                });
+              },
+            ),
+          ],
+        ),
+      );
+    }
 
     if (displayData != null && displayData.isOwner) {
       items.addAll([
