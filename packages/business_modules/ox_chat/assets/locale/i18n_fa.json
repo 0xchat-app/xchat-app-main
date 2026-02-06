@@ -60,7 +60,7 @@
   "no_keypackages_available": "هیچ بسته کلیدی موجود نیست",
   "group_info": "اطلاعات گروه",
   "group_name": "نام گروه",
-  "delete_and_leave_item": "ترک کردن و پاک کردن",
+  "delete_and_leave_item": "ترک و حذف",
   "group_mute_no_member_toast": "اعضای گروه نمی‌توانند عملیات انجام دهند",
   "group_mute_operate_success_toast": "عملیات موفقیت‌آمیز بود",
   "leave_group_success_toast": "ترک گروه موفق بود",
@@ -174,7 +174,7 @@
   "message_detail_not_found": "پیام یافت نشد",
   "message_properties": "ویژگی‌های پیام",
   "send_event_info": "ارسال اطلاعات رویداد",
-  "file_transfer_assistant": "یادداشت برای خودم",
+  "file_transfer_assistant": "یادداشت برای خودتان",
   "yourself": "خودتان",
   "click_to_send_message_to_yourself": "برای ارسال پیام به خودتان ضربه بزنید",
   "welcome_to_xchat": "تبریک!",
@@ -228,5 +228,10 @@
   "see_all": "مشاهده همه",
   "you": "شما",
   "view_profile": "مشاهده پروفایل",
-  "remove_from_group": "حذف از گروه"
+  "remove_from_group": "حذف از گروه",
+  "join_circle_title": "Join Circle",
+  "find_people_join_circle_notice": "Enter a circle invite link or scan the invite QR code to join a circle.",
+  "circle_expired_cannot_send": "Subscription has expired. You cannot send messages. Please renew to continue.",
+  "find_by_username": "جستجو بر اساس نام کاربری",
+  "username": "نام کاربری"
 }

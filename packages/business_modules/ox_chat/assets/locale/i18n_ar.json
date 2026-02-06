@@ -140,8 +140,8 @@
   "get_image_from_clipboard_failed": "فشل في الحصول على الصورة من الحافظة",
   "invite_private_chat": "${userName} يدعوك للانضمام إلى الدردشة الخاصة",
   "invite_private_group": "${userName} يدعوك للانضمام إلى المجموعة الخاصة",
-  "private_chat_created": "الرسائل والمكالمات مشفرة من طرف إلى طرف. فقط الأشخاص في هذه الدردشة يمكنهم القراءة.",
-  "private_group_created": "الرسائل مشفرة من طرف إلى طرف. فقط الأشخاص في هذه الدردشة يمكنهم القراءة.",
+  "private_chat_created": "الرسائل والمكالمات مشفرة من طرف إلى طرف. فقط الأشخاص في هذه المحادثة يمكنهم قراءتها.",
+  "private_group_created": "الرسائل مشفرة من طرف إلى طرف. فقط الأشخاص في هذه المحادثة يمكنهم قراءتها.",
   "self_chat_created": "يمكنك إضافة ملاحظات لنفسك في هذه الدردشة. الملاحظات مشفرة من طرف إلى طرف ومحفوظة محليًا.",
   "removed_from_group": "تم إزالتك من المجموعة",
   "user_left_group": "${userName} غادر المجموعة",
@@ -174,7 +174,7 @@
   "message_detail_not_found": "الرسالة غير موجودة",
   "message_properties": "خصائص الرسالة",
   "send_event_info": "معلومات حدث الإرسال",
-  "file_transfer_assistant": "ملاحظة لنفسي",
+  "file_transfer_assistant": "ملاحظة لنفسك",
   "yourself": "نفسك",
   "click_to_send_message_to_yourself": "اضغط لإرسال رسالة لنفسك",
   "welcome_to_xchat": "تهانينا!",
@@ -228,5 +228,10 @@
   "see_all": "عرض الكل",
   "you": "أنت",
   "view_profile": "عرض الملف الشخصي",
-  "remove_from_group": "إزالة من المجموعة"
+  "remove_from_group": "إزالة من المجموعة",
+  "join_circle_title": "Join Circle",
+  "find_people_join_circle_notice": "Enter a circle invite link or scan the invite QR code to join a circle.",
+  "circle_expired_cannot_send": "Subscription has expired. You cannot send messages. Please renew to continue.",
+  "find_by_username": "البحث باسم المستخدم",
+  "username": "اسم المستخدم"
 }

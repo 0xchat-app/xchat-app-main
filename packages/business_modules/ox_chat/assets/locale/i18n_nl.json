@@ -140,7 +140,7 @@
   "get_image_from_clipboard_failed": "Afbeelding ophalen uit klembord mislukt",
   "invite_private_chat": "${userName} nodigt je uit om deel te nemen aan de privéchat",
   "invite_private_group": "${userName} nodigt je uit om deel te nemen aan de privégroep",
-  "private_chat_created": "Berichten en gesprekken zijn end-to-end versleuteld. Alleen mensen in deze chat kunnen ze lezen.",
+  "private_chat_created": "Berichten en oproepen zijn end-to-end versleuteld. Alleen mensen in deze chat kunnen ze lezen.",
   "private_group_created": "Berichten zijn end-to-end versleuteld. Alleen mensen in deze chat kunnen ze lezen.",
   "self_chat_created": "U kunt notities voor uzelf toevoegen in deze chat. Notities zijn end-to-end versleuteld en lokaal opgeslagen.",
   "removed_from_group": "Je bent uit de groep verwijderd",
@@ -174,7 +174,7 @@
   "message_detail_not_found": "Bericht niet gevonden",
   "message_properties": "Berichteigenschappen",
   "send_event_info": "Gebeurtenisinformatie verzenden",
-  "file_transfer_assistant": "Notitie aan mezelf",
+  "file_transfer_assistant": "Notitie voor jezelf",
   "yourself": "Jezelf",
   "click_to_send_message_to_yourself": "Tik om jezelf een bericht te sturen",
   "welcome_to_xchat": "Gefeliciteerd!",
@@ -228,5 +228,10 @@
   "see_all": "Alles weergeven",
   "you": "Jij",
   "view_profile": "Profiel bekijken",
-  "remove_from_group": "Uit groep verwijderen"
+  "remove_from_group": "Uit groep verwijderen",
+  "join_circle_title": "Join Circle",
+  "find_people_join_circle_notice": "Enter a circle invite link or scan the invite QR code to join a circle.",
+  "circle_expired_cannot_send": "Subscription has expired. You cannot send messages. Please renew to continue.",
+  "find_by_username": "Zoeken op gebruikersnaam",
+  "username": "Gebruikersnaam"
 }

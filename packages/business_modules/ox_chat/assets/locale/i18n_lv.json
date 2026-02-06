@@ -60,7 +60,7 @@
   "no_keypackages_available": "Nav pieejamu atslēgu pakotņu",
   "group_info": "Grupas Informācija",
   "group_name": "Grupas Nosaukums",
-  "delete_and_leave_item": "Iziet un dzēst",
+  "delete_and_leave_item": "Pamest un dzēst",
   "group_mute_no_member_toast": "Nav grupas dalībnieki nevar darboties",
   "group_mute_operate_success_toast": "Darbība veiksmīga",
   "leave_group_success_toast": "Grupas atstāšana veiksmīga",
@@ -140,8 +140,8 @@
   "get_image_from_clipboard_failed": "Neizdevās iegūt attēlu no starpliktuves",
   "invite_private_chat": "${userName} aicina jūs pievienoties privātajai sarunai",
   "invite_private_group": "${userName} aicina jūs pievienoties privātajai grupai",
-  "private_chat_created": "Ziņojumi un zvani ir šifrēti end-to-end. Tikai cilvēki šajā tērzēšanā var tos lasīt.",
-  "private_group_created": "Ziņojumi ir šifrēti end-to-end. Tikai cilvēki šajā tērzēšanā var tos lasīt.",
+  "private_chat_created": "Ziņojumi un zvani ir end-to-end šifrēti. Tikai cilvēki šajā tērzēšanā var tos lasīt.",
+  "private_group_created": "Ziņojumi ir end-to-end šifrēti. Tikai cilvēki šajā tērzēšanā var tos lasīt.",
   "self_chat_created": "Šajā tērzēšanā varat pievienot piezīmes sev. Piezīmes ir šifrētas end-to-end un tiek saglabātas lokāli.",
   "removed_from_group": "Jūs esat noņemts no grupas",
   "user_left_group": "${userName} pameta grupu",
@@ -228,5 +228,10 @@
   "see_all": "Skatīt visu",
   "you": "Tu",
   "view_profile": "Skatīt profilu",
-  "remove_from_group": "Noņemt no grupas"
+  "remove_from_group": "Noņemt no grupas",
+  "join_circle_title": "Join Circle",
+  "find_people_join_circle_notice": "Enter a circle invite link or scan the invite QR code to join a circle.",
+  "circle_expired_cannot_send": "Subscription has expired. You cannot send messages. Please renew to continue.",
+  "find_by_username": "Meklēt pēc lietotājvārda",
+  "username": "Lietotājvārds"
 }

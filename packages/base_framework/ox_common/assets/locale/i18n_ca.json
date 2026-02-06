@@ -165,5 +165,15 @@
   "str_title_contacts": "Contactes",
   "str_title_groups": "Grups",
   "logged_circle_not_found": "Cercle connectat no trobat",
-  "push_token_is_null": "El token push és null"
+  "push_token_is_null": "El token push és null",
+  "operation_success": "Operació exitosa",
+  "unsupported_platform": "Plataforma no compatible",
+  "failed_to_open_url": "No s'ha pogut obrir l'URL",
+  "circle_expired_title": "Cercle caducat",
+  "circle_expired_heading": "Cercle caducat",
+  "circle_expired_message_member": "Aquest cercle ha caducat. Encara podeu veure les dades però no podeu enviar missatges o fer canvis. Si us plau, contacteu amb l'administrador del cercle per renovar.",
+  "circle_expired_message_admin": "Aquest cercle ha caducat. Encara podeu veure les dades però no podeu enviar missatges o fer canvis. Podeu renovar a continuació.",
+  "circle_removed_title": "Eliminat del cercle",
+  "circle_removed_message": "Heu estat eliminat del cercle \"{name}\".",
+  "renew": "Renovar"
 }

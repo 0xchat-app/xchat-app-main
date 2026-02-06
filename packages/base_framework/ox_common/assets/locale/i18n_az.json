@@ -37,7 +37,7 @@
   "str_scan": "QR kodu skan et",
   "str_my_idcard": "Mənim şəxsiyyət kartım",
   "str_album": "Albom",
-  "str_scan_contact_qr_hint": "Zəhmət olmasa, əlaqəli cihazınızdakı QR kodunu skan edin",
+  "str_scan_contact_qr_hint": "Zəhmət olmasa, əlaqənizin cihazındakı QR kodunu skan edin",
   "str_invalid_qr_code": "Yanlış QR kod",
   "str_error": "Xəta",
   "str_user_not_found": "İstifadəçi tapılmadı",
@@ -164,5 +164,15 @@
   "str_title_contacts": "Əlaqələr",
   "str_title_groups": "Qruplar",
   "logged_circle_not_found": "Daxil olunmuş dairə tapılmadı",
-  "push_token_is_null": "Push token null-dur"
+  "push_token_is_null": "Push token null-dur",
+  "operation_success": "Əməliyyat uğurlu oldu",
+  "unsupported_platform": "Dəstəklənməyən platforma",
+  "failed_to_open_url": "URL açıla bilmədi",
+  "circle_expired_title": "Dairə müddəti bitib",
+  "circle_expired_heading": "Dairə müddəti bitib",
+  "circle_expired_message_member": "Bu dairənin müddəti bitib. Siz hələ də məlumatları görə bilərsiniz, lakin mesaj göndərə və ya dəyişiklik edə bilməzsiniz. Zəhmət olmasa, yeniləmək üçün dairə administratoru ilə əlaqə saxlayın.",
+  "circle_expired_message_admin": "Bu dairənin müddəti bitib. Siz hələ də məlumatları görə bilərsiniz, lakin mesaj göndərə və ya dəyişiklik edə bilməzsiniz. Aşağıda yeniləyə bilərsiniz.",
+  "circle_removed_title": "Dairədən çıxarıldı",
+  "circle_removed_message": "Siz \"{name}\" dairəsindən çıxarıldınız.",
+  "renew": "Yenilə"
 }

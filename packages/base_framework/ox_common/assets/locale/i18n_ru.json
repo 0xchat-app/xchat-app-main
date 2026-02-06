@@ -164,5 +164,15 @@
   "str_title_contacts": "Контакты",
   "str_title_groups": "Группы",
   "logged_circle_not_found": "Войденный круг не найден",
-  "push_token_is_null": "Push-токен равен null"
+  "push_token_is_null": "Push-токен равен null",
+  "operation_success": "Операция выполнена успешно",
+  "unsupported_platform": "Неподдерживаемая платформа",
+  "failed_to_open_url": "Не удалось открыть URL",
+  "circle_expired_title": "Круг истек",
+  "circle_expired_heading": "Круг истек",
+  "circle_expired_message_member": "Этот круг истек. Вы все еще можете просматривать данные, но не можете отправлять сообщения или вносить изменения. Пожалуйста, свяжитесь с администратором круга для продления.",
+  "circle_expired_message_admin": "Этот круг истек. Вы все еще можете просматривать данные, но не можете отправлять сообщения или вносить изменения. Вы можете продлить ниже.",
+  "circle_removed_title": "Удален из круга",
+  "circle_removed_message": "Вы были удалены из круга \"{name}\".",
+  "renew": "Продлить"
 }

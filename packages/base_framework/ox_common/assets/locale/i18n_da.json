@@ -37,7 +37,7 @@
   "str_scan": "Scan",
   "str_my_idcard": "Mit ID-kort",
   "str_album": "Album",
-  "str_scan_contact_qr_hint": "Venligst scan QR-koden på din kontakts enhed",
+  "str_scan_contact_qr_hint": "Scan venligst QR-koden på din kontakts enhed",
   "str_invalid_qr_code": "Ugyldig QR-kode",
   "str_error": "Fejl",
   "str_user_not_found": "Bruger ikke fundet",
@@ -165,5 +165,15 @@
   "str_title_contacts": "Kontakter",
   "str_title_groups": "Grupper",
   "logged_circle_not_found": "Indlogget cirkel ikke fundet",
-  "push_token_is_null": "Push token er null"
+  "push_token_is_null": "Push token er null",
+  "operation_success": "Handling lykkedes",
+  "unsupported_platform": "Ikke-understøttet platform",
+  "failed_to_open_url": "Kunne ikke åbne URL",
+  "circle_expired_title": "Cirkel udløbet",
+  "circle_expired_heading": "Cirkel udløbet",
+  "circle_expired_message_member": "Denne cirkel er udløbet. Du kan stadig se data, men kan ikke sende beskeder eller foretage ændringer. Kontakt cirkeladministratoren for at fornye.",
+  "circle_expired_message_admin": "Denne cirkel er udløbet. Du kan stadig se data, men kan ikke sende beskeder eller foretage ændringer. Du kan fornye nedenfor.",
+  "circle_removed_title": "Fjernet fra cirkel",
+  "circle_removed_message": "Du er blevet fjernet fra cirklen \"{name}\".",
+  "renew": "Forny"
 }

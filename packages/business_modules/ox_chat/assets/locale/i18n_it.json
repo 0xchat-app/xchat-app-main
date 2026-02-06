@@ -60,7 +60,7 @@
   "no_keypackages_available": "Nessun pacchetto chiave disponibile",
   "group_info": "Info Gruppo",
   "group_name": "Nome del Gruppo",
-  "delete_and_leave_item": "Esci ed elimina",
+  "delete_and_leave_item": "Esci e elimina",
   "group_mute_no_member_toast": "I non membri non possono operare",
   "group_mute_operate_success_toast": "Operazione riuscita",
   "leave_group_success_toast": "Gruppo lasciato con successo",
@@ -140,7 +140,7 @@
   "get_image_from_clipboard_failed": "Impossibile ottenere l'immagine dagli appunti",
   "invite_private_chat": "${userName} ti invita a unirti alla chat privata",
   "invite_private_group": "${userName} ti invita a unirti al gruppo privato",
-  "private_chat_created": "I messaggi e le chiamate sono crittografati end-to-end. Solo le persone in questa chat possono leggerli.",
+  "private_chat_created": "Messaggi e chiamate sono crittografati end-to-end. Solo le persone in questa chat possono leggerli.",
   "private_group_created": "I messaggi sono crittografati end-to-end. Solo le persone in questa chat possono leggerli.",
   "self_chat_created": "Puoi aggiungere note per te stesso in questa chat. Le note sono crittografate end-to-end e salvate localmente.",
   "removed_from_group": "Sei stato rimosso dal gruppo",
@@ -174,7 +174,7 @@
   "message_detail_not_found": "Messaggio non trovato",
   "message_properties": "Proprietà messaggio",
   "send_event_info": "Invia informazioni evento",
-  "file_transfer_assistant": "Nota a me stesso",
+  "file_transfer_assistant": "Nota personale",
   "yourself": "Te stesso",
   "click_to_send_message_to_yourself": "Tocca per inviarti un messaggio",
   "welcome_to_xchat": "Congratulazioni!",
@@ -228,5 +228,10 @@
   "see_all": "Vedi tutto",
   "you": "Tu",
   "view_profile": "Visualizza profilo",
-  "remove_from_group": "Rimuovi dal gruppo"
+  "remove_from_group": "Rimuovi dal gruppo",
+  "join_circle_title": "Join Circle",
+  "find_people_join_circle_notice": "Enter a circle invite link or scan the invite QR code to join a circle.",
+  "circle_expired_cannot_send": "Subscription has expired. You cannot send messages. Please renew to continue.",
+  "find_by_username": "Cerca per nome utente",
+  "username": "Nome utente"
 }

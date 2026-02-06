@@ -60,7 +60,7 @@
   "no_keypackages_available": "Không có gói khóa khả dụng",
   "group_info": "Thông Tin Nhóm",
   "group_name": "Tên Nhóm",
-  "delete_and_leave_item": "Rời đi và xóa",
+  "delete_and_leave_item": "Rời và xóa",
   "group_mute_no_member_toast": "Không phải thành viên nhóm không thể thao tác",
   "group_mute_operate_success_toast": "Thao tác thành công",
   "leave_group_success_toast": "Rời nhóm thành công",
@@ -174,7 +174,7 @@
   "message_detail_not_found": "Không tìm thấy tin nhắn",
   "message_properties": "Thuộc tính tin nhắn",
   "send_event_info": "Gửi thông tin sự kiện",
-  "file_transfer_assistant": "Ghi chú cho bản thân",
+  "file_transfer_assistant": "Ghi chú cho chính mình",
   "yourself": "Chính bạn",
   "click_to_send_message_to_yourself": "Nhấn để gửi tin nhắn cho chính mình",
   "welcome_to_xchat": "Chúc mừng!",
@@ -228,5 +228,10 @@
   "see_all": "Xem tất cả",
   "you": "Bạn",
   "view_profile": "Xem hồ sơ",
-  "remove_from_group": "Xóa khỏi nhóm"
+  "remove_from_group": "Xóa khỏi nhóm",
+  "join_circle_title": "Join Circle",
+  "find_people_join_circle_notice": "Enter a circle invite link or scan the invite QR code to join a circle.",
+  "circle_expired_cannot_send": "Subscription has expired. You cannot send messages. Please renew to continue.",
+  "find_by_username": "Tìm theo tên người dùng",
+  "username": "Tên người dùng"
 }

@@ -165,5 +165,15 @@
   "str_title_contacts": "Kontak",
   "str_title_groups": "Grup",
   "logged_circle_not_found": "Lingkaran yang masuk tidak ditemukan",
-  "push_token_is_null": "Token push adalah null"
+  "push_token_is_null": "Token push adalah null",
+  "operation_success": "Operasi berhasil",
+  "unsupported_platform": "Platform tidak didukung",
+  "failed_to_open_url": "Gagal membuka URL",
+  "circle_expired_title": "Lingkaran kedaluwarsa",
+  "circle_expired_heading": "Lingkaran kedaluwarsa",
+  "circle_expired_message_member": "Lingkaran ini telah kedaluwarsa. Anda masih dapat melihat data tetapi tidak dapat mengirim pesan atau melakukan perubahan. Silakan hubungi administrator lingkaran untuk memperpanjang.",
+  "circle_expired_message_admin": "Lingkaran ini telah kedaluwarsa. Anda masih dapat melihat data tetapi tidak dapat mengirim pesan atau melakukan perubahan. Anda dapat memperpanjang di bawah.",
+  "circle_removed_title": "Dihapus dari lingkaran",
+  "circle_removed_message": "Anda telah dihapus dari lingkaran \"{name}\".",
+  "renew": "Perpanjang"
 }

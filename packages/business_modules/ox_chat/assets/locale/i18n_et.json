@@ -140,8 +140,8 @@
   "get_image_from_clipboard_failed": "Pildi hankimine lõikelaualt ebaõnnestus",
   "invite_private_chat": "${userName} kutsub teid ühinema privaatse vestlusega",
   "invite_private_group": "${userName} kutsub teid ühinema privaatse grupiga",
-  "private_chat_created": "Sõnumid ja kõned on end-to-end krüpteeritud. Ainult selle vestluse inimesed saavad neid lugeda.",
-  "private_group_created": "Sõnumid on end-to-end krüpteeritud. Ainult selle vestluse inimesed saavad neid lugeda.",
+  "private_chat_created": "Sõnumid ja kõned on end-to-end krüpteeritud. Ainult selle vestluse osalejad saavad neid lugeda.",
+  "private_group_created": "Sõnumid on end-to-end krüpteeritud. Ainult selle vestluse osalejad saavad neid lugeda.",
   "self_chat_created": "Saate selles vestluses enda jaoks märkmeid lisada. Märkmed on end-to-end krüpteeritud ja salvestatud kohapeal.",
   "removed_from_group": "Teid eemaldati grupist",
   "user_left_group": "${userName} lahkus grupist",
@@ -174,7 +174,7 @@
   "message_detail_not_found": "Sõnumit ei leitud",
   "message_properties": "Sõnumi omadused",
   "send_event_info": "Saada sündmuse teave",
-  "file_transfer_assistant": "Märkus endale",
+  "file_transfer_assistant": "Märge endale",
   "yourself": "Ise",
   "click_to_send_message_to_yourself": "Puudutage, et saata endale sõnum",
   "welcome_to_xchat": "Palju õnne!",
@@ -228,5 +228,10 @@
   "see_all": "Kuva kõik",
   "you": "Sina",
   "view_profile": "Vaata profiili",
-  "remove_from_group": "Eemalda grupist"
+  "remove_from_group": "Eemalda grupist",
+  "join_circle_title": "Join Circle",
+  "find_people_join_circle_notice": "Enter a circle invite link or scan the invite QR code to join a circle.",
+  "circle_expired_cannot_send": "Subscription has expired. You cannot send messages. Please renew to continue.",
+  "find_by_username": "Otsi kasutajanime järgi",
+  "username": "Kasutajanimi"
 }

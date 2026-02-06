@@ -37,7 +37,7 @@
   "str_scan": "Skanuj",
   "str_my_idcard": "Moja Karta Identyfikacyjna",
   "str_album": "Album",
-  "str_scan_contact_qr_hint": "Proszę zeskanować kod QR na urządzeniu kontaktu",
+  "str_scan_contact_qr_hint": "Zeskanuj kod QR na urządzeniu kontaktu",
   "str_invalid_qr_code": "Nieprawidłowy Kod QR",
   "str_error": "Błąd",
   "str_user_not_found": "Użytkownik nie znaleziony",
@@ -164,5 +164,15 @@
   "str_title_contacts": "Kontakty",
   "str_title_groups": "Grupy",
   "logged_circle_not_found": "Zalogowany krąg nie został znaleziony",
-  "push_token_is_null": "Token push jest null"
+  "push_token_is_null": "Token push jest null",
+  "operation_success": "Operacja zakończona sukcesem",
+  "unsupported_platform": "Nieobsługiwana platforma",
+  "failed_to_open_url": "Nie można otworzyć adresu URL",
+  "circle_expired_title": "Krąg wygasł",
+  "circle_expired_heading": "Krąg wygasł",
+  "circle_expired_message_member": "Ten krąg wygasł. Możesz nadal przeglądać dane, ale nie możesz wysyłać wiadomości ani wprowadzać zmian. Skontaktuj się z administratorem kręgu, aby odnowić.",
+  "circle_expired_message_admin": "Ten krąg wygasł. Możesz nadal przeglądać dane, ale nie możesz wysyłać wiadomości ani wprowadzać zmian. Możesz odnowić poniżej.",
+  "circle_removed_title": "Usunięto z kręgu",
+  "circle_removed_message": "Zostałeś usunięty z kręgu \"{name}\".",
+  "renew": "Odnów"
 }

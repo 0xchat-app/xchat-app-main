@@ -60,7 +60,7 @@
   "no_keypackages_available": "Nejsou k dispozici žádné balíčky klíčů",
   "group_info": "Informace o skupině",
   "group_name": "Název skupiny",
-  "delete_and_leave_item": "Opustit a odstranit",
+  "delete_and_leave_item": "Odejít a smazat",
   "group_mute_no_member_toast": "Nečlenové skupiny nemohou provádět",
   "group_mute_operate_success_toast": "Úspěšná operace",
   "leave_group_success_toast": "Skupina opuštěna",
@@ -228,5 +228,10 @@
   "see_all": "Zobrazit vše",
   "you": "Vy",
   "view_profile": "Zobrazit profil",
-  "remove_from_group": "Odebrat ze skupiny"
+  "remove_from_group": "Odebrat ze skupiny",
+  "join_circle_title": "Join Circle",
+  "find_people_join_circle_notice": "Enter a circle invite link or scan the invite QR code to join a circle.",
+  "circle_expired_cannot_send": "Subscription has expired. You cannot send messages. Please renew to continue.",
+  "find_by_username": "Hledat podle uživatelského jména",
+  "username": "Uživatelské jméno"
 }

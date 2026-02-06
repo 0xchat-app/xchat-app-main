@@ -37,7 +37,7 @@
   "str_scan": "掃一掃",
   "str_my_idcard": "我的名片",
   "str_album": "相簿",
-  "str_scan_contact_qr_hint": "請掃描你聯絡人設備上的二維碼",
+  "str_scan_contact_qr_hint": "請掃描您聯絡人設備上的二維碼",
   "str_invalid_qr_code": "無效的二維碼",
   "str_error": "錯誤",
   "str_user_not_found": "使用者未找到",
@@ -83,7 +83,6 @@
   "circle_already_exists": "使用中繼 ${relay} 的圈子已存在",
   "bitchat_circle_already_exists": "Bitchat 圈子已存在",
   "hint_dont_know_what_to_input": "不知道輸入什麼？試試：",
-  "circle_intro_title": "什麼是圈子？",
   "circle_intro_title": "什麼是圈子？",
   "circle_intro_subtitle": "您的私密聊天空間",
   "circle_intro_content_1": "把圈子想像成一棟公寓大樓，有自己的信箱室、儲物間和保全。您需要的一切都在這裡，和其他大樓完全獨立。",
@@ -165,5 +164,15 @@
   "str_title_contacts": "聯絡人",
   "str_title_groups": "群組",
   "logged_circle_not_found": "未找到已登入的圈子",
-  "push_token_is_null": "推播令牌為空"
+  "push_token_is_null": "推播令牌為空",
+  "operation_success": "操作成功",
+  "unsupported_platform": "目前平台不支援",
+  "failed_to_open_url": "無法開啟連結",
+  "circle_expired_title": "圈子已過期",
+  "circle_expired_heading": "圈子已過期",
+  "circle_expired_message_member": "目前圈子已過期。您仍可查看資料，但無法傳送訊息或進行修改。請聯絡圈子管理員續訂。",
+  "circle_expired_message_admin": "目前圈子已過期。您仍可查看資料，但無法傳送訊息或進行修改。您可以在下方續訂。",
+  "circle_removed_title": "已被移出圈子",
+  "circle_removed_message": "您已被移出圈子「{name}」。",
+  "renew": "續訂"
 }

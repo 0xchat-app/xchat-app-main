@@ -164,5 +164,15 @@
   "str_title_contacts": "Contacts",
   "str_title_groups": "Groupes",
   "logged_circle_not_found": "Cercle connecté non trouvé",
-  "push_token_is_null": "Le jeton de notification push est nul"
+  "push_token_is_null": "Le jeton de notification push est nul",
+  "operation_success": "Opération réussie",
+  "unsupported_platform": "Plateforme non prise en charge",
+  "failed_to_open_url": "Impossible d'ouvrir l'URL",
+  "circle_expired_title": "Cercle expiré",
+  "circle_expired_heading": "Cercle expiré",
+  "circle_expired_message_member": "Ce cercle a expiré. Vous pouvez toujours consulter les données mais vous ne pouvez pas envoyer de messages ou apporter des modifications. Veuillez contacter l'administrateur du cercle pour renouveler.",
+  "circle_expired_message_admin": "Ce cercle a expiré. Vous pouvez toujours consulter les données mais vous ne pouvez pas envoyer de messages ou apporter des modifications. Vous pouvez renouveler ci-dessous.",
+  "circle_removed_title": "Retiré du cercle",
+  "circle_removed_message": "Vous avez été retiré du cercle \"{name}\".",
+  "renew": "Renouveler"
 }

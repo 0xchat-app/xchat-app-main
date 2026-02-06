@@ -165,5 +165,15 @@
   "str_title_contacts": "مخاطبین",
   "str_title_groups": "گروه‌ها",
   "logged_circle_not_found": "حلقه وارد شده یافت نشد",
-  "push_token_is_null": "توکن push null است"
+  "push_token_is_null": "توکن push null است",
+  "operation_success": "عملیات موفقیت آمیز بود",
+  "unsupported_platform": "پلتفرم پشتیبانی نشده",
+  "failed_to_open_url": "باز کردن URL ناموفق بود",
+  "circle_expired_title": "دایره منقضی شد",
+  "circle_expired_heading": "دایره منقضی شد",
+  "circle_expired_message_member": "این دایره منقضی شده است. شما هنوز می‌توانید داده‌ها را مشاهده کنید اما نمی‌توانید پیام ارسال کنید یا تغییراتی ایجاد کنید. لطفاً برای تمدید با مدیر دایره تماس بگیرید.",
+  "circle_expired_message_admin": "این دایره منقضی شده است. شما هنوز می‌توانید داده‌ها را مشاهده کنید اما نمی‌توانید پیام ارسال کنید یا تغییراتی ایجاد کنید. می‌توانید در زیر تمدید کنید.",
+  "circle_removed_title": "از دایره حذف شد",
+  "circle_removed_message": "شما از دایره \"{name}\" حذف شده‌اید.",
+  "renew": "تمدید"
 }

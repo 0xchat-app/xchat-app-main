@@ -164,5 +164,15 @@
   "str_title_contacts": "รายชื่อติดต่อ",
   "str_title_groups": "กลุ่ม",
   "logged_circle_not_found": "ไม่พบวงกลมที่เข้าสู่ระบบ",
-  "push_token_is_null": "โทเค็นพุชเป็น null"
+  "push_token_is_null": "โทเค็นพุชเป็น null",
+  "operation_success": "ดำเนินการสำเร็จ",
+  "unsupported_platform": "แพลตฟอร์มที่ไม่รองรับ",
+  "failed_to_open_url": "ไม่สามารถเปิด URL ได้",
+  "circle_expired_title": "วงกลมหมดอายุ",
+  "circle_expired_heading": "วงกลมหมดอายุ",
+  "circle_expired_message_member": "วงกลมนี้หมดอายุแล้ว คุณยังสามารถดูข้อมูลได้ แต่ไม่สามารถส่งข้อความหรือทำการเปลี่ยนแปลงได้ กรุณาติดต่อผู้ดูแลวงกลมเพื่อต่ออายุ",
+  "circle_expired_message_admin": "วงกลมนี้หมดอายุแล้ว คุณยังสามารถดูข้อมูลได้ แต่ไม่สามารถส่งข้อความหรือทำการเปลี่ยนแปลงได้ คุณสามารถต่ออายุด้านล่าง",
+  "circle_removed_title": "ถูกลบออกจากวงกลม",
+  "circle_removed_message": "คุณถูกลบออกจากวงกลม \"{name}\"",
+  "renew": "ต่ออายุ"
 }

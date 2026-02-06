@@ -140,8 +140,8 @@
   "get_image_from_clipboard_failed": "Αποτυχία λήψης εικόνας από το πρόχειρο",
   "invite_private_chat": "${userName} σας προσκαλεί να συμμετάσχετε στην ιδιωτική συνομιλία",
   "invite_private_group": "${userName} σας προσκαλεί να συμμετάσχετε στην ιδιωτική ομάδα",
-  "private_chat_created": "Τα μηνύματα και οι κλήσεις είναι κρυπτογραφημένα end-to-end. Μόνο οι άνθρωποι σε αυτή τη συνομιλία μπορούν να τα διαβάσουν.",
-  "private_group_created": "Τα μηνύματα είναι κρυπτογραφημένα end-to-end. Μόνο οι άνθρωποι σε αυτή τη συνομιλία μπορούν να τα διαβάσουν.",
+  "private_chat_created": "Τα μηνύματα και οι κλήσεις είναι κρυπτογραφημένα end-to-end. Μόνο τα άτομα σε αυτή τη συνομιλία μπορούν να τα διαβάσουν.",
+  "private_group_created": "Τα μηνύματα είναι κρυπτογραφημένα end-to-end. Μόνο τα άτομα σε αυτή τη συνομιλία μπορούν να τα διαβάσουν.",
   "self_chat_created": "Μπορείτε να προσθέσετε σημειώσεις για τον εαυτό σας σε αυτή τη συνομιλία. Οι σημειώσεις είναι κρυπτογραφημένες end-to-end και αποθηκεύονται τοπικά.",
   "removed_from_group": "Έχετε αφαιρεθεί από την ομάδα",
   "user_left_group": "${userName} άφησε την ομάδα",
@@ -174,7 +174,7 @@
   "message_detail_not_found": "Μήνυμα δεν βρέθηκε",
   "message_properties": "Ιδιότητες μηνύματος",
   "send_event_info": "Αποστολή πληροφοριών συμβάντος",
-  "file_transfer_assistant": "Σημείωση στον εαυτό μου",
+  "file_transfer_assistant": "Σημείωση για τον εαυτό σας",
   "yourself": "Εσείς οι ίδιοι",
   "click_to_send_message_to_yourself": "Πατήστε για να στείλετε μήνυμα στον εαυτό σας",
   "welcome_to_xchat": "Συγχαρητήρια!",
@@ -228,5 +228,10 @@
   "see_all": "Προβολή όλων",
   "you": "Εσείς",
   "view_profile": "Προβολή προφίλ",
-  "remove_from_group": "Αφαίρεση από την ομάδα"
+  "remove_from_group": "Αφαίρεση από την ομάδα",
+  "join_circle_title": "Join Circle",
+  "find_people_join_circle_notice": "Enter a circle invite link or scan the invite QR code to join a circle.",
+  "circle_expired_cannot_send": "Subscription has expired. You cannot send messages. Please renew to continue.",
+  "find_by_username": "Αναζήτηση με όνομα χρήστη",
+  "username": "Όνομα χρήστη"
 }

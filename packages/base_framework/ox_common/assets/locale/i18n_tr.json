@@ -164,5 +164,15 @@
   "str_title_contacts": "Kişiler",
   "str_title_groups": "Gruplar",
   "logged_circle_not_found": "Giriş yapılmış daire bulunamadı",
-  "push_token_is_null": "Push token boş"
+  "push_token_is_null": "Push token boş",
+  "operation_success": "İşlem başarılı",
+  "unsupported_platform": "Desteklenmeyen platform",
+  "failed_to_open_url": "URL açılamadı",
+  "circle_expired_title": "Çember süresi doldu",
+  "circle_expired_heading": "Çember süresi doldu",
+  "circle_expired_message_member": "Bu çemberin süresi doldu. Verileri hala görüntüleyebilirsiniz ancak mesaj gönderemez veya değişiklik yapamazsınız. Lütfen yenilemek için çember yöneticisine başvurun.",
+  "circle_expired_message_admin": "Bu çemberin süresi doldu. Verileri hala görüntüleyebilirsiniz ancak mesaj gönderemez veya değişiklik yapamazsınız. Aşağıdan yenileyebilirsiniz.",
+  "circle_removed_title": "Çemberden kaldırıldı",
+  "circle_removed_message": "\"{name}\" çemberinden kaldırıldınız.",
+  "renew": "Yenile"
 }

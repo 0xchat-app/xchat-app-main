@@ -164,5 +164,15 @@
   "str_title_contacts": "연락처",
   "str_title_groups": "그룹",
   "logged_circle_not_found": "로그인된 원을 찾을 수 없습니다",
-  "push_token_is_null": "푸시 토큰이 null입니다"
+  "push_token_is_null": "푸시 토큰이 null입니다",
+  "operation_success": "작업 성공",
+  "unsupported_platform": "지원되지 않는 플랫폼",
+  "failed_to_open_url": "URL을 열 수 없습니다",
+  "circle_expired_title": "서클 만료",
+  "circle_expired_heading": "서클 만료",
+  "circle_expired_message_member": "이 서클이 만료되었습니다. 데이터는 계속 볼 수 있지만 메시지를 보내거나 변경할 수 없습니다. 서클 관리자에게 연락하여 갱신하세요.",
+  "circle_expired_message_admin": "이 서클이 만료되었습니다. 데이터는 계속 볼 수 있지만 메시지를 보내거나 변경할 수 없습니다. 아래에서 갱신할 수 있습니다.",
+  "circle_removed_title": "서클에서 제거됨",
+  "circle_removed_message": "\"{name}\" 서클에서 제거되었습니다.",
+  "renew": "갱신"
 }

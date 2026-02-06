@@ -140,8 +140,8 @@
   "get_image_from_clipboard_failed": "ไม่สามารถรับรูปภาพจากคลิปบอร์ด",
   "invite_private_chat": "${userName} เชิญคุณเข้าร่วมการแชทส่วนตัว",
   "invite_private_group": "${userName} เชิญคุณเข้าร่วมกลุ่มส่วนตัว",
-  "private_chat_created": "ข้อความและการโทรได้รับการเข้ารหัสแบบ end-to-end เฉพาะผู้คนในการแชทนี้เท่านั้นที่สามารถอ่านได้",
-  "private_group_created": "ข้อความได้รับการเข้ารหัสแบบ end-to-end เฉพาะผู้คนในการแชทนี้เท่านั้นที่สามารถอ่านได้",
+  "private_chat_created": "ข้อความและการโทรถูกเข้ารหัสแบบ end-to-end เฉพาะคนในแชทนี้เท่านั้นที่สามารถอ่านได้",
+  "private_group_created": "ข้อความถูกเข้ารหัสแบบ end-to-end เฉพาะคนในแชทนี้เท่านั้นที่สามารถอ่านได้",
   "self_chat_created": "คุณสามารถเพิ่มบันทึกย่อสำหรับตัวเองในการแชทนี้ บันทึกย่อได้รับการเข้ารหัสแบบ end-to-end และบันทึกไว้ในเครื่อง",
   "removed_from_group": "คุณถูกนำออกจากกลุ่มแล้ว",
   "user_left_group": "${userName} ออกจากกลุ่มแล้ว",
@@ -174,7 +174,7 @@
   "message_detail_not_found": "ไม่พบข้อความ",
   "message_properties": "คุณสมบัติข้อความ",
   "send_event_info": "ส่งข้อมูลเหตุการณ์",
-  "file_transfer_assistant": "บันทึกถึงตัวเอง",
+  "file_transfer_assistant": "บันทึกย่อสำหรับตัวเอง",
   "yourself": "ตัวคุณเอง",
   "click_to_send_message_to_yourself": "แตะเพื่อส่งข้อความถึงตัวเอง",
   "welcome_to_xchat": "ยินดีด้วย!",
@@ -228,5 +228,10 @@
   "see_all": "ดูทั้งหมด",
   "you": "คุณ",
   "view_profile": "ดูโปรไฟล์",
-  "remove_from_group": "ลบออกจากกลุ่ม"
+  "remove_from_group": "ลบออกจากกลุ่ม",
+  "join_circle_title": "Join Circle",
+  "find_people_join_circle_notice": "Enter a circle invite link or scan the invite QR code to join a circle.",
+  "circle_expired_cannot_send": "Subscription has expired. You cannot send messages. Please renew to continue.",
+  "find_by_username": "ค้นหาตามชื่อผู้ใช้",
+  "username": "ชื่อผู้ใช้"
 }

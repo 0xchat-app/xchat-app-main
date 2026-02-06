@@ -140,8 +140,8 @@
   "get_image_from_clipboard_failed": "Hämta bild från urklipp misslyckades",
   "invite_private_chat": "${userName} bjuder in dig att gå med i den privata chatten",
   "invite_private_group": "${userName} bjuder in dig att gå med i den privata gruppen",
-  "private_chat_created": "Meddelanden och samtal är end-to-end krypterade. Endast personer i denna chatt kan läsa dem.",
-  "private_group_created": "Meddelanden är end-to-end krypterade. Endast personer i denna chatt kan läsa dem.",
+  "private_chat_created": "Meddelanden och samtal är end-to-end-krypterade. Endast personer i denna chatt kan läsa dem.",
+  "private_group_created": "Meddelanden är end-to-end-krypterade. Endast personer i denna chatt kan läsa dem.",
   "self_chat_created": "Du kan lägga till anteckningar för dig själv i denna chatt. Anteckningar är end-to-end krypterade och sparas lokalt.",
   "removed_from_group": "Du har blivit borttagen från gruppen",
   "user_left_group": "${userName} lämnade gruppen",
@@ -174,7 +174,7 @@
   "message_detail_not_found": "Meddelande hittades inte",
   "message_properties": "Meddelandeegenskaper",
   "send_event_info": "Skicka händelseinformation",
-  "file_transfer_assistant": "Anteckning till mig själv",
+  "file_transfer_assistant": "Anteckning till dig själv",
   "yourself": "Dig själv",
   "click_to_send_message_to_yourself": "Tryck för att skicka ett meddelande till dig själv",
   "welcome_to_xchat": "Grattis!",
@@ -228,5 +228,10 @@
   "see_all": "Visa alla",
   "you": "Du",
   "view_profile": "Visa profil",
-  "remove_from_group": "Ta bort från grupp"
+  "remove_from_group": "Ta bort från grupp",
+  "join_circle_title": "Join Circle",
+  "find_people_join_circle_notice": "Enter a circle invite link or scan the invite QR code to join a circle.",
+  "circle_expired_cannot_send": "Subscription has expired. You cannot send messages. Please renew to continue.",
+  "find_by_username": "Sök efter användarnamn",
+  "username": "Användarnamn"
 }

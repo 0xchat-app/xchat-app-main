@@ -37,7 +37,7 @@
   "str_scan": "Scansione",
   "str_my_idcard": "La Mia Carta d'Identità",
   "str_album": "Album",
-  "str_scan_contact_qr_hint": "Si prega di scansionare il codice QR sul dispositivo del contatto",
+  "str_scan_contact_qr_hint": "Scansiona il codice QR sul dispositivo del tuo contatto",
   "str_invalid_qr_code": "Codice QR Non Valido",
   "str_error": "Errore",
   "str_user_not_found": "Utente non trovato",
@@ -165,5 +165,15 @@
   "str_title_contacts": "Contatti",
   "str_title_groups": "Gruppi",
   "logged_circle_not_found": "Cerchio connesso non trovato",
-  "push_token_is_null": "Token di notifica push è nullo"
+  "push_token_is_null": "Token di notifica push è nullo",
+  "operation_success": "Operazione completata con successo",
+  "unsupported_platform": "Piattaforma non supportata",
+  "failed_to_open_url": "Impossibile aprire l'URL",
+  "circle_expired_title": "Cerchio scaduto",
+  "circle_expired_heading": "Cerchio scaduto",
+  "circle_expired_message_member": "Questo cerchio è scaduto. Puoi ancora visualizzare i dati ma non puoi inviare messaggi o apportare modifiche. Contatta l'amministratore del cerchio per rinnovare.",
+  "circle_expired_message_admin": "Questo cerchio è scaduto. Puoi ancora visualizzare i dati ma non puoi inviare messaggi o apportare modifiche. Puoi rinnovare di seguito.",
+  "circle_removed_title": "Rimosso dal cerchio",
+  "circle_removed_message": "Sei stato rimosso dal cerchio \"{name}\".",
+  "renew": "Rinnova"
 }

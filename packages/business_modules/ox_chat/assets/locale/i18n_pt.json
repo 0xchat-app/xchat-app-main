@@ -140,8 +140,8 @@
   "get_image_from_clipboard_failed": "Falha ao obter imagem da área de transferência",
   "invite_private_chat": "${userName} convida você a participar do chat privado",
   "invite_private_group": "${userName} convida você a participar do grupo privado",
-  "private_chat_created": "Mensagens e chamadas são criptografadas de ponta a ponta. Apenas pessoas neste chat podem ler.",
-  "private_group_created": "Mensagens são criptografadas de ponta a ponta. Apenas pessoas neste chat podem ler.",
+  "private_chat_created": "Mensagens e chamadas são criptografadas de ponta a ponta. Apenas pessoas nesta conversa podem lê-las.",
+  "private_group_created": "As mensagens são criptografadas de ponta a ponta. Apenas pessoas nesta conversa podem lê-las.",
   "self_chat_created": "Você pode adicionar notas para si mesmo neste chat. As notas são criptografadas de ponta a ponta e salvas localmente.",
   "removed_from_group": "Você foi removido do grupo",
   "user_left_group": "${userName} saiu do grupo",
@@ -174,7 +174,7 @@
   "message_detail_not_found": "Mensagem não encontrada",
   "message_properties": "Propriedades da mensagem",
   "send_event_info": "Enviar informações do evento",
-  "file_transfer_assistant": "Nota para mim",
+  "file_transfer_assistant": "Nota pessoal",
   "yourself": "Você mesmo",
   "click_to_send_message_to_yourself": "Toque para enviar uma mensagem para si mesmo",
   "welcome_to_xchat": "Parabéns!",
@@ -228,5 +228,10 @@
   "see_all": "Ver tudo",
   "you": "Você",
   "view_profile": "Ver perfil",
-  "remove_from_group": "Remover do grupo"
+  "remove_from_group": "Remover do grupo",
+  "join_circle_title": "Join Circle",
+  "find_people_join_circle_notice": "Enter a circle invite link or scan the invite QR code to join a circle.",
+  "circle_expired_cannot_send": "Subscription has expired. You cannot send messages. Please renew to continue.",
+  "find_by_username": "Buscar por nome de usuário",
+  "username": "Nome de usuário"
 }

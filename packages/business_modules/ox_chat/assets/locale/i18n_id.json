@@ -60,7 +60,7 @@
   "no_keypackages_available": "Tidak ada paket kunci yang tersedia",
   "group_info": "Informasi Grup",
   "group_name": "Nama Grup",
-  "delete_and_leave_item": "Tinggalkan dan hapus",
+  "delete_and_leave_item": "Keluar dan hapus",
   "group_mute_no_member_toast": "Bukan anggota grup tidak dapat beroperasi",
   "group_mute_operate_success_toast": "Operasi berhasil",
   "leave_group_success_toast": "Meninggalkan grup berhasil",
@@ -174,7 +174,7 @@
   "message_detail_not_found": "Pesan tidak ditemukan",
   "message_properties": "Properti pesan",
   "send_event_info": "Kirim informasi acara",
-  "file_transfer_assistant": "Catatan untuk Diri Sendiri",
+  "file_transfer_assistant": "Catatan untuk diri sendiri",
   "yourself": "Anda sendiri",
   "click_to_send_message_to_yourself": "Ketuk untuk mengirim pesan ke diri sendiri",
   "welcome_to_xchat": "Selamat!",
@@ -228,5 +228,10 @@
   "see_all": "Lihat Semua",
   "you": "Anda",
   "view_profile": "Lihat Profil",
-  "remove_from_group": "Hapus dari Grup"
+  "remove_from_group": "Hapus dari Grup",
+  "join_circle_title": "Join Circle",
+  "find_people_join_circle_notice": "Enter a circle invite link or scan the invite QR code to join a circle.",
+  "circle_expired_cannot_send": "Subscription has expired. You cannot send messages. Please renew to continue.",
+  "find_by_username": "Cari berdasarkan nama pengguna",
+  "username": "Nama pengguna"
 }

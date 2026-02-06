@@ -165,5 +165,15 @@
   "str_title_contacts": "संपर्क",
   "str_title_groups": "समूह",
   "logged_circle_not_found": "लॉग इन सर्कल नहीं मिला",
-  "push_token_is_null": "पुश टोकन null है"
+  "push_token_is_null": "पुश टोकन null है",
+  "operation_success": "ऑपरेशन सफल",
+  "unsupported_platform": "असमर्थित प्लेटफ़ॉर्म",
+  "failed_to_open_url": "URL खोलने में विफल",
+  "circle_expired_title": "सर्कल समाप्त हो गया",
+  "circle_expired_heading": "सर्कल समाप्त हो गया",
+  "circle_expired_message_member": "यह सर्कल समाप्त हो गया है। आप अभी भी डेटा देख सकते हैं लेकिन संदेश भेज या परिवर्तन नहीं कर सकते। कृपया नवीकरण के लिए सर्कल व्यवस्थापक से संपर्क करें।",
+  "circle_expired_message_admin": "यह सर्कल समाप्त हो गया है। आप अभी भी डेटा देख सकते हैं लेकिन संदेश भेज या परिवर्तन नहीं कर सकते। आप नीचे नवीकरण कर सकते हैं।",
+  "circle_removed_title": "सर्कल से हटा दिया गया",
+  "circle_removed_message": "आपको सर्कल \"{name}\" से हटा दिया गया है।",
+  "renew": "नवीकरण करें"
 }

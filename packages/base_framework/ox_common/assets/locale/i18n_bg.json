@@ -164,5 +164,15 @@
   "str_title_contacts": "Контакти",
   "str_title_groups": "Групи",
   "logged_circle_not_found": "Влязъл кръг не е намерен",
-  "push_token_is_null": "Push токенът е null"
+  "push_token_is_null": "Push токенът е null",
+  "operation_success": "Операцията е успешна",
+  "unsupported_platform": "Неподдържана платформа",
+  "failed_to_open_url": "Неуспешно отваряне на URL",
+  "circle_expired_title": "Кръгът е изтекъл",
+  "circle_expired_heading": "Кръгът е изтекъл",
+  "circle_expired_message_member": "Този кръг е изтекъл. Все още можете да преглеждате данни, но не можете да изпращате съобщения или да правите промени. Моля, свържете се с администратора на кръга за подновяване.",
+  "circle_expired_message_admin": "Този кръг е изтекъл. Все още можете да преглеждате данни, но не можете да изпращате съобщения или да правите промени. Можете да подновите по-долу.",
+  "circle_removed_title": "Премахнат от кръга",
+  "circle_removed_message": "Бяхте премахнати от кръга \"{name}\".",
+  "renew": "Подновяване"
 }

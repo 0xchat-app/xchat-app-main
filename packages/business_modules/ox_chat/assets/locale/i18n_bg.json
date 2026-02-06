@@ -60,7 +60,7 @@
   "no_keypackages_available": "Няма налични пакети с ключове",
   "group_info": "Информация за групата",
   "group_name": "Име на групата",
-  "delete_and_leave_item": "Напуснете и изтрийте",
+  "delete_and_leave_item": "Напусни и изтрий",
   "group_mute_no_member_toast": "Членовете на групата не могат да работят",
   "group_mute_operate_success_toast": "Операцията беше успешна",
   "leave_group_success_toast": "Успешно напуснахте групата",
@@ -228,5 +228,10 @@
   "see_all": "Покажи всички",
   "you": "Вие",
   "view_profile": "Преглед на профил",
-  "remove_from_group": "Премахване от групата"
+  "remove_from_group": "Премахване от групата",
+  "join_circle_title": "Join Circle",
+  "find_people_join_circle_notice": "Enter a circle invite link or scan the invite QR code to join a circle.",
+  "circle_expired_cannot_send": "Subscription has expired. You cannot send messages. Please renew to continue.",
+  "find_by_username": "Търсене по потребителско име",
+  "username": "Потребителско име"
 }

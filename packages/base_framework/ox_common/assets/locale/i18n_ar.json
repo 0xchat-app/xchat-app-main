@@ -164,5 +164,15 @@
   "str_title_contacts": "جهات الاتصال",
   "str_title_groups": "المجموعات",
   "logged_circle_not_found": "الدائرة المسجلة الدخول غير موجودة",
-  "push_token_is_null": "رمز الإشعارات الفورية فارغ"
+  "push_token_is_null": "رمز الإشعارات الفورية فارغ",
+  "operation_success": "نجحت العملية",
+  "unsupported_platform": "منصة غير مدعومة",
+  "failed_to_open_url": "فشل في فتح عنوان URL",
+  "circle_expired_title": "انتهت صلاحية الدائرة",
+  "circle_expired_heading": "انتهت صلاحية الدائرة",
+  "circle_expired_message_member": "انتهت صلاحية هذه الدائرة. لا يزال بإمكانك عرض البيانات ولكن لا يمكنك إرسال رسائل أو إجراء تغييرات. يرجى الاتصال بمسؤول الدائرة للتجديد.",
+  "circle_expired_message_admin": "انتهت صلاحية هذه الدائرة. لا يزال بإمكانك عرض البيانات ولكن لا يمكنك إرسال رسائل أو إجراء تغييرات. يمكنك التجديد أدناه.",
+  "circle_removed_title": "تمت إزالته من الدائرة",
+  "circle_removed_message": "تمت إزالتك من الدائرة \"{name}\".",
+  "renew": "تجديد"
 }

@@ -165,5 +165,15 @@
   "str_title_contacts": "Επαφές",
   "str_title_groups": "Ομάδες",
   "logged_circle_not_found": "Η συνδεδεμένη κύκλος δεν βρέθηκε",
-  "push_token_is_null": "Το push token είναι null"
+  "push_token_is_null": "Το push token είναι null",
+  "operation_success": "Επιχείρηση επιτυχής",
+  "unsupported_platform": "Μη υποστηριζόμενη πλατφόρμα",
+  "failed_to_open_url": "Αποτυχία ανοίγματος URL",
+  "circle_expired_title": "Ο κύκλος έληξε",
+  "circle_expired_heading": "Ο κύκλος έληξε",
+  "circle_expired_message_member": "Αυτός ο κύκλος έληξε. Μπορείτε ακόμα να δείτε δεδομένα αλλά δεν μπορείτε να στείλετε μηνύματα ή να κάνετε αλλαγές. Παρακαλώ επικοινωνήστε με τον διαχειριστή του κύκλου για ανανέωση.",
+  "circle_expired_message_admin": "Αυτός ο κύκλος έληξε. Μπορείτε ακόμα να δείτε δεδομένα αλλά δεν μπορείτε να στείλετε μηνύματα ή να κάνετε αλλαγές. Μπορείτε να ανανεώσετε παρακάτω.",
+  "circle_removed_title": "Αφαιρέθηκε από τον κύκλο",
+  "circle_removed_message": "Έχετε αφαιρεθεί από τον κύκλο \"{name}\".",
+  "renew": "Ανανέωση"
 }

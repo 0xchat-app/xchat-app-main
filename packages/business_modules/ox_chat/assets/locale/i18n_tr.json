@@ -140,8 +140,8 @@
   "get_image_from_clipboard_failed": "Panodan resim alınamadı",
   "invite_private_chat": "${userName} sizi özel sohbete katılmaya davet ediyor",
   "invite_private_group": "${userName} sizi özel gruba katılmaya davet ediyor",
-  "private_chat_created": "Mesajlar ve aramalar uçtan uca şifrelenmiştir. Bu sohbetteki kişiler okuyabilir.",
-  "private_group_created": "Mesajlar uçtan uca şifrelenmiştir. Bu sohbetteki kişiler okuyabilir.",
+  "private_chat_created": "Mesajlar ve aramalar uçtan uca şifrelenmiştir. Yalnızca bu sohbetteki kişiler okuyabilir.",
+  "private_group_created": "Mesajlar uçtan uca şifrelenmiştir. Yalnızca bu sohbetteki kişiler okuyabilir.",
   "self_chat_created": "Bu sohbette kendiniz için notlar ekleyebilirsiniz. Notlar uçtan uca şifrelenir ve yerel olarak kaydedilir.",
   "removed_from_group": "Gruptan çıkarıldınız",
   "user_left_group": "${userName} gruptan ayrıldı",
@@ -174,7 +174,7 @@
   "message_detail_not_found": "Mesaj bulunamadı",
   "message_properties": "Mesaj özellikleri",
   "send_event_info": "Olay bilgisi gönder",
-  "file_transfer_assistant": "Kendime Not",
+  "file_transfer_assistant": "Kendine not",
   "yourself": "Kendiniz",
   "click_to_send_message_to_yourself": "Kendinize mesaj göndermek için dokunun",
   "welcome_to_xchat": "Tebrikler!",
@@ -228,5 +228,10 @@
   "see_all": "Tümünü Gör",
   "you": "Sen",
   "view_profile": "Profili Görüntüle",
-  "remove_from_group": "Gruptan Kaldır"
+  "remove_from_group": "Gruptan Kaldır",
+  "join_circle_title": "Join Circle",
+  "find_people_join_circle_notice": "Enter a circle invite link or scan the invite QR code to join a circle.",
+  "circle_expired_cannot_send": "Subscription has expired. You cannot send messages. Please renew to continue.",
+  "find_by_username": "Kullanıcı adına göre ara",
+  "username": "Kullanıcı adı"
 }

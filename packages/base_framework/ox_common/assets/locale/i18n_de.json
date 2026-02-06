@@ -164,5 +164,15 @@
   "str_title_contacts": "Kontakte",
   "str_title_groups": "Gruppen",
   "logged_circle_not_found": "Angemeldeter Kreis nicht gefunden",
-  "push_token_is_null": "Push-Token ist null"
+  "push_token_is_null": "Push-Token ist null",
+  "operation_success": "Vorgang erfolgreich",
+  "unsupported_platform": "Nicht unterstützte Plattform",
+  "failed_to_open_url": "URL konnte nicht geöffnet werden",
+  "circle_expired_title": "Kreis abgelaufen",
+  "circle_expired_heading": "Kreis abgelaufen",
+  "circle_expired_message_member": "Dieser Kreis ist abgelaufen. Sie können Daten weiterhin ansehen, aber keine Nachrichten senden oder Änderungen vornehmen. Bitte kontaktieren Sie den Kreis-Administrator zur Verlängerung.",
+  "circle_expired_message_admin": "Dieser Kreis ist abgelaufen. Sie können Daten weiterhin ansehen, aber keine Nachrichten senden oder Änderungen vornehmen. Sie können unten verlängern.",
+  "circle_removed_title": "Aus Kreis entfernt",
+  "circle_removed_message": "Sie wurden aus dem Kreis \"{name}\" entfernt.",
+  "renew": "Verlängern"
 }

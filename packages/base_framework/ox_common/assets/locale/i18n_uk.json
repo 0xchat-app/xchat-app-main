@@ -164,5 +164,15 @@
   "str_title_contacts": "Контакти",
   "str_title_groups": "Групи",
   "logged_circle_not_found": "Ввійшов коло не знайдено",
-  "push_token_is_null": "Push-токен є null"
+  "push_token_is_null": "Push-токен є null",
+  "operation_success": "Операція успішна",
+  "unsupported_platform": "Непідтримувана платформа",
+  "failed_to_open_url": "Не вдалося відкрити URL",
+  "circle_expired_title": "Коло закінчилося",
+  "circle_expired_heading": "Коло закінчилося",
+  "circle_expired_message_member": "Це коло закінчилося. Ви все ще можете переглядати дані, але не можете надсилати повідомлення або вносити зміни. Будь ласка, зв'яжіться з адміністратором кола для поновлення.",
+  "circle_expired_message_admin": "Це коло закінчилося. Ви все ще можете переглядати дані, але не можете надсилати повідомлення або вносити зміни. Ви можете поновити нижче.",
+  "circle_removed_title": "Видалено з кола",
+  "circle_removed_message": "Вас було видалено з кола \"{name}\".",
+  "renew": "Поновлення"
 }

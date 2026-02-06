@@ -140,8 +140,8 @@
   "get_image_from_clipboard_failed": "A kép lekérése a vágólapról sikertelen",
   "invite_private_chat": "${userName} meghívja, hogy csatlakozzon a privát csevegéshez",
   "invite_private_group": "${userName} meghívja, hogy csatlakozzon a privát csoporthoz",
-  "private_chat_created": "Az üzenetek és hívások end-to-end titkosítva vannak. Csak ebben a csevegésben lévő emberek olvashatják.",
-  "private_group_created": "Az üzenetek end-to-end titkosítva vannak. Csak ebben a csevegésben lévő emberek olvashatják.",
+  "private_chat_created": "Az üzenetek és hívások végpontok közötti titkosítással vannak védve. Csak az ebben a csevegésben lévő emberek olvashatják.",
+  "private_group_created": "Az üzenetek végpontok közötti titkosítással vannak védve. Csak az ebben a csevegésben lévő emberek olvashatják.",
   "self_chat_created": "Ebben a csevegésben jegyzeteket adhat hozzá magának. A jegyzetek end-to-end titkosítva vannak és helyileg tárolódnak.",
   "removed_from_group": "Eltávolították a csoportból",
   "user_left_group": "${userName} elhagyta a csoportot",
@@ -174,7 +174,7 @@
   "message_detail_not_found": "Üzenet nem található",
   "message_properties": "Üzenet tulajdonságai",
   "send_event_info": "Eseményinformációk küldése",
-  "file_transfer_assistant": "Jegyzet magamnak",
+  "file_transfer_assistant": "Jegyzet magának",
   "yourself": "Önmaga",
   "click_to_send_message_to_yourself": "Kattintson, hogy magának küldjön üzenetet",
   "welcome_to_xchat": "Gratulálunk!",
@@ -228,5 +228,10 @@
   "see_all": "Összes megjelenítése",
   "you": "Te",
   "view_profile": "Profil megtekintése",
-  "remove_from_group": "Eltávolítás a csoportból"
+  "remove_from_group": "Eltávolítás a csoportból",
+  "join_circle_title": "Join Circle",
+  "find_people_join_circle_notice": "Enter a circle invite link or scan the invite QR code to join a circle.",
+  "circle_expired_cannot_send": "Subscription has expired. You cannot send messages. Please renew to continue.",
+  "find_by_username": "Keresés felhasználónév szerint",
+  "username": "Felhasználónév"
 }

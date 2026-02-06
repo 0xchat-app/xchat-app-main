@@ -165,5 +165,15 @@
   "str_title_contacts": "Contacten",
   "str_title_groups": "Groepen",
   "logged_circle_not_found": "Aangemelde cirkel niet gevonden",
-  "push_token_is_null": "Push-token is null"
+  "push_token_is_null": "Push-token is null",
+  "operation_success": "Bewerking succesvol",
+  "unsupported_platform": "Niet-ondersteund platform",
+  "failed_to_open_url": "Kan URL niet openen",
+  "circle_expired_title": "Cirkel verlopen",
+  "circle_expired_heading": "Cirkel verlopen",
+  "circle_expired_message_member": "Deze cirkel is verlopen. U kunt nog steeds gegevens bekijken, maar geen berichten verzenden of wijzigingen aanbrengen. Neem contact op met de cirkelbeheerder om te verlengen.",
+  "circle_expired_message_admin": "Deze cirkel is verlopen. U kunt nog steeds gegevens bekijken, maar geen berichten verzenden of wijzigingen aanbrengen. U kunt hieronder verlengen.",
+  "circle_removed_title": "Verwijderd uit cirkel",
+  "circle_removed_message": "U bent verwijderd uit de cirkel \"{name}\".",
+  "renew": "Verlengen"
 }

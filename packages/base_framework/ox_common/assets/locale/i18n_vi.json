@@ -164,5 +164,15 @@
   "str_title_contacts": "Danh bạ",
   "str_title_groups": "Nhóm",
   "logged_circle_not_found": "Không tìm thấy vòng tròn đã đăng nhập",
-  "push_token_is_null": "Token push là null"
+  "push_token_is_null": "Token push là null",
+  "operation_success": "Thao tác thành công",
+  "unsupported_platform": "Nền tảng không được hỗ trợ",
+  "failed_to_open_url": "Không thể mở URL",
+  "circle_expired_title": "Vòng tròn đã hết hạn",
+  "circle_expired_heading": "Vòng tròn đã hết hạn",
+  "circle_expired_message_member": "Vòng tròn này đã hết hạn. Bạn vẫn có thể xem dữ liệu nhưng không thể gửi tin nhắn hoặc thực hiện thay đổi. Vui lòng liên hệ với quản trị viên vòng tròn để gia hạn.",
+  "circle_expired_message_admin": "Vòng tròn này đã hết hạn. Bạn vẫn có thể xem dữ liệu nhưng không thể gửi tin nhắn hoặc thực hiện thay đổi. Bạn có thể gia hạn bên dưới.",
+  "circle_removed_title": "Đã bị xóa khỏi vòng tròn",
+  "circle_removed_message": "Bạn đã bị xóa khỏi vòng tròn \"{name}\".",
+  "renew": "Gia hạn"
 }

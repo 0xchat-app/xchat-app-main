@@ -165,5 +165,15 @@
   "str_title_contacts": "Kapcsolatok",
   "str_title_groups": "Csoportok",
   "logged_circle_not_found": "Bejelentkezett kör nem található",
-  "push_token_is_null": "Push token null"
+  "push_token_is_null": "Push token null",
+  "operation_success": "Művelet sikeres",
+  "unsupported_platform": "Nem támogatott platform",
+  "failed_to_open_url": "Az URL megnyitása sikertelen",
+  "circle_expired_title": "Kör lejárt",
+  "circle_expired_heading": "Kör lejárt",
+  "circle_expired_message_member": "Ez a kör lejárt. Továbbra is megtekintheti az adatokat, de nem küldhet üzeneteket vagy nem végezhet módosításokat. Kérjük, lépjen kapcsolatba a kör adminisztrátorával a megújításhoz.",
+  "circle_expired_message_admin": "Ez a kör lejárt. Továbbra is megtekintheti az adatokat, de nem küldhet üzeneteket vagy nem végezhet módosításokat. Az alábbiakban megújíthatja.",
+  "circle_removed_title": "Eltávolítva a körből",
+  "circle_removed_message": "Eltávolították Önt a \"{name}\" körből.",
+  "renew": "Megújítás"
 }

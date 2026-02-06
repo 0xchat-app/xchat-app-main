@@ -228,5 +228,10 @@
   "see_all": "सभी देखें",
   "you": "आप",
   "view_profile": "प्रोफ़ाइल देखें",
-  "remove_from_group": "समूह से हटाएं"
+  "remove_from_group": "समूह से हटाएं",
+  "join_circle_title": "Join Circle",
+  "find_people_join_circle_notice": "Enter a circle invite link or scan the invite QR code to join a circle.",
+  "circle_expired_cannot_send": "Subscription has expired. You cannot send messages. Please renew to continue.",
+  "find_by_username": "उपयोगकर्ता नाम से खोजें",
+  "username": "उपयोगकर्ता नाम"
 }

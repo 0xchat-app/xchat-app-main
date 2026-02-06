@@ -37,7 +37,7 @@
   "str_scan": "Skanneeri",
   "str_my_idcard": "Minu ID-kaart",
   "str_album": "Album",
-  "str_scan_contact_qr_hint": "Palun skannige QR-kood kontakti seadmel",
+  "str_scan_contact_qr_hint": "Palun skannige QR-koodi oma kontakti seadmelt",
   "str_invalid_qr_code": "Vigane QR-kood",
   "str_error": "Viga",
   "str_user_not_found": "Kasutajat ei leitud",
@@ -165,5 +165,15 @@
   "str_title_contacts": "Kontaktid",
   "str_title_groups": "Grupid",
   "logged_circle_not_found": "Sisse logitud ring ei leitud",
-  "push_token_is_null": "Push token on null"
+  "push_token_is_null": "Push token on null",
+  "operation_success": "Toiming õnnestus",
+  "unsupported_platform": "Toetamata platvorm",
+  "failed_to_open_url": "URL-i avamine ebaõnnestus",
+  "circle_expired_title": "Ring aegus",
+  "circle_expired_heading": "Ring aegus",
+  "circle_expired_message_member": "See ring on aegunud. Saate andmeid endiselt vaadata, kuid ei saa sõnumeid saata ega muudatusi teha. Palun võtke ühendust ringi administraatoriga, et uuendada.",
+  "circle_expired_message_admin": "See ring on aegunud. Saate andmeid endiselt vaadata, kuid ei saa sõnumeid saata ega muudatusi teha. Saate allpool uuendada.",
+  "circle_removed_title": "Eemaldatud ringist",
+  "circle_removed_message": "Teid on ringist \"{name}\" eemaldatud.",
+  "renew": "Uuenda"
 }

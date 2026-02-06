@@ -37,7 +37,7 @@
   "str_scan": "Skanna QR-kod",
   "str_my_idcard": "Mitt ID-kort",
   "str_album": "Album",
-  "str_scan_contact_qr_hint": "Vänligen skanna QR-koden på din kontakts enhet",
+  "str_scan_contact_qr_hint": "Vänligen skanna QR-koden på kontaktens enhet",
   "str_invalid_qr_code": "Ogiltig QR-kod",
   "str_error": "Fel",
   "str_user_not_found": "Användare hittades inte",
@@ -164,5 +164,15 @@
   "str_title_contacts": "Kontakter",
   "str_title_groups": "Grupper",
   "logged_circle_not_found": "Inloggad cirkel hittades inte",
-  "push_token_is_null": "Push-token är null"
+  "push_token_is_null": "Push-token är null",
+  "operation_success": "Åtgärd lyckades",
+  "unsupported_platform": "Plattform som inte stöds",
+  "failed_to_open_url": "Kunde inte öppna URL",
+  "circle_expired_title": "Cirkel utgången",
+  "circle_expired_heading": "Cirkel utgången",
+  "circle_expired_message_member": "Denna cirkel har gått ut. Du kan fortfarande visa data men kan inte skicka meddelanden eller göra ändringar. Kontakta cirkeladministratören för att förnya.",
+  "circle_expired_message_admin": "Denna cirkel har gått ut. Du kan fortfarande visa data men kan inte skicka meddelanden eller göra ändringar. Du kan förnya nedan.",
+  "circle_removed_title": "Borttagen från cirkel",
+  "circle_removed_message": "Du har tagits bort från cirkeln \"{name}\".",
+  "renew": "Förnya"
 }
