@@ -30,6 +30,10 @@ enum _MenuAction { edit, delete }
 enum _PlanAction { changePlan, cancelSubscription, renewPlan }
 enum _StorageAction { clearAllStorage }
 
+/// Placeholder when subscription status is loading or unknown. Avoids showing
+/// optimistic "renews on" which would flash to "expired" after server response.
+const String _kSubscriptionUnknownPlaceholder = '—';
+
 class CircleDetailPage extends StatefulWidget {
   const CircleDetailPage({
     super.key,
@@ -67,10 +71,17 @@ class _CircleDetailPageState extends State<CircleDetailPage>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _circleName = widget.circle.name;
-    _renewDate$ = ValueNotifier<String>('Dec 31, 2025');
+    _renewDate$ = ValueNotifier<String>(_kSubscriptionUnknownPlaceholder);
     _subscriptionStatus$ = ValueNotifier<String?>(null);
     _fileServerName$ = ValueNotifier<String>('');
     _checkIfOwner();
+    if (widget.circle.isPaidRelay &&
+        widget.circle.id == LoginManager.instance.currentCircle?.id &&
+        LoginManager.instance.currentCircle?.tenantInfo != null) {
+      _applySubscriptionDisplayFromTenantInfo(
+        LoginManager.instance.currentCircle!.tenantInfo!.toJson(),
+      );
+    }
     _stateListener = () {
       final state = LoginManager.instance.currentState;
       if (state.currentCircle?.id != widget.circle.id ||
@@ -116,6 +127,37 @@ class _CircleDetailPageState extends State<CircleDetailPage>
   void _checkIfOwner() {
     final currentPubkey = LoginManager.instance.currentPubkey;
     _isOwner = widget.circle.ownerPubkey == currentPubkey;
+  }
+
+  /// Updates only subscription display (renew date, status, isOwner) from
+  /// [tenantInfo]. Synchronous; use for first-paint when tenantInfo is already
+  /// in memory (e.g. currentCircle.tenantInfo) to avoid showing "loading" then
+  /// flashing to real state.
+  void _applySubscriptionDisplayFromTenantInfo(Map<String, dynamic> tenantInfo) {
+    final currentPubkey = LoginManager.instance.currentPubkey;
+    final tenantAdminPubkey = tenantInfo['tenant_admin_pubkey'] as String?;
+    if (tenantAdminPubkey != null && tenantAdminPubkey.isNotEmpty) {
+      _isOwner = tenantAdminPubkey.toLowerCase() == currentPubkey.toLowerCase();
+    }
+    String renewDateText = _kSubscriptionUnknownPlaceholder;
+    final expiresAt = tenantInfo['expires_at'] as int?;
+    if (expiresAt != null && expiresAt > 0) {
+      try {
+        final date = DateTime.fromMillisecondsSinceEpoch(expiresAt * 1000);
+        renewDateText = DateFormat('MMM d, yyyy').format(date);
+      } catch (_) {}
+    }
+    _renewDate$.value = renewDateText;
+    String? subscriptionStatus = tenantInfo['subscription_status'] as String? ?? tenantInfo['status'] as String?;
+    if (subscriptionStatus == null || subscriptionStatus.isEmpty) {
+      if (expiresAt != null && expiresAt > 0) {
+        try {
+          final expiresDate = DateTime.fromMillisecondsSinceEpoch(expiresAt * 1000);
+          subscriptionStatus = expiresDate.isBefore(DateTime.now()) ? 'expired' : 'active';
+        } catch (_) {}
+      }
+    }
+    _subscriptionStatus$.value = subscriptionStatus;
   }
 
   /// Check if this circle is a paid relay (based on relayUrl matching privateRelayApiBaseUrl)
@@ -183,7 +225,7 @@ class _CircleDetailPageState extends State<CircleDetailPage>
     }
 
     // Extract expires_at and format renew date
-    String renewDateText = 'Dec 31, 2025'; // Default
+    String renewDateText = _kSubscriptionUnknownPlaceholder;
     final expiresAt = tenantInfo['expires_at'] as int?;
     if (expiresAt != null && expiresAt > 0) {
       try {
@@ -669,9 +711,10 @@ class _CircleDetailPageState extends State<CircleDetailPage>
                       ],
                     );
                   } else {
-                    // Default: show renew date only
+                    // Loading or unknown: show neutral placeholder so we never
+                    // show optimistic "renews on" that later flips to "expired".
                     return CLText.bodySmall(
-                      Localized.text('ox_usercenter.renews_on').replaceAll('{date}', renewDate),
+                      _kSubscriptionUnknownPlaceholder,
                       colorToken: ColorToken.onSurfaceVariant,
                     );
                   }
