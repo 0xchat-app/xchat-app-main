@@ -175,5 +175,7 @@
   "circle_expired_message_admin": "Šis aplis ir beidzies. Jūs joprojām varat skatīt datus, bet nevarat sūtīt ziņojumus vai veikt izmaiņas. Jūs varat atjaunot zemāk.",
   "circle_removed_title": "Noņemts no apļa",
   "circle_removed_message": "Jūs esat noņemts no apļa \"{name}\".",
+  "circle_deleted_title": "Aplis izdzēsts",
+  "circle_deleted_message": "Aplis \"{name}\" ir izdzēsts.",
   "renew": "Atjaunot"
 }

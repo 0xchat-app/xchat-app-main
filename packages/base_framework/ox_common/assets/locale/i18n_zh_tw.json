@@ -174,5 +174,7 @@
   "circle_expired_message_admin": "目前圈子已過期。您仍可查看資料，但無法傳送訊息或進行修改。您可以在下方續訂。",
   "circle_removed_title": "已被移出圈子",
   "circle_removed_message": "您已被移出圈子「{name}」。",
+  "circle_deleted_title": "圈子已刪除",
+  "circle_deleted_message": "圈子「{name}」已刪除。",
   "renew": "續訂"
 }

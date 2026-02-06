@@ -174,5 +174,7 @@
   "circle_expired_message_admin": "วงกลมนี้หมดอายุแล้ว คุณยังสามารถดูข้อมูลได้ แต่ไม่สามารถส่งข้อความหรือทำการเปลี่ยนแปลงได้ คุณสามารถต่ออายุด้านล่าง",
   "circle_removed_title": "ถูกลบออกจากวงกลม",
   "circle_removed_message": "คุณถูกลบออกจากวงกลม \"{name}\"",
+  "circle_deleted_title": "ลบวงแล้ว",
+  "circle_deleted_message": "วง \"{name}\" ถูกลบแล้ว",
   "renew": "ต่ออายุ"
 }

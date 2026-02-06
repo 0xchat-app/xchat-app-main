@@ -174,5 +174,7 @@
   "circle_expired_message_admin": "Bu dairənin müddəti bitib. Siz hələ də məlumatları görə bilərsiniz, lakin mesaj göndərə və ya dəyişiklik edə bilməzsiniz. Aşağıda yeniləyə bilərsiniz.",
   "circle_removed_title": "Dairədən çıxarıldı",
   "circle_removed_message": "Siz \"{name}\" dairəsindən çıxarıldınız.",
+  "circle_deleted_title": "Dairə silindi",
+  "circle_deleted_message": "\"{name}\" dairəsi silindi.",
   "renew": "Yenilə"
 }

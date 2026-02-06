@@ -175,5 +175,7 @@
   "circle_expired_message_admin": "Deze cirkel is verlopen. U kunt nog steeds gegevens bekijken, maar geen berichten verzenden of wijzigingen aanbrengen. U kunt hieronder verlengen.",
   "circle_removed_title": "Verwijderd uit cirkel",
   "circle_removed_message": "U bent verwijderd uit de cirkel \"{name}\".",
+  "circle_deleted_title": "Cirkel verwijderd",
+  "circle_deleted_message": "De cirkel \"{name}\" is verwijderd.",
   "renew": "Verlengen"
 }

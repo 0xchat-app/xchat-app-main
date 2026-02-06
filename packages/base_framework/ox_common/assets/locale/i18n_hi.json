@@ -175,5 +175,7 @@
   "circle_expired_message_admin": "यह सर्कल समाप्त हो गया है। आप अभी भी डेटा देख सकते हैं लेकिन संदेश भेज या परिवर्तन नहीं कर सकते। आप नीचे नवीकरण कर सकते हैं।",
   "circle_removed_title": "सर्कल से हटा दिया गया",
   "circle_removed_message": "आपको सर्कल \"{name}\" से हटा दिया गया है।",
+  "circle_deleted_title": "सर्कल हटा दिया गया",
+  "circle_deleted_message": "सर्कल \"{name}\" हटा दिया गया है।",
   "renew": "नवीकरण करें"
 }

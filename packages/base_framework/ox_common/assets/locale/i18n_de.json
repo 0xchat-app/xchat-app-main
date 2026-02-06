@@ -174,5 +174,7 @@
   "circle_expired_message_admin": "Dieser Kreis ist abgelaufen. Sie können Daten weiterhin ansehen, aber keine Nachrichten senden oder Änderungen vornehmen. Sie können unten verlängern.",
   "circle_removed_title": "Aus Kreis entfernt",
   "circle_removed_message": "Sie wurden aus dem Kreis \"{name}\" entfernt.",
+  "circle_deleted_title": "Kreis gelöscht",
+  "circle_deleted_message": "Der Kreis \"{name}\" wurde gelöscht.",
   "renew": "Verlängern"
 }

@@ -174,5 +174,7 @@
   "circle_expired_message_admin": "Denna cirkel har gått ut. Du kan fortfarande visa data men kan inte skicka meddelanden eller göra ändringar. Du kan förnya nedan.",
   "circle_removed_title": "Borttagen från cirkel",
   "circle_removed_message": "Du har tagits bort från cirkeln \"{name}\".",
+  "circle_deleted_title": "Cirkel borttagen",
+  "circle_deleted_message": "Cirkeln \"{name}\" har tagits bort.",
   "renew": "Förnya"
 }

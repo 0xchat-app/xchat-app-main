@@ -174,5 +174,7 @@
   "circle_expired_message_admin": "Vòng tròn này đã hết hạn. Bạn vẫn có thể xem dữ liệu nhưng không thể gửi tin nhắn hoặc thực hiện thay đổi. Bạn có thể gia hạn bên dưới.",
   "circle_removed_title": "Đã bị xóa khỏi vòng tròn",
   "circle_removed_message": "Bạn đã bị xóa khỏi vòng tròn \"{name}\".",
+  "circle_deleted_title": "Đã xóa vòng kết nối",
+  "circle_deleted_message": "Vòng kết nối \"{name}\" đã bị xóa.",
   "renew": "Gia hạn"
 }

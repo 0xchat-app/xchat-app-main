@@ -174,5 +174,7 @@
   "circle_expired_message_admin": "Este círculo ha expirado. Todavía puede ver los datos pero no puede enviar mensajes o hacer cambios. Puede renovar a continuación.",
   "circle_removed_title": "Eliminado del círculo",
   "circle_removed_message": "Ha sido eliminado del círculo \"{name}\".",
+  "circle_deleted_title": "Círculo eliminado",
+  "circle_deleted_message": "El círculo \"{name}\" ha sido eliminado.",
   "renew": "Renovar"
 }

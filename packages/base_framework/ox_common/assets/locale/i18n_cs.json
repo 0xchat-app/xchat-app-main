@@ -175,5 +175,7 @@
   "circle_expired_message_admin": "Tento kruh vypršel. Stále můžete prohlížet data, ale nemůžete odesílat zprávy nebo provádět změny. Můžete obnovit níže.",
   "circle_removed_title": "Odebrán z kruhu",
   "circle_removed_message": "Byli jste odebráni z kruhu \"{name}\".",
+  "circle_deleted_title": "Kruh byl smazán",
+  "circle_deleted_message": "Kruh \"{name}\" byl smazán.",
   "renew": "Obnovit"
 }

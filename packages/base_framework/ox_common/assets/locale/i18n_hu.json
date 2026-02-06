@@ -175,5 +175,7 @@
   "circle_expired_message_admin": "Ez a kör lejárt. Továbbra is megtekintheti az adatokat, de nem küldhet üzeneteket vagy nem végezhet módosításokat. Az alábbiakban megújíthatja.",
   "circle_removed_title": "Eltávolítva a körből",
   "circle_removed_message": "Eltávolították Önt a \"{name}\" körből.",
+  "circle_deleted_title": "A kör törölve",
+  "circle_deleted_message": "A \"{name}\" kör törölve lett.",
   "renew": "Megújítás"
 }

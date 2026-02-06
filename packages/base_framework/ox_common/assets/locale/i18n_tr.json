@@ -174,5 +174,7 @@
   "circle_expired_message_admin": "Bu çemberin süresi doldu. Verileri hala görüntüleyebilirsiniz ancak mesaj gönderemez veya değişiklik yapamazsınız. Aşağıdan yenileyebilirsiniz.",
   "circle_removed_title": "Çemberden kaldırıldı",
   "circle_removed_message": "\"{name}\" çemberinden kaldırıldınız.",
+  "circle_deleted_title": "Çember silindi",
+  "circle_deleted_message": "\"{name}\" çemberi silindi.",
   "renew": "Yenile"
 }

@@ -175,5 +175,7 @@
   "circle_expired_message_admin": "Denne cirkel er udløbet. Du kan stadig se data, men kan ikke sende beskeder eller foretage ændringer. Du kan fornye nedenfor.",
   "circle_removed_title": "Fjernet fra cirkel",
   "circle_removed_message": "Du er blevet fjernet fra cirklen \"{name}\".",
+  "circle_deleted_title": "Cirkel slettet",
+  "circle_deleted_message": "Cirklen \"{name}\" er blevet slettet.",
   "renew": "Forny"
 }

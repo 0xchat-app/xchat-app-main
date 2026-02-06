@@ -174,5 +174,7 @@
   "circle_expired_message_admin": "このサークルの有効期限が切れました。データの閲覧は可能ですが、メッセージの送信や変更はできません。下記で更新できます。",
   "circle_removed_title": "サークルから削除されました",
   "circle_removed_message": "「{name}」サークルから削除されました。",
+  "circle_deleted_title": "サークルが削除されました",
+  "circle_deleted_message": "サークル「{name}」は削除されました。",
   "renew": "更新"
 }

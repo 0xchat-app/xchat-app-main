@@ -174,5 +174,7 @@
   "circle_expired_message_admin": "Ten krąg wygasł. Możesz nadal przeglądać dane, ale nie możesz wysyłać wiadomości ani wprowadzać zmian. Możesz odnowić poniżej.",
   "circle_removed_title": "Usunięto z kręgu",
   "circle_removed_message": "Zostałeś usunięty z kręgu \"{name}\".",
+  "circle_deleted_title": "Krąg usunięty",
+  "circle_deleted_message": "Krąg \"{name}\" został usunięty.",
   "renew": "Odnów"
 }

@@ -175,5 +175,7 @@
   "circle_expired_message_admin": "Questo cerchio è scaduto. Puoi ancora visualizzare i dati ma non puoi inviare messaggi o apportare modifiche. Puoi rinnovare di seguito.",
   "circle_removed_title": "Rimosso dal cerchio",
   "circle_removed_message": "Sei stato rimosso dal cerchio \"{name}\".",
+  "circle_deleted_title": "Cerchio eliminato",
+  "circle_deleted_message": "Il cerchio \"{name}\" è stato eliminato.",
   "renew": "Rinnova"
 }

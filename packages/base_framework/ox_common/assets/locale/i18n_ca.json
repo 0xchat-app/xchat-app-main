@@ -175,5 +175,7 @@
   "circle_expired_message_admin": "Aquest cercle ha caducat. Encara podeu veure les dades però no podeu enviar missatges o fer canvis. Podeu renovar a continuació.",
   "circle_removed_title": "Eliminat del cercle",
   "circle_removed_message": "Heu estat eliminat del cercle \"{name}\".",
+  "circle_deleted_title": "Cercle eliminat",
+  "circle_deleted_message": "El cercle \"{name}\" ha estat eliminat.",
   "renew": "Renovar"
 }

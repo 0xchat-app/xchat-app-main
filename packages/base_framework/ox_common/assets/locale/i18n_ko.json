@@ -174,5 +174,7 @@
   "circle_expired_message_admin": "이 서클이 만료되었습니다. 데이터는 계속 볼 수 있지만 메시지를 보내거나 변경할 수 없습니다. 아래에서 갱신할 수 있습니다.",
   "circle_removed_title": "서클에서 제거됨",
   "circle_removed_message": "\"{name}\" 서클에서 제거되었습니다.",
+  "circle_deleted_title": "서클이 삭제됨",
+  "circle_deleted_message": "\"{name}\" 서클이 삭제되었습니다.",
   "renew": "갱신"
 }

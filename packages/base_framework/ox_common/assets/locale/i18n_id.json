@@ -175,5 +175,7 @@
   "circle_expired_message_admin": "Lingkaran ini telah kedaluwarsa. Anda masih dapat melihat data tetapi tidak dapat mengirim pesan atau melakukan perubahan. Anda dapat memperpanjang di bawah.",
   "circle_removed_title": "Dihapus dari lingkaran",
   "circle_removed_message": "Anda telah dihapus dari lingkaran \"{name}\".",
+  "circle_deleted_title": "Lingkaran dihapus",
+  "circle_deleted_message": "Lingkaran \"{name}\" telah dihapus.",
   "renew": "Perpanjang"
 }
