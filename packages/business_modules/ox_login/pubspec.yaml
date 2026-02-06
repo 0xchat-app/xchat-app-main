@@ -14,6 +14,8 @@ dependencies:
   url_launcher: ^6.0.12
   qr_flutter: ^4.0.0
 
+  chatcore:
+    path: ../../0xchat-core
   ox_common:
     path: ../../base_framework/ox_common
   ox_module_service:

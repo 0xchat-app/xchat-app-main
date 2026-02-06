@@ -1,7 +1,9 @@
+import 'package:chatcore/chat-core.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/login/circle_service.dart';
+import 'package:ox_common/log_util.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/color_extension.dart';
@@ -351,7 +353,7 @@ class _CircleActivatedPageState extends State<CircleActivatedPage> {
 
         try {
           OXLoading.show();
-          
+
           final circle = LoginManager.instance.currentCircle;
           if (circle == null) {
             OXLoading.dismiss();
@@ -359,9 +361,31 @@ class _CircleActivatedPageState extends State<CircleActivatedPage> {
             return false;
           }
 
+          final trimmedName = newName.trim();
+
+          // If this is a paid relay, update tenant name on server first (same as circle_detail_page)
+          if (CircleApi.isPaidRelay(circle.relayUrl)) {
+            try {
+              await CircleMemberService.sharedInstance.updateTenant(
+                name: trimmedName,
+              );
+            } catch (e) {
+              OXLoading.dismiss();
+              LogUtil.e(() => 'Failed to update tenant name on server: $e');
+              final errorMessage = e.toString().replaceFirst('Exception: ', '');
+              CommonToast.instance.show(
+                context,
+                errorMessage.isNotEmpty
+                    ? errorMessage
+                    : Localized.text('ox_common.operation_failed'),
+              );
+              return false;
+            }
+          }
+
           final updatedCircle = await CircleService.updateCircleName(
             circle.id,
-            newName.trim(),
+            trimmedName,
           );
 
           if (updatedCircle == null) {
@@ -371,10 +395,10 @@ class _CircleActivatedPageState extends State<CircleActivatedPage> {
           }
 
           OXLoading.dismiss();
-          
+
           setState(() {
-            _circleName = newName.trim();
-            _nameController.text = newName.trim();
+            _circleName = trimmedName;
+            _nameController.text = trimmedName;
           });
 
           return true;
