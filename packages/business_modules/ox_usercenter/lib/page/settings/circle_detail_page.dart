@@ -50,7 +50,8 @@ class CircleDetailPage extends StatefulWidget {
   State<CircleDetailPage> createState() => _CircleDetailPageState();
 }
 
-class _CircleDetailPageState extends State<CircleDetailPage> {
+class _CircleDetailPageState extends State<CircleDetailPage>
+    with WidgetsBindingObserver {
   late String _circleName;
   bool _isOwner = false;
   late ValueNotifier<String> _renewDate$;
@@ -64,6 +65,7 @@ class _CircleDetailPageState extends State<CircleDetailPage> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _circleName = widget.circle.name;
     _renewDate$ = ValueNotifier<String>('Dec 31, 2025');
     _subscriptionStatus$ = ValueNotifier<String?>(null);
@@ -87,6 +89,7 @@ class _CircleDetailPageState extends State<CircleDetailPage> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     if (_stateListener != null) {
       LoginManager.instance.state$.removeListener(_stateListener!);
     }
@@ -94,6 +97,20 @@ class _CircleDetailPageState extends State<CircleDetailPage> {
     _subscriptionStatus$.dispose();
     _fileServerName$.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && mounted) {
+      _refreshCircleInfo();
+    }
+  }
+
+  /// Refresh circle info when app returns from background.
+  Future<void> _refreshCircleInfo() async {
+    _loadLocalData();
+    await _loadSubscriptionInfo();
+    _loadFileServerInfo();
   }
 
   void _checkIfOwner() {
