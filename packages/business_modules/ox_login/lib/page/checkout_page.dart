@@ -168,7 +168,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         : Localized.text('ox_login.yearly');
     final planName = _planDisplayName(t);
     final membersText = '${t.maxUsers} ${Localized.text('ox_login.max_users')}';
-    final storageText = Localized.text('ox_login.tb_storage');
+    final storageText = Localized.text('ox_login.unlimited_secure_storage');
     return Container(
       padding: EdgeInsets.all(20.px),
       decoration: BoxDecoration(
