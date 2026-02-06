@@ -37,17 +37,24 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
     userNotifier = LoginUserNotifier.instance;
   }
 
+  bool _isPaidRelay() {
+    final circle = LoginManager.instance.currentCircle;
+    return circle != null && CircleApi.isPaidRelay(circle.relayUrl);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isPaidRelay = _isPaidRelay();
     return CLScaffold(
       appBar: CLAppBar(
         title: 'Profile',
         previousPageTitle: widget.previousPageTitle,
         actions: [
-          CLButton.icon(
-            icon: _isRefreshing ? Icons.refresh : Icons.refresh_outlined,
-            onTap: _isRefreshing ? null : refreshProfile,
-          ),
+          if (!isPaidRelay)
+            CLButton.icon(
+              icon: _isRefreshing ? Icons.refresh : Icons.refresh_outlined,
+              onTap: _isRefreshing ? null : refreshProfile,
+            ),
         ],
       ),
       isSectionListPage: true,
