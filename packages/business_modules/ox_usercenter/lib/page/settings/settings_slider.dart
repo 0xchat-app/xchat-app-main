@@ -438,6 +438,18 @@ class SettingSliderState extends State<SettingSlider> {
                       ),
                     ),
                   ),
+                // Arrow indicator for navigation - only show for paid relay
+                if (_isPaidRelay)
+                  Padding(
+                    padding: EdgeInsets.only(right: CLLayout.horizontalPadding),
+                    child: Icon(
+                      PlatformStyle.isUseMaterial
+                          ? Icons.chevron_right
+                          : CupertinoIcons.chevron_right,
+                      color: ColorToken.onSurfaceVariant.of(context),
+                      size: 20.px,
+                    ),
+                  ),
               ],
             ),
           ),
