@@ -15,6 +15,7 @@ import 'package:ox_common/purchase/purchase_manager.dart';
 import 'package:ox_common/utils/extension.dart';
 import 'package:ox_common/circle/page/circle_expired_prompt_dialog.dart';
 import 'package:ox_common/log_util.dart';
+import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import '../utils/ox_chat_binding.dart';
 import 'database_manager.dart';
@@ -120,6 +121,7 @@ class LoginManager {
   // Persistence storage keys
   static const String _keyLastPubkey = 'login_manager_last_pubkey';
   static const String _keySignerPrefix = 'login_manager_signer_';
+  static const String _tenantNotFoundErrorCode = 'TENANT_NOT_FOUND';
 }
 
 /// Account management related methods
@@ -1133,7 +1135,8 @@ extension LoginManagerCircle on LoginManager {
     return await Account.sharedInstance.loadTenantInfoFromCircleDB(circleId);
   }
 
-  /// Internal: fetch tenant info, update mem + store, handle notfound/expired.
+  /// Internal: fetch tenant info, update mem + store, handle tenant-not-found (404) / expired.
+  /// Server returns 404 with code TENANT_NOT_FOUND when circle was deleted remotely.
   Future<void> _fetchAndUpdateTenantInfo(Circle circle) async {
     if (!circle.isPaidRelay) return;
     try {
@@ -1142,11 +1145,6 @@ extension LoginManagerCircle on LoginManager {
         circleId: circle.id,
       );
       final statusLower = tenantInfo.status.toLowerCase();
-
-      if (statusLower == 'notfound') {
-        await deleteCircle(circle.id);
-        return;
-      }
 
       await Account.sharedInstance.saveTenantInfoToCircleDB(
         circleId: circle.id,
@@ -1172,7 +1170,34 @@ extension LoginManagerCircle on LoginManager {
         CircleExpiredPromptDialog.show(OXNavigator.rootContext, circle);
       }
     } catch (e) {
+      final msg = e.toString();
+      if (msg.contains(LoginManager._tenantNotFoundErrorCode)) {
+        await deleteCircleAndShowDeletedPrompt(circle.id, circle.name);
+        return;
+      }
       LogUtils.w(() => 'Fetch and update tenant info failed: $e');
+    }
+  }
+
+  /// Called when circle was deleted remotely (API 404 TENANT_NOT_FOUND or relay OK "tenant not found").
+  /// Deletes circle locally and shows "circle deleted" prompt.
+  Future<void> deleteCircleAndShowDeletedPrompt(String circleId, String circleName) async {
+    _showCircleDeletedPrompt(circleName);
+    await deleteCircle(circleId);
+  }
+
+  void _showCircleDeletedPrompt(String circleName) {
+    final context = OXNavigator.navigatorKey.currentContext;
+    if (context != null && context.mounted) {
+      OXNavigator.popToRoot(context);
+      final title = Localized.text('ox_common.circle_deleted_title');
+      final content = Localized.text('ox_common.circle_deleted_message').replaceAll('{name}', circleName);
+      CLAlertDialog.show<void>(
+        context: context,
+        title: title,
+        content: content,
+        actions: [CLAlertAction.ok()],
+      );
     }
   }
 

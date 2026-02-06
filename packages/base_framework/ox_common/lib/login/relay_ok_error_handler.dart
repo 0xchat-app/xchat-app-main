@@ -11,7 +11,8 @@ import 'login_manager.dart';
 /// Registers [Account.onRelayOkError] in ox_common.
 /// Handles relay OK errors (status false + non-empty message):
 /// - "tenant expired" → show circle expired toast
-/// - "not a member of this tenant" → delete current circle and show dialog with circle name
+/// - "tenant not found" → delete circle locally and show "circle deleted" dialog
+/// - "not a member of this tenant" → delete current circle and show "removed from circle" dialog
 void registerRelayOkErrorHandler() {
   Account.onRelayOkError = (OKEvent ok) {
     final msg = ok.message.toLowerCase();
@@ -22,6 +23,11 @@ void registerRelayOkErrorHandler() {
           context,
           Localized.text('ox_common.circle_expired_title'),
         );
+      }
+    } else if (msg.contains('tenant not found')) {
+      final circle = LoginManager.instance.currentCircle;
+      if (circle != null) {
+        unawaited(LoginManager.instance.deleteCircleAndShowDeletedPrompt(circle.id, circle.name));
       }
     } else if (msg.contains('not a member of this tenant')) {
       final circle = LoginManager.instance.currentCircle;
