@@ -189,8 +189,6 @@ class _FileServerPageState extends State<FileServerPage> {
               ? [
                   LabelItemModel(
                     title: Localized.text('ox_usercenter.file_server_info_empty'),
-                    subtitle: '',
-                    onTap: null,
                   ),
                 ]
               : list
