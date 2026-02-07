@@ -1,10 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:ox_common/component.dart';
+import 'package:ox_common/purchase/purchase_manager.dart';
+import 'package:ox_common/purchase/subscription_period.dart';
+import 'package:ox_common/purchase/subscription_product_prices.dart';
+import 'package:ox_common/purchase/subscription_registry.dart';
+import 'package:ox_common/purchase/subscription_tier.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 
-class PrivateCircleLearnMorePage extends StatelessWidget {
+class PrivateCircleLearnMorePage extends StatefulWidget {
   const PrivateCircleLearnMorePage({super.key});
+
+  @override
+  State<PrivateCircleLearnMorePage> createState() => _PrivateCircleLearnMorePageState();
+}
+
+class _PrivateCircleLearnMorePageState extends State<PrivateCircleLearnMorePage> {
+  late final String _groupId;
+  late final List<SubscriptionTier> _tiers;
+
+  @override
+  void initState() {
+    super.initState();
+    _groupId = SubscriptionRegistry.instance.groups.first.id;
+    _tiers = SubscriptionRegistry.instance.tiersForGroup(_groupId);
+    PurchaseManager.instance.refreshAllPrices();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +53,19 @@ class PrivateCircleLearnMorePage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  static String _planDisplayName(SubscriptionTier t) {
+    switch (t.id) {
+      case SubscriptionTierIds.lovers:
+        return Localized.text('ox_login.capacity_2_members');
+      case SubscriptionTierIds.family:
+        return Localized.text('ox_login.capacity_6_members');
+      case SubscriptionTierIds.community:
+        return Localized.text('ox_login.capacity_50_members');
+      default:
+        return '${t.maxUsers} ${Localized.text('ox_login.max_users')}';
+    }
   }
 
   Widget _buildHeader(BuildContext context) {
@@ -207,26 +241,27 @@ class PrivateCircleLearnMorePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildPricingItem(
-                context,
-                '2',
-                '0.99',
-                '9.99',
-              ),
-              _buildDivider(context),
-              _buildPricingItem(
-                context,
-                '6',
-                '2.99',
-                '29.99',
-              ),
-              _buildDivider(context),
-              _buildPricingItem(
-                context,
-                '20',
-                '9.99',
-                '99.99',
-              ),
+              for (var i = 0; i < _tiers.length; i++) ...[
+                if (i > 0) _buildDivider(context),
+                _buildPricingItem(
+                  context,
+                  _tiers[i],
+                  SubscriptionProductPrices.instance.getNotifier(
+                    SubscriptionRegistry.instance.productIdFor(
+                      _groupId,
+                      _tiers[i].id,
+                      SubscriptionPeriod.monthly,
+                    ),
+                  ),
+                  SubscriptionProductPrices.instance.getNotifier(
+                    SubscriptionRegistry.instance.productIdFor(
+                      _groupId,
+                      _tiers[i].id,
+                      SubscriptionPeriod.yearly,
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
         ),
@@ -241,7 +276,12 @@ class PrivateCircleLearnMorePage extends StatelessWidget {
     );
   }
 
-  Widget _buildPricingItem(BuildContext context, String members, String monthlyPrice, String yearlyPrice) {
+  Widget _buildPricingItem(
+    BuildContext context,
+    SubscriptionTier tier,
+    ValueNotifier<String?> monthlyPriceNotifier,
+    ValueNotifier<String?> yearlyPriceNotifier,
+  ) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 12.px),
       child: Column(
@@ -252,7 +292,7 @@ class PrivateCircleLearnMorePage extends StatelessWidget {
             textBaseline: TextBaseline.alphabetic,
             children: [
               CLText.titleMedium(
-                '$members Members',
+                _planDisplayName(tier),
                 isBold: true,
               ),
               SizedBox(width: 8.px),
@@ -267,14 +307,37 @@ class PrivateCircleLearnMorePage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
             children: [
-              CLText.titleLarge(
-                '\$$monthlyPrice/mo',
-                isBold: true,
+              ValueListenableBuilder<String?>(
+                valueListenable: monthlyPriceNotifier,
+                builder: (_, monthlyPrice, __) {
+                  if (monthlyPrice == null || monthlyPrice.isEmpty) {
+                    return SizedBox(
+                      width: 24.px,
+                      height: 24.px,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: ColorToken.xChat.of(context),
+                      ),
+                    );
+                  }
+                  return CLText.titleLarge(
+                    '$monthlyPrice${Localized.text('ox_login.per_month')}',
+                    isBold: true,
+                  );
+                },
               ),
               SizedBox(width: 12.px),
-              CLText.bodySmall(
-                '\$$yearlyPrice/year',
-                colorToken: ColorToken.onSurfaceVariant,
+              ValueListenableBuilder<String?>(
+                valueListenable: yearlyPriceNotifier,
+                builder: (_, yearlyPrice, __) {
+                  if (yearlyPrice == null || yearlyPrice.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+                  return CLText.bodySmall(
+                    '$yearlyPrice${Localized.text('ox_login.per_year')}',
+                    colorToken: ColorToken.onSurfaceVariant,
+                  );
+                },
               ),
             ],
           ),
