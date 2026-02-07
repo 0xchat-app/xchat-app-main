@@ -110,6 +110,8 @@
   "monthly": "Monthly",
   "yearly": "Yearly",
   "save_17_percent": "SAVE 17%",
+  "save_percent": "SAVE {percent}%",
+  "save_label": "Save",
   "most_popular": "Most Popular",
   "max_users": "Max Users",
   "storage": "Storage",
@@ -143,7 +145,8 @@
   "capacity_50_members_desc": "For groups & creators.",
   
   "duration_selection_title": "How often to pay?",
-  "duration_selection_subtitle": "Save up to 17% with yearly billing.",
+  "duration_selection_subtitle": "Save up to {percent}% with yearly billing.",
+  "duration_selection_subtitle_fallback": "Save with yearly billing.",
   "save_20_percent": "SAVE 17%",
   "billed_every_month": "Billed every month",
   "billed_every_12_months": "Billed every 12 months",

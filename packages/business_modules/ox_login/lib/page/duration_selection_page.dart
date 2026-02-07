@@ -43,6 +43,17 @@ class _DurationSelectionPageState extends State<DurationSelectionPage> {
   late final ValueNotifier<String?> _monthlyPriceNotifier =
       SubscriptionProductPrices.instance.getNotifier(_monthlyProductId);
 
+  /// Yearly savings vs 12× monthly: (12*monthly - yearly) / (12*monthly) * 100. Null if prices not available.
+  int? get _yearlySavingsPercent {
+    final monthlyRaw = SubscriptionProductPrices.instance.getRawPrice(_monthlyProductId);
+    final yearlyRaw = SubscriptionProductPrices.instance.getRawPrice(_yearlyProductId);
+    if (monthlyRaw == null || yearlyRaw == null || monthlyRaw <= 0) return null;
+    final twelveMonthly = 12 * monthlyRaw;
+    if (twelveMonthly <= 0) return null;
+    final percent = (twelveMonthly - yearlyRaw) / twelveMonthly * 100;
+    return (percent.clamp(0.0, 100.0).round());
+  }
+
   @override
   void initState() {
     super.initState();
@@ -130,42 +141,62 @@ class _DurationSelectionPageState extends State<DurationSelectionPage> {
   }
 
   Widget _buildHeader() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CLText.titleLarge(
-          Localized.text('ox_login.duration_selection_title'),
-          colorToken: ColorToken.onSurface,
-          isBold: true,
-        ),
-        SizedBox(height: 8.px),
-        CLText.bodyMedium(
-          Localized.text('ox_login.duration_selection_subtitle'),
-          colorToken: ColorToken.onSurfaceVariant,
-        ),
-      ],
+    return ListenableBuilder(
+      listenable: Listenable.merge([_yearlyPriceNotifier, _monthlyPriceNotifier]),
+      builder: (_, __) {
+        final percent = _yearlySavingsPercent;
+        final subtitle = percent != null
+            ? Localized.text('ox_login.duration_selection_subtitle').replaceAll('{percent}', '$percent')
+            : Localized.text('ox_login.duration_selection_subtitle_fallback');
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CLText.titleLarge(
+              Localized.text('ox_login.duration_selection_title'),
+              colorToken: ColorToken.onSurface,
+              isBold: true,
+            ),
+            SizedBox(height: 8.px),
+            CLText.bodyMedium(
+              subtitle,
+              colorToken: ColorToken.onSurfaceVariant,
+            ),
+          ],
+        );
+      },
     );
   }
 
   Widget _buildDurationOptions() {
-    return Column(
-      children: [
-        _buildDurationOption(
-          period: SubscriptionPeriod.yearly,
-          priceNotifier: _yearlyPriceNotifier,
-          label: Localized.text('ox_login.yearly'),
-          billingText: Localized.text('ox_login.billed_every_12_months'),
-          showSaveTag: true,
-        ),
-        SizedBox(height: 16.px),
-        _buildDurationOption(
-          period: SubscriptionPeriod.monthly,
-          priceNotifier: _monthlyPriceNotifier,
-          label: Localized.text('ox_login.monthly'),
-          billingText: Localized.text('ox_login.billed_every_month'),
-          showSaveTag: false,
-        ),
-      ],
+    return ListenableBuilder(
+      listenable: Listenable.merge([_yearlyPriceNotifier, _monthlyPriceNotifier]),
+      builder: (_, __) {
+        final percent = _yearlySavingsPercent;
+        final saveTagText = percent != null
+            ? Localized.text('ox_login.save_percent').replaceAll('{percent}', '$percent')
+            : Localized.text('ox_login.save_label');
+        return Column(
+          children: [
+            _buildDurationOption(
+              period: SubscriptionPeriod.yearly,
+              priceNotifier: _yearlyPriceNotifier,
+              label: Localized.text('ox_login.yearly'),
+              billingText: Localized.text('ox_login.billed_every_12_months'),
+              showSaveTag: true,
+              saveTagText: saveTagText,
+            ),
+            SizedBox(height: 16.px),
+            _buildDurationOption(
+              period: SubscriptionPeriod.monthly,
+              priceNotifier: _monthlyPriceNotifier,
+              label: Localized.text('ox_login.monthly'),
+              billingText: Localized.text('ox_login.billed_every_month'),
+              showSaveTag: false,
+              saveTagText: '',
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -175,6 +206,7 @@ class _DurationSelectionPageState extends State<DurationSelectionPage> {
     required String label,
     required String billingText,
     required bool showSaveTag,
+    required String saveTagText,
   }) {
     final isSelected = _selectedPeriod == period;
 
@@ -263,7 +295,7 @@ class _DurationSelectionPageState extends State<DurationSelectionPage> {
             ),
           ),
         ),
-        if (showSaveTag && isSelected)
+        if (showSaveTag && isSelected && saveTagText.isNotEmpty)
           Positioned(
             top: -8.px,
             right: 8.px,
@@ -277,7 +309,7 @@ class _DurationSelectionPageState extends State<DurationSelectionPage> {
                 borderRadius: BorderRadius.circular(4.px),
               ),
               child: CLText.labelSmall(
-                Localized.text('ox_login.save_20_percent'),
+                saveTagText,
                 customColor: Colors.white,
               ),
             ),

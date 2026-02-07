@@ -67,6 +67,9 @@ class SubscriptionProductPrices {
   /// Returns current lowest price (display string) among products that have a price; null if none. See [lowestPriceNotifier] for reactive UI.
   String? getLowestPrice() => lowestPriceNotifier.value;
 
+  /// Returns raw numeric price for [productId] if set; null otherwise. Used to compute yearly savings vs monthly.
+  double? getRawPrice(String productId) => _rawPrices[productId];
+
   /// Called by PurchaseManager on dispose (e.g. logout). Clears all notifier values and [lowestPriceNotifier].
   void clear() {
     for (final n in _cache.values) {
