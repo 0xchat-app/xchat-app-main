@@ -72,8 +72,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
           _buildHeader(),
           SizedBox(height: 24.px),
           _buildOrderSummary(),
-          SizedBox(height: 24.px),
-          _buildGuarantees(),
         ],
       ),
     );
@@ -275,44 +273,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildGuarantees() {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Icon(
-              Icons.check_circle,
-              color: Colors.green,
-              size: 20.px,
-            ),
-            SizedBox(width: 8.px),
-            CLText.bodySmall(
-              Localized.text('ox_login.money_back_guarantee'),
-              colorToken: ColorToken.onSurfaceVariant,
-            ),
-          ],
-        ),
-        SizedBox(height: 12.px),
-        Row(
-          children: [
-            Icon(
-              Icons.lock,
-              color: ColorToken.onSurfaceVariant.of(context),
-              size: 20.px,
-            ),
-            SizedBox(width: 8.px),
-            CLText.bodySmall(
-              Platform.isIOS
-                  ? Localized.text('ox_login.secure_payment_apple')
-                  : Localized.text('ox_login.secure_payment_google'),
-              colorToken: ColorToken.onSurfaceVariant,
-            ),
-          ],
-        ),
-      ],
     );
   }
 
