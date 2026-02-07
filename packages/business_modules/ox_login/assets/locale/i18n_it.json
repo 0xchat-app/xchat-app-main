@@ -182,5 +182,6 @@
   "private_circle_pricing_20_members_monthly": "20 Membri: $9,99/mese",
   "private_circle_pricing_20_members_yearly": "20 Membri: $99,99/anno",
   "yearly_plan": "Piano annuale",
-  "private_circle_pricing_disclaimer": "Gli abbonamenti si rinnovano automaticamente a meno che il rinnovo automatico non sia disattivato almeno 24 ore prima della fine del periodo corrente."
+  "private_circle_pricing_disclaimer": "Gli abbonamenti si rinnovano automaticamente a meno che il rinnovo automatico non sia disattivato almeno 24 ore prima della fine del periodo corrente.",
+  "private_circle_pricing_disclaimer_android": "Gli abbonamenti si rinnovano automaticamente salvo cancellazione. La cancellazione ha effetto alla fine del periodo di fatturazione corrente."
 }

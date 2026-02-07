@@ -182,5 +182,6 @@
   "private_circle_pricing_20_members_monthly": "20 Membres: $9,99/mes",
   "private_circle_pricing_20_members_yearly": "20 Membres: $99,99/any",
   "yearly_plan": "Pla anual",
-  "private_circle_pricing_disclaimer": "Les subscripcions es renouen automàticament tret que la renovació automàtica estigui desactivada almenys 24 hores abans del final del període actual."
+  "private_circle_pricing_disclaimer": "Les subscripcions es renouen automàticament tret que la renovació automàtica estigui desactivada almenys 24 hores abans del final del període actual.",
+  "private_circle_pricing_disclaimer_android": "Les subscripcions es renouen automàticament tret que es cancel·lin. La cancel·lació té efecte al final del període de facturació actual."
 }

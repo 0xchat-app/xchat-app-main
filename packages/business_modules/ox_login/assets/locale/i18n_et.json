@@ -182,5 +182,6 @@
   "private_circle_pricing_20_members_monthly": "20 Liiget: $9,99/kuu",
   "private_circle_pricing_20_members_yearly": "20 Liiget: $99,99/aasta",
   "yearly_plan": "Aastane plaan",
-  "private_circle_pricing_disclaimer": "Tellimused uuendatakse automaatselt, välja arvatud juhul, kui automaatne uuendamine on välja lülitatud vähemalt 24 tundi enne praeguse perioodi lõppu."
+  "private_circle_pricing_disclaimer": "Tellimused uuendatakse automaatselt, välja arvatud juhul, kui automaatne uuendamine on välja lülitatud vähemalt 24 tundi enne praeguse perioodi lõppu.",
+  "private_circle_pricing_disclaimer_android": "Tellimused uuendatakse automaatselt, kui neid ei tühistata. Tühistamine jõustub praeguse arveldusperioodi lõpus."
 }

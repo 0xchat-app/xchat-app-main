@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/purchase/purchase_manager.dart';
@@ -267,7 +269,9 @@ class _PrivateCircleLearnMorePageState extends State<PrivateCircleLearnMorePage>
         ),
         SizedBox(height: 12.px),
         CLText.bodySmall(
-          Localized.text('ox_login.private_circle_pricing_disclaimer'),
+          Platform.isIOS
+              ? Localized.text('ox_login.private_circle_pricing_disclaimer')
+              : Localized.text('ox_login.private_circle_pricing_disclaimer_android'),
           colorToken: ColorToken.onSurfaceVariant,
           maxLines: null,
           textAlign: TextAlign.center,

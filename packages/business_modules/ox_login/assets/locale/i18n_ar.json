@@ -180,5 +180,6 @@
   "private_circle_pricing_20_members_monthly": "20 عضواً: 9.99 دولار/شهر",
   "private_circle_pricing_20_members_yearly": "20 عضواً: 99.99 دولار/سنة",
   "yearly_plan": "خطة سنوية",
-  "private_circle_pricing_disclaimer": "يتم تجديد الاشتراكات تلقائياً ما لم يتم إيقاف التجديد التلقائي قبل 24 ساعة على الأقل من نهاية الفترة الحالية."
+  "private_circle_pricing_disclaimer": "يتم تجديد الاشتراكات تلقائياً ما لم يتم إيقاف التجديد التلقائي قبل 24 ساعة على الأقل من نهاية الفترة الحالية.",
+  "private_circle_pricing_disclaimer_android": "يتم تجديد الاشتراكات تلقائياً ما لم يتم إلغاؤها. يُفعّل الإلغاء في نهاية فترة الفوترة الحالية."
 }

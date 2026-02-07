@@ -182,5 +182,6 @@
   "private_circle_pricing_20_members_monthly": "20 Üye: $9,99/ay",
   "private_circle_pricing_20_members_yearly": "20 Üye: $99,99/yıl",
   "yearly_plan": "Yıllık plan",
-  "private_circle_pricing_disclaimer": "Abonelikler, mevcut dönemin sonundan en az 24 saat önce otomatik yenileme kapatılmadığı sürece otomatik olarak yenilenir."
+  "private_circle_pricing_disclaimer": "Abonelikler, mevcut dönemin sonundan en az 24 saat önce otomatik yenileme kapatılmadığı sürece otomatik olarak yenilenir.",
+  "private_circle_pricing_disclaimer_android": "İptal edilmedikçe abonelikler otomatik olarak yenilenir. İptal, mevcut faturalandırma döneminin sonunda yürürlüğe girer."
 }

@@ -182,5 +182,6 @@
   "private_circle_pricing_20_members_monthly": "20メンバー: $9.99/月",
   "private_circle_pricing_20_members_yearly": "20メンバー: $99.99/年",
   "yearly_plan": "年間プラン",
-  "private_circle_pricing_disclaimer": "サブスクリプションは、現在の期間の終了の少なくとも24時間前に自動更新がオフにされない限り、自動的に更新されます。"
+  "private_circle_pricing_disclaimer": "サブスクリプションは、現在の期間の終了の少なくとも24時間前に自動更新がオフにされない限り、自動的に更新されます。",
+  "private_circle_pricing_disclaimer_android": "サブスクリプションは、キャンセルしない限り自動更新されます。キャンセルは現在の請求期間の終了時に有効になります。"
 }

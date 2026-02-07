@@ -182,5 +182,6 @@
   "private_circle_pricing_20_members_monthly": "20 名成員：$9.99/月",
   "private_circle_pricing_20_members_yearly": "20 名成員：$99.99/年",
   "yearly_plan": "年度方案",
-  "private_circle_pricing_disclaimer": "除非在目前期間結束前至少 24 小時關閉自動續訂，否則訂閱將自動續訂。"
+  "private_circle_pricing_disclaimer": "除非在目前期間結束前至少 24 小時關閉自動續訂，否則訂閱將自動續訂。",
+  "private_circle_pricing_disclaimer_android": "訂閱將自動續訂，除非取消。取消將在目前計費週期結束時生效。"
 }

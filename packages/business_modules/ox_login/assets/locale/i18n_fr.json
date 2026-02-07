@@ -182,5 +182,6 @@
   "private_circle_pricing_20_members_monthly": "20 Membres: $9,99/mois",
   "private_circle_pricing_20_members_yearly": "20 Membres: $99,99/an",
   "yearly_plan": "Plan annuel",
-  "private_circle_pricing_disclaimer": "Les abonnements sont renouvelés automatiquement sauf si le renouvellement automatique est désactivé au moins 24 heures avant la fin de la période en cours."
+  "private_circle_pricing_disclaimer": "Les abonnements sont renouvelés automatiquement sauf si le renouvellement automatique est désactivé au moins 24 heures avant la fin de la période en cours.",
+  "private_circle_pricing_disclaimer_android": "Les abonnements se renouvellent automatiquement sauf annulation. L'annulation prend effet à la fin de la période de facturation en cours."
 }

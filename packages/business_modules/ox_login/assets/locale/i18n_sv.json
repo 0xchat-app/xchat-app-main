@@ -182,5 +182,6 @@
   "private_circle_pricing_20_members_monthly": "20 Medlemmar: $9,99/mån",
   "private_circle_pricing_20_members_yearly": "20 Medlemmar: $99,99/år",
   "yearly_plan": "Årsplan",
-  "private_circle_pricing_disclaimer": "Prenumerationer förnyas automatiskt om automatisk förnyelse inte stängs av minst 24 timmar före slutet av den nuvarande perioden."
+  "private_circle_pricing_disclaimer": "Prenumerationer förnyas automatiskt om automatisk förnyelse inte stängs av minst 24 timmar före slutet av den nuvarande perioden.",
+  "private_circle_pricing_disclaimer_android": "Prenumerationer förnyas automatiskt om de inte avbryts. Avbokning träder i kraft i slutet av den aktuella faktureringsperioden."
 }

@@ -182,5 +182,6 @@
   "private_circle_pricing_20_members_monthly": "20 Biedri: $9,99/mēnesī",
   "private_circle_pricing_20_members_yearly": "20 Biedri: $99,99/gadā",
   "yearly_plan": "Gada plāns",
-  "private_circle_pricing_disclaimer": "Abonementi tiek automātiski pagarināti, ja vien automātiskā pagarināšana nav izslēgta vismaz 24 stundas pirms pašreizējā perioda beigām."
+  "private_circle_pricing_disclaimer": "Abonementi tiek automātiski pagarināti, ja vien automātiskā pagarināšana nav izslēgta vismaz 24 stundas pirms pašreizējā perioda beigām.",
+  "private_circle_pricing_disclaimer_android": "Abonementi tiek automātiski pagarināti, ja vien tos neatsaka. Atsaukšana stājas spēkā pašreizējā norēķinu perioda beigās."
 }

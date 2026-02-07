@@ -182,5 +182,6 @@
   "private_circle_pricing_20_members_monthly": "20명: $9.99/월",
   "private_circle_pricing_20_members_yearly": "20명: $99.99/년",
   "yearly_plan": "연간 플랜",
-  "private_circle_pricing_disclaimer": "구독은 현재 기간 종료 최소 24시간 전에 자동 갱신이 꺼지지 않는 한 자동으로 갱신됩니다."
+  "private_circle_pricing_disclaimer": "구독은 현재 기간 종료 최소 24시간 전에 자동 갱신이 꺼지지 않는 한 자동으로 갱신됩니다.",
+  "private_circle_pricing_disclaimer_android": "취소하지 않는 한 구독이 자동으로 갱신됩니다. 취소는 현재 결제 기간 종료 시점에 적용됩니다."
 }

@@ -182,5 +182,6 @@
   "private_circle_pricing_20_members_monthly": "20 Členů: $9,99/měsíc",
   "private_circle_pricing_20_members_yearly": "20 Členů: $99,99/rok",
   "yearly_plan": "Roční plán",
-  "private_circle_pricing_disclaimer": "Předplatná se automaticky obnovují, pokud není automatické obnovení vypnuto alespoň 24 hodin před koncem aktuálního období."
+  "private_circle_pricing_disclaimer": "Předplatná se automaticky obnovují, pokud není automatické obnovení vypnuto alespoň 24 hodin před koncem aktuálního období.",
+  "private_circle_pricing_disclaimer_android": "Předplatná se automaticky obnovují, pokud nejsou zrušena. Zrušení nabývá účinnosti na konci aktuálního fakturačního období."
 }

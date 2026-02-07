@@ -190,5 +190,6 @@
   "private_circle_pricing_20_members_monthly": "20 عضو: $9.99/ماه",
   "private_circle_pricing_20_members_yearly": "20 عضو: $99.99/سال",
   "yearly_plan": "طرح سالانه",
-  "private_circle_pricing_disclaimer": "اشتراک‌ها به طور خودکار تمدید می‌شوند مگر اینکه تمدید خودکار حداقل 24 ساعت قبل از پایان دوره فعلی خاموش شود."
+  "private_circle_pricing_disclaimer": "اشتراک‌ها به طور خودکار تمدید می‌شوند مگر اینکه تمدید خودکار حداقل 24 ساعت قبل از پایان دوره فعلی خاموش شود.",
+  "private_circle_pricing_disclaimer_android": "اشتراک‌ها به‌طور خودکار تمدید می‌شوند مگر اینکه لغو شوند. لغو در پایان دوره صورتحساب فعلی اعمال می‌شود."
 }

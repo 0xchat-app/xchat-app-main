@@ -182,5 +182,6 @@
   "private_circle_pricing_20_members_monthly": "20 Üzv: $9,99/ay",
   "private_circle_pricing_20_members_yearly": "20 Üzv: $99,99/il",
   "yearly_plan": "İllik plan",
-  "private_circle_pricing_disclaimer": "Abunəliklər avtomatik olaraq yenilənir, cari dövrün sonundan ən azı 24 saat əvvəl avtomatik yeniləmə söndürülməyibsə."
+  "private_circle_pricing_disclaimer": "Abunəliklər avtomatik olaraq yenilənir, cari dövrün sonundan ən azı 24 saat əvvəl avtomatik yeniləmə söndürülməyibsə.",
+  "private_circle_pricing_disclaimer_android": "Ləğv edilməyənə qədər abunəliklər avtomatik yenilənir. Ləğv cari ödəniş dövrünün sonunda qüvvəyə minir."
 }

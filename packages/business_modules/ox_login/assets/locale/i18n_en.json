@@ -195,5 +195,6 @@
   "private_circle_pricing_20_members_monthly": "20 Members: $9.99/month",
   "private_circle_pricing_20_members_yearly": "20 Members: $99.99/year",
   "yearly_plan": "Yearly plan",
-  "private_circle_pricing_disclaimer": "Subscriptions automatically renew unless auto-renew is turned off at least 24-hours before the end of the current period."
+  "private_circle_pricing_disclaimer": "Subscriptions automatically renew unless auto-renew is turned off at least 24-hours before the end of the current period.",
+  "private_circle_pricing_disclaimer_android": "Subscriptions automatically renew unless canceled. Cancellation takes effect at the end of the current billing period."
 }

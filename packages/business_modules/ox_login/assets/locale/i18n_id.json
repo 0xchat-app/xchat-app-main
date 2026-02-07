@@ -182,5 +182,6 @@
   "private_circle_pricing_20_members_monthly": "20 Anggota: $9,99/bulan",
   "private_circle_pricing_20_members_yearly": "20 Anggota: $99,99/tahun",
   "yearly_plan": "Paket tahunan",
-  "private_circle_pricing_disclaimer": "Langganan diperpanjang secara otomatis kecuali perpanjangan otomatis dimatikan setidaknya 24 jam sebelum akhir periode saat ini."
+  "private_circle_pricing_disclaimer": "Langganan diperpanjang secara otomatis kecuali perpanjangan otomatis dimatikan setidaknya 24 jam sebelum akhir periode saat ini.",
+  "private_circle_pricing_disclaimer_android": "Langganan diperpanjang secara otomatis kecuali dibatalkan. Pembatalan berlaku pada akhir periode penagihan saat ini."
 }

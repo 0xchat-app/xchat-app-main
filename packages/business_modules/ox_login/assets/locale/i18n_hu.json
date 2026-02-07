@@ -182,5 +182,6 @@
   "private_circle_pricing_20_members_monthly": "20 Tag: $9,99/hó",
   "private_circle_pricing_20_members_yearly": "20 Tag: $99,99/év",
   "yearly_plan": "Éves terv",
-  "private_circle_pricing_disclaimer": "Az előfizetések automatikusan megújulnak, kivéve, ha az automatikus megújítás legalább 24 órával a jelenlegi időszak vége előtt ki van kapcsolva."
+  "private_circle_pricing_disclaimer": "Az előfizetések automatikusan megújulnak, kivéve, ha az automatikus megújítás legalább 24 órával a jelenlegi időszak vége előtt ki van kapcsolva.",
+  "private_circle_pricing_disclaimer_android": "Az előfizetések automatikusan megújulnak, hacsak le nem mondják. A lemondás a jelenlegi számlázási időszak végén lép életbe."
 }

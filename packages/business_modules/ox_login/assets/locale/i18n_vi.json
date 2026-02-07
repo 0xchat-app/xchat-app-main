@@ -182,5 +182,6 @@
   "private_circle_pricing_20_members_monthly": "20 Thành viên: $9,99/tháng",
   "private_circle_pricing_20_members_yearly": "20 Thành viên: $99,99/năm",
   "yearly_plan": "Gói hàng năm",
-  "private_circle_pricing_disclaimer": "Đăng ký tự động gia hạn trừ khi tự động gia hạn được tắt ít nhất 24 giờ trước khi kết thúc thời gian hiện tại."
+  "private_circle_pricing_disclaimer": "Đăng ký tự động gia hạn trừ khi tự động gia hạn được tắt ít nhất 24 giờ trước khi kết thúc thời gian hiện tại.",
+  "private_circle_pricing_disclaimer_android": "Đăng ký tự động gia hạn trừ khi bị hủy. Việc hủy có hiệu lực vào cuối kỳ thanh toán hiện tại."
 }

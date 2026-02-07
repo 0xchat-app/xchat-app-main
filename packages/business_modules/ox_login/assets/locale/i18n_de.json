@@ -182,5 +182,6 @@
   "private_circle_pricing_20_members_monthly": "20 Mitglieder: $9,99/Monat",
   "private_circle_pricing_20_members_yearly": "20 Mitglieder: $99,99/Jahr",
   "yearly_plan": "Jahresplan",
-  "private_circle_pricing_disclaimer": "Abonnements werden automatisch verlängert, es sei denn, die automatische Verlängerung wird mindestens 24 Stunden vor Ende des aktuellen Zeitraums deaktiviert."
+  "private_circle_pricing_disclaimer": "Abonnements werden automatisch verlängert, es sei denn, die automatische Verlängerung wird mindestens 24 Stunden vor Ende des aktuellen Zeitraums deaktiviert.",
+  "private_circle_pricing_disclaimer_android": "Abonnements werden automatisch verlängert, sofern sie nicht gekündigt werden. Die Kündigung wird am Ende des aktuellen Abrechnungszeitraums wirksam."
 }

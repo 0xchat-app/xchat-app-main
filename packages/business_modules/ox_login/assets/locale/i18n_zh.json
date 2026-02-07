@@ -118,6 +118,7 @@
   "private_circle_pricing_20_members_yearly": "20 名成员：$99.99/年",
   "yearly_plan": "年度方案",
   "private_circle_pricing_disclaimer": "除非在当前期间结束前至少 24 小时关闭自动续订，否则订阅将自动续订。",
+  "private_circle_pricing_disclaimer_android": "订阅将自动续订，除非取消。取消将在当前计费周期结束时生效。",
   "join_circle": "加入圈子",
   "join_circle_subtitle": "使用邀请链接连接到您的圈子，或选择中继提供商。",
   "i_have_an_invite": "我有邀请",

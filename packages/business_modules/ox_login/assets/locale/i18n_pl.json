@@ -182,5 +182,6 @@
   "private_circle_pricing_20_members_monthly": "20 Członków: $9,99/mies",
   "private_circle_pricing_20_members_yearly": "20 Członków: $99,99/rok",
   "yearly_plan": "Plan roczny",
-  "private_circle_pricing_disclaimer": "Subskrypcje są automatycznie odnawiane, chyba że automatyczne odnawianie zostanie wyłączone co najmniej 24 godziny przed końcem bieżącego okresu."
+  "private_circle_pricing_disclaimer": "Subskrypcje są automatycznie odnawiane, chyba że automatyczne odnawianie zostanie wyłączone co najmniej 24 godziny przed końcem bieżącego okresu.",
+  "private_circle_pricing_disclaimer_android": "Subskrypcje odnawiają się automatycznie, chyba że zostaną anulowane. Anulowanie wchodzi w życie na końcu bieżącego okresu rozliczeniowego."
 }
