@@ -143,6 +143,7 @@
   "billing": "Penagihan",
   "total": "Total",
   "per_year": "/tahun",
+  "per_month": "/bulan",
   "money_back_guarantee": "Jaminan uang kembali 7 hari",
   "secure_payment_apple": "Pembayaran aman melalui Apple Pay",
   "secure_payment_google": "Pembayaran aman melalui Google Pay",

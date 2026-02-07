@@ -154,6 +154,7 @@
   "billing": "Billing",
   "total": "Total",
   "per_year": "/year",
+  "per_month": "/month",
   "money_back_guarantee": "7-day money-back guarantee",
   "secure_payment_apple": "Secure payment via Apple Pay",
   "secure_payment_google": "Secure payment via Google Pay",

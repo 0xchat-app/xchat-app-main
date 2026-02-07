@@ -143,6 +143,7 @@
   "billing": "Fakturering",
   "total": "Totalt",
   "per_year": "/år",
+  "per_month": "/månad",
   "money_back_guarantee": "7-dagars pengarna-tillbaka-garanti",
   "secure_payment_apple": "Säker betalning via Apple Pay",
   "secure_payment_google": "Säker betalning via Google Pay",

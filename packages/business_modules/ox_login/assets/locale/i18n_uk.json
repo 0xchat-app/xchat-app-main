@@ -143,6 +143,7 @@
   "billing": "Оплата",
   "total": "Всього",
   "per_year": "/рік",
+  "per_month": "/місяць",
   "money_back_guarantee": "Гарантія повернення коштів 7 днів",
   "secure_payment_apple": "Безпечна оплата через Apple Pay",
   "secure_payment_google": "Безпечна оплата через Google Pay",

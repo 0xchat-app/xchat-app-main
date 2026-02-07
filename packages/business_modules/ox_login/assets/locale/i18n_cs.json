@@ -143,6 +143,7 @@
   "billing": "Fakturace",
   "total": "Celkem",
   "per_year": "/rok",
+  "per_month": "/měsíc",
   "money_back_guarantee": "7denní záruka vrácení peněz",
   "secure_payment_apple": "Bezpečná platba přes Apple Pay",
   "secure_payment_google": "Bezpečná platba přes Google Pay",

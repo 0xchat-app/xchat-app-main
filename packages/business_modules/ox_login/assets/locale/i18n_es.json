@@ -143,6 +143,7 @@
   "billing": "Facturación",
   "total": "Total",
   "per_year": "/año",
+  "per_month": "/mes",
   "money_back_guarantee": "Garantía de devolución de dinero de 7 días",
   "secure_payment_apple": "Pago seguro a través de Apple Pay",
   "secure_payment_google": "Pago seguro a través de Google Pay",

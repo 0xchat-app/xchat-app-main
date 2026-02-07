@@ -143,6 +143,7 @@
   "billing": "Ödəniş",
   "total": "Ümumi",
   "per_year": "/il",
+  "per_month": "/ay",
   "money_back_guarantee": "7 günlük pul geri qaytarma zəmanəti",
   "secure_payment_apple": "Apple Pay vasitəsilə təhlükəsiz ödəniş",
   "secure_payment_google": "Google Pay vasitəsilə təhlükəsiz ödəniş",

@@ -143,6 +143,7 @@
   "billing": "請求",
   "total": "合計",
   "per_year": "/年",
+  "per_month": "/月",
   "money_back_guarantee": "7日間の返金保証",
   "secure_payment_apple": "Apple Payによる安全な支払い",
   "secure_payment_google": "Google Payによる安全な支払い",

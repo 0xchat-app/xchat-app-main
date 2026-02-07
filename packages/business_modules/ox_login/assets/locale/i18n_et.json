@@ -143,6 +143,7 @@
   "billing": "Arveldamine",
   "total": "Kokku",
   "per_year": "/aasta",
+  "per_month": "/kuu",
   "money_back_guarantee": "7-päevane raha tagasimakse garantii",
   "secure_payment_apple": "Turvaline makse Apple Pay kaudu",
   "secure_payment_google": "Turvaline makse Google Pay kaudu",

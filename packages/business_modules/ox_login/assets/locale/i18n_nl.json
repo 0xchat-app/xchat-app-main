@@ -143,6 +143,7 @@
   "billing": "Facturering",
   "total": "Totaal",
   "per_year": "/jaar",
+  "per_month": "/maand",
   "money_back_guarantee": "7-dagen geld-terug-garantie",
   "secure_payment_apple": "Veilige betaling via Apple Pay",
   "secure_payment_google": "Veilige betaling via Google Pay",

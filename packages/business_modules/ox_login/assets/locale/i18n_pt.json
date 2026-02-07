@@ -143,6 +143,7 @@
   "billing": "Cobrança",
   "total": "Total",
   "per_year": "/ano",
+  "per_month": "/mês",
   "money_back_guarantee": "Garantia de reembolso de 7 dias",
   "secure_payment_apple": "Pagamento seguro via Apple Pay",
   "secure_payment_google": "Pagamento seguro via Google Pay",

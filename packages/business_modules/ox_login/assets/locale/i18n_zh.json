@@ -172,6 +172,7 @@
   "billing": "计费",
   "total": "总计",
   "per_year": "/年",
+  "per_month": "/月",
   "money_back_guarantee": "7 天退款保证",
   "secure_payment_apple": "通过 Apple Pay 安全支付",
   "secure_payment_google": "通过 Google Pay 安全支付",

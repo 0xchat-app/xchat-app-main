@@ -143,6 +143,7 @@
   "billing": "Faturalama",
   "total": "Toplam",
   "per_year": "/yıl",
+  "per_month": "/ay",
   "money_back_guarantee": "7 günlük para iade garantisi",
   "secure_payment_apple": "Apple Pay ile güvenli ödeme",
   "secure_payment_google": "Google Pay ile güvenli ödeme",

@@ -143,6 +143,7 @@
   "billing": "Фактуриране",
   "total": "Общо",
   "per_year": "/година",
+  "per_month": "/месец",
   "money_back_guarantee": "7-дневна гаранция за връщане на парите",
   "secure_payment_apple": "Сигурно плащане чрез Apple Pay",
   "secure_payment_google": "Сигурно плащане чрез Google Pay",

@@ -143,6 +143,7 @@
   "billing": "Norēķināšana",
   "total": "Kopā",
   "per_year": "/gadā",
+  "per_month": "/mēnesī",
   "money_back_guarantee": "7 dienu naudas atgriešanas garantija",
   "secure_payment_apple": "Droša maksājuma veikšana ar Apple Pay",
   "secure_payment_google": "Droša maksājuma veikšana ar Google Pay",

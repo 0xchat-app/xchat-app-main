@@ -143,6 +143,7 @@
   "billing": "Számlázás",
   "total": "Összesen",
   "per_year": "/év",
+  "per_month": "/hónap",
   "money_back_guarantee": "7 napos pénzvisszafizetési garancia",
   "secure_payment_apple": "Biztonságos fizetés Apple Pay-jel",
   "secure_payment_google": "Biztonságos fizetés Google Pay-jel",

@@ -143,6 +143,7 @@
   "billing": "Abrechnung",
   "total": "Gesamt",
   "per_year": "/Jahr",
+  "per_month": "/Monat",
   "money_back_guarantee": "7-Tage-Geld-zurück-Garantie",
   "secure_payment_apple": "Sichere Zahlung über Apple Pay",
   "secure_payment_google": "Sichere Zahlung über Google Pay",

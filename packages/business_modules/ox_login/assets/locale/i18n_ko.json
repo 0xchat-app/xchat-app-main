@@ -143,6 +143,7 @@
   "billing": "청구",
   "total": "총액",
   "per_year": "/년",
+  "per_month": "/월",
   "money_back_guarantee": "7일 환불 보장",
   "secure_payment_apple": "Apple Pay를 통한 안전한 결제",
   "secure_payment_google": "Google Pay를 통한 안전한 결제",

@@ -264,7 +264,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                       return CLText.bodySmall(
                         widget.selectedPeriod == SubscriptionPeriod.yearly
                             ? Localized.text('ox_login.per_year')
-                            : '/month',
+                            : Localized.text('ox_login.per_month'),
                         colorToken: ColorToken.onSurfaceVariant,
                       );
                     },

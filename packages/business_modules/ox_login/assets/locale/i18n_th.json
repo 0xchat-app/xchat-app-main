@@ -143,6 +143,7 @@
   "billing": "การเรียกเก็บเงิน",
   "total": "รวม",
   "per_year": "/ปี",
+  "per_month": "/เดือน",
   "money_back_guarantee": "การรับประกันคืนเงิน 7 วัน",
   "secure_payment_apple": "การชำระเงินที่ปลอดภัยผ่าน Apple Pay",
   "secure_payment_google": "การชำระเงินที่ปลอดภัยผ่าน Google Pay",

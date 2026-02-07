@@ -143,6 +143,7 @@
   "billing": "Оплата",
   "total": "Итого",
   "per_year": "/год",
+  "per_month": "/месяц",
   "money_back_guarantee": "Гарантия возврата денег 7 дней",
   "secure_payment_apple": "Безопасная оплата через Apple Pay",
   "secure_payment_google": "Безопасная оплата через Google Pay",
