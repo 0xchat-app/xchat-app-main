@@ -167,15 +167,15 @@ class _CapacitySelectionPageState extends State<CapacitySelectionPage> {
     String desc;
     switch (tier.id) {
       case SubscriptionTierIds.lovers:
-        title = Localized.text('ox_login.capacity_2_members');
+        title = Localized.text('ox_login.capacity_2_members').replaceFirst('2', '≤ 2');
         desc = Localized.text('ox_login.capacity_2_members_desc');
         break;
       case SubscriptionTierIds.family:
-        title = Localized.text('ox_login.capacity_6_members');
+        title = Localized.text('ox_login.capacity_6_members').replaceFirst('6', '≤ 6');
         desc = Localized.text('ox_login.capacity_6_members_desc');
         break;
       case SubscriptionTierIds.community:
-        title = Localized.text('ox_login.capacity_50_members');
+        title = Localized.text('ox_login.capacity_50_members').replaceFirst('20', '≤ 20');
         desc = Localized.text('ox_login.capacity_50_members_desc');
         break;
       default:
