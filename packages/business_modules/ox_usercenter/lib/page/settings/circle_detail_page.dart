@@ -7,6 +7,7 @@ import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/login/login_models.dart';
 import 'package:ox_common/login/circle_service.dart';
 import 'package:ox_common/login/circle_repository.dart';
+import 'package:ox_common/circle/page/circle_expired_prompt_dialog.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
@@ -159,6 +160,8 @@ class _CircleDetailPageState extends State<CircleDetailPage>
   late ValueNotifier<String> _fileServerName$;
   /// Cache for first-paint when state.currentCircle.tenantInfo not yet loaded. Loaded once.
   late Future<Map<String, dynamic>?> _cachedTenantInfoFuture;
+  /// Whether current user is admin for this circle (resolved async; default false to avoid showing edit to non-admins on first frame).
+  bool _isCircleAdmin = false;
 
   @override
   void initState() {
@@ -171,6 +174,9 @@ class _CircleDetailPageState extends State<CircleDetailPage>
       _loadLocalData();
       _loadSubscriptionInfo();
       _loadFileServerInfo();
+      CircleExpiredPromptDialog.resolveIsAdmin(widget.circle).then((isAdmin) {
+        if (mounted) setState(() => _isCircleAdmin = isAdmin);
+      });
     });
   }
 
@@ -397,30 +403,45 @@ class _CircleDetailPageState extends State<CircleDetailPage>
       
           SizedBox(height: 12.px),
 
-          GestureDetector(
-            onTap: () => _editCircleName(context),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Flexible(
-                  child: CLText.titleLarge(
-                    _displayCircleName,
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+          _isCircleAdmin
+              ? GestureDetector(
+                  onTap: () => _editCircleName(context),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                        child: CLText.titleLarge(
+                          _displayCircleName,
+                          textAlign: TextAlign.center,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      SizedBox(width: 8.px),
+                      Icon(
+                        CupertinoIcons.create_solid,
+                        size: 18.px,
+                        color: ColorToken.onSurfaceVariant.of(context),
+                      ),
+                    ],
                   ),
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(
+                      child: CLText.titleLarge(
+                        _displayCircleName,
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(width: 8.px),
-                Icon(
-                  CupertinoIcons.create_solid,
-                  size: 18.px,
-                  color: ColorToken.onSurfaceVariant.of(context),
-                ),
-              ],
-            ),
-          ),
-      
+
           SizedBox(height: 12.px),
       
           // Padding(
