@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/login/login_models.dart';
@@ -91,24 +92,28 @@ class _SessionListWidgetState extends State<SessionListWidget> {
                   return _buildEmptyState(context, isPaidRelay, isAdmin);
                 }
 
-                return ListView.separated(
-              padding:
-                  EdgeInsets.only(bottom: Adapt.bottomSafeAreaHeightByKeyboard),
-              itemBuilder: (context, index) {
-                if (hasArchived && index == sessionList.length) {
-                  // This is the footer
-                  return _buildArchivedChatsFooter(context);
-                }
-                return itemBuilder(context, sessionList[index]);
-              },
-              separatorBuilder: (context, index) {
-                if (hasArchived && index == sessionList.length - 1) {
-                  // No separator before footer
-                  return const SizedBox.shrink();
-                }
-                return buildSeparator(context, index, sessionList);
-              },
-              itemCount: sessionList.length + (hasArchived ? 1 : 0),
+                return SlidableAutoCloseBehavior(
+                  closeWhenOpened: true,
+                  closeWhenTapped: true,
+                  child: ListView.separated(
+                    padding:
+                        EdgeInsets.only(bottom: Adapt.bottomSafeAreaHeightByKeyboard),
+                    itemBuilder: (context, index) {
+                      if (hasArchived && index == sessionList.length) {
+                        // This is the footer
+                        return _buildArchivedChatsFooter(context);
+                      }
+                      return itemBuilder(context, sessionList[index]);
+                    },
+                    separatorBuilder: (context, index) {
+                      if (hasArchived && index == sessionList.length - 1) {
+                        // No separator before footer
+                        return const SizedBox.shrink();
+                      }
+                      return buildSeparator(context, index, sessionList);
+                    },
+                    itemCount: sessionList.length + (hasArchived ? 1 : 0),
+                  ),
                 );
               },
             );

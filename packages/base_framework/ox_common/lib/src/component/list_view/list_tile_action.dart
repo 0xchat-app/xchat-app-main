@@ -32,6 +32,7 @@ class CLListTileActions extends StatelessWidget {
     this.semanticLabel,
     this.cupertinoExtentRatio = 0.6,
     this.cupertinoMotion = const DrawerMotion(),
+    this.groupTag,
   });
 
   final Widget child;
@@ -52,6 +53,10 @@ class CLListTileActions extends StatelessWidget {
 
   /// iOS only: motion for the action pane.
   final Widget cupertinoMotion;
+
+  /// iOS only: when used with [SlidableAutoCloseBehavior], same groupTag ensures
+  /// only one slidable in the group is open at a time.
+  final Object? groupTag;
 
   @override
   Widget build(BuildContext context) {
@@ -76,6 +81,7 @@ class CLListTileActions extends StatelessWidget {
     final end = endActions ?? actions;
 
     return Slidable(
+      groupTag: groupTag,
       startActionPane: start != null && start.isNotEmpty
           ? ActionPane(
               extentRatio: cupertinoExtentRatio,
