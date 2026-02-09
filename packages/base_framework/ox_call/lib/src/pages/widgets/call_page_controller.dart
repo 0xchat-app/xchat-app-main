@@ -5,6 +5,7 @@ import 'package:chatcore/chat-core.dart';
 import 'package:ox_call/src/call_manager.dart';
 import 'package:ox_call/src/models/call_state.dart';
 import 'package:ox_call/src/models/call_session.dart';
+import 'package:ox_common/utils/chat_prompt_tone.dart';
 import 'package:ox_common/utils/permission_utils.dart';
 import 'package:ox_common/business_interface/ox_chat/call_message_type.dart';
 import 'package:ox_call/src/utils/call_logger.dart';
@@ -74,6 +75,9 @@ class CallPageController {
     _setupListeners();
     _updateStreams();
 
+    // Init: start ringtone
+    PromptToneManager.sharedInstance.playCalling();
+
     // Start auto-hide timer for video calls
     if (isVideoCall) {
       _startAutoHideTimer();
@@ -138,13 +142,27 @@ class CallPageController {
     }
   }
 
+  void _syncRingtoneWithState(CallState state) {
+    final ringtoneStates = {
+      CallState.idle,
+      CallState.initiating,
+      CallState.ringing,
+      CallState.connecting,
+    };
+    if (!ringtoneStates.contains(state)) {
+      PromptToneManager.sharedInstance.stopPlay();
+    }
+  }
+
   void _onCallStateChanged(CallSession session) {
     // Only handle events for this session
     if (session.sessionId != _session.sessionId) return;
 
     _session = session;
     callState$.value = session.state;
-    
+
+    _syncRingtoneWithState(session.state);
+
     if (session.state == CallState.connected && !isConnected$.value) {
       isConnected$.value = true;
     }
@@ -296,6 +314,7 @@ class CallPageController {
 
   // Cleanup
   void dispose() {
+    PromptToneManager.sharedInstance.stopPlay();
     _stopDurationTimer();
     _autoHideTimer?.cancel();
 

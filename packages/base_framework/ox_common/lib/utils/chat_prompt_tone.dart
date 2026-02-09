@@ -103,23 +103,28 @@ class PromptToneManager {
     });
   }
 
-  void playCalling() async {
-    _player.stop();
-    // final audioContext = AudioContextConfig(
-    //   forceSpeaker: false,
-    //   duckAudio: true,
-    //   respectSilence: false,
-    //   stayAwake: false,
-    // ).build();
+  /// AudioContext for call ringtone: follows system mute switch (respectSilence).
+  static AudioContext get _callingAudioContext => AudioContextConfig(
+        respectSilence: true,
+        stayAwake: false,
+        focus: Platform.isIOS
+            ? AudioContextConfigFocus.gain
+            : AudioContextConfigFocus.mixWithOthers,
+      ).build();
+
+  Future<void> playCalling() async {
+    if (!OXUserInfoManager.sharedInstance.canSound) return;
+    await _player.stop();
     _player.setReleaseMode(ReleaseMode.loop);
-    // There is no need to set AudioContext because WebRTC has its own playback type control
-    // await AudioPlayer.global.setGlobalAudioContext(audioContext);
-    _player.play(
+    await AudioPlayer.global.setAudioContext(_callingAudioContext);
+    await _player.play(
       AssetSource('sounds/${_currentSoundTheme.name}/calling.mp3'),
+      ctx: _callingAudioContext,
     );
   }
 
-  void stopPlay() async {
-    _player.stop();
+  Future<void> stopPlay() async {
+    await _player.stop();
+    await AudioPlayer.global.setAudioContext(_defaultAudioContext);
   }
 }
