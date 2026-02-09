@@ -550,11 +550,13 @@ class _CircleDetailPageState extends State<CircleDetailPage>
       );
     }
 
+    // Subscription section: owner only
     if (displayData != null && displayData.isOwner) {
-      items.addAll([
-        _buildSubscriptionSection(context, displayData),
-        _buildMembersSection(context, displayData, resolvedMembers ?? []),
-      ]);
+      items.add(_buildSubscriptionSection(context, displayData));
+    }
+    // Members section: all members for paid relay (invite/remove only when owner)
+    if (_isPaidRelay() && displayData != null) {
+      items.add(_buildMembersSection(context, displayData, resolvedMembers ?? []));
     }
 
     return items;
@@ -625,12 +627,17 @@ class _CircleDetailPageState extends State<CircleDetailPage>
     } catch (e) {
       if (members.isNotEmpty) ownerUser = members.first;
     }
+    final isOwner = displayData.isOwner;
     if (ownerUser != null) {
       memberItems.add(
         LabelItemModel(
           icon: ListViewIcon.data(Icons.person),
-          title: Localized.text('ox_usercenter.you_owner'),
-          subtitle: Localized.text('ox_usercenter.owner'),
+          title: isOwner
+              ? Localized.text('ox_usercenter.you_owner')
+              : Localized.text('ox_chat.you'),
+          subtitle: isOwner
+              ? Localized.text('ox_usercenter.owner')
+              : Localized.text('ox_usercenter.member'),
           onTap: null,
         ),
       );
@@ -647,11 +654,13 @@ class _CircleDetailPageState extends State<CircleDetailPage>
             icon: ListViewIcon.data(Icons.person),
             title: displayName,
             subtitle: Localized.text('ox_usercenter.member'),
-            trailing: CLButton.text(
-              text: Localized.text('ox_usercenter.remove'),
-              color: ColorToken.error.of(context),
-              onTap: () => _removeMember(member),
-            ),
+            trailing: isOwner
+                ? CLButton.text(
+                    text: Localized.text('ox_usercenter.remove'),
+                    color: ColorToken.error.of(context),
+                    onTap: () => _removeMember(member),
+                  )
+                : null,
             onTap: () {
               OXModuleService.pushPage(
                 context,
@@ -665,7 +674,8 @@ class _CircleDetailPageState extends State<CircleDetailPage>
       }
     }
 
-    if (displayData.currentMembers < displayData.maxMembers) {
+    // Add member entry: owner only
+    if (isOwner && displayData.currentMembers < displayData.maxMembers) {
       memberItems.add(
         LabelItemModel(
           icon: ListViewIcon.data(Icons.person_add),
