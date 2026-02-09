@@ -17,6 +17,9 @@ import 'package:ox_localizable/ox_localizable.dart';
 import 'session_view_model_handler.dart';
 import 'session_view_model.dart';
 
+/// Group tag for session list slidables so only one item can be swiped open at a time.
+final Object _sessionListSlidableGroupTag = Object();
+
 enum SessionDeleteAction {
   selfChatDelete,
   singleDeleteForMe,
@@ -44,6 +47,7 @@ class SessionListItemWidget extends StatelessWidget {
       valueListenable: item.build$,
       builder: (context, value, _) {
         return CLListTileActions(
+          groupTag: _sessionListSlidableGroupTag,
           actions: [
             buildPinAction(),
             buildArchiveAction(),
