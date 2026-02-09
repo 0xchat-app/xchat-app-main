@@ -10,7 +10,6 @@ import 'package:ox_common/component.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
-import 'package:ox_common/utils/widget_tool.dart';
 import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 
@@ -104,20 +103,29 @@ class SessionListItemWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Flexible(
-                            child: CLText.bodyLarge(
-                              item.name,
-                              customColor: ColorToken.onSurface.of(context),
-                              maxLines: 1,
-                              isBold: false,
-                              overflow: TextOverflow.ellipsis,
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Flexible(
+                                  child: CLText.bodyLarge(
+                                    item.name,
+                                    customColor: ColorToken.onSurface.of(context),
+                                    maxLines: 1,
+                                    isBold: false,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                if (item.sessionModel.isSelfChat) ...[
+                                  SizedBox(width: 6.px),
+                                  ChatIconWidget.selfAuthIcon(context),
+                                ],
+                              ],
                             ),
                           ),
-                          if (item.sessionModel.isSelfChat) ...[
-                            SizedBox(width: 6.px),
-                            ChatIconWidget.selfAuthIcon(context),
-                          ],
+                          CLText.labelSmall(item.updateTime),
                         ],
                       ),
                       _buildItemSubtitle(context),
@@ -125,20 +133,8 @@ class SessionListItemWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  CLText.labelSmall(
-                    item.updateTime,
-                  ).setPadding(EdgeInsets.symmetric(vertical: 4.px)),
-                  SizedBox(
-                    height: 20.px,
-                    child: Center(
-                      child: _buildUnreadWidget(context),
-                    ),
-                  ),
-                ],
+              Center(
+                child: _buildUnreadWidget(context),
               ),
             ],
           ),
