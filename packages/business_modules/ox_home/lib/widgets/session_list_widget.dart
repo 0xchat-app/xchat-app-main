@@ -164,32 +164,34 @@ class _SessionListWidgetState extends State<SessionListWidget> {
                 maxLines: 3,
               ),
               SizedBox(height: 32.px),
-              CLButton.filled(
-                expanded: true,
-                onTap: () => isPaidRelay
-                    ? _navigateToInviteFriends(context, isPaidRelay)
-                    : _navigateToFindPeople(context),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      PlatformStyle.isUseMaterial
-                          ? Icons.person_add
-                          : CupertinoIcons.person_add,
-                      size: 20.px,
-                      color: ColorToken.white.of(context),
-                    ),
-                    SizedBox(width: 8.px),
-                    CLText.bodyMedium(
-                      isPaidRelay
-                          ? Localized.text('ox_usercenter.invite_to_circle')
-                          : Localized.text('ox_chat.add_friends_to_chat'),
-                      customColor: ColorToken.white.of(context),
-                    ),
-                  ],
+              // Only show main invite button for non-paid relay, or for paid relay when user is circle admin
+              if (!isPaidRelay || isAdmin)
+                CLButton.filled(
+                  expanded: true,
+                  onTap: () => isPaidRelay
+                      ? _navigateToInviteFriends(context, isPaidRelay)
+                      : _navigateToFindPeople(context),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        PlatformStyle.isUseMaterial
+                            ? Icons.person_add
+                            : CupertinoIcons.person_add,
+                        size: 20.px,
+                        color: ColorToken.white.of(context),
+                      ),
+                      SizedBox(width: 8.px),
+                      CLText.bodyMedium(
+                        isPaidRelay
+                            ? Localized.text('ox_usercenter.invite_to_circle')
+                            : Localized.text('ox_chat.add_friends_to_chat'),
+                        customColor: ColorToken.white.of(context),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
               if (!isPaidRelay)
                 CupertinoButton(
                   onPressed: () => _navigateToInviteFriends(context, isPaidRelay),
