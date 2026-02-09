@@ -144,5 +144,7 @@
   "share_link": "Share Link",
   "circle_expired_title": "서클 만료됨",
   "circle_expired_message_member": "This circle has expired. You can still view data but cannot send messages or make changes. Please contact the circle admin to renew.",
-  "circle_expired_message_admin": "This circle has expired. You can still view data but cannot send messages or make changes. You can renew below."
+  "circle_expired_message_admin": "This circle has expired. You can still view data but cannot send messages or make changes. You can renew below.",
+  "restore_private_relay": "Private Circle 복원",
+  "restore_private_relay_no_circles": "복원할 Private Circle이 없습니다"
 }

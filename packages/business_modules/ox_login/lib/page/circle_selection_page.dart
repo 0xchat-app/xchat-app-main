@@ -7,9 +7,11 @@ import 'package:ox_common/utils/circle_join_utils.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
+import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_chat/page/session/find_people_page.dart';
 import '../controller/onboarding_controller.dart';
 import '../utils/circle_entry_helper.dart';
+import 'circle_restore_page.dart';
 import 'private_cloud_overview_page.dart';
 
 enum CircleType { invite, private, custom }
@@ -60,6 +62,7 @@ class _CircleSelectionPageState extends State<CircleSelectionPage> {
           SizedBox(height: 32.px),
           _buildCircleOptions(),
           SizedBox(height: 24.px),
+          _buildRestorePrivateRelaySection(),
         ],
       ),
     );
@@ -95,6 +98,54 @@ class _CircleSelectionPageState extends State<CircleSelectionPage> {
         SizedBox(height: 16.px),
         _buildCustomRelayOption(),
       ],
+    );
+  }
+
+  /// Restore private relay: clickable text + button below Add Circle options
+  Widget _buildRestorePrivateRelaySection() {
+    return GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: _onRestorePrivateRelayTap,
+            child: CLText.bodyMedium(
+                Localized.text('ox_usercenter.restore_private_relay'),
+                colorToken: ColorToken.primary,
+            ),
+          );
+  }
+
+  Future<void> _onRestorePrivateRelayTap() async {
+    OXLoading.show();
+    final fetched = await CircleEntryHelper.fetchCirclesToRestore();
+    OXLoading.dismiss();
+    if (!mounted) return;
+
+    if (fetched == null || fetched.isEmpty) {
+      CommonToast.instance.show(
+        context,
+        Localized.text('ox_usercenter.restore_private_relay_no_circles'),
+      );
+      return;
+    }
+
+    final currentRelayUrls = LoginManager.instance.currentState.account?.circles
+            .map((c) => c.relayUrl)
+            .toSet() ??
+        {};
+    final circlesToRestore = fetched
+        .where((r) => !currentRelayUrls.contains(r.relayUrl))
+        .toList();
+
+    if (circlesToRestore.isEmpty) {
+      CommonToast.instance.show(
+        context,
+        Localized.text('ox_usercenter.restore_private_relay_no_circles'),
+      );
+      return;
+    }
+
+    OXNavigator.pushPage(
+      context,
+      (_) => CircleRestorePage(circles: circlesToRestore, controller: _controller),
     );
   }
 

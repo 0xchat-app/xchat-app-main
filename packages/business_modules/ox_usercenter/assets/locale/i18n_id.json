@@ -144,5 +144,7 @@
   "share_link": "Share Link",
   "circle_expired_title": "Lingkaran kedaluwarsa",
   "circle_expired_message_member": "This circle has expired. You can still view data but cannot send messages or make changes. Please contact the circle admin to renew.",
-  "circle_expired_message_admin": "This circle has expired. You can still view data but cannot send messages or make changes. You can renew below."
+  "circle_expired_message_admin": "This circle has expired. You can still view data but cannot send messages or make changes. You can renew below.",
+  "restore_private_relay": "Pulihkan Private Circle",
+  "restore_private_relay_no_circles": "Tidak ada Private Circle untuk dipulihkan"
 }
