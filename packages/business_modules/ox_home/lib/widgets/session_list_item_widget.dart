@@ -128,13 +128,17 @@ class SessionListItemWidget extends StatelessWidget {
                           CLText.labelSmall(item.updateTime),
                         ],
                       ),
-                      _buildItemSubtitle(context),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(child: _buildItemSubtitle(context)),
+                          SizedBox(width: 6.px),
+                          _buildUnreadWidget(context),
+                        ],
+                      ),
                     ],
                   ),
                 ),
-              ),
-              Center(
-                child: _buildUnreadWidget(context),
               ),
             ],
           ),
