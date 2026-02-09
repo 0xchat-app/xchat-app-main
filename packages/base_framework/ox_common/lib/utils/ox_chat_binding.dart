@@ -7,8 +7,7 @@ import 'package:ox_common/utils/ox_chat_observer.dart';
 abstract class CLSessionHandler {
   Future<void> updateLastMessageInfo({
     required String chatId,
-    required String previewContent,
-    required DateTime msgTime,
+    required MessageDBISAR message,
   });
 
   Future<void> updateDraft({
@@ -76,12 +75,10 @@ class OXChatBinding {
 
   Future<void> updateLastMessageInfo({
     required String chatId,
-    required String previewContent,
-    required DateTime msgTime,
+    required MessageDBISAR message,
   }) async => _handler?.updateLastMessageInfo(
     chatId: chatId,
-    previewContent: previewContent,
-    msgTime: msgTime,
+    message: message,
   );
 
   Future<void> updateDraft({

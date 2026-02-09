@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:ox_chat/manager/chat_draft_manager.dart';
+import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/login/login_models.dart';
+import 'package:ox_common/business_interface/ox_chat/utils.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'package:ox_common/utils/ox_chat_observer.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
@@ -12,6 +14,7 @@ import 'package:ox_chat/utils/chat_log_utils.dart';
 import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
 import 'package:ox_common/utils/ox_userinfo_manager.dart';
+import 'package:ox_localizable/ox_localizable.dart';
 
 class ChatDataCache with OXChatObserver, LoginManagerObserver {
 
@@ -93,18 +96,39 @@ class ChatDataCache with OXChatObserver, LoginManagerObserver {
   void didMessageDeleteCallBack(List<MessageDBISAR> delMessages) async {
     for (var message in delMessages) {
       final chatType = message.chatTypeKey;
-      if (chatType == null) continue ;
+      if (chatType == null) continue;
 
       final loadParams = chatType.messageLoaderParams;
+      final chatId = (loadParams.groupId != null && loadParams.groupId!.isNotEmpty)
+          ? loadParams.groupId!
+          : (loadParams.receiver ?? '');
+      final session = OXChatBinding.sharedInstance.getSessionModel(chatId);
+
       List<MessageDBISAR> messages = (await Messages.loadMessagesFromDB(
         receiver: loadParams.receiver,
         groupId: loadParams.groupId,
         sessionId: loadParams.sessionId,
       ))['messages'] ?? <MessageDBISAR>[];
 
-      types.Message? lastMessage = await messages.firstOrNull?.toChatUIMessage();
-      OXChatBinding.sharedInstance.deleteMessageHandler(message, lastMessage?.messagePreviewText ?? '');
+      final lastMessageDB = messages.firstOrNull;
+      final preview = lastMessageDB != null
+          ? (OXChatBinding.sharedInstance.sessionMessageTextBuilder?.call(lastMessageDB) ?? '')
+          : '';
+      final isGroupChat = session != null && !session.isSingleChat;
+      final fullSubtitle = (isGroupChat && lastMessageDB != null && preview.isNotEmpty)
+          ? '${_senderDisplayNameForSessionSubtitle(lastMessageDB.sender)}: $preview'
+          : preview;
+      OXChatBinding.sharedInstance.deleteMessageHandler(message, fullSubtitle);
     }
+  }
+
+  static String _senderDisplayNameForSessionSubtitle(String senderPubkey) {
+    if (senderPubkey.isEmpty) return '';
+    if (senderPubkey == LoginManager.instance.currentPubkey) {
+      return Localized.text('ox_chat.you');
+    }
+    final user = Account.sharedInstance.userCache[senderPubkey]?.value;
+    return user?.getUserShowName() ?? '';
   }
 
   @override

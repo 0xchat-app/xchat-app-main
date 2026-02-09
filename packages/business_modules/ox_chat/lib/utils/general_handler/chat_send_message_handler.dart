@@ -262,28 +262,12 @@ extension ChatMessageSendEx on ChatGeneralHandler {
       dataController.galleryCache.tryAddPreviewImage(message: message);
     }
 
-    // Update session position after sending message
-    _updateSessionAfterSendMessage(message);
-
     if (sendingType == ChatSendingType.remote) {
       // If the message is not sent within a short period of time, change the status to the sending state
       _setMessageSendingStatusIfNeeded(sendFinish, message);
     } else if (session.isSelfChat) {
       _updateMessageStatus(message, types.Status.sent, true);
     }
-  }
-
-  void _updateSessionAfterSendMessage(types.Message message) {
-    // Get the session model and update its lastActivityTime
-    OXChatBinding.sharedInstance.updateLastMessageInfo(
-      chatId: session.chatId,
-      previewContent: ChatMessageHelper.getMessagePreviewText(
-        message.content,
-        message.dbMessageType,
-        message.author.id,
-      ), 
-      msgTime: DateTime.fromMillisecondsSinceEpoch(message.createdAt),
-    );
   }
 
   void _setMessageSendingStatusIfNeeded(OXValue<bool> sendFinish, types.Message message) {

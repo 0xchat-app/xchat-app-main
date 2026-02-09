@@ -257,22 +257,6 @@ class SessionListItemWidget extends StatelessWidget {
       subtitle = draft;
     }
 
-    // Get sender name for group chats
-    String? senderName;
-    if (!item.isSingleChat && subtitle.isNotEmpty) {
-      final senderPubkey = item.sessionModel.sender;
-      if (senderPubkey.isNotEmpty) {
-        if (senderPubkey == Account.sharedInstance.currentPubkey) {
-          senderName = Localized.text('ox_chat.you');
-        } else {
-          final senderUser = Account.sharedInstance.userCache[senderPubkey]?.value;
-          if (senderUser != null) {
-            senderName = senderUser.getUserShowName();
-          }
-        }
-      }
-    }
-
     return RichText(
       textAlign: TextAlign.left,
       maxLines: 2,
@@ -288,14 +272,6 @@ class SessionListItemWidget extends StatelessWidget {
             TextSpan(
               text: '[${Localized.text('ox_chat.session_content_draft')}] ',
               style: style.copyWith(color: ColorToken.error.of(context)),
-            ),
-          if (senderName != null && !isMentioned && draft.isEmpty)
-            TextSpan(
-              text: '$senderName: ',
-              style: style.copyWith(
-                color: ColorToken.onSecondaryContainer.of(context),
-                fontWeight: FontWeight.w500,
-              ),
             ),
           TextSpan(
             text: subtitle,

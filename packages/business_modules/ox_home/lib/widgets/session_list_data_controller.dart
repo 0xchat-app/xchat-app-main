@@ -4,11 +4,13 @@ import 'package:chatcore/chat-core.dart';
 import 'package:isar/isar.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/login/login_models.dart';
+import 'package:ox_common/business_interface/ox_chat/utils.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'package:ox_common/push/push_integration.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
 import 'package:ox_common/utils/ox_chat_observer.dart';
 import 'package:ox_common/utils/session_helper.dart';
+import 'package:ox_localizable/ox_localizable.dart';
 
 import 'session_view_model_handler.dart';
 import 'session_view_model.dart';
@@ -126,6 +128,7 @@ class SessionListDataController extends CLSessionHandler with OXChatObserver, Se
     if (isNewSession) {
       final params = SessionCreateParams.fromMessage(message);
       sessionModel = await SessionHelper.createSessionModel(params);
+      sessionModel.content = _buildSessionSubtitle(message, sessionModel.isSingleChat);
       if (!messageIsRead) {
         sessionModel.unreadCount = 1;
       }
@@ -237,24 +240,26 @@ class SessionListDataController extends CLSessionHandler with OXChatObserver, Se
   @override
   Future<void> updateLastMessageInfo({
     required String chatId,
-    required String previewContent,
-    required DateTime msgTime,
-  }) => _updateSession(
-    chatId: chatId,
-    handler: (session) {
-      final timestamp = msgTime.millisecondsSinceEpoch;
-      if (session.createTime > timestamp) return false;
+    required MessageDBISAR message,
+  }) {
+    final createTimeInMs = message.createTime * 1000;
+    final contentForSingle = _buildSessionSubtitle(message, true);
+    final contentForGroup = _buildSessionSubtitle(message, false);
+    return _updateSession(
+      chatId: chatId,
+      handler: (session) {
+        if (session.createTime > createTimeInMs) return false;
 
-      session.createTime = timestamp;
-      if (session.lastActivityTime < timestamp) {
-        session.lastActivityTime = timestamp;
-      }
+        session.createTime = createTimeInMs;
+        if (session.lastActivityTime < createTimeInMs) {
+          session.lastActivityTime = createTimeInMs;
+        }
+        session.content = session.isSingleChat ? contentForSingle : contentForGroup;
 
-      session.content = previewContent;
-
-      return true;
-    },
-  );
+        return true;
+      },
+    );
+  }
 
   @override
   Future<void> updateDraft({
@@ -337,18 +342,16 @@ class SessionListDataController extends CLSessionHandler with OXChatObserver, Se
     required String chatId,
     required MessageDBISAR message,
   }) {
-    final sessionMessageTextBuilder =
-        OXChatBinding.sharedInstance.sessionMessageTextBuilder;
-    final text = sessionMessageTextBuilder?.call(message) ?? '';
+    final createTimeInMs = message.createTime * 1000;
+    final contentForSingle = _buildSessionSubtitle(message, true);
+    final contentForGroup = _buildSessionSubtitle(message, false);
     return _updateSession(
       chatId: chatId,
       handler: (session) {
-        // Convert message createTime from seconds to milliseconds
         bool updated = false;
-        final createTimeInMs = message.createTime * 1000;
         if (session.createTime < createTimeInMs) {
           session.createTime = createTimeInMs;
-          session.content = text;
+          session.content = session.isSingleChat ? contentForSingle : contentForGroup;
           updated = true;
         }
         if (session.lastActivityTime < createTimeInMs) {
@@ -364,6 +367,24 @@ class SessionListDataController extends CLSessionHandler with OXChatObserver, Se
         return updated;
       },
     );
+  }
+
+  /// Builds session list subtitle: for group chat "senderName: preview", for single chat just preview.
+  String _buildSessionSubtitle(MessageDBISAR message, bool isSingleChat) {
+    final builder = OXChatBinding.sharedInstance.sessionMessageTextBuilder;
+    final preview = builder?.call(message) ?? '';
+    if (isSingleChat) return preview;
+    final senderName = _senderDisplayName(message.sender);
+    return senderName.isNotEmpty ? '$senderName: $preview' : preview;
+  }
+
+  String _senderDisplayName(String senderPubkey) {
+    if (senderPubkey.isEmpty) return '';
+    if (senderPubkey == LoginManager.instance.currentPubkey) {
+      return Localized.text('ox_chat.you');
+    }
+    final user = Account.sharedInstance.userCache[senderPubkey]?.value;
+    return user?.getUserShowName() ?? '';
   }
 }
 
