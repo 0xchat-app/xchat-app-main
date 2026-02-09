@@ -173,29 +173,28 @@ class CommonChatWidgetState extends State<CommonChatWidget> with OXChatObserver 
     );
   }
 
+  void _onAppBarTap() {
+    if (session.isSelfChat) return;
+    if (session.isSingleChat) {
+      OXNavigator.pushPage(context, (_) => ContactUserInfoPage(
+        chatId: session.chatId,
+        user: handler.otherUser,
+      ));
+    } else {
+      final groupId = session.groupId;
+      if (groupId == null || groupId.isEmpty) return;
+      final group = Groups.sharedInstance.getPrivateGroupNotifier(groupId);
+      OXNavigator.pushPage(context, (_) => GroupInfoPage(
+        privateGroupId: group.value.privateGroupId,
+      ));
+    }
+  }
+
   CLAppBar buildAppBar() {
     return CLAppBar(
       leading: GestureDetector(
         behavior: HitTestBehavior.translucent,
-        onTap: () {
-          // Don't navigate to profile page for self chat
-          if (session.isSelfChat) return;
-          
-          if (session.isSingleChat) {
-            OXNavigator.pushPage(context, (_) => ContactUserInfoPage(
-              chatId: session.chatId,
-              user: handler.otherUser,
-            ));
-          } else {
-            final groupId = session.groupId;
-            if (groupId == null || groupId.isEmpty) return;
-
-            final group = Groups.sharedInstance.getPrivateGroupNotifier(groupId);
-            OXNavigator.pushPage(context, (_) => GroupInfoPage(
-              privateGroupId: group.value.privateGroupId,
-            ));
-          }
-        },
+        onTap: _onAppBarTap,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -212,6 +211,13 @@ class CommonChatWidgetState extends State<CommonChatWidget> with OXChatObserver 
           ],
         ),
       ),
+      title: session.isSelfChat
+          ? null
+          : GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: _onAppBarTap,
+              child: const SizedBox.expand(),
+            ),
       actions: buildAppBarActions(),
     );
   }
