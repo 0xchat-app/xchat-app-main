@@ -57,6 +57,7 @@
   "no_available_keypackages_title": "Brak Dostępnych Pakietów Kluczy",
   "no_available_keypackages_content": "Brak dostępnych pakietów kluczy. Zaprosić znajomych do połączenia?",
   "invite_friends": "Zaproś Znajomych",
+  "invite_send_fail": "Nie udało się wysłać zaproszenia. Sprawdź połączenie sieciowe i spróbuj ponownie.",
   "no_keypackages_available": "Brak dostępnych pakietów kluczy",
   "group_info": "Informacje o Grupie",
   "group_name": "Nazwa Grupy",

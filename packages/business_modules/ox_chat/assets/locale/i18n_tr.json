@@ -57,6 +57,7 @@
   "no_available_keypackages_title": "Kullanılabilir Anahtar Paketi Yok",
   "no_available_keypackages_content": "Kullanılabilir anahtar paketi yok. Arkadaşlarınızı bağlamaya davet edin mi?",
   "invite_friends": "Arkadaşları Davet Et",
+  "invite_send_fail": "Davet gönderilemedi. Lütfen ağ bağlantınızı kontrol edip tekrar deneyin.",
   "no_keypackages_available": "Kullanılabilir anahtar paketi yok",
   "group_info": "Grup Bilgisi",
   "group_name": "Grup Adı",

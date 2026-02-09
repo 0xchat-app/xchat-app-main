@@ -925,7 +925,14 @@ class _CLNewMessagePageState extends State<CLNewMessagePage> {
       );
     } catch (e) {
       await OXLoading.dismiss();
-      CommonToast.instance.show(context, e.toString());
+      if (e is InviteSendFailureException) {
+        CommonToast.instance.show(
+          context,
+          Localized.text('ox_chat.invite_send_fail'),
+        );
+      } else {
+        CommonToast.instance.show(context, e.toString());
+      }
     }
   }
 }

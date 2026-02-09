@@ -57,6 +57,7 @@
   "no_available_keypackages_title": "사용 가능한 키 패키지가 없습니다",
   "no_available_keypackages_content": "사용 가능한 키 패키지가 없습니다. 친구들을 연결하도록 초대하시겠습니까?",
   "invite_friends": "친구 초대",
+  "invite_send_fail": "초대 전송에 실패했습니다. 네트워크를 확인한 후 다시 시도해 주세요.",
   "no_keypackages_available": "사용 가능한 키 패키지가 없습니다",
   "group_info": "그룹 정보",
   "group_name": "그룹 이름",

@@ -57,6 +57,7 @@
   "no_available_keypackages_title": "هیچ بسته کلید موجودی وجود ندارد",
   "no_available_keypackages_content": "بسته کلید موجود نیست. دوستان خود را دعوت کنید تا متصل شوند؟",
   "invite_friends": "دعوت دوستان",
+  "invite_send_fail": "ارسال دعوت نامه ناموفق بود. لطفاً شبکه را بررسی کرده و دوباره تلاش کنید.",
   "no_keypackages_available": "هیچ بسته کلیدی موجود نیست",
   "group_info": "اطلاعات گروه",
   "group_name": "نام گروه",

@@ -57,6 +57,7 @@
   "no_available_keypackages_title": "No Available Key Packages",
   "no_available_keypackages_content": "Not available key packages. Invite your friend(s) to connect?",
   "invite_friends": "Invite Friends",
+  "invite_send_fail": "Invite send failed. Please check your network and try again.",
   "no_keypackages_available": "No key packages available",
   "group_info": "Group Info",
   "group_name": "Group Name",

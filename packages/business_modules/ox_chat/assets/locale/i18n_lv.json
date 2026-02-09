@@ -57,6 +57,7 @@
   "no_available_keypackages_title": "Nav Pieejamu Atslēgu Pakotņu",
   "no_available_keypackages_content": "Nav pieejamu atslēgu pakotņu. Ielūgt draugus savienoties?",
   "invite_friends": "Ielūgt Draugus",
+  "invite_send_fail": "Uzaicinājuma nosūtīšana neizdevās. Lūdzu, pārbaudiet tīklu un mēģiniet vēlreiz.",
   "no_keypackages_available": "Nav pieejamu atslēgu pakotņu",
   "group_info": "Grupas Informācija",
   "group_name": "Grupas Nosaukums",

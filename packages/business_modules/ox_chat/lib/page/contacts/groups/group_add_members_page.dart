@@ -194,7 +194,15 @@ class _GroupAddMembersPageState extends State<GroupAddMembersPage> {
     } catch (e) {
       await OXLoading.dismiss();
       if (!mounted) return;
-      
+
+      if (e is InviteSendFailureException) {
+        CommonToast.instance.show(
+          context,
+          Localized.text('ox_chat.invite_send_fail'),
+        );
+        return;
+      }
+
       // Handle KeyPackageError
       final handled = await ChatSessionUtils.handleKeyPackageError(
         context: context,

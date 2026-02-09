@@ -57,6 +57,7 @@
   "no_available_keypackages_title": "Ingen Tilgængelige Nøglepakker",
   "no_available_keypackages_content": "Ingen nøglepakker tilgængelige. Inviter dine venner til at forbinde?",
   "invite_friends": "Inviter Venner",
+  "invite_send_fail": "Invitationen kunne ikke sendes. Tjek dit netværk og prøv igen.",
   "no_keypackages_available": "Ingen nøglepakker tilgængelige",
   "group_info": "Gruppeinfo",
   "group_name": "Gruppenavn",

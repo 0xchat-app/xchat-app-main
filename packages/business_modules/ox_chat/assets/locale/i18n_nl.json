@@ -57,6 +57,7 @@
   "no_available_keypackages_title": "Geen Beschikbare Sleutelpakketten",
   "no_available_keypackages_content": "Geen beschikbare sleutelpakketten. Vrienden uitnodigen om te verbinden?",
   "invite_friends": "Vrienden Uitnodigen",
+  "invite_send_fail": "Uitnodiging verzenden mislukt. Controleer uw netwerk en probeer het opnieuw.",
   "no_keypackages_available": "Geen beschikbare sleutelpakketten",
   "group_info": "Groepsinformatie",
   "group_name": "Groepsnaam",

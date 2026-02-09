@@ -57,6 +57,7 @@
   "no_available_keypackages_title": "Inga Tillgängliga Nyckelpaket",
   "no_available_keypackages_content": "Inga tillgängliga nyckelpaket. Bjud in vänner att ansluta?",
   "invite_friends": "Bjud In Vänner",
+  "invite_send_fail": "Inbjudan kunde inte skickas. Kontrollera nätverket och försök igen.",
   "no_keypackages_available": "Inga tillgängliga nyckelpaket",
   "group_info": "Gruppinformation",
   "group_name": "Gruppnamn",

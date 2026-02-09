@@ -57,6 +57,7 @@
   "no_available_keypackages_title": "لا توجد حزم مفاتيح متاحة",
   "no_available_keypackages_content": "لا توجد حزم مفاتيح متاحة. هل تريد دعوة أصدقائك للاتصال؟",
   "invite_friends": "دعوة أصدقاء",
+  "invite_send_fail": "فشل إرسال الدعوة. يرجى التحقق من الشبكة والمحاولة مرة أخرى.",
   "no_keypackages_available": "لا توجد حزم مفاتيح متاحة",
   "group_info": "معلومات المجموعة",
   "group_name": "اسم المجموعة",

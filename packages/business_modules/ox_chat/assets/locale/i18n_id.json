@@ -57,6 +57,7 @@
   "no_available_keypackages_title": "Tidak Ada Paket Kunci yang Tersedia",
   "no_available_keypackages_content": "Tidak ada paket kunci yang tersedia. Undang teman untuk terhubung?",
   "invite_friends": "Undang Teman",
+  "invite_send_fail": "Gagal mengirim undangan. Periksa jaringan Anda dan coba lagi.",
   "no_keypackages_available": "Tidak ada paket kunci yang tersedia",
   "group_info": "Informasi Grup",
   "group_name": "Nama Grup",

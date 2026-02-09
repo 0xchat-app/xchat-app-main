@@ -57,6 +57,7 @@
   "no_available_keypackages_title": "Ühtegi Saadaval Olevat Võtme Paketti Pole",
   "no_available_keypackages_content": "Ühtegi võtme paketti pole saadaval. Kutsuge oma sõbrad ühenduma?",
   "invite_friends": "Kutsu Sõbrad",
+  "invite_send_fail": "Kutse saatmine ebaõnnestus. Palun kontrolli võrguühendust ja proovi uuesti.",
   "no_keypackages_available": "Ühtegi võtme paketti pole saadaval",
   "group_info": "Rühma info",
   "group_name": "Rühma nimi",

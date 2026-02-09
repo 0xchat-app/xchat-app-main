@@ -57,6 +57,7 @@
   "no_available_keypackages_title": "ไม่มีแพ็คเกจคีย์ที่ใช้ได้",
   "no_available_keypackages_content": "ไม่มีแพ็คเกจคีย์ที่ใช้ได้ ต้องการเชิญเพื่อนของคุณให้เชื่อมต่อหรือไม่?",
   "invite_friends": "เชิญเพื่อน",
+  "invite_send_fail": "การส่งคำเชิญล้มเหลว กรุณาตรวจสอบเครือข่ายแล้วลองอีกครั้ง",
   "no_keypackages_available": "ไม่มีแพ็คเกจคีย์ที่ใช้ได้",
   "group_info": "ข้อมูลกลุ่ม",
   "group_name": "ชื่อกลุ่ม",

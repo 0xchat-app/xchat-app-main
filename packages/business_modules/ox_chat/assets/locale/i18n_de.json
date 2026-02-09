@@ -57,6 +57,7 @@
   "no_available_keypackages_title": "Keine verfügbaren Schlüsselpakete",
   "no_available_keypackages_content": "Keine verfügbaren Schlüsselpakete. Ihre Freunde einladen, sich zu verbinden?",
   "invite_friends": "Freunde einladen",
+  "invite_send_fail": "Einladung konnte nicht gesendet werden. Bitte überprüfen Sie Ihr Netzwerk und versuchen Sie es erneut.",
   "no_keypackages_available": "Keine Schlüsselpakete verfügbar",
   "group_info": "Gruppeninformationen",
   "group_name": "Gruppenname",

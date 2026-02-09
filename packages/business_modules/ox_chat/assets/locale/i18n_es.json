@@ -57,6 +57,7 @@
   "no_available_keypackages_title": "No hay paquetes de claves disponibles",
   "no_available_keypackages_content": "No hay paquetes de claves disponibles. ¿Invitar a tus amigos a conectarse?",
   "invite_friends": "Invitar amigos",
+  "invite_send_fail": "Error al enviar la invitación. Comprueba tu red e inténtalo de nuevo.",
   "no_keypackages_available": "No hay paquetes de claves disponibles",
   "group_info": "Información del grupo",
   "group_name": "Nombre del grupo",

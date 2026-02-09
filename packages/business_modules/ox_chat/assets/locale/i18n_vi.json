@@ -57,6 +57,7 @@
   "no_available_keypackages_title": "Không Có Gói Khóa Khả Dụng",
   "no_available_keypackages_content": "Không có gói khóa khả dụng. Mời bạn bè kết nối?",
   "invite_friends": "Mời Bạn Bè",
+  "invite_send_fail": "Gửi lời mời thất bại. Vui lòng kiểm tra mạng và thử lại.",
   "no_keypackages_available": "Không có gói khóa khả dụng",
   "group_info": "Thông Tin Nhóm",
   "group_name": "Tên Nhóm",

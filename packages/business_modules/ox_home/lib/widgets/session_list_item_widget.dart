@@ -258,9 +258,13 @@ class SessionListItemWidget extends StatelessWidget {
     if (!item.isSingleChat && subtitle.isNotEmpty) {
       final senderPubkey = item.sessionModel.sender;
       if (senderPubkey.isNotEmpty) {
-        final senderUser = Account.sharedInstance.userCache[senderPubkey]?.value;
-        if (senderUser != null) {
-          senderName = senderUser.getUserShowName();
+        if (senderPubkey == Account.sharedInstance.currentPubkey) {
+          senderName = Localized.text('ox_chat.you');
+        } else {
+          final senderUser = Account.sharedInstance.userCache[senderPubkey]?.value;
+          if (senderUser != null) {
+            senderName = senderUser.getUserShowName();
+          }
         }
       }
     }

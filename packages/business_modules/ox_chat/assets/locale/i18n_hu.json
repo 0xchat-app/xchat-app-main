@@ -57,6 +57,7 @@
   "no_available_keypackages_title": "Nincsenek Elérhető Kulcscsomagok",
   "no_available_keypackages_content": "Nincsenek elérhető kulcscsomagok. Barátok meghívása kapcsolódásra?",
   "invite_friends": "Barátok Meghívása",
+  "invite_send_fail": "A meghívó küldése sikertelen. Ellenőrizze a hálózatot, és próbálja újra.",
   "no_keypackages_available": "Nincsenek elérhető kulcscsomagok",
   "group_info": "Csoport Információ",
   "group_name": "Csoport Neve",

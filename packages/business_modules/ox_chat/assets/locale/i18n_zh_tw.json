@@ -57,6 +57,7 @@
   "no_available_keypackages_title": "無可用密鑰包",
   "no_available_keypackages_content": "無可用密鑰包。邀請您的朋友連接？",
   "invite_friends": "邀請朋友",
+  "invite_send_fail": "邀請發送失敗，請檢查網路後重試",
   "no_keypackages_available": "無可用密鑰包",
   "group_info": "群組資訊",
   "group_name": "群組名稱",

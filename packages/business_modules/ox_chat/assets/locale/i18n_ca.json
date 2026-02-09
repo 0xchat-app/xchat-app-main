@@ -57,6 +57,7 @@
   "no_available_keypackages_title": "No Hi Ha Paquets de Claus Disponibles",
   "no_available_keypackages_content": "No hi ha paquets de claus disponibles. Convida els teus amics a connectar-se?",
   "invite_friends": "Convida Amics",
+  "invite_send_fail": "Error en l'enviament de la invitació. Comproveu la xarxa i torneu-ho a provar.",
   "no_keypackages_available": "No hi ha paquets de claus disponibles",
   "group_info": "Informació del Grup",
   "group_name": "Nom del Grup",

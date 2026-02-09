@@ -57,6 +57,7 @@
   "no_available_keypackages_title": "Heç bir Açar Paketi Mövcud Deyil",
   "no_available_keypackages_content": "Heç bir açar paketi mövcud deyil. Dostlarınızı qoşulmağa dəvət edin?",
   "invite_friends": "Dostları Dəvət Et",
+  "invite_send_fail": "Dəvət göndərilmədi. Şəbəkəni yoxlayın və yenidən cəhd edin.",
   "no_keypackages_available": "Heç bir açar paketi mövcud deyil",
   "group_info": "Qrup məlumatı",
   "group_name": "Qrup adı",

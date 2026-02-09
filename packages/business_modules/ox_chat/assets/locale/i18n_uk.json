@@ -57,6 +57,7 @@
   "no_available_keypackages_title": "Немає Доступних Пакетів Ключів",
   "no_available_keypackages_content": "Немає доступних пакетів ключів. Запросити друзів підключитися?",
   "invite_friends": "Запросити Друзів",
+  "invite_send_fail": "Не вдалося надіслати запрошення. Перевірте мережу та спробуйте знову.",
   "no_keypackages_available": "Немає доступних пакетів ключів",
   "group_info": "Інформація про Групу",
   "group_name": "Назва Групи",

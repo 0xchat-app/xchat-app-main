@@ -57,6 +57,7 @@
   "no_available_keypackages_title": "无可用密钥包",
   "no_available_keypackages_content": "无可用密钥包。邀请您的朋友连接？",
   "invite_friends": "邀请朋友",
+  "invite_send_fail": "邀请发送失败，请检查网络后重试",
   "no_keypackages_available": "无可用密钥包",
   "group_info": "群组信息",
   "group_name": "群组名称",

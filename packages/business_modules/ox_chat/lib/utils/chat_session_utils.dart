@@ -320,7 +320,16 @@ class ChatSessionUtils {
       return true;
     } catch (e) {
       await OXLoading.dismiss();
-      
+
+      // Invite send failure: show friendly toast (no technical details)
+      if (e is InviteSendFailureException) {
+        CommonToast.instance.show(
+          context,
+          Localized.text('ox_chat.invite_send_fail'),
+        );
+        return false;
+      }
+
       // Handle KeyPackageError
       final handled = await ChatSessionUtils.handleKeyPackageError(
         context: context,

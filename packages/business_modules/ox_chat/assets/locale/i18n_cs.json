@@ -57,6 +57,7 @@
   "no_available_keypackages_title": "Žádné Dostupné Balíčky Klíčů",
   "no_available_keypackages_content": "Nejsou k dispozici žádné balíčky klíčů. Pozvěte své přátele, aby se připojili?",
   "invite_friends": "Pozvěte Přátele",
+  "invite_send_fail": "Odeslání pozvánky se nezdařilo. Zkontrolujte síť a zkuste to znovu.",
   "no_keypackages_available": "Nejsou k dispozici žádné balíčky klíčů",
   "group_info": "Informace o skupině",
   "group_name": "Název skupiny",
