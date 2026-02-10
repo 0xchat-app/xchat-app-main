@@ -147,5 +147,6 @@
   "circle_expired_message_member": "This circle has expired. You can still view data but cannot send messages or make changes. Please contact the circle admin to renew.",
   "circle_expired_message_admin": "This circle has expired. You can still view data but cannot send messages or make changes. You can renew below.",
   "restore_private_relay": "Restore private circle",
-  "restore_private_relay_no_circles": "No Private Circle to restore"
+  "restore_private_relay_no_circles": "No Private Circle to restore",
+  "no_invite_data": "No invite data available."
 }

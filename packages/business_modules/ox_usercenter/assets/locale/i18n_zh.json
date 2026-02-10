@@ -147,5 +147,6 @@
   "circle_expired_message_member": "当前圈子已过期。您仍可查看数据，但无法发送消息或进行修改。请联系圈子管理员续订。",
   "circle_expired_message_admin": "当前圈子已过期。您仍可查看数据，但无法发送消息或进行修改。您可以在下方续订。",
   "restore_private_relay": "恢复 Private Circle",
-  "restore_private_relay_no_circles": "没有可恢复的 Private Circle"
+  "restore_private_relay_no_circles": "没有可恢复的 Private Circle",
+  "no_invite_data": "暂无邀请数据。"
 }

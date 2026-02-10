@@ -146,5 +146,6 @@
   "circle_expired_message_member": "This circle has expired. You can still view data but cannot send messages or make changes. Please contact the circle admin to renew.",
   "circle_expired_message_admin": "This circle has expired. You can still view data but cannot send messages or make changes. You can renew below.",
   "restore_private_relay": "Private Circle 복원",
-  "restore_private_relay_no_circles": "복원할 Private Circle이 없습니다"
+  "restore_private_relay_no_circles": "복원할 Private Circle이 없습니다",
+  "no_invite_data": "초대 데이터를 사용할 수 없습니다."
 }

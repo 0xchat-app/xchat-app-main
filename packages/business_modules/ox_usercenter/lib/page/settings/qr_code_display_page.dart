@@ -1,30 +1,18 @@
-import 'dart:io';
-import 'dart:math' as math;
 import 'dart:ui' as ui;
 import 'package:ox_common/login/account_path_manager.dart';
-import 'package:path_provider/path_provider.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:chatcore/chat-core.dart';
-import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
-import 'package:nostr_core_dart/nostr.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/widgets/common_toast.dart';
-import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:ox_common/utils/permission_utils.dart';
-import 'package:ox_common/const/app_config.dart';
-import 'package:ox_common/utils/compression_utils.dart';
-import 'package:ox_common/utils/user_config_tool.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:ox_chat/utils/chat_session_utils.dart';
 import 'package:ox_common/widgets/common_scan_page.dart';
 import 'package:flutter/services.dart';
 
@@ -45,17 +33,18 @@ enum QRCodePageMode {
   scan,  // Show scan page
 }
 
+/// Data for QR code display. Used by FutureBuilder (has-data vs no-data).
+typedef _QrPageData = ({String inviteLink, String displayName});
+
 class QRCodeDisplayPage extends StatefulWidget {
   const QRCodeDisplayPage({
     super.key,
     this.previousPageTitle,
-    this.otherUser,
     this.inviteType = InviteType.keypackage,
     this.circle,
   });
 
   final String? previousPageTitle;
-  final UserDBISAR? otherUser;
   final InviteType inviteType;
   final Circle? circle;
 
@@ -64,10 +53,7 @@ class QRCodeDisplayPage extends StatefulWidget {
 }
 
 class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
-  late final UserDBISAR userNotifier;
   late final String userName;
-  String? currentInviteLink;
-  String currentQrCodeData = '';
 
   final GlobalKey qrWidgetKey = GlobalKey();
 
@@ -76,39 +62,36 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
 
   double get horizontal => 32.px;
 
-  // Invite link type (for keypackage invites)
-  InviteLinkType? currentLinkType;
-
   // Discoverable by ID setting
   late final ValueNotifier<bool> discoverableByID$;
 
   // Page mode (Code or Scan)
   late final ValueNotifier<QRCodePageMode?> currentMode$;
 
+  /// Data to display: initialized in didChangeDependencies (has context), replaced on regenerate.
+  Future<_QrPageData?>? _qrPageDataFuture;
+
   @override
   void initState() {
     super.initState();
-    userNotifier = widget.otherUser ?? Account.sharedInstance.me!;
-    userName = userNotifier.name ?? userNotifier.shortEncodedPubkey;
+    final user = Account.sharedInstance.me!;
+    userName = user.name ?? user.shortEncodedPubkey;
 
-    // Initialize discoverable by ID setting
-    // Check both saved setting and actual keypackage events in database
     discoverableByID$ = ValueNotifier<bool>(false);
     _initializeDiscoverableByID();
 
-    // Initialize page mode
     currentMode$ = ValueNotifier<QRCodePageMode?>(QRCodePageMode.code);
+  }
 
-    // Auto-generate invite link when page loads (only for current user)
-    if (widget.otherUser == null) {
-      _generateInviteLink();
-    }
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Initialize QR data future once when a valid BuildContext with dependencies is available.
+    _qrPageDataFuture ??= _loadQrPageData(context);
   }
 
   /// Initialize discoverable by ID state by checking database
   Future<void> _initializeDiscoverableByID() async {
-    if (widget.otherUser != null) return; // Only for current user
-    
     try {
       final ownerPubkey = Account.sharedInstance.currentPubkey;
       
@@ -129,6 +112,30 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
     }
   }
 
+  Future<void> _regenerateInviteLink() async {
+    try {
+      if (widget.inviteType == InviteType.circle) {
+        if (widget.circle == null) {
+          CommonToast.instance.show(context, 'Circle is required for circle invite');
+          return;
+        }
+        await InviteLinkManager.regenerateCircleInviteLink(
+          circle: widget.circle!,
+        );
+      } else {
+        await InviteLinkManager.regenerateKeyPackageInviteLink(
+          context: context,
+        );
+      }
+
+      _qrPageDataFuture = _loadQrPageData(context);
+      if (mounted) setState(() {}); // FutureBuilder will listen to the new future
+
+      CommonToast.instance.show(context, Localized.text('ox_usercenter.invite_link_regenerated'));
+    } catch (e) {
+      CommonToast.instance.show(context, e.toString());
+    }
+  }
 
   @override
   void dispose() {
@@ -137,45 +144,37 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
     super.dispose();
   }
 
-  Future<void> _generateInviteLink() async {
-    if (widget.otherUser != null) return; // Only for current user
-
-    try {
-      String inviteLink;
-      
-      if (widget.inviteType == InviteType.circle) {
-        // Generate circle invite link
-        if (widget.circle == null) {
-          CommonToast.instance.show(context, 'Circle is required for circle invite');
-          return;
-        }
-        
-        final result = await InviteLinkManager.generateCircleInviteLink(
-          circle: widget.circle!,
-        );
-        inviteLink = result['inviteLink'] as String;
-        currentLinkType = InviteLinkType.permanent; // Circle invites are permanent
-      } else {
-        // Generate keypackage invite link (default to permanent)
-        inviteLink = await InviteLinkManager.generateKeyPackageInviteLink(
-          linkType: InviteLinkType.permanent,
-          context: context,
-        );
-        currentLinkType = InviteLinkType.permanent;
+  /// Pure fetch: returns [_QrPageData] or throws. No toast/pop.
+  Future<_QrPageData> _fetchQrPageData(BuildContext context) async {
+    if (widget.inviteType == InviteType.circle) {
+      if (widget.circle == null) {
+        throw Exception('Circle is required for circle invite');
       }
-
-      // Update QR code data and invite link
-      currentInviteLink = inviteLink;
-      currentQrCodeData = inviteLink;
-
-      setState(() {});
-    } catch (e) {
-      CommonToast.instance.show(context, e.toString());
-      if (widget.inviteType == InviteType.circle) {
-        // For circle invites, pop back on error
-        OXNavigator.pop(context);
-      }
+      final result = await InviteLinkManager.generateCircleInviteLink(
+        circle: widget.circle!,
+      );
+      final inviteLink = result['inviteLink'] as String;
+      return (inviteLink: inviteLink, displayName: widget.circle!.name);
+    } else {
+      final inviteLink = await InviteLinkManager.generateKeyPackageInviteLink(
+        linkType: InviteLinkType.permanent,
+        context: context,
+      );
+      return (inviteLink: inviteLink, displayName: userName);
     }
+  }
+
+  /// Wraps [_fetchQrPageData]: on error completes with null and shows toast/pop.
+  Future<_QrPageData?> _loadQrPageData(BuildContext context) {
+    return _fetchQrPageData(context).then<_QrPageData?>((d) => d).catchError((e, st) {
+      if (mounted) {
+        CommonToast.instance.show(context, e.toString());
+        if (widget.inviteType == InviteType.circle) {
+          OXNavigator.pop(context);
+        }
+      }
+      return null;
+    });
   }
 
   @override
@@ -185,40 +184,6 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
         title: _buildSegmentControl(),
       ),
       body: _buildBody(),
-    );
-  }
-
-  PreferredSizeWidget _buildMaterialAppBar() {
-    return AppBar(
-      backgroundColor: ColorToken.surface.of(context),
-      elevation: 0,
-      leading: Container(), // Remove default back button
-      title: _buildSegmentControl(),
-      centerTitle: true,
-      actions: [
-        // Close button (X)
-        Padding(
-          padding: EdgeInsets.only(right: 16.px),
-          child: CLButton.icon(
-            onTap: () => OXNavigator.pop(context),
-            icon: Icons.close,
-            iconSize: 24.px,
-          ),
-        ),
-      ],
-    );
-  }
-
-  CupertinoNavigationBar _buildCupertinoAppBar() {
-    return CupertinoNavigationBar(
-      middle: _buildSegmentControl(),
-      leading: null,
-      padding: EdgeInsetsDirectional.zero,
-      trailing: CupertinoButton(
-        padding: EdgeInsets.only(right: 16.px),
-        onPressed: () => OXNavigator.pop(context),
-        child: Text(Localized.text('ox_common.complete')),
-      ),
     );
   }
 
@@ -252,57 +217,176 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
           return _buildScanPage();
         }
 
-        return SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: horizontal),
-            child: Column(
-              children: [
-                SizedBox(height: 24.px),
-
-                // QR Code Card - Blue background with QR code
-                RepaintBoundary(
-                  key: qrWidgetKey,
-                  child: UserQrCodeDisplay(
-                    qrcodeValue: currentQrCodeData,
-                    tintColor: selectedColor,
-                    userName: widget.inviteType == InviteType.circle && widget.circle != null
-                        ? widget.circle!.name
-                        : userName,
-                    canCopyName: true,
-                  ),
-                ),
-
-                // Action buttons (Link, Share, Color)
-                SizedBox(height: 32.px),
-                _buildActionButtons(),
-
-                // Warning text
-                SizedBox(height: 32.px),
-                CLText.bodySmall(
-                  widget.inviteType == InviteType.circle
-                      ? Localized.text('ox_usercenter.qr_code_share_warning_circle')
-                      : Localized.text('ox_usercenter.qr_code_share_warning'),
-                  textAlign: TextAlign.center,
-                  colorToken: ColorToken.onSurfaceVariant,
-                ),
-
-                // Reset button (for both keypackage and circle invites)
-                SizedBox(height: 32.px),
-                CLButton.outlined(
-                  text: Localized.text('ox_usercenter.reset'),
-                  onTap: widget.otherUser == null && currentInviteLink != null
-                      ? _showRegenerateConfirmDialog
-                      : null,
-                  expanded: true,
-                ),
-
-                SafeArea(child: SizedBox(height: 12.px))
-              ],
-            ),
-          ),
+        return FutureBuilder<_QrPageData?>(
+          future: _qrPageDataFuture,
+          builder: (context, snapshot) {
+            // If future is not yet set (ConnectionState.none) or still loading, show loading UI.
+            if (snapshot.connectionState == ConnectionState.none ||
+                snapshot.connectionState == ConnectionState.waiting) {
+              return _buildCodeTabContentLoading();
+            }
+            if (snapshot.hasError) {
+              return _buildCodeTabContentError(snapshot.error);
+            }
+            final data = snapshot.data;
+            if (data == null) {
+              return _buildCodeTabContentNoData();
+            }
+            return _buildCodeTabContentWithData(data);
+          },
         );
       },
+    );
+  }
+
+  Widget _buildCodeTabContentLoading() {
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: horizontal),
+        child: Column(
+          children: [
+            SizedBox(height: 24.px),
+            RepaintBoundary(
+              key: qrWidgetKey,
+              child: _buildQrCodeLoadingPlaceholder(),
+            ),
+            SizedBox(height: 32.px),
+            _buildActionButtonsPlaceholder(),
+            SizedBox(height: 32.px),
+            CLText.bodySmall(
+              widget.inviteType == InviteType.circle
+                  ? Localized.text('ox_usercenter.qr_code_share_warning_circle')
+                  : Localized.text('ox_usercenter.qr_code_share_warning'),
+              textAlign: TextAlign.center,
+              colorToken: ColorToken.onSurfaceVariant,
+            ),
+            SafeArea(child: SizedBox(height: 12.px)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCodeTabContentError(Object? error) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: horizontal),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CLText.bodyMedium(
+              error?.toString() ?? Localized.text('ox_common.error'),
+              textAlign: TextAlign.center,
+              colorToken: ColorToken.onSurfaceVariant,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCodeTabContentNoData() {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: horizontal),
+        child: CLText.bodyMedium(
+          Localized.text('ox_usercenter.no_invite_data'),
+          textAlign: TextAlign.center,
+          colorToken: ColorToken.onSurfaceVariant,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCodeTabContentWithData(_QrPageData data) {
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: horizontal),
+        child: Column(
+          children: [
+            SizedBox(height: 24.px),
+            RepaintBoundary(
+              key: qrWidgetKey,
+              child: UserQrCodeDisplay(
+                qrcodeValue: data.inviteLink,
+                tintColor: selectedColor,
+                userName: data.displayName,
+                canCopyName: true,
+              ),
+            ),
+            SizedBox(height: 32.px),
+            _buildActionButtons(data),
+            SizedBox(height: 32.px),
+            CLText.bodySmall(
+              widget.inviteType == InviteType.circle
+                  ? Localized.text('ox_usercenter.qr_code_share_warning_circle')
+                  : Localized.text('ox_usercenter.qr_code_share_warning'),
+              textAlign: TextAlign.center,
+              colorToken: ColorToken.onSurfaceVariant,
+            ),
+            SizedBox(height: 32.px),
+            CLButton.outlined(
+              text: Localized.text('ox_usercenter.reset'),
+              onTap: _showRegenerateConfirmDialog,
+              expanded: true,
+            ),
+            SafeArea(child: SizedBox(height: 12.px)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Loading placeholder with same card style as UserQrCodeDisplay.
+  Widget _buildQrCodeLoadingPlaceholder() {
+    return Container(
+      padding: EdgeInsets.all(30.px),
+      decoration: BoxDecoration(
+        color: selectedColor,
+        borderRadius: BorderRadius.circular(30.px),
+      ),
+      child: IntrinsicWidth(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox.square(
+              dimension: 250.px,
+              child: Center(
+                child: SizedBox(
+                  width: 40.px,
+                  height: 40.px,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 16.px),
+            CLText.bodyMedium(
+              widget.inviteType == InviteType.circle && widget.circle != null
+                  ? widget.circle!.name
+                  : userName,
+              textAlign: TextAlign.center,
+              colorToken: ColorToken.white,
+              isBold: true,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButtonsPlaceholder() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        _buildCircularActionButton(icon: Icons.link, label: Localized.text('ox_usercenter.link'), onTap: null),
+        _buildCircularActionButton(icon: Icons.share, label: Localized.text('ox_usercenter.share'), onTap: null),
+        _buildCircularActionButton(icon: Icons.palette, label: Localized.text('ox_usercenter.color'), onTap: null),
+      ],
     );
   }
 
@@ -310,14 +394,14 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
     return CommonScanPage();
   }
 
-  Widget _buildActionButtons() {
+  Widget _buildActionButtons(_QrPageData data) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         _buildCircularActionButton(
           icon: Icons.link,
           label: Localized.text('ox_usercenter.link'),
-          onTap: _copyLink,
+          onTap: () => _copyLink(data.inviteLink),
         ),
         _buildCircularActionButton(
           icon: Icons.share,
@@ -327,7 +411,7 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
         _buildCircularActionButton(
           icon: Icons.palette,
           label: Localized.text('ox_usercenter.color'),
-          onTap: _showColorPicker,
+          onTap: () => _showColorPicker(qrcodeValue: data.inviteLink, displayName: data.displayName),
         ),
       ],
     );
@@ -475,9 +559,7 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
     }
   }
 
-  Future<void> _copyLink() async {
-    if (currentInviteLink == null) return;
-    
+  Future<void> _copyLink(String inviteLink) async {
     // Show dialog with link information
     if (PlatformStyle.isUseMaterial) {
       await showDialog(
@@ -488,16 +570,14 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Description text
               CLText.bodyMedium(
                 Localized.text('ox_usercenter.invite_link_description'),
                 colorToken: ColorToken.onSurfaceVariant,
               ),
               SizedBox(height: 16.px),
-              // Link URL
               GestureDetector(
                 onTap: () async {
-                  await Clipboard.setData(ClipboardData(text: currentInviteLink!));
+                  await Clipboard.setData(ClipboardData(text: inviteLink));
                   CommonToast.instance.show(context, Localized.text('ox_common.copied_to_clipboard'));
                 },
                 child: Container(
@@ -507,7 +587,7 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
                     borderRadius: BorderRadius.circular(8.px),
                   ),
                   child: Text(
-                    currentInviteLink!,
+                    inviteLink,
                     style: TextStyle(
                       fontSize: 14.px,
                       color: ColorToken.onSurface.of(context),
@@ -523,7 +603,7 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
             TextButton.icon(
               onPressed: () async {
                 Navigator.pop(context);
-                await Clipboard.setData(ClipboardData(text: currentInviteLink!));
+                await Clipboard.setData(ClipboardData(text: inviteLink));
                 CommonToast.instance.show(context, Localized.text('ox_common.copied_to_clipboard'));
               },
               icon: Icon(Icons.description_outlined, size: 20.px),
@@ -533,7 +613,7 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
               onPressed: () async {
                 Navigator.pop(context);
                 await Share.share(
-                  currentInviteLink!,
+                  inviteLink,
                   subject: Localized.text('ox_usercenter.invite_to_chat'),
                 );
               },
@@ -557,16 +637,14 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Description text
               CLText.bodyMedium(
                 Localized.text('ox_usercenter.invite_link_description'),
                 colorToken: ColorToken.onSurfaceVariant,
               ),
               SizedBox(height: 16.px),
-              // Link URL
               GestureDetector(
                 onTap: () async {
-                  await Clipboard.setData(ClipboardData(text: currentInviteLink!));
+                  await Clipboard.setData(ClipboardData(text: inviteLink));
                   CommonToast.instance.show(context, Localized.text('ox_common.copied_to_clipboard'));
                 },
                 child: Container(
@@ -576,7 +654,7 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
                     borderRadius: BorderRadius.circular(8.px),
                   ),
                   child: Text(
-                    currentInviteLink!,
+                    inviteLink,
                     style: TextStyle(
                       fontSize: 14.px,
                       color: ColorToken.onSurface.of(context),
@@ -592,7 +670,7 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
             CupertinoDialogAction(
               onPressed: () async {
                 Navigator.pop(context);
-                await Clipboard.setData(ClipboardData(text: currentInviteLink!));
+                await Clipboard.setData(ClipboardData(text: inviteLink));
                 CommonToast.instance.show(context, Localized.text('ox_common.copied_to_clipboard'));
               },
               child: Row(
@@ -609,7 +687,7 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
               onPressed: () async {
                 Navigator.pop(context);
                 await Share.share(
-                  currentInviteLink!,
+                  inviteLink,
                   subject: Localized.text('ox_usercenter.invite_to_chat'),
                 );
               },
@@ -634,16 +712,12 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
     }
   }
 
-  Future<void> _showColorPicker() async {
-    final displayName = widget.inviteType == InviteType.circle && widget.circle != null
-        ? widget.circle!.name
-        : userName;
-    
+  Future<void> _showColorPicker({required String qrcodeValue, required String displayName}) async {
     final Color? selectedColorResult = await OXNavigator.pushPage<Color>(
       context,
       (context) => QRCodeColorPickerPage(
         initialColor: selectedColor,
-        qrcodeValue: currentQrCodeData,
+        qrcodeValue: qrcodeValue,
         userName: displayName,
       ),
       type: OXPushPageType.present,
@@ -651,41 +725,6 @@ class _QRCodeDisplayPageState extends State<QRCodeDisplayPage> {
 
     if (selectedColorResult != null) {
       changeQrColor(selectedColorResult);
-    }
-  }
-
-
-  Future<void> _regenerateInviteLink() async {
-    try {
-      String inviteLink;
-      
-      if (widget.inviteType == InviteType.circle) {
-        // Reset circle invitation code
-        if (widget.circle == null) {
-          CommonToast.instance.show(context, 'Circle is required for circle invite');
-          return;
-        }
-        
-        final result = await InviteLinkManager.regenerateCircleInviteLink(
-          circle: widget.circle!,
-        );
-        inviteLink = result['inviteLink'] as String;
-      } else {
-        // Regenerate keypackage invite link
-        inviteLink = await InviteLinkManager.regenerateKeyPackageInviteLink(
-          context: context,
-        );
-      }
-
-      // Update QR code data and invite link
-      currentInviteLink = inviteLink;
-      currentQrCodeData = inviteLink;
-
-      setState(() {});
-
-      CommonToast.instance.show(context, Localized.text('ox_usercenter.invite_link_regenerated'));
-    } catch (e) {
-      CommonToast.instance.show(context, e.toString());
     }
   }
 

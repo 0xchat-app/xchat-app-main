@@ -146,5 +146,6 @@
   "circle_expired_message_member": "This circle has expired. You can still view data but cannot send messages or make changes. Please contact the circle admin to renew.",
   "circle_expired_message_admin": "This circle has expired. You can still view data but cannot send messages or make changes. You can renew below.",
   "restore_private_relay": "Private Circle を復元",
-  "restore_private_relay_no_circles": "復元する Private Circle がありません"
+  "restore_private_relay_no_circles": "復元する Private Circle がありません",
+  "no_invite_data": "招待データがありません。"
 }

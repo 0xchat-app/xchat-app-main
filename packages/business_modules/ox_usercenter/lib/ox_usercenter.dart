@@ -45,11 +45,10 @@ class OXUserCenter extends OXFlutterModule {
         );
       case 'QRCodeDisplayPage':
         String? previousPageTitle = params?['previousPageTitle'];
-        UserDBISAR? otherUser = params?['otherUser'];
         return OXNavigator.pushPage(
           context,
           (context) => QRCodeDisplayPage(
-              previousPageTitle: previousPageTitle, otherUser: otherUser),
+              previousPageTitle: previousPageTitle),
         );
     }
     return null;
