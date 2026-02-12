@@ -15,14 +15,13 @@ class OXUserCenterInterface {
     ) ?? const SizedBox();
   }
 
-  static Future<T?>? pushQRCodeDisplayPage<T>(BuildContext context, {String? previousPageTitle, UserDBISAR? otherUser}) {
+  static Future<T?>? pushQRCodeDisplayPage<T>(BuildContext context, {String? previousPageTitle}) {
     return OXModuleService.pushPage<T>(
       context,
       moduleName,
       'QRCodeDisplayPage',
       {
         'previousPageTitle': previousPageTitle,
-        'otherUser': otherUser,
       },
     );
   }
