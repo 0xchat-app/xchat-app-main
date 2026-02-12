@@ -54,10 +54,14 @@ class _SessionListWidgetState extends State<SessionListWidget> {
 
   @override
   void dispose() {
+    controller?.dispose();
+    controller = null;
     super.dispose();
   }
 
   void _initializeController() {
+    controller?.dispose();
+    controller = null;
     if (widget.ownerPubkey.isNotEmpty) {
       controller = SessionListDataController(widget.ownerPubkey, widget.circle);
       controller!.initialized();
