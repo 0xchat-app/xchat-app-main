@@ -417,7 +417,7 @@ class SettingSliderState extends State<SettingSlider> {
                           ValueListenableBuilder(
                             valueListenable: userNotifier.encodedPubkey$,
                             builder: (context, encodedPubkey, _) {
-                              return CLText.bodyMedium(encodedPubkey.truncate(25));
+                              return CLText.bodyMedium(encodedPubkey.truncate(PlatformStyle.isUseMaterial ? 20 : 25));
                             }
                           ),
                         ]
