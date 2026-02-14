@@ -419,13 +419,14 @@ class PurchaseManager {
   bool _shouldRouteToSession(PurchaseDetails p, _PurchaseSession session) {
     // 1) product filter
     if (session.type == _SessionType.purchase) {
-      // Android may send PurchaseStatus.canceled with empty productID when user
-      // dismisses the native dialog; accept so we can complete the session as canceled.
-      if (p.status == PurchaseStatus.canceled &&
+      // Android may send canceled/error with empty productID (e.g. user dismisses
+      // dialog, or billing fails with resultCode 3). Accept so we complete the
+      // session and reset UI. iOS typically sends productID; no platform check.
+      if ((p.status == PurchaseStatus.canceled || p.status == PurchaseStatus.error) &&
           p.productID.isEmpty &&
           session.productIds.length == 1) {
         LogUtil.d(() => '''
-          [PurchaseManager] Accepting canceled with empty productID (current purchase session):
+          [PurchaseManager] Accepting ${p.status} with empty productID (current purchase session):
           - session productId: ${session.productIds.single}
         ''');
         return true;
@@ -832,9 +833,14 @@ class PurchaseManager {
         session.completer != null &&
         !session.completer!.isCompleted) {
       session.completer!.complete(PurchaseResult.error(errorMessage));
-      // Clear pending flag immediately
-      _pendingPurchases.remove(purchaseDetails.productID);
-      LogUtil.d(() => '[PurchaseManager] Purchase error handled, pending flag cleared for: ${purchaseDetails.productID}');
+      // Clear pending flag; Android may send error with empty productID
+      final productIdToClear = purchaseDetails.productID.isNotEmpty
+          ? purchaseDetails.productID
+          : (session.productIds.length == 1 ? session.productIds.single : null);
+      if (productIdToClear != null) {
+        _pendingPurchases.remove(productIdToClear);
+        LogUtil.d(() => '[PurchaseManager] Purchase error handled, pending flag cleared for: $productIdToClear');
+      }
     }
 
     // Do NOT finish here. PurchaseService decides finish/shouldFinish policy.
