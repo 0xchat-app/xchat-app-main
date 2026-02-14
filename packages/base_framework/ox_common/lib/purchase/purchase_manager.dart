@@ -815,6 +815,18 @@ class PurchaseManager {
     }
   }
 
+  /// Returns a user-facing message for cancel, or null to use localized fallback.
+  /// Android plugin often puts technical strings in error.message (e.g. "BillingResponse.userCanceled");
+  /// filter those so UI shows ox_login.purchase_canceled instead.
+  String? _userFriendlyCancelMessage(String? platformMessage) {
+    if (platformMessage == null || platformMessage.trim().isEmpty) return null;
+    final lower = platformMessage.toLowerCase();
+    if (lower.contains('billingresponse')) {
+      return null; // Technical identifier, not for end user
+    }
+    return platformMessage.trim();
+  }
+
   /// True when the error represents user cancellation (so we can return
   /// [PurchaseResult.canceled] and align with [PurchaseStatus.canceled] path).
   /// - iOS StoreKit 2: code "storekit2_purchase_cancelled", message "This transaction has been cancelled by the user."
@@ -855,8 +867,8 @@ class PurchaseManager {
           : (session.productIds.length == 1 ? session.productIds.single : null);
 
       if (_isUserCancelError(purchaseDetails)) {
-        // Prefer platform message (e.g. iOS "This transaction has been cancelled by the user.").
-        final cancelMessage = purchaseDetails.error?.message;
+        // Prefer platform message when user-friendly (e.g. iOS); Android often sends "BillingResponse.userCanceled" → use null so UI shows localized text.
+        final cancelMessage = _userFriendlyCancelMessage(purchaseDetails.error?.message);
         session.completer!.complete(PurchaseResult.canceled(message: cancelMessage));
         if (productIdToClear != null) {
           _pendingPurchases.remove(productIdToClear);
@@ -890,8 +902,8 @@ class PurchaseManager {
         session.type == _SessionType.purchase &&
         session.completer != null &&
         !session.completer!.isCompleted) {
-      // Prefer platform message if present (Android may have none).
-      final cancelMessage = purchaseDetails.error?.message;
+      // Prefer platform message when user-friendly; filter technical strings (e.g. Android "BillingResponse.userCanceled").
+      final cancelMessage = _userFriendlyCancelMessage(purchaseDetails.error?.message);
       session.completer!.complete(PurchaseResult.canceled(message: cancelMessage));
       // Clear pending flag: Android may send canceled with empty productID
       final productIdToClear = purchaseDetails.productID.isNotEmpty
