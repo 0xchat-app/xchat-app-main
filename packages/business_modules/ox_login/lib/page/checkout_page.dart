@@ -48,6 +48,15 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   @override
+  void dispose() {
+    // On Android, dismissing the native purchase dialog does not send any stream
+    // event; pending state would otherwise stick and re-entry would show
+    // "Purchase already in progress". Clear so user can retry when they come back.
+    PurchaseManager.instance.clearPendingPurchase(_productId);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return CLScaffold(
       appBar: CLAppBar(),

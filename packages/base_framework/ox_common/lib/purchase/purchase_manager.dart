@@ -419,6 +419,17 @@ class PurchaseManager {
   bool _shouldRouteToSession(PurchaseDetails p, _PurchaseSession session) {
     // 1) product filter
     if (session.type == _SessionType.purchase) {
+      // Android may send PurchaseStatus.canceled with empty productID when user
+      // dismisses the native dialog; accept so we can complete the session as canceled.
+      if (p.status == PurchaseStatus.canceled &&
+          p.productID.isEmpty &&
+          session.productIds.length == 1) {
+        LogUtil.d(() => '''
+          [PurchaseManager] Accepting canceled with empty productID (current purchase session):
+          - session productId: ${session.productIds.single}
+        ''');
+        return true;
+      }
       // Only this productId
       if (!session.productIds.contains(p.productID)) return false;
 
@@ -839,14 +850,19 @@ class PurchaseManager {
 
     // Complete the Future for purchaseProduct
     final session = _activeSession;
-    if (session != null && 
-        session.type == _SessionType.purchase && 
+    if (session != null &&
+        session.type == _SessionType.purchase &&
         session.completer != null &&
         !session.completer!.isCompleted) {
       session.completer!.complete(PurchaseResult.canceled());
-      // Clear pending flag immediately
-      _pendingPurchases.remove(purchaseDetails.productID);
-      LogUtil.d(() => '[PurchaseManager] Purchase canceled, pending flag cleared for: ${purchaseDetails.productID}');
+      // Clear pending flag: Android may send canceled with empty productID
+      final productIdToClear = purchaseDetails.productID.isNotEmpty
+          ? purchaseDetails.productID
+          : (session.productIds.length == 1 ? session.productIds.single : null);
+      if (productIdToClear != null) {
+        _pendingPurchases.remove(productIdToClear);
+        LogUtil.d(() => '[PurchaseManager] Purchase canceled, pending flag cleared for: $productIdToClear');
+      }
     }
 
     // Do NOT finish here. PurchaseService decides finish/shouldFinish policy.
@@ -892,6 +908,27 @@ class PurchaseManager {
   /// }
   /// ```
   ///
+  /// Clears pending purchase state for [productId] and ends the current purchase
+  /// session if it matches. Call when the user leaves the checkout page without
+  /// completing (e.g. Navigator.pop). Ensures re-entering the flow does not show
+  /// "Purchase already in progress". On Android, dismissing the native dialog
+  /// does not send any stream event, so pending state can stick without this.
+  void clearPendingPurchase(String productId) {
+    if (_pendingPurchases.remove(productId) != true) return;
+    final session = _activeSession;
+    if (session != null &&
+        session.type == _SessionType.purchase &&
+        session.productIds.contains(productId) &&
+        session.completer != null &&
+        !session.completer!.isCompleted) {
+      session.completer!.complete(PurchaseResult.canceled());
+      LogUtil.d(() => '[PurchaseManager] clearPendingPurchase: completed session with canceled for: $productId');
+    }
+    if (_activeSession != null && _activeSession!.productIds.contains(productId)) {
+      _endSessionInternal(reason: 'clearPendingPurchase (user left checkout)');
+    }
+  }
+
   /// Query product details from the store for UI display (e.g. localized price).
   /// Returns null if store unavailable or product not found. Flow pages use [SubscriptionProductPrices] first, then this as fallback.
   Future<ProductDetails?> getProductDetails(String productId) async {
@@ -1005,7 +1042,10 @@ class PurchaseManager {
         return completer.future;
       }
 
-      // Set timeout for purchase completion
+      // If no stream event arrives (e.g. on Android, plugin may not forward USER_CANCELED
+      // when user dismisses the dialog), the caller can clear state by leaving the
+      // checkout page (dispose → clearPendingPurchase). We only use a long timeout
+      // here to avoid the Future hanging forever on real hangs.
       Future.delayed(const Duration(minutes: 5), () {
         if (!completer.isCompleted) {
           completeAndClear(PurchaseResult.error('Purchase timeout. Please try again.'));
