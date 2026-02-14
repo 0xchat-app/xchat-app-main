@@ -116,6 +116,7 @@
   "pay": "Paga",
   "recurring_billing": "Fatturazione ricorrente, cancella in qualsiasi momento",
   "already_purchased": "Hai già un abbonamento attivo.",
+  "purchase_canceled": "Acquisto annullato.",
   "circle_activated": "Cerchio Attivato!",
   "circle_activated_desc": "Il tuo relay privato sicuro è attivo. Personalizza il tuo cerchio per iniziare.",
   "name_your_circle": "Dai un nome al tuo cerchio",

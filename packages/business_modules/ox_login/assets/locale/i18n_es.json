@@ -116,6 +116,7 @@
   "pay": "Pagar",
   "recurring_billing": "Facturación recurrente, cancele en cualquier momento",
   "already_purchased": "Ya tiene una suscripción activa.",
+  "purchase_canceled": "Compra cancelada.",
   "circle_activated": "¡Círculo Activado!",
   "circle_activated_desc": "Su relé privado seguro está activo. Personalice su círculo para comenzar.",
   "name_your_circle": "Nombre su círculo",

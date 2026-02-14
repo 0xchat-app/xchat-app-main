@@ -116,6 +116,7 @@
   "pay": "Zaplatit",
   "recurring_billing": "Opakující se fakturace, zrušte kdykoli",
   "already_purchased": "Již máte aktivní předplatné.",
+  "purchase_canceled": "Nákup byl zrušen.",
   "circle_activated": "Kruh Aktivován!",
   "circle_activated_desc": "Vaše bezpečné soukromé relé je aktivní. Přizpůsobte si svůj kruh pro začátek.",
   "name_your_circle": "Pojmenujte svůj kruh",

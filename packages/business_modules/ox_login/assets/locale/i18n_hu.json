@@ -116,6 +116,7 @@
   "pay": "Fizetés",
   "recurring_billing": "Ismétlődő számlázás, bármikor lemondható",
   "already_purchased": "Már van aktív előfizetése.",
+  "purchase_canceled": "A vásárlás törölve.",
   "circle_activated": "Kör Aktiválva!",
   "circle_activated_desc": "Biztonságos privát reléje aktív. Testreszabhatja körét a kezdéshez.",
   "name_your_circle": "Nevezze el körét",

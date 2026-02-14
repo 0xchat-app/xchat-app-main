@@ -116,6 +116,7 @@
   "pay": "Betalen",
   "recurring_billing": "Terugkerende facturering, annuleer op elk moment",
   "already_purchased": "U heeft al een actief abonnement.",
+  "purchase_canceled": "Aankoop geannuleerd.",
   "circle_activated": "Cirkel Geactiveerd!",
   "circle_activated_desc": "Uw veilige privé relay is actief. Pas uw cirkel aan om te beginnen.",
   "name_your_circle": "Geef uw cirkel een naam",

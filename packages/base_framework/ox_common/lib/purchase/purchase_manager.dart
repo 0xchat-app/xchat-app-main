@@ -66,11 +66,13 @@ class PurchaseResult {
     );
   }
 
-  /// Create canceled result
-  factory PurchaseResult.canceled() {
+  /// Create canceled result.
+  /// [message] Optional platform message (e.g. iOS "This transaction has been cancelled by the user.").
+  /// UI should show [message] if present, otherwise localized fallback.
+  factory PurchaseResult.canceled({String? message}) {
     return PurchaseResult(
       success: false,
-      errorMessage: null, // Canceled doesn't need error message
+      errorMessage: message,
       isCanceled: true,
     );
   }
@@ -813,6 +815,22 @@ class PurchaseManager {
     }
   }
 
+  /// True when the error represents user cancellation (so we can return
+  /// [PurchaseResult.canceled] and align with [PurchaseStatus.canceled] path).
+  /// - iOS StoreKit 2: code "storekit2_purchase_cancelled", message "This transaction has been cancelled by the user."
+  /// - iOS StoreKit 1: SKError.Code.paymentCancelled = 2 → plugin may expose code "2".
+  /// - Android: BillingResponseCode.USER_CANCELED = 1 → plugin may expose "1".
+  bool _isUserCancelError(PurchaseDetails purchaseDetails) {
+    final err = purchaseDetails.error;
+    if (err == null) return false;
+    final code = err.code.trim();
+    if (code == '1' || code == '2') return true; // Android 1, iOS StoreKit 1 (2)
+    if (code == 'storekit2_purchase_cancelled') return true; // iOS StoreKit 2
+    final msg = err.message.toLowerCase();
+    if (msg.contains('cancel')) return true;
+    return false;
+  }
+
   Future<void> _handleError(PurchaseDetails purchaseDetails) async {
     LogUtil.e(() => '''
       [PurchaseManager] Purchase error:
@@ -824,19 +842,31 @@ class PurchaseManager {
       - pendingCompletePurchase: ${purchaseDetails.pendingCompletePurchase}
     ''');
 
-    final errorMessage = purchaseDetails.error?.message ?? 'Purchase error';
-
-    // Complete the Future for purchaseProduct
     final session = _activeSession;
-    if (session != null && 
-        session.type == _SessionType.purchase && 
+    final bool isPurchaseSession =
+        session != null &&
+        session.type == _SessionType.purchase &&
         session.completer != null &&
-        !session.completer!.isCompleted) {
-      session.completer!.complete(PurchaseResult.error(errorMessage));
-      // Clear pending flag; Android may send error with empty productID
+        !session.completer!.isCompleted;
+
+    if (isPurchaseSession) {
       final productIdToClear = purchaseDetails.productID.isNotEmpty
           ? purchaseDetails.productID
           : (session.productIds.length == 1 ? session.productIds.single : null);
+
+      if (_isUserCancelError(purchaseDetails)) {
+        // Prefer platform message (e.g. iOS "This transaction has been cancelled by the user.").
+        final cancelMessage = purchaseDetails.error?.message;
+        session.completer!.complete(PurchaseResult.canceled(message: cancelMessage));
+        if (productIdToClear != null) {
+          _pendingPurchases.remove(productIdToClear);
+          LogUtil.d(() => '[PurchaseManager] Purchase error treated as user cancel, pending flag cleared for: $productIdToClear');
+        }
+        return;
+      }
+
+      final errorMessage = purchaseDetails.error?.message ?? 'Purchase error';
+      session.completer!.complete(PurchaseResult.error(errorMessage));
       if (productIdToClear != null) {
         _pendingPurchases.remove(productIdToClear);
         LogUtil.d(() => '[PurchaseManager] Purchase error handled, pending flag cleared for: $productIdToClear');
@@ -860,7 +890,9 @@ class PurchaseManager {
         session.type == _SessionType.purchase &&
         session.completer != null &&
         !session.completer!.isCompleted) {
-      session.completer!.complete(PurchaseResult.canceled());
+      // Prefer platform message if present (Android may have none).
+      final cancelMessage = purchaseDetails.error?.message;
+      session.completer!.complete(PurchaseResult.canceled(message: cancelMessage));
       // Clear pending flag: Android may send canceled with empty productID
       final productIdToClear = purchaseDetails.productID.isNotEmpty
           ? purchaseDetails.productID
@@ -927,7 +959,7 @@ class PurchaseManager {
         session.productIds.contains(productId) &&
         session.completer != null &&
         !session.completer!.isCompleted) {
-      session.completer!.complete(PurchaseResult.canceled());
+      session.completer!.complete(PurchaseResult.canceled()); // no platform message when user left page
       LogUtil.d(() => '[PurchaseManager] clearPendingPurchase: completed session with canceled for: $productId');
     }
     if (_activeSession != null && _activeSession!.productIds.contains(productId)) {

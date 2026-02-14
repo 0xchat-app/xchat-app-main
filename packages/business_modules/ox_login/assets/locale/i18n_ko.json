@@ -116,6 +116,7 @@
   "pay": "결제",
   "recurring_billing": "정기 청구, 언제든지 취소 가능",
   "already_purchased": "이미 활성 구독이 있습니다.",
+  "purchase_canceled": "구매가 취소되었습니다.",
   "circle_activated": "서클이 활성화되었습니다!",
   "circle_activated_desc": "안전한 프라이빗 릴레이가 활성화되었습니다. 서클을 사용자 정의하여 시작하세요.",
   "name_your_circle": "서클 이름 지정",

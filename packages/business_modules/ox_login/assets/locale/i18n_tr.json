@@ -116,6 +116,7 @@
   "pay": "Öde",
   "recurring_billing": "Yinelenen faturalama, istediğiniz zaman iptal edin",
   "already_purchased": "Zaten aktif bir aboneliğiniz var.",
+  "purchase_canceled": "Satın alma iptal edildi.",
   "circle_activated": "Çember Etkinleştirildi!",
   "circle_activated_desc": "Güvenli özel relay'iniz aktif. Başlamak için çemberinizi özelleştirin.",
   "name_your_circle": "Çemberinize bir isim verin",

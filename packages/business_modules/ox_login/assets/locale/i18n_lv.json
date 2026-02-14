@@ -116,6 +116,7 @@
   "pay": "Maksāt",
   "recurring_billing": "Atkārtota norēķināšana, atcelt jebkurā laikā",
   "already_purchased": "Jums jau ir aktīvs abonements.",
+  "purchase_canceled": "Pirkums atcelts.",
   "circle_activated": "Aplis Aktivizēts!",
   "circle_activated_desc": "Jūsu drošais privātais relejs ir aktīvs. Pielāgojiet savu apli, lai sāktu.",
   "name_your_circle": "Nosauciet savu apli",

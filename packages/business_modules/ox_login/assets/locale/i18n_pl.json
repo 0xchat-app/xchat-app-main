@@ -116,6 +116,7 @@
   "pay": "Zapłać",
   "recurring_billing": "Cykliczne rozliczanie, anuluj w dowolnym momencie",
   "already_purchased": "Masz już aktywną subskrypcję.",
+  "purchase_canceled": "Zakup anulowany.",
   "circle_activated": "Krąg Aktywowany!",
   "circle_activated_desc": "Twój bezpieczny prywatny przekaźnik jest aktywny. Dostosuj swój krąg, aby rozpocząć.",
   "name_your_circle": "Nazwij swój krąg",

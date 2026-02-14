@@ -116,6 +116,7 @@
   "pay": "Ödə",
   "recurring_billing": "Təkrarlanan ödəniş, istənilən vaxt ləğv edin",
   "already_purchased": "Artıq aktiv abunəliyiniz var.",
+  "purchase_canceled": "Satınalma ləğv edildi.",
   "circle_activated": "Dairə Aktivləşdirildi!",
   "circle_activated_desc": "Təhlükəsiz şəxsi röleniz aktivdir. Başlamaq üçün dairənizi fərdiləşdirin.",
   "name_your_circle": "Dairənizi adlandırın",

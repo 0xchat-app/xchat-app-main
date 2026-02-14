@@ -379,7 +379,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
             ),
           );
         } else if (result.isCanceled) {
-          // no toast
+          CommonToast.instance.show(
+            context,
+            result.errorMessage ?? Localized.text('ox_login.purchase_canceled'),
+          );
         } else if (result.isAlreadyRestored) {
           CommonToast.instance.show(
             context,

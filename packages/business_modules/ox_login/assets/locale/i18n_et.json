@@ -116,6 +116,7 @@
   "pay": "Maksa",
   "recurring_billing": "Korduv arveldamine, tühistage igal ajal",
   "already_purchased": "Teil on juba aktiivne tellimus.",
+  "purchase_canceled": "Ost on tühistatud.",
   "circle_activated": "Ring Aktiveeritud!",
   "circle_activated_desc": "Teie turvaline privaatne relee on aktiivne. Kohandage oma ringi alustamiseks.",
   "name_your_circle": "Nimetage oma ring",

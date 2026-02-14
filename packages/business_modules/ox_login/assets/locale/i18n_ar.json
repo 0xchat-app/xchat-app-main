@@ -114,6 +114,7 @@
   "pay": "دفع",
   "recurring_billing": "فوترة متكررة، ألغِ في أي وقت",
   "already_purchased": "لديك بالفعل اشتراك نشط.",
+  "purchase_canceled": "تم إلغاء الشراء.",
   "circle_activated": "تم تفعيل الدائرة!",
   "circle_activated_desc": "محطة الإعادة الخاصة الآمنة الخاصة بك نشطة. خصص دائرتك للبدء.",
   "name_your_circle": "اسم دائرتك",

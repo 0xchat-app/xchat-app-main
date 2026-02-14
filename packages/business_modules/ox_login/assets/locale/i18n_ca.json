@@ -116,6 +116,7 @@
   "pay": "Pagar",
   "recurring_billing": "Facturació recurrent, cancel·leu en qualsevol moment",
   "already_purchased": "Ja teniu una subscripció activa.",
+  "purchase_canceled": "Compra cancel·lada.",
   "circle_activated": "Cercle Activat!",
   "circle_activated_desc": "El vostre relé privat segur està actiu. Personalitzeu el vostre cercle per començar.",
   "name_your_circle": "Anomeneu el vostre cercle",

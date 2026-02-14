@@ -116,6 +116,7 @@
   "pay": "支払う",
   "recurring_billing": "定期請求、いつでもキャンセル可能",
   "already_purchased": "既にアクティブなサブスクリプションがあります。",
+  "purchase_canceled": "購入をキャンセルしました。",
   "circle_activated": "サークルが有効化されました！",
   "circle_activated_desc": "安全なプライベートリレーがアクティブです。サークルをカスタマイズして始めましょう。",
   "name_your_circle": "サークルに名前を付ける",

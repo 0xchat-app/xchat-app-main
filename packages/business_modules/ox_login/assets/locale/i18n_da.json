@@ -116,6 +116,7 @@
   "pay": "Betal",
   "recurring_billing": "Tilbagevendende fakturering, annuller når som helst",
   "already_purchased": "Du har allerede et aktivt abonnement.",
+  "purchase_canceled": "Køb annulleret.",
   "circle_activated": "Cirkel Aktiveret!",
   "circle_activated_desc": "Dit sikre private relæ er aktivt. Tilpas din cirkel for at komme i gang.",
   "name_your_circle": "Navngiv din cirkel",

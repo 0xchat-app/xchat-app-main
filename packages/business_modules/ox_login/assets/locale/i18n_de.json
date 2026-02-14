@@ -116,6 +116,7 @@
   "pay": "Bezahlen",
   "recurring_billing": "Wiederkehrende Abrechnung, jederzeit kündbar",
   "already_purchased": "Sie haben bereits ein aktives Abonnement.",
+  "purchase_canceled": "Kauf abgebrochen.",
   "circle_activated": "Kreis Aktiviert!",
   "circle_activated_desc": "Ihr sicheres privates Relay ist aktiv. Passen Sie Ihren Kreis an, um zu beginnen.",
   "name_your_circle": "Benennen Sie Ihren Kreis",

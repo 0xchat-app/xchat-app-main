@@ -123,7 +123,7 @@
   "pay": "Pay",
   "recurring_billing": "Recurring billing, cancel anytime",
   "already_purchased": "You already have an active subscription.",
-  
+  "purchase_canceled": "Purchase canceled.",
   "circle_activated": "Circle Activated!",
   "circle_activated_desc": "Your secure private relay is live. Customize your circle to get started.",
   "name_your_circle": "Name your circle",

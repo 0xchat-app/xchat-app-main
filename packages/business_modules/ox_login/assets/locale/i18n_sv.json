@@ -116,6 +116,7 @@
   "pay": "Betala",
   "recurring_billing": "Återkommande fakturering, avbryt när som helst",
   "already_purchased": "Du har redan en aktiv prenumeration.",
+  "purchase_canceled": "Köpet avbröts.",
   "circle_activated": "Cirkel Aktiverad!",
   "circle_activated_desc": "Din säkra privata relä är aktiv. Anpassa din cirkel för att komma igång.",
   "name_your_circle": "Döp din cirkel",

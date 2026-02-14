@@ -116,6 +116,7 @@
   "pay": "Pagar",
   "recurring_billing": "Cobrança recorrente, cancele a qualquer momento",
   "already_purchased": "Você já tem uma assinatura ativa.",
+  "purchase_canceled": "Compra cancelada.",
   "circle_activated": "Círculo Ativado!",
   "circle_activated_desc": "Seu relay privado seguro está ativo. Personalize seu círculo para começar.",
   "name_your_circle": "Nomeie seu círculo",
