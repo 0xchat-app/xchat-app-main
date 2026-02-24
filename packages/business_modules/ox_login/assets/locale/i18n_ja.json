@@ -114,6 +114,8 @@
   "need_more_users": "より多くのユーザーが必要ですか？チームにお問い合わせください",
   "contact_our_team": "チームにお問い合わせください",
   "pay": "支払う",
+  "subscribe": "購読する",
+  "checkout_agree_terms": "購読することで、当社の{privacy_policy}と{terms_of_service}に同意したものとみなされます。",
   "recurring_billing": "定期請求、いつでもキャンセル可能",
   "already_purchased": "既にアクティブなサブスクリプションがあります。",
   "purchase_canceled": "購入をキャンセルしました。",

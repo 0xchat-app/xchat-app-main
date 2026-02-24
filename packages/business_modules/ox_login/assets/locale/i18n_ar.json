@@ -112,6 +112,8 @@
   "need_more_users": "تحتاج إلى المزيد من المستخدمين؟ اتصل بفريقنا",
   "contact_our_team": "اتصل بفريقنا",
   "pay": "دفع",
+  "subscribe": "اشترك",
+  "checkout_agree_terms": "بالاشتراك فإنك توافق على {privacy_policy} و{terms_of_service}.",
   "recurring_billing": "فوترة متكررة، ألغِ في أي وقت",
   "already_purchased": "لديك بالفعل اشتراك نشط.",
   "purchase_canceled": "تم إلغاء الشراء.",

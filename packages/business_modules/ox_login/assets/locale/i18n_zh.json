@@ -89,6 +89,8 @@
   "contact_our_team": "联系我们的团队",
   "custom_relay": "自定义中继",
   "pay": "支付",
+  "subscribe": "订阅",
+  "checkout_agree_terms": "订阅即表示您同意我们的 {privacy_policy} 和 {terms_of_service}。",
   "recurring_billing": "循环计费，随时取消",
   "already_purchased": "您已有活跃订阅。",
   "purchase_canceled": "已取消购买。",

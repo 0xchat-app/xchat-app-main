@@ -114,6 +114,8 @@
   "need_more_users": "Потрібно більше користувачів? Зв'яжіться з нашою командою",
   "contact_our_team": "Зв'яжіться з нашою командою",
   "pay": "Сплатити",
+  "subscribe": "Підписатися",
+  "checkout_agree_terms": "Підписуючись, ви погоджуєтесь з нашою {privacy_policy} та {terms_of_service}.",
   "recurring_billing": "Регулярне виставлення рахунків, скасуйте в будь-який час",
   "already_purchased": "У вас вже є активна підписка.",
   "purchase_canceled": "Покупку скасовано.",

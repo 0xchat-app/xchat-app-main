@@ -114,6 +114,8 @@
   "need_more_users": "Χρειάζεστε περισσότερους χρήστες; Επικοινωνήστε με την ομάδα μας",
   "contact_our_team": "Επικοινωνήστε με την ομάδα μας",
   "pay": "Πληρωμή",
+  "subscribe": "Εγγραφή",
+  "checkout_agree_terms": "Με την εγγραφή συμφωνείτε με την {privacy_policy} και {terms_of_service}.",
   "recurring_billing": "Επαναλαμβανόμενη χρέωση, ακύρωση οποιαδήποτε στιγμή",
   "already_purchased": "Έχετε ήδη ενεργή συνδρομή.",
   "purchase_canceled": "Η αγορά ακυρώθηκε.",

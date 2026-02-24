@@ -114,6 +114,8 @@
   "need_more_users": "Behöver fler användare? Kontakta vårt team",
   "contact_our_team": "Kontakta vårt team",
   "pay": "Betala",
+  "subscribe": "Prenumerera",
+  "checkout_agree_terms": "Genom att prenumerera godkänner du vår {privacy_policy} och {terms_of_service}.",
   "recurring_billing": "Återkommande fakturering, avbryt när som helst",
   "already_purchased": "Du har redan en aktiv prenumeration.",
   "purchase_canceled": "Köpet avbröts.",

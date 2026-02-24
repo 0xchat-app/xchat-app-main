@@ -114,6 +114,8 @@
   "need_more_users": "Cần thêm người dùng? Liên hệ với nhóm của chúng tôi",
   "contact_our_team": "Liên hệ với nhóm của chúng tôi",
   "pay": "Thanh toán",
+  "subscribe": "Đăng ký",
+  "checkout_agree_terms": "Bằng việc đăng ký, bạn đồng ý với {privacy_policy} và {terms_of_service} của chúng tôi.",
   "recurring_billing": "Thanh toán định kỳ, hủy bất cứ lúc nào",
   "already_purchased": "Bạn đã có đăng ký đang hoạt động.",
   "purchase_canceled": "Đã hủy mua hàng.",

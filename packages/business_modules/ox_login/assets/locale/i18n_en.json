@@ -121,6 +121,8 @@
   "need_more_users": "Need more users? Contact our team",
   "contact_our_team": "Contact our team",
   "pay": "Pay",
+  "subscribe": "Subscribe",
+  "checkout_agree_terms": "By subscribing you agree to our {privacy_policy} and {terms_of_service}.",
   "recurring_billing": "Recurring billing, cancel anytime",
   "already_purchased": "You already have an active subscription.",
   "purchase_canceled": "Purchase canceled.",

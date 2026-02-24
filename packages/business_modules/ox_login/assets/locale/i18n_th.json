@@ -114,6 +114,8 @@
   "need_more_users": "ต้องการผู้ใช้เพิ่มเติม? ติดต่อทีมของเรา",
   "contact_our_team": "ติดต่อทีมของเรา",
   "pay": "ชำระเงิน",
+  "subscribe": "สมัครสมาชิก",
+  "checkout_agree_terms": "การสมัครสมาชิกถือว่าคุณยอมรับ {privacy_policy} และ {terms_of_service}",
   "recurring_billing": "การเรียกเก็บเงินแบบวนซ้ำ ยกเลิกได้ตลอดเวลา",
   "already_purchased": "คุณมีการสมัครสมาชิกที่ใช้งานอยู่แล้ว",
   "purchase_canceled": "ยกเลิกการซื้อแล้ว",

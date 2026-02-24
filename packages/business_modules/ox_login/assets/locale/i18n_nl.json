@@ -114,6 +114,8 @@
   "need_more_users": "Meer gebruikers nodig? Neem contact op met ons team",
   "contact_our_team": "Neem contact op met ons team",
   "pay": "Betalen",
+  "subscribe": "Abonneren",
+  "checkout_agree_terms": "Door te abonneren gaat u akkoord met ons {privacy_policy} en {terms_of_service}.",
   "recurring_billing": "Terugkerende facturering, annuleer op elk moment",
   "already_purchased": "U heeft al een actief abonnement.",
   "purchase_canceled": "Aankoop geannuleerd.",

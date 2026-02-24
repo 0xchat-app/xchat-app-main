@@ -114,6 +114,8 @@
   "need_more_users": "더 많은 사용자가 필요하신가요? 팀에 문의하세요",
   "contact_our_team": "팀에 문의하세요",
   "pay": "결제",
+  "subscribe": "구독하기",
+  "checkout_agree_terms": "구독하면 {privacy_policy} 및 {terms_of_service}에 동의하는 것입니다.",
   "recurring_billing": "정기 청구, 언제든지 취소 가능",
   "already_purchased": "이미 활성 구독이 있습니다.",
   "purchase_canceled": "구매가 취소되었습니다.",

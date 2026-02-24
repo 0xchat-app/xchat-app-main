@@ -89,6 +89,8 @@
   "contact_our_team": "聯絡我們的團隊",
   "custom_relay": "自訂中繼",
   "pay": "支付",
+  "subscribe": "訂閱",
+  "checkout_agree_terms": "訂閱即表示您同意我們的 {privacy_policy} 和 {terms_of_service}。",
   "recurring_billing": "循環計費，隨時取消",
   "join_circle": "加入圈子",
   "join_circle_subtitle": "使用邀請連結連接到您的圈子，或選擇中繼提供者。",

@@ -114,6 +114,8 @@
   "need_more_users": "Daha çox istifadəçi lazımdır? Komandamızla əlaqə saxlayın",
   "contact_our_team": "Komandamızla əlaqə saxlayın",
   "pay": "Ödə",
+  "subscribe": "Abunə ol",
+  "checkout_agree_terms": "Abunə olmaqla bizim {privacy_policy} və {terms_of_service} ilə razılaşırsınız.",
   "recurring_billing": "Təkrarlanan ödəniş, istənilən vaxt ləğv edin",
   "already_purchased": "Artıq aktiv abunəliyiniz var.",
   "purchase_canceled": "Satınalma ləğv edildi.",

@@ -114,6 +114,8 @@
   "need_more_users": "Нуждаете се от повече потребители? Свържете се с нашия екип",
   "contact_our_team": "Свържете се с нашия екип",
   "pay": "Плати",
+  "subscribe": "Абонирайте се",
+  "checkout_agree_terms": "С абониране вие приемате нашата {privacy_policy} и {terms_of_service}.",
   "recurring_billing": "Повтарящо се фактуриране, отменете по всяко време",
   "already_purchased": "Вече имате активен абонамент.",
   "purchase_canceled": "Покупката е отменена.",

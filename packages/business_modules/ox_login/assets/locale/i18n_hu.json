@@ -114,6 +114,8 @@
   "need_more_users": "Több felhasználóra van szüksége? Lépjen kapcsolatba csapatunkkal",
   "contact_our_team": "Lépjen kapcsolatba csapatunkkal",
   "pay": "Fizetés",
+  "subscribe": "Feliratkozás",
+  "checkout_agree_terms": "A feliratkozással elfogadja a {privacy_policy} és {terms_of_service} feltételeinket.",
   "recurring_billing": "Ismétlődő számlázás, bármikor lemondható",
   "already_purchased": "Már van aktív előfizetése.",
   "purchase_canceled": "A vásárlás törölve.",

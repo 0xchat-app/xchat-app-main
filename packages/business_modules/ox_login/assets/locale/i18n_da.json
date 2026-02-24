@@ -114,6 +114,8 @@
   "need_more_users": "Har brug for flere brugere? Kontakt vores team",
   "contact_our_team": "Kontakt vores team",
   "pay": "Betal",
+  "subscribe": "Abonner",
+  "checkout_agree_terms": "Ved at abonnere accepterer du vores {privacy_policy} og {terms_of_service}.",
   "recurring_billing": "Tilbagevendende fakturering, annuller når som helst",
   "already_purchased": "Du har allerede et aktivt abonnement.",
   "purchase_canceled": "Køb annulleret.",

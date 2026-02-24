@@ -114,6 +114,8 @@
   "need_more_users": "अधिक उपयोगकर्ताओं की आवश्यकता है? हमारी टीम से संपर्क करें",
   "contact_our_team": "हमारी टीम से संपर्क करें",
   "pay": "भुगतान करें",
+  "subscribe": "सदस्यता लें",
+  "checkout_agree_terms": "सदस्यता लेकर आप हमारी {privacy_policy} और {terms_of_service} से सहमत हैं।",
   "recurring_billing": "आवर्ती बिलिंग, किसी भी समय रद्द करें",
   "already_purchased": "आपके पास पहले से ही एक सक्रिय सदस्यता है।",
   "purchase_canceled": "खरीद रद्द कर दी गई।",

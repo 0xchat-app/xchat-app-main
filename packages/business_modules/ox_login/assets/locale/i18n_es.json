@@ -114,6 +114,8 @@
   "need_more_users": "¿Necesita más usuarios? Contacte a nuestro equipo",
   "contact_our_team": "Contacte a nuestro equipo",
   "pay": "Pagar",
+  "subscribe": "Suscribirse",
+  "checkout_agree_terms": "Al suscribirte aceptas nuestra {privacy_policy} y {terms_of_service}.",
   "recurring_billing": "Facturación recurrente, cancele en cualquier momento",
   "already_purchased": "Ya tiene una suscripción activa.",
   "purchase_canceled": "Compra cancelada.",

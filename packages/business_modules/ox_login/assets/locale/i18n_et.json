@@ -114,6 +114,8 @@
   "need_more_users": "Vajate rohkem kasutajaid? Võtke meiega ühendust",
   "contact_our_team": "Võtke meiega ühendust",
   "pay": "Maksa",
+  "subscribe": "Telli",
+  "checkout_agree_terms": "Tellimisega nõustute meie {privacy_policy} ja {terms_of_service} tingimustega.",
   "recurring_billing": "Korduv arveldamine, tühistage igal ajal",
   "already_purchased": "Teil on juba aktiivne tellimus.",
   "purchase_canceled": "Ost on tühistatud.",

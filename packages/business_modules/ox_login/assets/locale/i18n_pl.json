@@ -114,6 +114,8 @@
   "need_more_users": "Potrzebujesz więcej użytkowników? Skontaktuj się z naszym zespołem",
   "contact_our_team": "Skontaktuj się z naszym zespołem",
   "pay": "Zapłać",
+  "subscribe": "Subskrybuj",
+  "checkout_agree_terms": "Subskrybując akceptujesz naszą {privacy_policy} i {terms_of_service}.",
   "recurring_billing": "Cykliczne rozliczanie, anuluj w dowolnym momencie",
   "already_purchased": "Masz już aktywną subskrypcję.",
   "purchase_canceled": "Zakup anulowany.",

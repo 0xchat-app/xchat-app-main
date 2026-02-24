@@ -1,7 +1,7 @@
-import 'dart:io';
-
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:ox_common/component.dart';
+import 'package:ox_module_service/ox_module_service.dart';
 import 'package:ox_common/log_util.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/purchase/purchase_manager.dart';
@@ -81,9 +81,109 @@ class _CheckoutPageState extends State<CheckoutPage> {
           _buildHeader(),
           SizedBox(height: 24.px),
           _buildOrderSummary(),
+          SizedBox(height: 20.px),
+          _buildPrivacyAndTermsLinks(),
         ],
       ),
     );
+  }
+
+  /// Privacy Policy and Terms of Use (EULA) links required by App Store for subscriptions.
+  /// Uses placeholder-based string (checkout_agree_terms) so each locale can control word order and grammar.
+  Widget _buildPrivacyAndTermsLinks() {
+    final linkColor = ColorToken.xChat.of(context);
+    final mutedColor = ColorToken.onSurfaceVariant.of(context);
+    final privacyPolicyText = Localized.text('ox_login.privacy_policy');
+    final termsOfServiceText = Localized.text('ox_login.terms_of_service');
+    final agreeText = Localized.text('ox_login.checkout_agree_terms');
+
+    const privacyPlaceholder = '{privacy_policy}';
+    const termsPlaceholder = '{terms_of_service}';
+
+    final List<InlineSpan> spans = [];
+    final posPrivacy = agreeText.indexOf(privacyPlaceholder);
+    final posTerms = agreeText.indexOf(termsPlaceholder);
+
+    final List<_CheckoutPlaceholder> placeholders = [];
+    if (posPrivacy != -1) {
+      placeholders.add(_CheckoutPlaceholder(posPrivacy, privacyPlaceholder.length, true));
+    }
+    if (posTerms != -1) {
+      placeholders.add(_CheckoutPlaceholder(posTerms, termsPlaceholder.length, false));
+    }
+    placeholders.sort((a, b) => a.start.compareTo(b.start));
+
+    int startIndex = 0;
+    for (final p in placeholders) {
+      if (p.start > startIndex) {
+        spans.add(TextSpan(
+          text: agreeText.substring(startIndex, p.start),
+          style: TextStyle(color: mutedColor, fontSize: 12.px),
+        ));
+      }
+      spans.add(TextSpan(
+        text: p.isPrivacy ? privacyPolicyText : termsOfServiceText,
+        style: TextStyle(
+          color: linkColor,
+          fontSize: 12.px,
+          decoration: TextDecoration.underline,
+        ),
+        recognizer: TapGestureRecognizer()
+          ..onTap = p.isPrivacy ? _openPrivacyPolicy : _openTermsOfService,
+      ));
+      startIndex = p.start + p.length;
+    }
+
+    if (startIndex < agreeText.length) {
+      spans.add(TextSpan(
+        text: agreeText.substring(startIndex),
+        style: TextStyle(color: mutedColor, fontSize: 12.px),
+      ));
+    }
+
+    if (spans.isEmpty) {
+      spans.add(TextSpan(
+        text: agreeText,
+        style: TextStyle(color: mutedColor, fontSize: 12.px),
+      ));
+    }
+
+    return Center(
+      child: RichText(
+        textAlign: TextAlign.center,
+        text: TextSpan(style: TextStyle(color: mutedColor, fontSize: 12.px), children: spans),
+      ),
+    );
+  }
+
+  void _openPrivacyPolicy() {
+    try {
+      OXModuleService.invoke('ox_common', 'gotoWebView', [
+        context,
+        'https://0xchat.com/protocols/xchat-privacy-policy.html',
+        null,
+        null,
+        null,
+        null,
+      ]);
+    } catch (e) {
+      CommonToast.instance.show(context, 'Failed to open privacy policy: $e');
+    }
+  }
+
+  void _openTermsOfService() {
+    try {
+      OXModuleService.invoke('ox_common', 'gotoWebView', [
+        context,
+        'https://0xchat.com/protocols/xchat-terms-of-use.html',
+        null,
+        null,
+        null,
+        null,
+      ]);
+    } catch (e) {
+      CommonToast.instance.show(context, 'Failed to open terms of service: $e');
+    }
   }
 
   Widget _buildProgressIndicator(int currentStep, int totalSteps) {
@@ -285,69 +385,18 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
+  /// Subscribe button. Uses same style on iOS and Android to avoid being mistaken for Apple Pay (Guideline 1.1.6).
   Widget _buildPaymentButtons() {
     final isEnabled = !_isProcessing;
     return Padding(
-      padding: EdgeInsets.symmetric(
-        vertical: 16.px,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (Platform.isIOS)
-            Container(
-              width: double.infinity,
-              height: 50.px,
-              decoration: BoxDecoration(
-                color: isEnabled ? Colors.black : Colors.grey,
-                borderRadius: BorderRadius.circular(12.px),
-              ),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: isEnabled ? _handlePay : null,
-                  borderRadius: BorderRadius.circular(12.px),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      if (_isProcessing)
-                        SizedBox(
-                          width: 20.px,
-                          height: 20.px,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.white),
-                          ),
-                        )
-                      else
-                        Icon(
-                          Icons.apple,
-                          color: Colors.white,
-                          size: 20.px,
-                        ),
-                      SizedBox(width: 8.px),
-                      CLText.titleMedium(
-                        _isProcessing
-                            ? Localized.text('ox_usercenter.processing')
-                            : Localized.text('ox_login.pay'),
-                        customColor: Colors.white,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            )
-          else
-            CLButton.filled(
-              text: _isProcessing
-                  ? Localized.text('ox_usercenter.processing')
-                  : Localized.text('ox_login.pay'),
-              onTap: isEnabled ? _handlePay : null,
-              expanded: true,
-              height: 50.px,
-            ),
-        ],
+      padding: EdgeInsets.symmetric(vertical: 16.px),
+      child: CLButton.filled(
+        text: _isProcessing
+            ? Localized.text('ox_usercenter.processing')
+            : Localized.text('ox_login.subscribe'),
+        onTap: isEnabled ? _handlePay : null,
+        expanded: true,
+        height: 50.px,
       ),
     );
   }
@@ -416,4 +465,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
       }
     }
   }
+}
+
+class _CheckoutPlaceholder {
+  _CheckoutPlaceholder(this.start, this.length, this.isPrivacy);
+  final int start;
+  final int length;
+  final bool isPrivacy;
 }

@@ -114,6 +114,8 @@
   "need_more_users": "Perlu lebih banyak pengguna? Hubungi tim kami",
   "contact_our_team": "Hubungi tim kami",
   "pay": "Bayar",
+  "subscribe": "Berlangganan",
+  "checkout_agree_terms": "Dengan berlangganan Anda setuju dengan {privacy_policy} dan {terms_of_service} kami.",
   "recurring_billing": "Penagihan berulang, batalkan kapan saja",
   "already_purchased": "Anda sudah memiliki langganan aktif.",
   "purchase_canceled": "Pembelian dibatalkan.",

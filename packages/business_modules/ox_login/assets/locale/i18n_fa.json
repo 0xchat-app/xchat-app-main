@@ -111,6 +111,8 @@
   "contact_our_team": "با تیم ما تماس بگیرید",
   "custom_relay": "رله سفارشی",
   "pay": "پرداخت",
+  "subscribe": "اشتراک",
+  "checkout_agree_terms": "با اشتراک شما با {privacy_policy} و {terms_of_service} ما موافقت می‌کنید.",
   "recurring_billing": "صورتحساب تکراری، در هر زمان لغو کنید",
   "circle_activated": "حلقه فعال شد!",
   "circle_activated_desc": "رله خصوصی امن شما فعال است. حلقه خود را برای شروع سفارشی کنید.",

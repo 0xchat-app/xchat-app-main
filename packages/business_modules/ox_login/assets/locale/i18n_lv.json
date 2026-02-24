@@ -114,6 +114,8 @@
   "need_more_users": "Vajag vairāk lietotāju? Sazinieties ar mūsu komandu",
   "contact_our_team": "Sazinieties ar mūsu komandu",
   "pay": "Maksāt",
+  "subscribe": "Abonēt",
+  "checkout_agree_terms": "Abonējot, jūs piekrītat mūsu {privacy_policy} un {terms_of_service}.",
   "recurring_billing": "Atkārtota norēķināšana, atcelt jebkurā laikā",
   "already_purchased": "Jums jau ir aktīvs abonements.",
   "purchase_canceled": "Pirkums atcelts.",

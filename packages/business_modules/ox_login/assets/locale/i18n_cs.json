@@ -114,6 +114,8 @@
   "need_more_users": "Potřebujete více uživatelů? Kontaktujte náš tým",
   "contact_our_team": "Kontaktujte náš tým",
   "pay": "Zaplatit",
+  "subscribe": "Předplatit",
+  "checkout_agree_terms": "Předplatěním souhlasíte s našimi {privacy_policy} a {terms_of_service}.",
   "recurring_billing": "Opakující se fakturace, zrušte kdykoli",
   "already_purchased": "Již máte aktivní předplatné.",
   "purchase_canceled": "Nákup byl zrušen.",
