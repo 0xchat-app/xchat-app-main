@@ -5,7 +5,7 @@ part 'file_server_model.g.dart';
 /// Supported file-server types.
 /// This enum is used by the new upload pipeline and is independent of
 /// the legacy `FileStorageServer` model used by OXServerManager.
-enum FileServerType { nip96, blossom, minio }
+enum FileServerType { nip96, blossom, minio, filedrop }
 
 @collection
 class FileServerModel {

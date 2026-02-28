@@ -24,7 +24,7 @@ const FileServerModelSchema = IsarGeneratedSchema(
       IsarPropertySchema(
         name: 'type',
         type: IsarType.byte,
-        enumMap: {"nip96": 0, "blossom": 1, "minio": 2},
+        enumMap: {"nip96": 0, "blossom": 1, "minio": 2, "filedrop": 3},
       ),
       IsarPropertySchema(
         name: 'name',
@@ -420,6 +420,7 @@ const _fileServerModelType = {
   0: FileServerType.nip96,
   1: FileServerType.blossom,
   2: FileServerType.minio,
+  3: FileServerType.filedrop,
 };
 
 extension FileServerModelQueryFilter

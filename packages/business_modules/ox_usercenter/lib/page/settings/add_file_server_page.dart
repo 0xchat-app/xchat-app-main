@@ -47,6 +47,8 @@ class _AddFileServerPageState extends State<AddFileServerPage> {
         return Localized.text('ox_usercenter.add_blossom_server');
       case FileServerType.minio:
         return Localized.text('ox_usercenter.add_minio_server');
+      case FileServerType.filedrop:
+        return Localized.text('ox_usercenter.add_filedrop_server');
     }
   }
 
@@ -58,6 +60,8 @@ class _AddFileServerPageState extends State<AddFileServerPage> {
         return Localized.text('ox_usercenter.validating_blossom_server');
       case FileServerType.minio:
         return Localized.text('ox_usercenter.validating_minio_server');
+      case FileServerType.filedrop:
+        return Localized.text('ox_usercenter.validating_filedrop_server');
     }
   }
 
@@ -160,6 +164,7 @@ class _AddFileServerPageState extends State<AddFileServerPage> {
         break;
       case FileServerType.blossom:
       case FileServerType.nip96:
+      case FileServerType.filedrop:
         break;
     }
 
@@ -279,6 +284,9 @@ class _AddFileServerPageState extends State<AddFileServerPage> {
           }
           break;
         case FileServerType.blossom:
+          // Basic URL validation already done.
+          break;
+        case FileServerType.filedrop:
           // Basic URL validation already done.
           break;
       }

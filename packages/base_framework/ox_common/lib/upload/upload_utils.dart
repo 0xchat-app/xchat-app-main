@@ -17,6 +17,7 @@ import 'package:uuid/uuid.dart';
 
 import 'blossom_uploader.dart';
 import 'file_type.dart';
+import 'filedrop_uploader.dart';
 import 'nip96_uploader.dart';
 import 'pomf2_lain_la.dart';
 export 'file_type.dart';
@@ -99,6 +100,14 @@ class UploadUtils {
               onProgress: onProgress,
               tags: tags,
             );
+            break;
+          case FileServerType.filedrop:
+            url = await FileDropUploader.upload(
+              server.url,
+              uploadFile.path,
+              fileName: filename,
+              onProgress: onProgress,
+            ) ?? '';
             break;
         }
 
