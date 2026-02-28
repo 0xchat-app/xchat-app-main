@@ -12,6 +12,10 @@ import 'package:ox_common/utils/file_server_helper.dart';
 import 'package:ox_localizable/ox_localizable.dart';
 
 import 'add_file_server_page.dart';
+import 'file_server_test_page.dart';
+
+/// Set to true to show the "Test" entry that opens the file server test page.
+const bool _showFileServerTestEntry = false;
 
 /// File Server Settings page.
 /// When [readOnlyForPaidCircle] is true, only the current circle's file server (S3) is shown
@@ -158,6 +162,16 @@ class _FileServerPageState extends State<FileServerPage> {
         actions: isReadOnly
             ? const []
             : [
+                if (_showFileServerTestEntry)
+                  CLButton.text(
+                    text: Localized.text('ox_usercenter.file_server_test_short'),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const FileServerTestPage(),
+                      ),
+                    ),
+                  ),
                 CLButton.text(
                   text: _isEditing ? Localized.text('ox_common.complete') : Localized.text('ox_usercenter.edit'),
                   onTap: () => setState(() => _isEditing = !_isEditing),
