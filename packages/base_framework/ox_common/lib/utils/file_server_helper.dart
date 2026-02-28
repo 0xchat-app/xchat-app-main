@@ -11,17 +11,23 @@ class FileServerHelper {
 
   static List<FileServerModel> get defaultFileServerGroup =>
       [
+        // FileServerModel(
+        //   id: 0,
+        //   type: FileServerType.nip96,
+        //   name: 'pomf2.lain.la',
+        //   url: 'https://pomf2.lain.la',
+        // ),
+        // FileServerModel(
+        //   id: 0,
+        //   type: FileServerType.blossom,
+        //   name: 'blossom.lostr.space',
+        //   url: 'https://blossom.lostr.space',
+        // ),
         FileServerModel(
           id: 0,
-          type: FileServerType.nip96,
-          name: 'pomf2.lain.la',
-          url: 'https://pomf2.lain.la',
-        ),
-        FileServerModel(
-          id: 0,
-          type: FileServerType.blossom,
-          name: 'blossom.lostr.space',
-          url: 'https://blossom.lostr.space',
+          type: FileServerType.filedrop,
+          name: 'filedrop.besoeasy.com',
+          url: 'https://filedrop.besoeasy.com',
         ),
       ];
 
