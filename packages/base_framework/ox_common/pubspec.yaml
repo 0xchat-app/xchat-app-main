@@ -98,6 +98,7 @@ dependencies:
   path_provider: ^2.1.0
   socks5_proxy: 2.1.1
   in_app_purchase: 3.2.3
+  in_app_purchase_android: 0.4.0+5  # for basePlanId (subscription offer); same as in_app_purchase's transitive
 
   chatcore:
     path: ../../0xchat-core

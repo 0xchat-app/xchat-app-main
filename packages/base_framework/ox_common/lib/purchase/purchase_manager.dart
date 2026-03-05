@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:ox_common/log_util.dart';
 import 'package:ox_common/purchase/purchase_idempotency_manager.dart';
@@ -238,15 +239,47 @@ class PurchaseManager {
     }
   }
 
-  /// Fills idToPrice/idToRawPrice from store response. On iOS each detail has logical id (e.g. loc1.level1.monthly).
-  /// On Android each detail has store id (e.g. loc1.level1); we map to both .monthly and .yearly with same price (temporary until per–base-plan expansion).
+  /// Fills idToPrice/idToRawPrice from store response.
+  /// On iOS each detail has logical id (e.g. loc1.level1.monthly); one-to-one mapping.
+  /// On Android product+plan: store returns 2 details per product (same id), we group by id
+  /// and assign by rawPrice: lower → .monthly, higher → .yearly.
   Future<void> _fillProductPricesFromResponse(
     List<ProductDetails> details,
     Map<String, String> idToPrice,
     Map<String, double> idToRawPrice,
   ) async {
+    final hasLogicalIds = details.any((d) =>
+        d.id.endsWith('.monthly') || d.id.endsWith('.yearly'));
+    if (hasLogicalIds) {
+      for (final d in details) {
+        _addDetailToLogicalPriceMaps(d.id, d.price, d.rawPrice, idToPrice, idToRawPrice);
+      }
+      return;
+    }
+    // Android: duplicate ids (one per base plan). Prefer base plan id to assign monthly/yearly; fallback to rawPrice order.
+    final byId = <String, List<ProductDetails>>{};
     for (final d in details) {
-      _addDetailToLogicalPriceMaps(d.id, d.price, d.rawPrice, idToPrice, idToRawPrice);
+      byId.putIfAbsent(d.id, () => []).add(d);
+    }
+    for (final entry in byId.entries) {
+      final id = entry.key;
+      final list = entry.value;
+      ProductDetails? monthlyDetail;
+      ProductDetails? yearlyDetail;
+      for (final d in list) {
+        final planId = _getAndroidBasePlanId(d);
+        if (planId == 'monthly') monthlyDetail = d;
+        if (planId == 'yearly') yearlyDetail = d;
+      }
+      if (monthlyDetail == null || yearlyDetail == null) {
+        list.sort((a, b) => a.rawPrice.compareTo(b.rawPrice));
+        monthlyDetail ??= list.first;
+        yearlyDetail ??= list.length >= 2 ? list[1] : list.first;
+      }
+      idToPrice['$id.monthly'] = monthlyDetail.price;
+      idToRawPrice['$id.monthly'] = monthlyDetail.rawPrice;
+      idToPrice['$id.yearly'] = yearlyDetail.price;
+      idToRawPrice['$id.yearly'] = yearlyDetail.rawPrice;
     }
   }
 
@@ -276,17 +309,52 @@ class PurchaseManager {
     }
   }
 
+  /// Picks the [ProductDetails] to pass to buy (so confirmation dialog shows correct plan/price).
+  /// Prefer store base plan id (Android) to match monthly/yearly; fallback to rawPrice order if unavailable.
+  ProductDetails _productDetailsForPurchase(
+    List<ProductDetails> details,
+    String productId,
+  ) {
+    if (details.length == 1) return details.first;
+    final wantYearly = productId.endsWith('.yearly');
+    final wantPlanId = wantYearly ? 'yearly' : 'monthly';
+    for (final d in details) {
+      final planId = _getAndroidBasePlanId(d);
+      if (planId == wantPlanId) return d;
+    }
+    final sorted = List<ProductDetails>.from(details)
+      ..sort((a, b) => a.rawPrice.compareTo(b.rawPrice));
+    return wantYearly ? sorted.last : sorted.first;
+  }
+
+  /// Android: base plan id from [ProductDetails] when it is [GooglePlayProductDetails]. Null on iOS or when unavailable.
+  static String? _getAndroidBasePlanId(ProductDetails d) {
+    if (d is! GooglePlayProductDetails) return null;
+    final idx = d.subscriptionIndex;
+    final offers = d.productDetails.subscriptionOfferDetails;
+    if (idx == null || offers == null || idx < 0 || idx >= offers.length) return null;
+    return offers[idx].basePlanId;
+  }
+
   /// Refreshes prices for [productIds] in one query and updates notifiers.
-  /// When [productIds] are store ids (Android), maps to logical ids (.monthly/.yearly) so UI sees 12 prices.
+  /// Uses store response list so Android's 2 details per product (monthly/yearly) are both applied.
   Future<void> refreshPrices(Set<String> productIds) async {
     if (productIds.isEmpty) return;
-    final details = await getProductDetailsSet(productIds);
-    final idToPrice = <String, String>{};
-    final idToRawPrice = <String, double>{};
-    for (final e in details.entries) {
-      _addDetailToLogicalPriceMaps(e.key, e.value.price, e.value.rawPrice, idToPrice, idToRawPrice);
-    }
-    SubscriptionProductPrices.instance.updateFromMap(idToPrice, idToRawPrice);
+    try {
+      final available = await _inAppPurchase.isAvailable();
+      if (!available) return;
+      final idsToQuery = productIds
+          .map((id) =>
+              SubscriptionPlatform.instance.storeProductIdForQuery(id) ?? id)
+          .toSet();
+      final response = await _inAppPurchase.queryProductDetails(idsToQuery);
+      if (response.error != null) return;
+      final idToPrice = <String, String>{};
+      final idToRawPrice = <String, double>{};
+      await _fillProductPricesFromResponse(
+          response.productDetails, idToPrice, idToRawPrice);
+      SubscriptionProductPrices.instance.updateFromMap(idToPrice, idToRawPrice);
+    } catch (_) {}
   }
 
   /// Refreshes all subscription product prices. Call from page initState for silent refresh (updates all notifiers).
@@ -1164,8 +1232,12 @@ class PurchaseManager {
         return completer.future;
       }
 
-      final ProductDetails productDetails =
-          productDetailResponse.productDetails.first;
+      // On Android with product+plan, store returns 2 details per product (same id); pick the one
+      // matching the requested base plan so confirmation dialog shows correct price/description.
+      final ProductDetails productDetails = _productDetailsForPurchase(
+        productDetailResponse.productDetails,
+        productId,
+      );
 
       final PurchaseParam purchaseParam = PurchaseParam(
         productDetails: productDetails,
