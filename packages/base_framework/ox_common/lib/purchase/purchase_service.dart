@@ -8,6 +8,7 @@ import 'package:ox_common/login/circle_repository.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/login/login_models.dart';
 import 'package:ox_common/purchase/purchase_idempotency_manager.dart';
+import 'package:ox_common/purchase/subscription_platform.dart';
 import 'package:ox_common/purchase/subscription_registry.dart';
 
 /// Purchase processing result
@@ -80,9 +81,11 @@ class PurchaseService {
   /// - System automatic retry (purchase stream will push again)
   /// - User restore purchases
   /// - Manual retry mechanisms
+  /// [logicalProductId] When provided (e.g. on Android where purchaseDetails.productID is store id), use for server verification and group/tier lookup.
   Future<PurchaseProcessResponse> processPurchase(
-    PurchaseDetails purchaseDetails,
-  ) async {
+    PurchaseDetails purchaseDetails, {
+    String? logicalProductId,
+  }) async {
     final transactionId = PurchaseIdempotencyManager.getTransactionId(purchaseDetails);
 
     // Check if already processed
@@ -94,8 +97,8 @@ class PurchaseService {
     try {
       _logPurchaseStart(purchaseDetails, transactionId);
 
-      // Step 1: Server-side verification
-      final verificationResponse = await _verifyPaymentWithServer(purchaseDetails);
+      // Step 1: Server-side verification (use logical id on Android so backend gets e.g. loc1.level1.monthly)
+      final verificationResponse = await _verifyPaymentWithServer(purchaseDetails, logicalProductId: logicalProductId);
       if (verificationResponse.result != PurchaseProcessResult.success) {
         // Verification failed - don't finish, let system retry later
         return verificationResponse;
@@ -117,9 +120,10 @@ class PurchaseService {
       }
 
       // Step 3: Delivery - join Circle (MUST happen before finish)
-      // This ensures we only finish transactions that have been successfully delivered
+      // Use logical product id for group lookup (required on Android where productID is store id).
+      final productIdForGroup = logicalProductId ?? purchaseDetails.productID;
       final groupId = SubscriptionRegistry.instance
-          .groupForProductId(purchaseDetails.productID)
+          .groupForProductId(productIdForGroup)
           ?.id;
       final deliveryResponse = await _deliverPurchase(verificationResult, groupId);
       if (deliveryResponse.result != PurchaseProcessResult.success) {
@@ -182,7 +186,11 @@ class PurchaseService {
     // Re-deliver if user deleted the circle locally: verify → check circle exists → joinCircle if missing
     final account = LoginManager.instance.currentState.account;
     if (account != null) {
-      final verificationResponse = await _verifyPaymentWithServer(purchaseDetails);
+      final logicalId = SubscriptionPlatform.instance.resolveLogicalProductId(purchaseDetails.productID);
+      final verificationResponse = await _verifyPaymentWithServer(
+        purchaseDetails,
+        logicalProductId: logicalId,
+      );
       if (verificationResponse.result == PurchaseProcessResult.success &&
           verificationResponse.verificationResult != null) {
         final verificationResult = verificationResponse.verificationResult!;
@@ -201,7 +209,7 @@ class PurchaseService {
               - relayUrl: ${verificationResult.relayUrl}
             ''');
             final groupId = SubscriptionRegistry.instance
-                .groupForProductId(purchaseDetails.productID)
+                .groupForProductId(logicalId)
                 ?.id;
             final deliveryResponse = await _deliverPurchase(verificationResult, groupId);
             if (deliveryResponse.result == PurchaseProcessResult.success) {
@@ -305,19 +313,19 @@ class PurchaseService {
   }
 
   /// Verify payment with server
-  /// 
-  /// Returns [PurchaseProcessResponse] with verification result on success,
-  /// or error response on failure
+  /// [logicalProductId] When set (e.g. Android), use for productId so backend receives e.g. loc1.level1.monthly.
   Future<PurchaseProcessResponse> _verifyPaymentWithServer(
-    PurchaseDetails purchaseDetails,
-  ) async {
+    PurchaseDetails purchaseDetails, {
+    String? logicalProductId,
+  }) async {
     final receipt = _getReceipt(purchaseDetails);
     final credentials = _getAccountCredentials();
+    final productIdForServer = logicalProductId ?? purchaseDetails.productID;
 
     LogUtil.d(() => '''
       [PurchaseService] Starting server verification:
       - platform: ${Platform.isIOS ? 'iOS' : 'Android'}
-      - productId: ${purchaseDetails.productID}
+      - productId: $productIdForServer
       - receipt length: ${receipt.length}
     ''');
 
@@ -327,14 +335,14 @@ class PurchaseService {
         verificationResult = await CircleApi.verifyApplePayment(
           pubkey: credentials.pubkey,
           privkey: credentials.privkey,
-          productId: purchaseDetails.productID,
+          productId: productIdForServer,
           receiptData: receipt,
         );
       } else {
         verificationResult = await CircleApi.verifyGooglePayment(
           pubkey: credentials.pubkey,
           privkey: credentials.privkey,
-          productId: purchaseDetails.productID,
+          productId: productIdForServer,
           purchaseToken: receipt,
         );
       }
@@ -537,9 +545,11 @@ class PurchaseService {
   /// - User taps \"restore purchases\" to (re)join the circle
   /// 
   /// Returns [PurchaseProcessResponse] containing the processing result
+  /// [logicalProductId] When provided (e.g. Android store product id), use for verification and group lookup.
   Future<PurchaseProcessResponse> processRestoredPurchase(
-    PurchaseDetails purchaseDetails,
-  ) async {
+    PurchaseDetails purchaseDetails, {
+    String? logicalProductId,
+  }) async {
     final transactionId = PurchaseIdempotencyManager.getTransactionId(purchaseDetails);
 
     // Get account to check if circle already exists
@@ -552,14 +562,16 @@ class PurchaseService {
       LogUtil.d(() => '''
         [PurchaseService] Processing restored purchase:
         - productID: ${purchaseDetails.productID}
-        - purchaseID: ${purchaseDetails.purchaseID}
+        - logicalProductId: $logicalProductId
         - transactionId: $transactionId
       ''');
 
       // Step 1: Server-side verification
-      final verificationResponse = await _verifyPaymentWithServer(purchaseDetails);
+      final verificationResponse = await _verifyPaymentWithServer(
+        purchaseDetails,
+        logicalProductId: logicalProductId,
+      );
       if (verificationResponse.result != PurchaseProcessResult.success) {
-        // Verification failed - don't finish, let system retry later
         return verificationResponse;
       }
       final verificationResult = verificationResponse.verificationResult!;
@@ -570,13 +582,13 @@ class PurchaseService {
         purchaseDetails: purchaseDetails,
       );
       if (validationResponse != null) {
-        // Validation failed - don't finish, let system retry later
         return validationResponse;
       }
 
-      // Step 3: Delivery - join Circle (MUST happen before finish)
+      // Step 3: Delivery - join Circle; use logical id for group lookup on Android
+      final productIdForGroup = logicalProductId ?? purchaseDetails.productID;
       final groupId = SubscriptionRegistry.instance
-          .groupForProductId(purchaseDetails.productID)
+          .groupForProductId(productIdForGroup)
           ?.id;
       final deliveryResponse = await _deliverRestoredPurchase(
         verificationResult,

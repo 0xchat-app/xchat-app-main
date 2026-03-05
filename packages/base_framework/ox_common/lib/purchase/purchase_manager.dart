@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ui';
 
 import 'package:flutter/services.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -8,6 +7,7 @@ import 'package:chatcore/chat-core.dart';
 import 'package:ox_common/log_util.dart';
 import 'package:ox_common/purchase/purchase_idempotency_manager.dart';
 import 'package:ox_common/purchase/subscription_product_prices.dart';
+import 'package:ox_common/purchase/subscription_platform.dart';
 import 'package:ox_common/purchase/subscription_registry.dart';
 import 'package:ox_common/purchase/purchase_service.dart';
 
@@ -212,7 +212,7 @@ class PurchaseManager {
         SubscriptionProductPrices.instance.updateFromMap({});
         return;
       }
-      final productIds = SubscriptionRegistry.instance.allProductIds;
+      final productIds = SubscriptionPlatform.instance.productIdsForQuery;
       if (productIds.isEmpty) {
         SubscriptionProductPrices.instance.updateFromMap({});
         return;
@@ -223,17 +223,48 @@ class PurchaseManager {
         SubscriptionProductPrices.instance.updateFromMap({});
         return;
       }
-      final idToPrice = <String, String>{};
-      final idToRawPrice = <String, double>{};
-      for (final d in response.productDetails) {
-        idToPrice[d.id] = d.price;
-        idToRawPrice[d.id] = d.rawPrice;
-      }
-      SubscriptionProductPrices.instance.updateFromMap(idToPrice, idToRawPrice);
-      LogUtil.d(() => '[PurchaseManager] Preloaded ${idToPrice.length} product prices');
+      final idToPriceMap = <String, String>{};
+      final idToRawPriceMap = <String, double>{};
+      await _fillProductPricesFromResponse(
+        response.productDetails,
+        idToPriceMap,
+        idToRawPriceMap,
+      );
+      SubscriptionProductPrices.instance.updateFromMap(idToPriceMap, idToRawPriceMap);
+      LogUtil.d(() => '[PurchaseManager] Preloaded ${idToPriceMap.length} product prices');
     } catch (e) {
       LogUtil.w(() => '[PurchaseManager] Preload product details failed: $e');
       SubscriptionProductPrices.instance.updateFromMap({});
+    }
+  }
+
+  /// Fills idToPrice/idToRawPrice from store response. On iOS each detail has logical id (e.g. loc1.level1.monthly).
+  /// On Android each detail has store id (e.g. loc1.level1); we map to both .monthly and .yearly with same price (temporary until per–base-plan expansion).
+  Future<void> _fillProductPricesFromResponse(
+    List<ProductDetails> details,
+    Map<String, String> idToPrice,
+    Map<String, double> idToRawPrice,
+  ) async {
+    for (final d in details) {
+      _addDetailToLogicalPriceMaps(d.id, d.price, d.rawPrice, idToPrice, idToRawPrice);
+    }
+  }
+
+  void _addDetailToLogicalPriceMaps(
+    String id,
+    String price,
+    double rawPrice,
+    Map<String, String> idToPrice,
+    Map<String, double> idToRawPrice,
+  ) {
+    if (id.endsWith('.monthly') || id.endsWith('.yearly')) {
+      idToPrice[id] = price;
+      idToRawPrice[id] = rawPrice;
+    } else {
+      idToPrice['$id.monthly'] = price;
+      idToPrice['$id.yearly'] = price;
+      idToRawPrice['$id.monthly'] = rawPrice;
+      idToRawPrice['$id.yearly'] = rawPrice;
     }
   }
 
@@ -245,21 +276,23 @@ class PurchaseManager {
     }
   }
 
-  /// Refreshes prices for [productIds] in one query and updates notifiers (with rawPrice for lowest-price logic).
+  /// Refreshes prices for [productIds] in one query and updates notifiers.
+  /// When [productIds] are store ids (Android), maps to logical ids (.monthly/.yearly) so UI sees 12 prices.
   Future<void> refreshPrices(Set<String> productIds) async {
     if (productIds.isEmpty) return;
     final details = await getProductDetailsSet(productIds);
-    for (final id in productIds) {
-      final d = details[id];
-      if (d != null) {
-        SubscriptionProductPrices.instance.setPrice(id, d.price, d.rawPrice);
-      }
+    final idToPrice = <String, String>{};
+    final idToRawPrice = <String, double>{};
+    for (final e in details.entries) {
+      _addDetailToLogicalPriceMaps(e.key, e.value.price, e.value.rawPrice, idToPrice, idToRawPrice);
     }
+    SubscriptionProductPrices.instance.updateFromMap(idToPrice, idToRawPrice);
   }
 
   /// Refreshes all subscription product prices. Call from page initState for silent refresh (updates all notifiers).
+  /// On Android uses 6 store product IDs; prices are then mapped to 12 logical IDs in _fillProductPricesFromResponse.
   Future<void> refreshAllPrices() async {
-    final productIds = SubscriptionRegistry.instance.allProductIds;
+    final productIds = SubscriptionPlatform.instance.productIdsForQuery;
     await refreshPrices(productIds);
   }
 
@@ -433,8 +466,10 @@ class PurchaseManager {
         ''');
         return true;
       }
-      // Only this productId
-      if (!session.productIds.contains(p.productID)) return false;
+      // Match by logical product id (on Android, p.productID is store id e.g. loc1.level1; resolve to logical id for comparison).
+      final pendingLogical = session.productIds.length == 1 ? session.productIds.single : null;
+      final resolvedLogical = SubscriptionPlatform.instance.resolveLogicalProductId(p.productID, pendingLogicalId: pendingLogical);
+      if (!session.productIds.contains(resolvedLogical)) return false;
 
       // For purchase session, handle restored status specially
       // New purchases can come as "restored" with transactionReason="PURCHASE"
@@ -663,7 +698,19 @@ class PurchaseManager {
       - pendingCompletePurchase: ${purchaseDetails.pendingCompletePurchase}
     ''');
 
-    final response = await PurchaseService.instance.processPurchase(purchaseDetails);
+    final pendingLogical = _activeSession != null &&
+            _activeSession!.type == _SessionType.purchase &&
+            _activeSession!.productIds.length == 1
+        ? _activeSession!.productIds.single
+        : null;
+    final logicalProductId = SubscriptionPlatform.instance.resolveLogicalProductId(
+      purchaseDetails.productID,
+      pendingLogicalId: pendingLogical,
+    );
+    final response = await PurchaseService.instance.processPurchase(
+      purchaseDetails,
+      logicalProductId: logicalProductId,
+    );
 
     LogUtil.d(() => '''
       [PurchaseManager] processPurchase completed:
@@ -704,9 +751,10 @@ class PurchaseManager {
           response.message ?? 'Purchase processing failed',
         ));
       }
-      // Clear pending flag immediately
+      // Clear pending flag (use logical id so we clear the key we set in purchaseProduct).
+      _pendingPurchases.remove(logicalProductId);
       _pendingPurchases.remove(purchaseDetails.productID);
-      LogUtil.d(() => '[PurchaseManager] Purchase processed, pending flag cleared for: ${purchaseDetails.productID}');
+      LogUtil.d(() => '[PurchaseManager] Purchase processed, pending flag cleared for: $logicalProductId');
     }
   }
 
@@ -728,18 +776,30 @@ class PurchaseManager {
     final bool isNewPurchase = session?.type == _SessionType.purchase;
     
     PurchaseProcessResponse response;
+    final logicalProductId = SubscriptionPlatform.instance.resolveLogicalProductId(
+      purchaseDetails.productID,
+      pendingLogicalId: session != null &&
+              session.type == _SessionType.purchase &&
+              session.productIds.length == 1
+          ? session.productIds.single
+          : null,
+    );
     if (isNewPurchase) {
       // New purchase that came as "restored" status - use processPurchase
-      // This ensures proper delivery flow (joinCircle for new purchase)
       LogUtil.d(() => '''
         [PurchaseManager] Restored event in purchase session (new purchase):
         - productID: ${purchaseDetails.productID}
-        - Using processPurchase (not processRestoredPurchase)
+        - logicalProductId: $logicalProductId
       ''');
-      response = await PurchaseService.instance.processPurchase(purchaseDetails);
+      response = await PurchaseService.instance.processPurchase(
+        purchaseDetails,
+        logicalProductId: logicalProductId,
+      );
     } else {
-      // True restore - use processRestoredPurchase
-      response = await PurchaseService.instance.processRestoredPurchase(purchaseDetails);
+      response = await PurchaseService.instance.processRestoredPurchase(
+        purchaseDetails,
+        logicalProductId: logicalProductId,
+      );
     }
 
     LogUtil.d(() => '''
@@ -752,21 +812,30 @@ class PurchaseManager {
 
     // Complete the Future based on session type
     if (session != null) {
-      if (session.type == _SessionType.restore && 
+      if (session.type == _SessionType.restore &&
           session.restoreCompleters != null) {
-        final completer = session.restoreCompleters![purchaseDetails.productID];
-        if (completer != null && !completer.isCompleted) {
-          if (response.result == PurchaseProcessResult.success) {
-            completer.complete(PurchaseResult.success(
-              verificationResult: response.verificationResult!,
-              purchaseDetails: purchaseDetails,
-            ));
-          } else if (response.result == PurchaseProcessResult.alreadyRestored) {
-            completer.complete(PurchaseResult.alreadyRestored());
-          } else {
-            final message =
-                response.message ?? 'No purchase to restore for this product';
-            completer.complete(PurchaseResult.error(message));
+        // On Android, purchaseDetails.productID is store id (e.g. loc1.level1); complete both .monthly and .yearly completers.
+        final keysToComplete = session.restoreCompleters!.containsKey(purchaseDetails.productID)
+            ? [purchaseDetails.productID]
+            : [
+                '${purchaseDetails.productID}.monthly',
+                '${purchaseDetails.productID}.yearly',
+              ];
+        for (final key in keysToComplete) {
+          final completer = session.restoreCompleters![key];
+          if (completer != null && !completer.isCompleted) {
+            if (response.result == PurchaseProcessResult.success) {
+              completer.complete(PurchaseResult.success(
+                verificationResult: response.verificationResult!,
+                purchaseDetails: purchaseDetails,
+              ));
+            } else if (response.result == PurchaseProcessResult.alreadyRestored) {
+              completer.complete(PurchaseResult.alreadyRestored());
+            } else {
+              final message =
+                  response.message ?? 'No purchase to restore for this product';
+              completer.complete(PurchaseResult.error(message));
+            }
           }
         }
       } else if (session.type == _SessionType.purchase) {
@@ -980,12 +1049,15 @@ class PurchaseManager {
   }
 
   /// Query product details from the store for UI display (e.g. localized price).
-  /// Returns null if store unavailable or product not found. Flow pages use [SubscriptionProductPrices] first, then this as fallback.
+  /// On Android, [productId] is logical (e.g. loc1.level1.monthly); we query by store id (loc1.level1).
   Future<ProductDetails?> getProductDetails(String productId) async {
     try {
       final available = await _inAppPurchase.isAvailable();
       if (!available) return null;
-      final response = await _inAppPurchase.queryProductDetails({productId});
+      final idToQuery =
+          SubscriptionPlatform.instance.storeProductIdForQuery(productId) ??
+              productId;
+      final response = await _inAppPurchase.queryProductDetails({idToQuery});
       if (response.error != null || response.productDetails.isEmpty) return null;
       return response.productDetails.first;
     } catch (_) {
@@ -993,17 +1065,29 @@ class PurchaseManager {
     }
   }
 
-  /// Query multiple product details at once. Returns map by product id.
+  /// Query multiple product details at once. Returns map by product id (logical id on Android).
   Future<Map<String, ProductDetails>> getProductDetailsSet(Set<String> productIds) async {
     final result = <String, ProductDetails>{};
     if (productIds.isEmpty) return result;
     try {
       final available = await _inAppPurchase.isAvailable();
       if (!available) return result;
-      final response = await _inAppPurchase.queryProductDetails(productIds);
+      final idsToQuery = productIds
+          .map((id) =>
+              SubscriptionPlatform.instance.storeProductIdForQuery(id) ?? id)
+          .toSet();
+      final response = await _inAppPurchase.queryProductDetails(idsToQuery);
       if (response.error != null) return result;
+      final byStoreId = <String, ProductDetails>{};
       for (final d in response.productDetails) {
-        result[d.id] = d;
+        byStoreId[d.id] = d;
+      }
+      for (final logicalId in productIds) {
+        final storeId =
+            SubscriptionPlatform.instance.storeProductIdForQuery(logicalId) ??
+                logicalId;
+        final d = byStoreId[storeId];
+        if (d != null) result[logicalId] = d;
       }
       return result;
     } catch (_) {
@@ -1059,8 +1143,12 @@ class PurchaseManager {
         return completer.future;
       }
 
+      // On Android, query by store product id (e.g. loc1.level1) not logical id (loc1.level1.monthly).
+      final productIdToQuery =
+          SubscriptionPlatform.instance.storeProductIdForQuery(productId) ??
+              productId;
       final ProductDetailsResponse productDetailResponse =
-      await _inAppPurchase.queryProductDetails({productId});
+          await _inAppPurchase.queryProductDetails({productIdToQuery});
 
       if (productDetailResponse.error != null) {
         completeAndClear(PurchaseResult.error(
