@@ -45,7 +45,6 @@ class CommonScanPageState extends State<CommonScanPage> {
       formats: const [BarcodeFormat.qrCode],
       autoStart: true,
       cameraResolution: preferredResolution,
-      useNewCameraSelector: Platform.isAndroid,
     );
   }
 
@@ -131,13 +130,15 @@ class CommonScanPageState extends State<CommonScanPage> {
       controller: _scannerController,
       fit: BoxFit.cover,
       onDetect: _handleBarcodeDetection,
-      errorBuilder: (context, error, child) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _handleScannerError(error);
-        });
-        return child ?? Container(color: Colors.black);
-      },
+      errorBuilder: _scannerErrorBuilder,
     );
+  }
+
+  Widget _scannerErrorBuilder(BuildContext context, MobileScannerException error) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _handleScannerError(error);
+    });
+    return Container(color: Colors.black);
   }
 
   Widget buildOptionWidget() {
