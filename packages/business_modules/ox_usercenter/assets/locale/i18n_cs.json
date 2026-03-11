@@ -90,7 +90,7 @@
   "show_message_info_option": "Zobrazit možnost informací o zprávě",
   "show_message_info_option_description": "Povolte tuto možnost pro zobrazení podrobností informací o zprávě v rozhraní chatu.",
   "use_tor_network": "Používat síť Tor globálně",
-  "use_tor_network_description": "Směrujte veškerý síťový provoz přes síť Tor pro zvýšení soukromí a anonymity. To může zpomalit vaše připojení.",
+  "use_tor_network_description": "Směrujte veškerý síťový provoz přes síť Tor pro zvýšení soukromí. To může zpomalit vaše připojení.",
   "chat": "Chaty",
   "default_file_server_group": "Výchozí server",
   "default_file_server_group_subtitle": "Výchozí souborový server",

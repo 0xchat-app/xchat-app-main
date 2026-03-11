@@ -90,7 +90,7 @@
   "show_message_info_option": "Mostrar opció d'informació del missatge",
   "show_message_info_option_description": "Habiliteu aquesta opció per mostrar detalls d'informació del missatge a la interfície de xat.",
   "use_tor_network": "Utilitza la xarxa Tor globalment",
-  "use_tor_network_description": "Enruta tot el trànsit de xarxa a través de la xarxa Tor per millorar la privacitat i l'anonimat. Això pot alentir la vostra connexió.",
+  "use_tor_network_description": "Enruta tot el trànsit de xarxa a través de la xarxa Tor per millorar la privacitat. Això pot alentir la vostra connexió.",
   "chat": "Xats",
   "default_file_server_group": "Servidor per defecte",
   "default_file_server_group_subtitle": "Servidor de fitxers per defecte",

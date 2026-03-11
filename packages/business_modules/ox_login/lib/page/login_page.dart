@@ -14,7 +14,9 @@ import 'package:ox_localizable/ox_localizable.dart';
 import 'package:ox_module_service/ox_module_service.dart';
 // ox_login
 import 'package:ox_login/page/account_key_login_page.dart';
+import 'package:ox_login/page/apple_password_page.dart';
 import 'package:ox_login/page/profile_setup_page.dart';
+import 'package:ox_login/utils/apple_nostr_login_helper.dart';
 import 'package:nostr_core_dart/src/channel/core_method_channel.dart';
 import 'package:nostr_core_dart/src/signer/signer_config.dart';
 
@@ -92,8 +94,12 @@ class _LoginPageState extends State<LoginPage> {
         const Spacer(),
         Column(
           children: [
-            // Primary button: Quick start for regular users
-            _buildQuickStartButton().setPaddingOnly(bottom: 18.px),
+            // iOS: Sign in with Apple only (no Get Started); same flow as Get Started (name, circle, then login)
+            // Non-iOS: Quick start for regular users
+            if (Platform.isIOS)
+              _buildAppleLoginButton().setPaddingOnly(bottom: 18.px)
+            else
+              _buildQuickStartButton().setPaddingOnly(bottom: 18.px),
             // Secondary button: For existing Nostr users
             _buildExistingAccountButton().setPaddingOnly(bottom: 18.px),
             // Privacy policy and terms links
@@ -115,6 +121,16 @@ class _LoginPageState extends State<LoginPage> {
     backgroundColor: ColorToken.white.of(context),
     foregroundColor: ColorToken.xChat.of(context),
     text: Localized.text('ox_login.get_started'),
+  );
+
+  /// Sign in with Apple (iOS): derive key from Apple + password, then go to ProfileSetup (same as Get Started).
+  Widget _buildAppleLoginButton() => CLButton.filled(
+    onTap: _appleLogin,
+    height: 48.py,
+    expanded: true,
+    backgroundColor: ColorToken.white.of(context),
+    foregroundColor: ColorToken.xChat.of(context),
+    text: Localized.text('ox_login.sign_in_with_apple'),
   );
 
   /// Secondary action: For users with existing Nostr account
@@ -213,7 +229,7 @@ class _LoginPageState extends State<LoginPage> {
             child: CLCheckbox(
               value: true,
               onChanged: null, // Disabled, always checked
-              size: 16.px,
+              size: 32.px,
             ),
           ),
           SizedBox(width: 8.px),
@@ -277,6 +293,43 @@ class _LoginPageState extends State<LoginPage> {
 
   void _login() {
     OXNavigator.pushPage(context, (context) => AccountKeyLoginPage());
+  }
+
+  Future<void> _appleLogin() async {
+    // If already logged in (e.g. no circle), logout first so new Apple login uses a clean state and avoids Isar/account mix.
+    if (LoginManager.instance.currentState.account != null) {
+      await LoginManager.instance.logoutAccount();
+      if (!mounted) return;
+    }
+    final credential = await AppleNostrLoginHelper.signInWithApple();
+    if (!mounted) return;
+    if (credential == null) return;
+    final sub = AppleNostrLoginHelper.parseSubFromAppleIdentityToken(credential.identityToken);
+    if (sub == null || sub.isEmpty) {
+      CommonToast.instance.show(context, 'Invalid Apple credential');
+      return;
+    }
+    // Push ApplePasswordPage (full page) to collect recovery password
+    final password = await Navigator.push<String>(
+      context,
+      MaterialPageRoute(builder: (ctx) => ApplePasswordPage()),
+    );
+    if (!mounted) return;
+    if (password == null) return;
+    try {
+      final keychain = AppleNostrLoginHelper.generateKeychainFromApple(sub, password);
+      if (!mounted) return;
+      OXNavigator.pushPage(
+        context,
+        (context) => ProfileSetupPage(
+          initialKeychain: keychain,
+          initialFirstName: credential.givenName,
+          initialLastName: credential.familyName,
+        ),
+      );
+    } catch (e) {
+      if (mounted) CommonToast.instance.show(context, 'Failed to derive key: $e');
+    }
   }
 
   void _openPrivacyPolicy() {

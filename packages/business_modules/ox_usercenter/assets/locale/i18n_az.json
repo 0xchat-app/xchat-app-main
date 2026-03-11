@@ -90,7 +90,7 @@
   "show_message_info_option": "Mesaj məlumatı seçimini göstər",
   "show_message_info_option_description": "Chat interfeysində mesaj məlumatı təfərrüatlarını göstərmək üçün bu seçimi aktivləşdirin.",
   "use_tor_network": "Tor şəbəkəsini qlobal olaraq istifadə et",
-  "use_tor_network_description": "Məxfilik və anonimliyi artırmaq üçün bütün şəbəkə trafikini Tor şəbəkəsi vasitəsilə yönləndirin. Bu əlaqəni yavaşlada bilər.",
+  "use_tor_network_description": "Məxfiliyi artırmaq üçün bütün şəbəkə trafikini Tor şəbəkəsi vasitəsilə yönləndirin. Bu əlaqəni yavaşlada bilər.",
   "chat": "Söhbətlər",
   "default_file_server_group": "Varsayılan sunucu",
   "default_file_server_group_subtitle": "Varsayılan fayl sunucusu",

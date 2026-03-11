@@ -90,7 +90,7 @@
   "show_message_info_option": "Pokaż opcję informacji o wiadomości",
   "show_message_info_option_description": "Włącz tę opcję, aby wyświetlić szczegóły informacji o wiadomości w interfejsie czatu.",
   "use_tor_network": "Używaj sieci Tor globalnie",
-  "use_tor_network_description": "Przekieruj cały ruch sieciowy przez sieć Tor w celu zwiększenia prywatności i anonimowości. Może to spowolnić połączenie.",
+  "use_tor_network_description": "Przekieruj cały ruch sieciowy przez sieć Tor w celu zwiększenia prywatności. Może to spowolnić połączenie.",
   "chat": "Czaty",
   "default_file_server_group": "Domyślny serwer",
   "default_file_server_group_subtitle": "Domyślny serwer plików",

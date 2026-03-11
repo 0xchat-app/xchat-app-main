@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:io';
 import 'package:nostr_core_dart/nostr.dart';
 import 'package:ox_cache_manager/ox_cache_manager.dart';
 import 'package:ox_common/login/login_models.dart';
@@ -57,7 +58,9 @@ class _HomePageState extends State<HomePage> {
   void signerCheck() async {
     final loginState = LoginManager.instance.state$.value;
     if (!loginState.isLoggedIn) return;
-    
+    // Amber is Android-only; skip signer check on iOS/macOS to avoid logging out after Apple login
+    if (!Platform.isAndroid) return;
+
     final currentPubkey = loginState.account?.pubkey ?? '';
     final bool? localIsLoginAmber = await OXCacheManager.defaultOXCacheManager
         .getForeverData('$currentPubkey${StorageKeyTool.KEY_IS_LOGIN_AMBER}');

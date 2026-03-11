@@ -90,7 +90,7 @@
   "show_message_info_option": "نمایش گزینه اطلاعات پیام",
   "show_message_info_option_description": "این گزینه را فعال کنید تا جزئیات اطلاعات پیام در رابط چت نمایش داده شود.",
   "use_tor_network": "استفاده جهانی از شبکه Tor",
-  "use_tor_network_description": "مسیریابی تمام ترافیک شبکه از طریق شبکه Tor برای افزایش حریم خصوصی و ناشناس بودن. این ممکن است اتصال شما را کند کند.",
+  "use_tor_network_description": "مسیریابی تمام ترافیک شبکه از طریق شبکه Tor برای افزایش حریم خصوصی. این ممکن است اتصال شما را کند کند.",
   "chat": "چت‌ها",
   "default_file_server_group": "سرور پیش‌فرض",
   "default_file_server_group_subtitle": "سرور فایل پیش‌فرض",

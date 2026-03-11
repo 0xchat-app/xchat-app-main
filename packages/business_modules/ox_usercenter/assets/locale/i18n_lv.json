@@ -90,7 +90,7 @@
   "show_message_info_option": "Rādīt ziņojuma informācijas opciju",
   "show_message_info_option_description": "Iespējojiet šo opciju, lai tērzēšanas saskarnē tiktu rādītas ziņojuma informācijas detaļas.",
   "use_tor_network": "Izmantot Tor tīklu globāli",
-  "use_tor_network_description": "Novirziet visu tīkla satiksmi caur Tor tīklu, lai uzlabotu privātumu un anonimitāti. Tas var palēnināt jūsu savienojumu.",
+  "use_tor_network_description": "Novirziet visu tīkla satiksmi caur Tor tīklu, lai uzlabotu privātumu. Tas var palēnināt jūsu savienojumu.",
   "chat": "Tērzēšanas",
   "default_file_server_group": "Noklusējuma serveris",
   "default_file_server_group_subtitle": "Noklusējuma failu serveris",

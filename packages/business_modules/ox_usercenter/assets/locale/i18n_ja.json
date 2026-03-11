@@ -90,7 +90,7 @@
   "show_message_info_option": "メッセージ情報オプションを表示",
   "show_message_info_option_description": "このオプションを有効にすると、チャットインターフェースにメッセージ情報の詳細が表示されます。",
   "use_tor_network": "Torネットワークをグローバルに使用する",
-  "use_tor_network_description": "すべてのネットワークトラフィックをTorネットワーク経由でルーティングし、プライバシーと匿名性を強化します。これにより接続速度が低下する可能性があります。",
+  "use_tor_network_description": "すべてのネットワークトラフィックをTorネットワーク経由でルーティングし、プライバシーを強化します。これにより接続速度が低下する可能性があります。",
   "chat": "チャット",
   "default_file_server_group": "デフォルトサーバー",
   "default_file_server_group_subtitle": "デフォルトファイルサーバー",

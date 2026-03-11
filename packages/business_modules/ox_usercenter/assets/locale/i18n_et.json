@@ -90,7 +90,7 @@
   "show_message_info_option": "Kuva sõnumi info valik",
   "show_message_info_option_description": "Luba see valik sõnumi infodetailide kuvamiseks vestlusliideses.",
   "use_tor_network": "Kasuta Tor-võrku globaalselt",
-  "use_tor_network_description": "Marsruudi kogu võrguliiklust Tor-võrgu kaudu suurendatud privaatsuse ja anonüümsuse saavutamiseks. See võib teie ühendust aeglustada.",
+  "use_tor_network_description": "Marsruudi kogu võrguliiklust Tor-võrgu kaudu suurendatud privaatsuse saavutamiseks. See võib teie ühendust aeglustada.",
   "chat": "Vestlused",
   "default_file_server_group": "Vaikimisi server",
   "default_file_server_group_subtitle": "Vaikimisi failiserver",

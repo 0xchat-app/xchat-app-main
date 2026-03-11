@@ -422,6 +422,7 @@ extension _SessionListDataControllerEx on SessionListDataController {
     // Read-modify-write must happen in a single Isar write transaction to avoid
     // lost updates when multiple async calls update the same session concurrently.
     final isar = DBISAR.sharedInstance.isar;
+    if (!isar.isOpen) return;
     ChatSessionModelISAR? updatedSession = await isar.writeAsync<ChatSessionModelISAR?>((isar) {
       final session = isar.chatSessionModelISARs
           .where()
@@ -448,7 +449,9 @@ extension _SessionListDataControllerEx on SessionListDataController {
 
   Future<void> _saveSessionToDB(ChatSessionModelISAR chatSessionModel) async {
     // Note: keep for callers outside _updateSession (e.g. create session).
-    await DBISAR.sharedInstance.isar.writeAsyncWith(chatSessionModel, (isar, model) {
+    final isar = DBISAR.sharedInstance.isar;
+    if (!isar.isOpen) return;
+    await isar.writeAsyncWith(chatSessionModel, (isar, model) {
       if (model.id == 0) {
         model.id = isar.chatSessionModelISARs.autoIncrement();
       }

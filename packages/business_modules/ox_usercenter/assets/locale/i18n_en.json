@@ -94,7 +94,7 @@
   "show_message_info_option": "Show Message Info Option",
   "show_message_info_option_description": "Enable this option to show message information details in the chat interface.",
   "use_tor_network": "Use Tor network globally",
-  "use_tor_network_description": "Route all network traffic through the Tor network for enhanced privacy and anonymity. This may slow down your connection.",
+  "use_tor_network_description": "Route all network traffic through the Tor network for enhanced privacy. This may slow down your connection.",
   "chat": "Chats",
   "default_file_server_group": "Default server",
   "default_file_server_group_subtitle": "Default file server",

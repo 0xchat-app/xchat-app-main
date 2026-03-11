@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ox_chat/page/session/bitchat_channel_message_page.dart';
 import 'package:ox_chat/page/session/chat_group_message_page.dart';
+import 'package:ox_chat/page/session/private_chat_message_page.dart';
 import 'package:ox_chat/utils/general_handler/chat_general_handler.dart';
 import 'package:ox_chat/widget/session_longpress_menu_dialog.dart';
 import 'package:ox_common/model/chat_type.dart';
@@ -20,6 +21,7 @@ class ChatMessagePage {
     final isSupportType = [
       ChatType.chatGroup,
       ChatType.bitchatChannel,
+      ChatType.chatSingle,
     ].contains(communityItem.chatType);
     if (!isSupportType) return null;
 
@@ -48,6 +50,10 @@ class ChatMessagePage {
         pageWidget = BitchatChannelMessagePage(
           handler: handler,
         );
+        break;
+      case ChatType.chatSingle:
+        handler = handlerCreator();
+        pageWidget = PrivateChatMessagePage(handler: handler);
         break;
       default:
         return null;

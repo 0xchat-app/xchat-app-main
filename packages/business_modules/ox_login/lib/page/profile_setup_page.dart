@@ -15,12 +15,27 @@ import 'package:ox_common/widgets/avatar.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
+import 'package:nostr_core_dart/nostr.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../controller/onboarding_controller.dart';
 import 'circle_selection_page.dart';
 
 class ProfileSetupPage extends StatefulWidget {
-  const ProfileSetupPage({super.key});
+  const ProfileSetupPage({
+    super.key,
+    this.initialKeychain,
+    this.initialFirstName,
+    this.initialLastName,
+  });
+
+  /// When set (e.g. from Apple login), onboarding uses this keychain instead of generating a new one.
+  final Keychain? initialKeychain;
+
+  /// Pre-fill first name (e.g. from Apple givenName). Editable.
+  final String? initialFirstName;
+
+  /// Pre-fill last name (e.g. from Apple familyName). Editable.
+  final String? initialLastName;
 
   @override
   State<ProfileSetupPage> createState() => _ProfileSetupPageState();
@@ -31,8 +46,11 @@ enum _AvatarAction { gallery, camera }
 class _ProfileSetupPageState extends State<ProfileSetupPage> {
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
-  
-  final OnboardingController _onboardingController = OnboardingController(isCreateNewAccount: true);
+
+  late final OnboardingController _onboardingController = OnboardingController(
+    isCreateNewAccount: true,
+    initialKeychain: widget.initialKeychain,
+  );
   
   bool _hasValidInput = false;
   File? _avatarFile;
@@ -40,8 +58,15 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
   @override
   void initState() {
     super.initState();
+    if (widget.initialFirstName != null && widget.initialFirstName!.isNotEmpty) {
+      _firstNameController.text = widget.initialFirstName!;
+    }
+    if (widget.initialLastName != null && widget.initialLastName!.isNotEmpty) {
+      _lastNameController.text = widget.initialLastName!;
+    }
     _firstNameController.addListener(_onInputChanged);
     _lastNameController.addListener(_onInputChanged);
+    _onInputChanged();
   }
 
   @override

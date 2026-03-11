@@ -90,7 +90,7 @@
   "show_message_info_option": "Hiển thị tùy chọn thông tin tin nhắn",
   "show_message_info_option_description": "Bật tùy chọn này để hiển thị chi tiết thông tin tin nhắn trong giao diện trò chuyện.",
   "use_tor_network": "Sử dụng mạng Tor toàn cục",
-  "use_tor_network_description": "Định tuyến tất cả lưu lượng mạng qua mạng Tor để tăng cường quyền riêng tư và ẩn danh. Điều này có thể làm chậm kết nối của bạn.",
+  "use_tor_network_description": "Định tuyến tất cả lưu lượng mạng qua mạng Tor để tăng cường quyền riêng tư. Điều này có thể làm chậm kết nối của bạn.",
   "chat": "Trò chuyện",
   "default_file_server_group": "Máy chủ mặc định",
   "default_file_server_group_subtitle": "Máy chủ tệp mặc định",

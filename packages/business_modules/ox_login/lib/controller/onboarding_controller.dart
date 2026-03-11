@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:chatcore/chat-core.dart';
 import 'package:flutter/widgets.dart';
+import 'package:nostr_core_dart/nostr.dart';
 import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/login/login_models.dart';
 import 'package:ox_common/utils/circle_join_utils.dart';
@@ -19,11 +20,13 @@ class OnboardingResult {
 class OnboardingController with LoginManagerObserver {
   OnboardingController({
     required this.isCreateNewAccount,
-  }) {
+    Keychain? initialKeychain,
+  }) : keychain = initialKeychain ?? Account.generateNewKeychain() {
     LoginManager.instance.addObserver(this);
   }
 
-  final keychain = Account.generateNewKeychain();
+  /// Keychain: either from Apple (or other social) login derivation, or newly generated.
+  final Keychain keychain;
 
   bool isCreateNewAccount;
 
@@ -130,7 +133,7 @@ extension _NewAccountEx on OnboardingController {
         _updateProfile();
       }
     } catch (e) {
-      LoginManager.instance.logoutAccount();
+      // Do not logout on join failure; only return failure so UI can show error
       return OnboardingResult.failure(e.toString());
     }
 
@@ -147,7 +150,6 @@ extension _NewAccountEx on OnboardingController {
       if (!uploadResult.isSuccess) {
         throw uploadResult.errorMsg!;
       }
-
       user.picture = uploadResult.url;
     }
 

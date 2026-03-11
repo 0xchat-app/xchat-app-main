@@ -90,7 +90,7 @@
   "show_message_info_option": "Üzenet információ opció megjelenítése",
   "show_message_info_option_description": "Engedélyezze ezt a beállítást az üzenetinformáció részleteinek megjelenítéséhez a csevegőfelületen.",
   "use_tor_network": "A Tor hálózat globális használata",
-  "use_tor_network_description": "Irányítsa az összes hálózati forgalmat a Tor hálózaton keresztül a fokozott adatvédelem és anonimitás érdekében. Ez lelassíthatja a kapcsolatot.",
+  "use_tor_network_description": "Irányítsa az összes hálózati forgalmat a Tor hálózaton keresztül a fokozott adatvédelem érdekében. Ez lelassíthatja a kapcsolatot.",
   "chat": "Csevegések",
   "default_file_server_group": "Alapértelmezett szerver",
   "default_file_server_group_subtitle": "Alapértelmezett fájlszerver",

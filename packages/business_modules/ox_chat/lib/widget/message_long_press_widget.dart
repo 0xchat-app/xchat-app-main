@@ -58,8 +58,8 @@ class MessageLongPressMenu {
       );
     }
 
-    // Report action
-    if (!handler.session.isSingleChat && !message.isMe) {
+    // Report action (show for others' messages in both single and group chat)
+    if (!message.isMe) {
       menuItems.add(
         MenuAction(
           title: Localized.text('ox_chat.message_menu_report'),

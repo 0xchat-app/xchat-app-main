@@ -90,7 +90,7 @@
   "show_message_info_option": "Nachrichteninfo-Option anzeigen",
   "show_message_info_option_description": "Aktivieren Sie diese Option, um Nachrichteninformationsdetails in der Chat-Oberfläche anzuzeigen.",
   "use_tor_network": "Tor-Netzwerk global verwenden",
-  "use_tor_network_description": "Leiten Sie den gesamten Netzwerkverkehr über das Tor-Netzwerk, um Datenschutz und Anonymität zu verbessern. Dies kann Ihre Verbindung verlangsamen.",
+  "use_tor_network_description": "Leiten Sie den gesamten Netzwerkverkehr über das Tor-Netzwerk für verbesserten Datenschutz weiter. Dies kann Ihre Verbindung verlangsamen.",
   "chat": "Chats",
   "default_file_server_group": "Standard-Server",
   "default_file_server_group_subtitle": "Standard-Dateiserver",

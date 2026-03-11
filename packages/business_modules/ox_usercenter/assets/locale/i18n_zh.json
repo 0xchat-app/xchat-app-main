@@ -94,7 +94,7 @@
   "show_message_info_option": "显示消息信息选项",
   "show_message_info_option_description": "启用此选项可在聊天界面中显示消息信息详情。",
   "use_tor_network": "全局使用Tor网络",
-  "use_tor_network_description": "通过 Tor 网络路由所有网络流量，以增强隐私和匿名性。这可能会减慢您的连接速度。",
+  "use_tor_network_description": "通过 Tor 网络路由所有网络流量，以增强隐私。这可能会减慢您的连接速度。",
   "chat": "聊天",
   "default_file_server_group": "默认服务器",
   "default_file_server_group_subtitle": "默认文件服务器",

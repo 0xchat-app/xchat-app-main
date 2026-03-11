@@ -825,8 +825,9 @@ extension ChatMenuHandlerEx on ChatGeneralHandler {
       target: MessageReportTarget(
         message: message,
         completeAction: () {
-          messageDeleteHandler(message);
-        }
+          // Delete from DB and remove from UI so message does not reappear when re-entering session
+          _deleteMessageLocally(message);
+        },
       ),
     );
   }

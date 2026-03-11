@@ -238,7 +238,8 @@ class CircleJoinUtils {
     // Check if circle already exists based on type
     final existsResult = await _checkCircleExists(circleConfig);
     if (existsResult.isExists) {
-      throw existsResult.message;
+      // Already in this circle, treat as success and continue (e.g. enter home)
+      return;
     }
 
     // Perform pre-checks based on circle type

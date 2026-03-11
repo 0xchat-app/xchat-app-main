@@ -90,7 +90,7 @@
   "show_message_info_option": "Tampilkan opsi info pesan",
   "show_message_info_option_description": "Aktifkan opsi ini untuk menampilkan detail informasi pesan di antarmuka chat.",
   "use_tor_network": "Gunakan jaringan Tor secara global",
-  "use_tor_network_description": "Arahkan semua lalu lintas jaringan melalui jaringan Tor untuk meningkatkan privasi dan anonimitas. Ini mungkin memperlambat koneksi Anda.",
+  "use_tor_network_description": "Arahkan semua lalu lintas jaringan melalui jaringan Tor untuk meningkatkan privasi. Ini mungkin memperlambat koneksi Anda.",
   "chat": "Obrolan",
   "default_file_server_group": "Server default",
   "default_file_server_group_subtitle": "Server file default",

@@ -90,7 +90,7 @@
   "show_message_info_option": "إظهار خيار معلومات الرسالة",
   "show_message_info_option_description": "تمكين هذا الخيار لعرض تفاصيل معلومات الرسالة في واجهة الدردشة.",
   "use_tor_network": "استخدام شبكة Tor عالميًا",
-  "use_tor_network_description": "توجيه كل حركة المرور على الشبكة عبر شبكة Tor لتعزيز الخصوصية وإخفاء الهوية. قد يبطئ هذا اتصالك.",
+  "use_tor_network_description": "توجيه كل حركة المرور على الشبكة عبر شبكة Tor لتعزيز الخصوصية. قد يبطئ هذا اتصالك.",
   "chat": "المحادثات",
   "default_file_server_group": "الخادم الافتراضي",
   "default_file_server_group_subtitle": "خادم الملفات الافتراضي",

@@ -90,7 +90,7 @@
   "show_message_info_option": "Toon berichtinfo-optie",
   "show_message_info_option_description": "Schakel deze optie in om berichtinformatiedetails weer te geven in de chatinterface.",
   "use_tor_network": "Tor-netwerk wereldwijd gebruiken",
-  "use_tor_network_description": "Routeer al het netwerkverkeer via het Tor-netwerk voor verbeterde privacy en anonimiteit. Dit kan uw verbinding vertragen.",
+  "use_tor_network_description": "Routeer al het netwerkverkeer via het Tor-netwerk voor verbeterde privacy. Dit kan uw verbinding vertragen.",
   "chat": "Chats",
   "default_file_server_group": "Standaardserver",
   "default_file_server_group_subtitle": "Standaard bestandsserver",

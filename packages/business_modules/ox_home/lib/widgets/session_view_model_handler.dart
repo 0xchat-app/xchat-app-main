@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:flutter/foundation.dart';
 import 'package:chatcore/chat-core.dart';
 import 'package:isar/isar.dart';
+import 'package:ox_common/login/login_manager.dart';
 import 'package:ox_common/model/chat_session_model_isar.dart';
 import 'package:ox_common/model/chat_type.dart';
 import 'package:ox_common/utils/ox_chat_binding.dart';
@@ -196,7 +197,13 @@ mixin SessionViewModelHandler on OXChatObserver {
 }
 
 extension MessageDBISAREx on MessageDBISAR {
+  /// Session list uses this to find existing session. For single chat groupId is empty,
+  /// so return the other party's pubkey (same logic as getRoomId in chat_message_helper).
   String get chatId {
+    if (groupId.isNotEmpty) return groupId;
+    final currentUserPubkey = LoginManager.instance.currentPubkey;
+    if (sender.isNotEmpty && sender != currentUserPubkey) return sender;
+    if (receiver.isNotEmpty && receiver != currentUserPubkey) return receiver;
     return groupId;
   }
 }

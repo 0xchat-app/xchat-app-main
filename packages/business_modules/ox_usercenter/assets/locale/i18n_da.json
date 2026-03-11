@@ -90,7 +90,7 @@
   "show_message_info_option": "Vis beskedinfo-option",
   "show_message_info_option_description": "Aktivér denne indstilling for at vise beskedinformationsdetaljer i chat-grænsefladen.",
   "use_tor_network": "Brug Tor-netværket globalt",
-  "use_tor_network_description": "Diriger al netværkstrafik gennem Tor-netværket for forbedret privatliv og anonymitet. Dette kan gøre din forbindelse langsommere.",
+  "use_tor_network_description": "Diriger al netværkstrafik gennem Tor-netværket for forbedret privatliv. Dette kan gøre din forbindelse langsommere.",
   "chat": "Chats",
   "default_file_server_group": "Standardserver",
   "default_file_server_group_subtitle": "Standard filserver",

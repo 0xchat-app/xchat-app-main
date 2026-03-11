@@ -40,8 +40,8 @@ abstract class OXFlutterModule {
   @mustCallSuper
   Future<void> setup() async {
     OXModuleService.registerFlutterModule(moduleName, this);
-    await ThemeManager.registerTheme(moduleName, assetPath);
-    await Localized.registerLocale(moduleName, assetPath);
+    if (useTheme) await ThemeManager.registerTheme(moduleName, assetPath);
+    if (useLocalized) await Localized.registerLocale(moduleName, assetPath);
     DBISAR.sharedInstance.schemas.addAll(isarDBSchemes);
   }
 

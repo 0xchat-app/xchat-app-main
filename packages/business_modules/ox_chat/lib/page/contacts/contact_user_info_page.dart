@@ -86,7 +86,7 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
                 ),
               ),
               Visibility(
-                visible: widget.chatId == null,
+                visible: widget.chatId == null || !isCurrentUser,
                 child: SafeArea(
                   child: Padding(
                     padding: EdgeInsets.only(
@@ -96,11 +96,11 @@ class _ContactUserInfoPageState extends State<ContactUserInfoPage> {
                     ),
                     child: Column(
                       children: [
-                        _buildSendMsgButton(isCurrentUser),
-                        if (!LoginManager.instance.isMe(user.pubKey)) ...[
+                        if (widget.chatId == null) _buildSendMsgButton(isCurrentUser),
+                        if (widget.chatId == null && !LoginManager.instance.isMe(user.pubKey))
                           SizedBox(height: 8.px),
+                        if (!LoginManager.instance.isMe(user.pubKey))
                           _buildBlockButton(user),
-                        ],
                       ],
                     ),
                   ),

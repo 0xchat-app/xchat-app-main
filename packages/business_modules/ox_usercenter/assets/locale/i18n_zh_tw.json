@@ -91,7 +91,7 @@
   "show_message_info_option": "顯示訊息資訊選項",
   "show_message_info_option_description": "啟用此選項可在聊天介面中顯示訊息資訊詳情。",
   "use_tor_network": "全域使用Tor網路",
-  "use_tor_network_description": "透過 Tor 網路路由所有網路流量，以增強隱私和匿名性。這可能會減慢您的連線速度。",
+  "use_tor_network_description": "透過 Tor 網路路由所有網路流量，以增強隱私。這可能會減慢您的連線速度。",
   "chat": "聊天",
   "default_file_server_group": "預設伺服器",
   "default_file_server_group_subtitle": "預設檔案伺服器",

@@ -90,7 +90,7 @@
   "show_message_info_option": "Mostrar opción de información del mensaje",
   "show_message_info_option_description": "Habilite esta opción para mostrar detalles de información de mensajes en la interfaz de chat.",
   "use_tor_network": "Usar la red Tor globalmente",
-  "use_tor_network_description": "Enrutar todo el tráfico de red a través de la red Tor para mejorar la privacidad y el anonimato. Esto puede ralentizar su conexión.",
+  "use_tor_network_description": "Enrutar todo el tráfico de red a través de la red Tor para mejorar la privacidad. Esto puede ralentizar su conexión.",
   "chat": "Chats",
   "default_file_server_group": "Servidor predeterminado",
   "default_file_server_group_subtitle": "Servidor de archivos predeterminado",

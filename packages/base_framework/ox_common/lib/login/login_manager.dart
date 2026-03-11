@@ -26,6 +26,8 @@ import 'circle_service.dart';
 import 'circle_repository.dart';
 import 'account_path_manager.dart';
 import '../secure/db_key_manager.dart';
+import 'demo_review_config.dart';
+import 'demo_review_seed.dart';
 
 class LoginUserNotifier {
   LoginUserNotifier._();
@@ -470,11 +472,12 @@ extension LoginManagerAccount on LoginManager {
       }
 
       // 3. Save account info to DB.
+      // Run encryptedPrivKey update only if still the same account and DB still open (not logged out).
       _saveAccount(account).then((_) async {
-        final account = currentState.account;
-        if (encryptedPrivKey != null && account != null) {
-          updateEncryptedPrivKey(await encryptedPrivKey);
-        }
+        final current = currentState.account;
+        if (encryptedPrivKey == null || current == null || account == null) return;
+        if (current.pubkey != account.pubkey || !account.db.isOpen) return;
+        updateEncryptedPrivKey(await encryptedPrivKey);
       });
       // 4. Update login state
       updateStateAccount(account);
@@ -497,6 +500,15 @@ extension LoginManagerAccount on LoginManager {
         // Also set the signer in ExternalSignerTool for immediate use
         await ExternalSignerTool.setSigner(signerKey);
         debugPrint('LoginManager: Set signer mapping $pubkey -> $signerKey');
+      }
+
+      // 7.5 Demo account: ensure one circle (wss://relay.damus.io) so reviewers can use the app
+      if (pubkey.toLowerCase() == kDemoAccountPubkey.toLowerCase() &&
+          account.circles.isEmpty) {
+        final joinResult = await joinCircle(kDemoRelayUrl);
+        if (joinResult != null) {
+          debugPrint('LoginManager: Demo account failed to join demo circle: ${joinResult.message}');
+        }
       }
 
       // 8. Try to login to last circle or first circle
@@ -1088,6 +1100,9 @@ extension LoginManagerCircle on LoginManager {
     LoginUserNotifier.instance.updateUserSource(Account.sharedInstance.getUserNotifier(pubkey));
     Account.sharedInstance.syncFollowingListFromRelay(pubkey, relay: relayUrl);
 
+    // Demo account: pre-populate one contact and chat for App Review (Guideline 2.1(a))
+    await runDemoReviewSeedIfNeeded();
+
     initializePushCore();
 
     if (TorNetworkHelper.isOnionUrl(relayUrl)) {
@@ -1488,9 +1503,11 @@ extension AccountUpdateMethod on LoginManager {
     return true;
   }
 
-  /// Save AccountModel to database
+  /// Save AccountModel to database.
+  /// No-op if account's Isar was already closed (e.g. after logout).
   Future<void> _saveAccount(AccountModel account) async {
     final db = account.db;
+    if (!db.isOpen) return;
     final accountDataList = AccountHelper.toAccountDataList(account);
     await db.writeAsync((accountDb) {
       accountDb.accountDataISARs.putAll(accountDataList);

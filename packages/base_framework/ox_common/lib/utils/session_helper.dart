@@ -30,7 +30,13 @@ class SessionCreateParams {
   });
 
   factory SessionCreateParams.fromMessage(MessageDBISAR message) {
-    final chatId = message.groupId;
+    String chatId = message.groupId;
+    if (chatId.isEmpty && message.chatType == ChatType.chatSingle) {
+      final me = LoginManager.instance.currentPubkey;
+      chatId = (message.sender == me && message.receiver.isNotEmpty)
+          ? message.receiver
+          : (message.sender.isNotEmpty ? message.sender : message.groupId);
+    }
     final defaultChatName = (message.chatType == ChatType.bitchatChannel && message.groupId.isEmpty) ? 'Global' : null;
     
     return SessionCreateParams(
@@ -42,7 +48,7 @@ class SessionCreateParams {
       chatType: message.chatType!,
       content: message.content,
       createTime: message.createTime * 1000,
-      isSingleChat: false, // Will be determined later
+      isSingleChat: message.chatType == ChatType.chatSingle,
     );
   }
 
