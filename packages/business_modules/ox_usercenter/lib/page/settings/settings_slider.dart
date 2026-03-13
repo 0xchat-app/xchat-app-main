@@ -7,6 +7,7 @@ import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/utils/circle_join_utils.dart';
 import 'package:ox_common/utils/string_utils.dart';
 import 'package:ox_common/widgets/avatar.dart';
+import 'package:ox_common/purchase/purchase_manager.dart';
 import 'package:ox_common/widgets/common_loading.dart';
 import 'package:ox_common/widgets/common_toast.dart';
 import 'package:ox_localizable/ox_localizable.dart';
@@ -162,10 +163,15 @@ class SettingSliderState extends State<SettingSlider> {
       ),
     );
     
-    // Add HELP section
+    // Add Restore Purchases and HELP section
     sections.add(
       SectionListViewItem(
         data: [
+          LabelItemModel(
+            icon: ListViewIcon.data(CupertinoIcons.arrow_2_circlepath),
+            title: Localized.text('ox_usercenter.restore_purchases'),
+            onTap: _restorePurchasesOnTap,
+          ),
           LabelItemModel(
             icon: ListViewIcon.data(CupertinoIcons.info),
             title: Localized.text('ox_usercenter.about_xchat'),
@@ -573,6 +579,47 @@ class SettingSliderState extends State<SettingSlider> {
 
   void advancedItemOnTap() {
     OXNavigator.pushPage(context, (_) => AdvancedSettingsPage(previousPageTitle: title,));
+  }
+
+  Future<void> _restorePurchasesOnTap() async {
+    try {
+      OXLoading.show(status: Localized.text('ox_usercenter.restoring_purchases'));
+      final results = await PurchaseManager.instance.restorePurchases();
+      if (!mounted) return;
+      await OXLoading.dismiss();
+
+      final successes = results.where((r) => r.success).toList();
+      final failures = results.where((r) => !r.success).toList();
+      final realFailures = failures.where((r) {
+        final msg = (r.errorMessage ?? '').trim();
+        if (msg.isEmpty) return false;
+        return msg != 'No purchase to restore for this product';
+      }).toList();
+
+      var message = '';
+      if (successes.isNotEmpty) {
+        message = Localized.text('ox_usercenter.restore_purchases_success');
+      } else if (realFailures.isNotEmpty) {
+        message = realFailures.first.errorMessage ?? 'Failed to restore purchases. Please try again.';
+      } else if (results.any((r) => r.isAlreadyRestored)) {
+        message = Localized.text('ox_usercenter.restore_purchases_already_restored');
+      } else {
+        message = 'No purchases found to restore';
+      }
+
+      await CLAlertDialog.show<bool>(
+        context: context,
+        content: message,
+        actions: [CLAlertAction.ok()],
+      );
+    } catch (e) {
+      if (mounted) {
+        await OXLoading.dismiss();
+        CommonToast.instance.show(context, 'Failed to restore purchases: $e');
+      }
+    } finally {
+      await OXLoading.dismiss();
+    }
   }
 
   void aboutXChatItemOnTap() {

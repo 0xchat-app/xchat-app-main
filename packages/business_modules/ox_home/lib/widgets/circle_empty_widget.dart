@@ -4,8 +4,11 @@ import 'package:ox_common/utils/adapt.dart';
 import 'package:ox_common/component.dart';
 import 'package:ox_common/navigator/navigator.dart';
 import 'package:ox_common/page/circle_introduction_page.dart';
-import 'package:ox_localizable/ox_localizable.dart';
+import 'package:ox_common/utils/scan_utils.dart';
 import 'package:ox_common/widgets/common_image.dart';
+import 'package:ox_common/widgets/common_scan_page.dart';
+import 'package:ox_localizable/ox_localizable.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class CircleEmptyWidget extends StatelessWidget {
   final VoidCallback? onJoinCircle;
@@ -75,13 +78,13 @@ class CircleEmptyWidget extends StatelessWidget {
 
           SizedBox(height: 16.px),
 
-          // New Paid Circle Button
-          // CLButton.tonal(
-          //   text: Localized.text('ox_home.new_paid_circle'),
-          //   onTap: onCreatePaidCircle,
-          //   expanded: true,
-          //   height: 52.px,
-          // ),
+          // Scan QR Code entry (e.g. circle invite, npub, etc.)
+          CLButton.text(
+            text: Localized.text('ox_common.scan_qr_code'),
+            onTap: () => _onScanQRCode(context),
+            expanded: true,
+            height: 52.px,
+          ),
         ],
         ),
       ),
@@ -96,5 +99,38 @@ class CircleEmptyWidget extends StatelessWidget {
       (context) => const CircleIntroductionPage(),
       type: OXPushPageType.present,
     );
+  }
+
+  /// Open scan page and handle result (invite link, npub, etc.) via ScanUtils
+  Future<void> _onScanQRCode(BuildContext context) async {
+    if (await Permission.camera.request().isGranted) {
+      final String? result = await OXNavigator.pushPage<String>(
+        context,
+        (context) => CLScaffold(
+          appBar: CLAppBar(
+            title: Localized.text('ox_common.scan_qr_code'),
+          ),
+          body: CommonScanPage(),
+        ),
+      );
+      if (result != null && result.isNotEmpty) {
+        await ScanUtils.analysis(context, result);
+      }
+    } else {
+      CLAlertDialog.show<bool>(
+        context: context,
+        content: Localized.text('ox_common.str_permission_camera_hint'),
+        actions: [
+          CLAlertAction.cancel(),
+          CLAlertAction<bool>(
+            label: Localized.text('ox_common.str_go_to_settings'),
+            value: true,
+            isDefaultAction: true,
+          ),
+        ],
+      ).then((value) {
+        if (value == true) openAppSettings();
+      });
+    }
   }
 } 

@@ -94,12 +94,11 @@ class _LoginPageState extends State<LoginPage> {
         const Spacer(),
         Column(
           children: [
-            // iOS: Sign in with Apple only (no Get Started); same flow as Get Started (name, circle, then login)
-            // Non-iOS: Quick start for regular users
+            // Primary: Get Started (all platforms)
+            _buildQuickStartButton().setPaddingOnly(bottom: 18.px),
+            // iOS only: Sign in with Apple below Get Started
             if (Platform.isIOS)
-              _buildAppleLoginButton().setPaddingOnly(bottom: 18.px)
-            else
-              _buildQuickStartButton().setPaddingOnly(bottom: 18.px),
+              _buildAppleLoginButton().setPaddingOnly(bottom: 8.px),
             // Secondary button: For existing Nostr users
             _buildExistingAccountButton().setPaddingOnly(bottom: 18.px),
             // Privacy policy and terms links
@@ -123,15 +122,52 @@ class _LoginPageState extends State<LoginPage> {
     text: Localized.text('ox_login.get_started'),
   );
 
-  /// Sign in with Apple (iOS): derive key from Apple + password, then go to ProfileSetup (same as Get Started).
-  Widget _buildAppleLoginButton() => CLButton.filled(
-    onTap: _appleLogin,
-    height: 48.py,
-    expanded: true,
-    backgroundColor: ColorToken.white.of(context),
-    foregroundColor: ColorToken.xChat.of(context),
-    text: Localized.text('ox_login.sign_in_with_apple'),
-  );
+  /// Sign in with Apple (iOS): fully transparent, white outline (same size/radius as Get Started).
+  Widget _buildAppleLoginButton() {
+    final white = Colors.white;
+    // Same height as Get Started (48.py)
+    final buttonHeight = 54.py;
+    // Match Get Started: Cupertino large = 12, Material stadium = half height
+    final radius = Platform.isIOS ? 12.0 : 24.0;
+    final borderRadius = BorderRadius.circular(radius.px);
+    return SizedBox(
+      height: buttonHeight,
+      width: double.infinity,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: _appleLogin,
+          borderRadius: borderRadius,
+          child: Container(
+            height: buttonHeight,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              border: Border.all(color: white, width: 1),
+              borderRadius: borderRadius,
+            ),
+            alignment: Alignment.center,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.apple, color: white, size: 22.px),
+                SizedBox(width: 10.px),
+                Text(
+                  Localized.text('ox_login.sign_in_with_apple'),
+                  style: TextStyle(
+                    color: white,
+                    fontSize: 17.px,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   /// Secondary action: For users with existing Nostr account
   Widget _buildExistingAccountButton() => CLButton.text(
