@@ -26,12 +26,12 @@
   "have_account": "I have a Nostr account",
   "sign_in_with_apple": "Sign in with Apple",
 
-  "apple_login_set_password_title": "Set recovery password",
-  "apple_login_set_password_hint": "Set a password to recover this account on other devices. You will need this password when signing in with Apple again.",
-  "apple_password_placeholder": "Password",
-  "apple_password_confirm_placeholder": "Confirm password",
-  "apple_password_required": "Please enter a password",
-  "apple_password_min_length": "Password must be at least 8 characters",
+  "apple_login_set_password_title": "Set recovery passphrase",
+  "apple_login_set_password_hint": "Set a passphrase to recover your XChat identity on a new device.",
+  "apple_password_placeholder": "Recovery passphrase",
+  "apple_password_confirm_placeholder": "Confirm recovery passphrase",
+  "apple_password_required": "Please enter a recovery passphrase",
+  "apple_password_min_length": "Recovery passphrase must be at least 8 characters",
   "apple_password_mismatch": "Passwords do not match",
 
   "profile_setup_title": "Create Your Profile",

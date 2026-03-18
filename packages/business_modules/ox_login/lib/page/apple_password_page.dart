@@ -84,7 +84,7 @@ class _ApplePasswordPageState extends State<ApplePasswordPage> {
         ),
         bottomWidget: SafeArea(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: CLLayout.horizontalPadding, vertical: 16.px),
+            padding: EdgeInsets.symmetric(horizontal: 0, vertical: 16.px),
             child: CLButton.filled(
               onTap: _submit,
               height: 48.px,
