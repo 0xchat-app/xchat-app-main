@@ -20,6 +20,9 @@ import 'package:ox_login/utils/apple_nostr_login_helper.dart';
 import 'package:nostr_core_dart/src/channel/core_method_channel.dart';
 import 'package:nostr_core_dart/src/signer/signer_config.dart';
 
+/// Set to true to show "Sign in with Apple" on iOS again.
+const bool kEnableAppleLogin = false;
+
 class LoginPage extends StatefulWidget {
   const LoginPage();
 
@@ -96,8 +99,8 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             // Primary: Get Started (all platforms)
             _buildQuickStartButton().setPaddingOnly(bottom: 18.px),
-            // iOS only: Sign in with Apple below Get Started
-            if (Platform.isIOS)
+            // iOS only: Sign in with Apple below Get Started (gated by kEnableAppleLogin)
+            if (Platform.isIOS && kEnableAppleLogin)
               _buildAppleLoginButton().setPaddingOnly(bottom: 8.px),
             // Secondary button: For existing Nostr users
             _buildExistingAccountButton().setPaddingOnly(bottom: 18.px),
